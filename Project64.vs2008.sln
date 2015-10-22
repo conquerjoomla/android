@@ -84,6 +84,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDL2", "Source\3rd Party\sd
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Project64-console", "Source\Project64-console\project64-console.vcproj", "{287C6721-3619-43ED-A4A5-03DDE5C7F125}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Project64-core", "Source\Project64-core\Project64-core.vcproj", "{00C7B43A-DED7-4DF0-B072-9A5783EF866D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -169,6 +171,10 @@ Global
 		{287C6721-3619-43ED-A4A5-03DDE5C7F125}.Debug|Win32.Build.0 = Debug|Win32
 		{287C6721-3619-43ED-A4A5-03DDE5C7F125}.Release|Win32.ActiveCfg = Release|Win32
 		{287C6721-3619-43ED-A4A5-03DDE5C7F125}.Release|Win32.Build.0 = Release|Win32
+		{00C7B43A-DED7-4DF0-B072-9A5783EF866D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{00C7B43A-DED7-4DF0-B072-9A5783EF866D}.Debug|Win32.Build.0 = Debug|Win32
+		{00C7B43A-DED7-4DF0-B072-9A5783EF866D}.Release|Win32.ActiveCfg = Release|Win32
+		{00C7B43A-DED7-4DF0-B072-9A5783EF866D}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
