@@ -15,6 +15,8 @@
 #include <float.h>
 #include <math.h>
 
+#include <Project64-core\AppInit.h>
+
 #include "User Interface.h"
 #include "N64 System/Types.h"
 
@@ -78,4 +80,3 @@ class CNotification;
 //Main Files
 #include "N64 System/N64 Class.h"
 #include "N64 System/System Globals.h"
-

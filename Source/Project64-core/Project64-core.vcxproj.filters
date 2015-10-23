@@ -13,14 +13,182 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
+    <Filter Include="Source Files\Multilanguage">
+      <UniqueIdentifier>{79bf4b75-4a28-4d09-a1ff-ba8d94c3bd6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Multilanguage">
+      <UniqueIdentifier>{727ca617-08a9-456c-be66-91f287495874}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Settings">
+      <UniqueIdentifier>{3066447b-6324-41a3-a220-25e86d06ecb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Settings">
+      <UniqueIdentifier>{2245e08f-c941-4a72-8456-c23f5c7b8084}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Settings\SettingType">
+      <UniqueIdentifier>{5247fbf4-b36d-4fae-a307-e1f260323444}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Settings\SettingType">
+      <UniqueIdentifier>{a13e8feb-8c4c-463f-8c4e-bcd9c8d8bac7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\N64 System">
+      <UniqueIdentifier>{9ac6fa7e-446a-4954-8bf7-4597925ebc28}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AppInit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Multilanguage\Language Class.cpp">
+      <Filter>Source Files\Multilanguage</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\Settings Class.cpp">
+      <Filter>Source Files\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-Application.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-ApplicationIndex.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-ApplicationPath.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-Cheats.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-GameSetting.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-GameSettingIndex.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-RDBCpuType.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-RDBOnOff.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-RDBRamSize.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-RDBSaveChip.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-RDBYesNo.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-RelativePath.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-RomDatabase.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-RomDatabaseIndex.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-RomDatabaseSetting.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-SelectedDirectory.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-TempBool.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-TempNumber.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-TempString.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AppInit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Multilanguage\Language Class.h">
+      <Filter>Header Files\Multilanguage</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\Settings Class.h">
+      <Filter>Header Files\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-Application.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-ApplicationIndex.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-ApplicationPath.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-Base.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-Cheats.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-GameSetting.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-GameSettingIndex.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-RDBCpuType.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-RDBOnOff.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-RDBRamSize.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-RDBSaveChip.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-RDBYesNo.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-RelativePath.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-RomDatabase.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-RomDatabaseIndex.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-RomDatabaseSetting.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-RomSetting.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-SelectedDirectory.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-TempBool.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-TempNumber.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-TempString.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\Settings.h">
+      <Filter>Header Files\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="N64 System\N64 Types.h">
+      <Filter>Header Files\N64 System</Filter>
+    </ClInclude>
+    <ClInclude Include="Notification.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

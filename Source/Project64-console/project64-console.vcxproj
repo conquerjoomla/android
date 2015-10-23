@@ -45,6 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Version.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Project64-core\Project64-core.vcxproj">
+      <Project>{00c7b43a-ded7-4df0-b072-9a5783ef866d}</Project>
+    </ProjectReference>
   </ItemGroup>
 </Project>

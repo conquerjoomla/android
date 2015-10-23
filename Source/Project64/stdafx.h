@@ -16,7 +16,7 @@
 #include <common/MemTest.h>
 #include <common/CriticalSection.h>
 #include <shellapi.h>
-#include "Multilanguage.h"
+#include <Project64-core\Multilanguage.h>
 #include "User Interface.h"
 #include "N64 System.h"
 #include "Plugin.h"

@@ -1,2 +1,2 @@
 #include <stdio.h>
-#include "version.h"
+#include <Project64-core\Version.h>

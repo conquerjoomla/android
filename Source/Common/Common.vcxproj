@@ -55,6 +55,7 @@
     <ClInclude Include="Smart Pointer.h" />
     <ClInclude Include="std string.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="stdtypes.h" />
     <ClInclude Include="Trace.h" />
     <ClInclude Include="TraceDefs.h" />
   </ItemGroup>
