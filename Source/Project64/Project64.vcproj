@@ -196,90 +196,6 @@
 					RelativePath="Settings\Recompiler Settings.cpp"
 					>
 				</File>
-				<File
-					RelativePath="Settings\Settings Class.cpp"
-					>
-				</File>
-				<Filter
-					Name="Setting Types Files"
-					>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-Application.cpp"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-ApplicationIndex.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\Settings\SettingType\SettingsType-ApplicationPath.cpp"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-Cheats.cpp"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-GameSetting.cpp"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-GameSettingIndex.cpp"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-RDBCpuType.cpp"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-RDBOnOff.cpp"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-RDBRamSize.cpp"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-RDBSaveChip.cpp"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-RDBYesNo.cpp"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-RelativePath.cpp"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-RomDatabase.cpp"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-RomDatabaseIndex.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\Settings\SettingType\SettingsType-RomDatabaseSetting.cpp"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-SelectedDirectory.cpp"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-TempBool.cpp"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-TempNumber.cpp"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-TempString.cpp"
-						>
-					</File>
-				</Filter>
 			</Filter>
 			<Filter
 				Name="User Interface Source"
@@ -402,14 +318,6 @@
 				</Filter>
 			</Filter>
 			<Filter
-				Name="Multilanguage Source"
-				>
-				<File
-					RelativePath="Multilanguage\Language Class.cpp"
-					>
-				</File>
-			</Filter>
-			<Filter
 				Name="N64 System Source"
 				>
 				<File
@@ -468,10 +376,6 @@
 						>
 					</File>
 					<File
-						RelativePath=".\N64 System\Mips\Rumblepak.cpp"
-						>
-					</File>
-					<File
 						RelativePath=".\N64 System\Mips\Mempak.cpp"
 						>
 					</File>
@@ -481,6 +385,10 @@
 					</File>
 					<File
 						RelativePath="N64 System\Mips\Register Class.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64 System\Mips\Rumblepak.cpp"
 						>
 					</File>
 					<File
@@ -577,6 +485,14 @@
 					</File>
 					<File
 						RelativePath="N64 System\Interpreter\Interpreter Ops.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Multilanguage Source"
+					>
+					<File
+						RelativePath=".\Multilanguage\LanguageSelector.cpp"
 						>
 					</File>
 				</Filter>
@@ -782,10 +698,6 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath="Version.h"
-				>
-			</File>
-			<File
 				RelativePath="Multilanguage.h"
 				>
 			</File>
@@ -798,15 +710,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Settings.h"
-				>
-			</File>
-			<File
 				RelativePath="stdafx.h"
 				>
 			</File>
 			<File
 				RelativePath="User Interface.h"
+				>
+			</File>
+			<File
+				RelativePath="Version.h"
 				>
 			</File>
 			<File
@@ -840,94 +752,6 @@
 					RelativePath="Settings\Recompiler Settings.h"
 					>
 				</File>
-				<File
-					RelativePath="Settings\Settings Class.h"
-					>
-				</File>
-				<Filter
-					Name="Setting Types Header"
-					>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-Application.h"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-ApplicationIndex.h"
-						>
-					</File>
-					<File
-						RelativePath=".\Settings\SettingType\SettingsType-ApplicationPath.h"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-Base.h"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-Cheats.h"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-GameSetting.h"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-GameSettingIndex.h"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-RDBCpuType.h"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-RDBOnOff.h"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-RDBRamSize.h"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-RDBSaveChip.h"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-RDBYesNo.h"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-RelativePath.h"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-RomDatabase.h"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-RomDatabaseIndex.h"
-						>
-					</File>
-					<File
-						RelativePath=".\Settings\SettingType\SettingsType-RomDatabaseSetting.h"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-SelectedDirectory.h"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-TempBool.h"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-TempNumber.h"
-						>
-					</File>
-					<File
-						RelativePath="Settings\SettingType\SettingsType-TempString.h"
-						>
-					</File>
-				</Filter>
 			</Filter>
 			<Filter
 				Name="User Interface Headers"
@@ -1045,7 +869,7 @@
 				Name="Multilanguage Headers"
 				>
 				<File
-					RelativePath="Multilanguage\Language Class.h"
+					RelativePath=".\Multilanguage\LanguageSelector.h"
 					>
 				</File>
 			</Filter>
@@ -1062,10 +886,6 @@
 				</File>
 				<File
 					RelativePath="N64 System\N64 Rom Class.h"
-					>
-				</File>
-				<File
-					RelativePath="N64 System\N64 Types.h"
 					>
 				</File>
 				<File
@@ -1120,10 +940,6 @@
 						>
 					</File>
 					<File
-						RelativePath=".\N64 System\Mips\Rumblepak.h"
-						>
-					</File>
-					<File
 						RelativePath=".\N64 System\Mips\Mempak.H"
 						>
 					</File>
@@ -1137,6 +953,10 @@
 					</File>
 					<File
 						RelativePath="N64 System\Mips\Register Class.h"
+						>
+					</File>
+					<File
+						RelativePath=".\N64 System\Mips\Rumblepak.h"
 						>
 					</File>
 					<File
@@ -1324,19 +1144,19 @@
 					Name="Zlib Headers"
 					>
 					<File
-						RelativePath="..\3rd Party\zlib\zconf.h"
-						>
-					</File>
-					<File
-						RelativePath="..\3rd Party\zlib\zlib.h"
-						>
-					</File>
-					<File
 						RelativePath="..\3rd Party\zlib\contrib\minizip\unzip.h"
 						>
 					</File>
 					<File
+						RelativePath="..\3rd Party\zlib\zconf.h"
+						>
+					</File>
+					<File
 						RelativePath="..\3rd Party\zlib\contrib\minizip\zip.h"
+						>
+					</File>
+					<File
+						RelativePath="..\3rd Party\zlib\zlib.h"
 						>
 					</File>
 				</Filter>

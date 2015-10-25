@@ -20,7 +20,6 @@
 #include "User Interface.h"
 #include "N64 System/Types.h"
 
-class CNotification;
 #include "N64 System/Profiling Class.h"
 
 //General Mips Information

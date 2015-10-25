@@ -1,22 +1,15 @@
-#include "..\\Settings.h"
+#include <Project64-core/Settings/Settings.h>
 
 class CPluginList  
 {
 public:
-	typedef struct {
+	typedef struct 
+	{
 		PLUGIN_INFO Info;
 		bool        AboutFunction;
 		CPath       FullPath;
 		stdstr      FileName;
 	} PLUGIN;
-
-private:	
-	typedef std::vector<PLUGIN>   PluginList;
-
-	PluginList m_PluginList;
-	CPath      m_PluginDir;
-
-	void AddPluginFromDir   ( CPath Dir);
 
 public:
 	   CPluginList(bool bAutoFill = true);
@@ -26,4 +19,12 @@ public:
 	int      GetPluginCount ( void ) const;
 	const PLUGIN * GetPluginInfo  ( int indx ) const;
 	static bool ValidPluginVersion ( PLUGIN_INFO & PluginInfo );
+
+private:
+	typedef std::vector<PLUGIN>   PluginList;
+
+	PluginList m_PluginList;
+	CPath      m_PluginDir;
+
+	void AddPluginFromDir(CPath Dir);
 };

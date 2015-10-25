@@ -127,6 +127,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\AppInit.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -146,6 +150,106 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<Filter
+				Name="Multilanguage"
+				>
+				<File
+					RelativePath=".\Multilanguage\Language Class.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Settings"
+				>
+				<File
+					RelativePath=".\Settings\Settings Class.cpp"
+					>
+				</File>
+				<Filter
+					Name="Setting Types"
+					>
+					<Filter
+						Name="Settings Type"
+						>
+						<File
+							RelativePath=".\Settings\SettingType\SettingsType-Application.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Settings\SettingType\SettingsType-ApplicationIndex.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Settings\SettingType\SettingsType-ApplicationPath.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Settings\SettingType\SettingsType-Cheats.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Settings\SettingType\SettingsType-GameSetting.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Settings\SettingType\SettingsType-GameSettingIndex.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Settings\SettingType\SettingsType-RDBCpuType.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Settings\SettingType\SettingsType-RDBOnOff.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Settings\SettingType\SettingsType-RDBRamSize.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Settings\SettingType\SettingsType-RDBSaveChip.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Settings\SettingType\SettingsType-RDBYesNo.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Settings\SettingType\SettingsType-RelativePath.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Settings\SettingType\SettingsType-RomDatabase.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Settings\SettingType\SettingsType-RomDatabaseIndex.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Settings\SettingType\SettingsType-RomDatabaseSetting.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Settings\SettingType\SettingsType-SelectedDirectory.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Settings\SettingType\SettingsType-TempBool.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Settings\SettingType\SettingsType-TempNumber.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Settings\SettingType\SettingsType-TempString.cpp"
+							>
+						</File>
+					</Filter>
+				</Filter>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -153,9 +257,141 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\AppInit.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Multilanguage.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Notification.h"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.h"
 				>
 			</File>
+			<File
+				RelativePath=".\Version.h"
+				>
+			</File>
+			<Filter
+				Name="Multilanguage"
+				>
+				<File
+					RelativePath=".\Multilanguage\Language Class.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="N64 System"
+				>
+				<File
+					RelativePath=".\N64 System\N64 Types.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Setttings"
+				>
+				<File
+					RelativePath=".\Settings\Settings Class.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Settings\Settings.h"
+					>
+				</File>
+				<Filter
+					Name="Setting Types"
+					>
+					<File
+						RelativePath=".\Settings\SettingType\SettingsType-Application.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Settings\SettingType\SettingsType-ApplicationIndex.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Settings\SettingType\SettingsType-ApplicationPath.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Settings\SettingType\SettingsType-Base.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Settings\SettingType\SettingsType-Cheats.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Settings\SettingType\SettingsType-GameSetting.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Settings\SettingType\SettingsType-GameSettingIndex.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Settings\SettingType\SettingsType-RDBCpuType.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Settings\SettingType\SettingsType-RDBOnOff.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Settings\SettingType\SettingsType-RDBRamSize.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Settings\SettingType\SettingsType-RDBSaveChip.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Settings\SettingType\SettingsType-RDBYesNo.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Settings\SettingType\SettingsType-RelativePath.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Settings\SettingType\SettingsType-RomDatabase.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Settings\SettingType\SettingsType-RomDatabaseIndex.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Settings\SettingType\SettingsType-RomDatabaseSetting.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Settings\SettingType\SettingsType-RomSetting.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Settings\SettingType\SettingsType-SelectedDirectory.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Settings\SettingType\SettingsType-TempBool.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Settings\SettingType\SettingsType-TempNumber.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Settings\SettingType\SettingsType-TempString.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"

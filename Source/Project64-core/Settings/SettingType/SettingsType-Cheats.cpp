@@ -11,6 +11,8 @@
 #include "stdafx.h"
 #include "SettingsType-Cheats.h"
 
+
+
 CIniFile * CSettingTypeCheats::m_CheatIniFile = NULL;
 stdstr   * CSettingTypeCheats::m_SectionIdent = NULL;
 
@@ -25,10 +27,10 @@ CSettingTypeCheats::~CSettingTypeCheats ( void )
 
 void CSettingTypeCheats::Initialize ( void )
 {
-    m_CheatIniFile = new CIniFile(g_Settings->LoadString(SupportFile_Cheats).c_str());
+    m_CheatIniFile = new CIniFile(g_Settings->LoadStringVal(SupportFile_Cheats).c_str());
     m_CheatIniFile->SetAutoFlush(false);
     g_Settings->RegisterChangeCB(Game_IniKey,NULL,GameChanged);
-    m_SectionIdent = new stdstr(g_Settings->LoadString(Game_IniKey));
+    m_SectionIdent = new stdstr(g_Settings->LoadStringVal(Game_IniKey));
     GameChanged(NULL);
 }
 
@@ -57,7 +59,7 @@ void CSettingTypeCheats::FlushChanges( void )
 
 void CSettingTypeCheats::GameChanged ( void * /*Data */ )
 {
-    *m_SectionIdent = g_Settings->LoadString(Game_IniKey);
+    *m_SectionIdent = g_Settings->LoadStringVal(Game_IniKey);
 }
 
 /*stdstr CSettingTypeCheats::FixName ( const char * Section, const char * Name )
@@ -80,7 +82,7 @@ bool CSettingTypeCheats::Load ( int /*Index*/, bool & /*Value*/ ) const
     return false;
 }
 
-bool CSettingTypeCheats::Load ( int /*Index*/, ULONG & /*Value*/ ) const
+bool CSettingTypeCheats::Load ( int /*Index*/, uint32_t & /*Value*/ ) const
 {
     g_Notify->BreakPoint(__FILEW__,__LINE__);
     return false;
@@ -118,7 +120,7 @@ void CSettingTypeCheats::Save ( int /*Index*/, bool /*Value*/ )
     g_Notify->BreakPoint(__FILEW__,__LINE__);
 }
 
-void CSettingTypeCheats::Save ( int /*Index*/, ULONG /*Value*/ )
+void CSettingTypeCheats::Save ( int /*Index*/, uint32_t /*Value*/ )
 {
     g_Notify->BreakPoint(__FILEW__,__LINE__);
 }

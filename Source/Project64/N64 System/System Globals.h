@@ -10,7 +10,6 @@
 ****************************************************************************/
 #pragma once
 
-extern CNotification * g_Notify;   
 extern CSettings     * g_Settings;   
 
 extern CN64System    * g_System;

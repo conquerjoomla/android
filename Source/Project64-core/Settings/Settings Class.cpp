@@ -386,7 +386,7 @@ const char * CSettings::GetSettingSz ( CSettings * _this, SettingID Type, char *
     if (Buffer && BufferSize > 0)
     {
         Buffer[0] = 0;
-        _this->LoadString(Type, Buffer,BufferSize);
+        _this->LoadStringVal(Type, Buffer,BufferSize);
     }
     return Buffer;
 }
@@ -634,14 +634,14 @@ bool CSettings::LoadDwordIndex( SettingID Type, int index, uint32_t & Value)
     return false;
 }
 
-stdstr CSettings::LoadString ( SettingID Type )
+stdstr CSettings::LoadStringVal ( SettingID Type )
 {
     stdstr Value;
-    LoadString(Type,Value);
+    LoadStringVal(Type,Value);
     return Value;
 }
 
-bool CSettings::LoadString ( SettingID Type, stdstr & Value )
+bool CSettings::LoadStringVal ( SettingID Type, stdstr & Value )
 {
     SETTING_HANDLER FindInfo = m_SettingInfo.find(Type);
     if (FindInfo == m_SettingInfo.end())
@@ -659,7 +659,7 @@ bool CSettings::LoadString ( SettingID Type, stdstr & Value )
     return false;
 }
 
-bool CSettings::LoadString ( SettingID Type, char * Buffer, int BufferSize )
+bool CSettings::LoadStringVal ( SettingID Type, char * Buffer, int BufferSize )
 {
     SETTING_HANDLER FindInfo = m_SettingInfo.find(Type);
     if (FindInfo == m_SettingInfo.end())

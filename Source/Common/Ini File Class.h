@@ -35,17 +35,17 @@ private:
 
     bool   m_ReadOnly;
     bool   m_InstantFlush;
-    LPCSTR m_LineFeed;
+    const char * m_LineFeed;
 
     CriticalSection m_CS;
     FILELOC m_SectionsPos;
 
-    //void AddItemData ( LPCTSTR lpKeyName, LPCTSTR lpString);
-    //bool ChangeItemData ( LPCTSTR lpKeyName, LPCTSTR lpString );
-    //void DeleteItem ( LPCSTR lpKeyName );
+    //void AddItemData ( const char * lpKeyName, const char * lpString);
+    //bool ChangeItemData ( const char * lpKeyName, const char * lpString );
+    //void DeleteItem ( const char * lpKeyName );
     void fInsertSpaces ( int Pos, int NoOfSpaces );
     int  GetStringFromFile ( char * & String, char * &Data, int & MaxDataSize, int & DataSize, int & ReadPos );
-    bool MoveToSectionNameData ( LPCSTR lpSectionName, bool ChangeCurrentSection );
+	bool MoveToSectionNameData(const char * lpSectionName, bool ChangeCurrentSection);
     const char * CleanLine ( char * const Line );
     void ClearSectionPosList( long FilePos );
 
@@ -55,17 +55,17 @@ protected:
     void SaveCurrentSection ( void );
 
 public:
-    CIniFileBase( CFileBase & FileObject, LPCTSTR FileName );
+	CIniFileBase(CFileBase & FileObject, const char * FileName);
     virtual ~CIniFileBase(void);
 
     bool IsEmpty();
     bool IsFileOpen ( void );
-    bool DeleteSection ( LPCSTR lpSectionName );
-    bool GetString ( LPCSTR lpSectionName, LPCSTR lpKeyName, LPCSTR lpDefault, stdstr & Value );
-    stdstr GetString  ( LPCSTR lpSectionName, LPCSTR lpKeyName, LPCSTR lpDefault );
-    uint32_t GetString  ( LPCSTR lpSectionName, LPCSTR lpKeyName, LPCSTR lpDefault, LPSTR lpReturnedString, uint32_t nSize );
-    uint32_t GetNumber ( LPCSTR lpSectionName, LPCSTR lpKeyName, uint32_t nDefault );
-    bool  GetNumber ( LPCSTR lpSectionName, LPCSTR lpKeyName, uint32_t nDefault, uint32_t & Value );
+	bool DeleteSection(const char * lpSectionName);
+    bool GetString ( const char * lpSectionName, const char * lpKeyName, const char * lpDefault, stdstr & Value );
+    stdstr GetString  ( const char * lpSectionName, const char * lpKeyName, const char * lpDefault );
+    uint32_t GetString  ( const char * lpSectionName, const char * lpKeyName, const char * lpDefault, char * lpReturnedString, uint32_t nSize );
+    uint32_t GetNumber ( const char * lpSectionName, const char * lpKeyName, uint32_t nDefault );
+    bool  GetNumber ( const char * lpSectionName, const char * lpKeyName, uint32_t nDefault, uint32_t & Value );
 
 #ifdef _UNICODE
     bool DeleteSection ( LPCWSTR lpSectionName );
@@ -77,12 +77,12 @@ public:
 
 #endif
 
-    virtual void  SaveString ( LPCTSTR lpSectionName, LPCTSTR lpKeyName, LPCTSTR lpString );
-    virtual void  SaveNumber ( LPCTSTR lpSectionName, LPCTSTR lpKeyName, uint32_t Value );
+    virtual void  SaveString ( const char * lpSectionName, const char * lpKeyName, const char * lpString );
+    virtual void  SaveNumber ( const char * lpSectionName, const char * lpKeyName, uint32_t Value );
     void SetAutoFlush (bool AutoFlush);
     void FlushChanges (void);
-    void GetKeyList ( LPCTSTR lpSectionName, strlist &List );
-    void GetKeyValueData ( LPCTSTR lpSectionName, KeyValueData & List );
+    void GetKeyList ( const char * lpSectionName, strlist &List );
+    void GetKeyValueData ( const char * lpSectionName, KeyValueData & List );
 
     void GetVectorOfSections( SectionList & sections);
     const stdstr &GetFileName() {return m_FileName;}
@@ -93,14 +93,14 @@ class CIniFileT :
     public CIniFileBase
 {
 public:
-    CIniFileT( LPCTSTR FileName ) :
+    CIniFileT( const char * FileName ) :
         CIniFileBase(m_FileObject,FileName)
     {
         //Try to open file for reading
         OpenIniFile();
     }
 
-    CIniFileT( LPCTSTR FileName, bool bCreate, bool bReadOnly) :
+    CIniFileT( const char * FileName, bool bCreate, bool bReadOnly) :
         CIniFileBase(m_FileObject,FileName)
     {
         if(bReadOnly)

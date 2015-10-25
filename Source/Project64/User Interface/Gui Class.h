@@ -10,12 +10,13 @@
 ****************************************************************************/
 #pragma once
 
+#include "../Settings/Gui Settings.h"
+
 class CGfxPlugin;      //Plugin that controls the rendering
 class CAudioPlugin;    //Plugin for audio, need the hwnd
 class CControl_Plugin; //Controller needs hwnd to see if it is the focused window
 class CBaseMenu;           //Menu for the gui
 class CN64System; 
-class CNotification;
 class CriticalSection;
 
 enum { 

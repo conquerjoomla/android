@@ -10,11 +10,12 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "SettingsType-Application.h"
+#include <Common/path.h>
 
 bool       CSettingTypeApplication::m_UseRegistry     = false;
 CIniFile * CSettingTypeApplication::m_SettingsIniFile = NULL;
 
-CSettingTypeApplication::CSettingTypeApplication(const char * Section, const char * Name, DWORD DefaultValue ) :
+CSettingTypeApplication::CSettingTypeApplication(const char * Section, const char * Name, uint32_t DefaultValue ) :
     m_DefaultStr(""),
     m_DefaultValue(DefaultValue),
     m_DefaultSetting(Default_Constant),
@@ -65,7 +66,7 @@ void CSettingTypeApplication::Initialize( const char * /*AppName*/ )
     for (int i = 0; i < 100; i++)
     {
         OrigSettingsFile = SettingsFile;
-        if (!g_Settings->LoadString(SupportFile_Settings,SettingsFile) && i > 0)
+        if (!g_Settings->LoadStringVal(SupportFile_Settings,SettingsFile) && i > 0)
         {
             break;
         }
@@ -80,7 +81,7 @@ void CSettingTypeApplication::Initialize( const char * /*AppName*/ )
         CPath SettingsDir(CPath(SettingsFile).GetDriveDirectory(),"");
         if (!SettingsDir.DirectoryExists())
         {
-            SettingsDir.CreateDirectory();
+			SettingsDir.DirectoryCreate();
         }
 
         m_SettingsIniFile = new CIniFile(SettingsFile.c_str());
@@ -114,7 +115,7 @@ bool CSettingTypeApplication::Load ( int /*Index*/, bool & Value ) const
 
     if (!m_UseRegistry)
     {
-        DWORD dwValue;
+        uint32_t dwValue;
         bRes = m_SettingsIniFile->GetNumber(SectionName(),m_KeyNameIdex.c_str(),Value,dwValue);
         if (bRes)
         {
@@ -136,7 +137,7 @@ bool CSettingTypeApplication::Load ( int /*Index*/, bool & Value ) const
     return bRes;
 }
 
-bool CSettingTypeApplication::Load ( int /*Index*/, ULONG & Value ) const
+bool CSettingTypeApplication::Load ( int /*Index*/, uint32_t & Value ) const
 {
     bool bRes = false;
     if (!m_UseRegistry)
@@ -213,7 +214,7 @@ void CSettingTypeApplication::LoadDefault ( int /*Index*/, stdstr & Value ) cons
         {
             Value = m_DefaultStr;
         } else {
-            g_Settings->LoadString(m_DefaultSetting,Value);
+            g_Settings->LoadStringVal(m_DefaultSetting,Value);
         }
     }
 }
@@ -229,7 +230,7 @@ void CSettingTypeApplication::Save ( int /*Index*/, bool Value )
     }
 }
 
-void CSettingTypeApplication::Save ( int /*Index*/, ULONG Value )
+void CSettingTypeApplication::Save ( int /*Index*/, uint32_t Value )
 {
     if (!m_UseRegistry)
     {

@@ -1,13 +1,13 @@
 #include "stdafx.h"
 #include <time.h>
 
-CNotification & Notify ( void )
+CNotificationImp & Notify ( void )
 {
-	static CNotification g_Notify;
+	static CNotificationImp g_Notify;
 	return g_Notify;
 }
 
-CNotification::CNotification() :
+CNotificationImp::CNotificationImp() :
 	m_hWnd(NULL), 
 	m_gfxPlugin(NULL),
 	m_NextMsg(0)
@@ -15,12 +15,17 @@ CNotification::CNotification() :
 	 _tzset();
 }
 
-void CNotification::SetMainWindow  ( CMainGui * Gui ) 
+void CNotificationImp::AppInitDone(void)
+{
+	CNotificationSettings::RegisterNotifications();
+}
+
+void CNotificationImp::SetMainWindow  ( CMainGui * Gui ) 
 {
 	m_hWnd = Gui;
 }
 
-void CNotification::WindowMode ( void ) const
+void CNotificationImp::WindowMode ( void ) const
 {
 	static bool InsideFunc = false;
 	if (InsideFunc)
@@ -43,23 +48,17 @@ void CNotification::WindowMode ( void ) const
 	InsideFunc = false;
 }
 
-void CNotification::DisplayError ( const wchar_t * Message, ... ) const 
+void CNotificationImp::DisplayError(LanguageStringID StringID) const
 {
-	va_list ap;
-	va_start( ap, Message );
-	DisplayError (Message,ap);
+	DisplayError(g_Lang->GetString(StringID).c_str());
 }
 
-void CNotification::DisplayError ( const wchar_t * Message, va_list ap ) const 
+void CNotificationImp::DisplayError(const wchar_t * Message) const
 {
 	if (this == NULL) { return; }
-	wchar_t Msg[1000];
-
-	_vsnwprintf( Msg,sizeof(Msg) - 1,Message, ap );
-	va_end( ap );
 
     stdstr TraceMessage;
-    TraceMessage.FromUTF16(Msg);
+	TraceMessage.FromUTF16(Message);
 	WriteTrace(TraceError,TraceMessage.c_str());
 	WindowMode();
 
@@ -68,17 +67,15 @@ void CNotification::DisplayError ( const wchar_t * Message, va_list ap ) const
     { 
         Parent = m_hWnd->GetHandle(); 
     }
-	MessageBoxW(Parent,Msg,GS(MSG_MSGBOX_TITLE),MB_OK|MB_ICONERROR|MB_SETFOREGROUND);
+	MessageBoxW(Parent, Message, GS(MSG_MSGBOX_TITLE), MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
 }
 
-void CNotification::DisplayMessage  ( int DisplayTime, const wchar_t * Message, ... ) const 
+void CNotificationImp::DisplayMessage(int DisplayTime, LanguageStringID StringID) const
 {
-	va_list ap;
-	va_start( ap, Message );
-	DisplayMessage (DisplayTime, Message,ap);
+	DisplayMessage(DisplayTime, g_Lang->GetString(StringID).c_str());
 }
 
-void CNotification::DisplayMessage  ( int DisplayTime, const wchar_t * Message, va_list ap ) const 
+void CNotificationImp::DisplayMessage(int DisplayTime, const wchar_t * Message) const
 {
 	if (!m_hWnd) { return; }
 
@@ -97,13 +94,7 @@ void CNotification::DisplayMessage  ( int DisplayTime, const wchar_t * Message, 
 		{
 			m_NextMsg = 0;
 		}
-	}
-	
-	wchar_t Msg[1000];
-
-	_vsnwprintf( Msg,sizeof(Msg) - 1,Message, ap );
-	va_end( ap );
-	
+	}	
 	
 	if (InFullScreen())
 	{
@@ -111,7 +102,7 @@ void CNotification::DisplayMessage  ( int DisplayTime, const wchar_t * Message, 
 		{
 			WriteTrace(TraceGfxPlugin,__FUNCTION__ ": DrawStatus - Starting");
 			stdstr PluginMessage;
-			PluginMessage.FromUTF16(Msg);
+			PluginMessage.FromUTF16(Message);
 			m_gfxPlugin->DrawStatus(PluginMessage.c_str(), FALSE);
 			WriteTrace(TraceGfxPlugin,__FUNCTION__ ": DrawStatus - Done");
 		}
@@ -119,46 +110,35 @@ void CNotification::DisplayMessage  ( int DisplayTime, const wchar_t * Message, 
     else 
     {
 #if defined(WINDOWS_UI)
-		m_hWnd->SetStatusText(0, Msg);
+		m_hWnd->SetStatusText(0, Message);
 #else
 		g_Notify -> BreakPoint(__FILEW__, __LINE__);
 #endif
 	}
 }
 
-void CNotification::DisplayMessage2 ( const wchar_t * Message, ... ) const 
-{
-	va_list ap;
-	va_start( ap, Message );
-	DisplayMessage2 (Message,ap);
-}
-
-void CNotification::DisplayMessage2 (  const wchar_t * Message, va_list ap ) const 
+void CNotificationImp::DisplayMessage2 ( const wchar_t * Message ) const 
 {
 	if (!m_hWnd) { return; }
 
-	wchar_t Msg[1000];
-	_vsnwprintf( Msg,sizeof(Msg) - 1 ,Message, ap );
-	va_end( ap );
-
 #if defined(WINDOWS_UI)
-    m_hWnd->SetStatusText(1,Msg);
+	m_hWnd->SetStatusText(1, Message);
 #else
     g_Notify -> BreakPoint(__FILEW__, __LINE__);
 #endif
 }
 
-void CNotification::SetGfxPlugin( CGfxPlugin * Plugin )
+void CNotificationImp::SetGfxPlugin( CGfxPlugin * Plugin )
 {
 	m_gfxPlugin = Plugin;
 }
 
-void CNotification::SetWindowCaption (const wchar_t * Caption)
+void CNotificationImp::SetWindowCaption (const wchar_t * Caption)
 {
 	static const size_t TITLE_SIZE = 256;
 	wchar_t WinTitle[TITLE_SIZE];
 
-	_snwprintf(WinTitle, TITLE_SIZE, L"%s - %s", Caption, g_Settings->LoadString(Setting_ApplicationName).ToUTF16().c_str());
+	_snwprintf(WinTitle, TITLE_SIZE, L"%s - %s", Caption, g_Settings->LoadStringVal(Setting_ApplicationName).ToUTF16().c_str());
 	WinTitle[TITLE_SIZE - 1] = 0;
 #if defined(WINDOWS_UI)
 	m_hWnd->Caption(WinTitle);
@@ -167,23 +147,22 @@ void CNotification::SetWindowCaption (const wchar_t * Caption)
 #endif
 }
 
-void CNotification::FatalError  ( const wchar_t * Message, ... ) const 
+void CNotificationImp::FatalError(LanguageStringID StringID) const
 {
-	wchar_t Msg[1000];
-	va_list ap;
+	FatalError(g_Lang->GetString(StringID).c_str());
+}
 
+void CNotificationImp::FatalError(const wchar_t * Message) const
+{
 	WindowMode();
 
-	va_start( ap, Message );
-	_vsnwprintf( Msg,(sizeof(Msg) / sizeof(Msg[0])) - 1, Message, ap );
-	va_end( ap );
 	HWND Parent = NULL;
 	if (m_hWnd) { Parent = reinterpret_cast<HWND>(m_hWnd->GetHandle()); }
-	MessageBoxW(Parent,Msg,L"Error",MB_OK|MB_ICONERROR|MB_SETFOREGROUND);
+	MessageBoxW(Parent, Message, L"Error", MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
 	ExitThread(0);
 }
 
-void CNotification::AddRecentDir ( const char * RomDir ) 
+void CNotificationImp::AddRecentDir ( const char * RomDir ) 
 {
 	//Validate the passed string
 	if (HIWORD(RomDir) == NULL) { return; }
@@ -225,7 +204,7 @@ void CNotification::AddRecentDir ( const char * RomDir )
 	}
 }
 
-void CNotification::AddRecentRom ( const char * ImagePath ) 
+void CNotificationImp::AddRecentRom ( const char * ImagePath ) 
 {
 	if (HIWORD(ImagePath) == NULL) { return; }
 
@@ -266,7 +245,7 @@ void CNotification::AddRecentRom ( const char * ImagePath )
 	}
 }
 
-void CNotification::RefreshMenu ( void )
+void CNotificationImp::RefreshMenu ( void )
 {
 	if (m_hWnd == NULL) { return; }
 
@@ -277,13 +256,13 @@ void CNotification::RefreshMenu ( void )
 #endif
 }
 
-void CNotification::HideRomBrowser ( void )
+void CNotificationImp::HideRomBrowser ( void )
 {
 	if (m_hWnd == NULL) { return; }
 	m_hWnd->HideRomList();
 }
 
-void CNotification::ShowRomBrowser ( void )
+void CNotificationImp::ShowRomBrowser ( void )
 {
 	if (m_hWnd == NULL) { return; }
 	if (g_Settings->LoadDword(RomBrowser_Enabled))
@@ -294,7 +273,7 @@ void CNotification::ShowRomBrowser ( void )
 	}
 }
 
-void CNotification::BringToTop ( void )
+void CNotificationImp::BringToTop ( void )
 {
 	if (m_hWnd == NULL) { return; }
 
@@ -305,7 +284,7 @@ void CNotification::BringToTop ( void )
 #endif
 }
 
-void CNotification::MakeWindowOnTop ( bool OnTop )
+void CNotificationImp::MakeWindowOnTop ( bool OnTop )
 {
 	if (m_hWnd == NULL) { return; }
 
@@ -316,13 +295,13 @@ void CNotification::MakeWindowOnTop ( bool OnTop )
 #endif
 }
 
-void CNotification::ChangeFullScreen ( void ) const
+void CNotificationImp::ChangeFullScreen ( void ) const
 {
 	if (m_hWnd == NULL) { return; }
 	SendMessage((HWND)(m_hWnd->GetHandle()),WM_COMMAND,MAKELPARAM(ID_OPTIONS_FULLSCREEN2,false),0);
 }
 
-bool CNotification::ProcessGuiMessages ( void ) const
+bool CNotificationImp::ProcessGuiMessages ( void ) const
 {
 	if (m_hWnd == NULL) { return false; }
 
@@ -334,11 +313,11 @@ bool CNotification::ProcessGuiMessages ( void ) const
 #endif
 }
 
-void CNotification::BreakPoint ( const wchar_t * FileName, const int LineNumber )
+void CNotificationImp::BreakPoint ( const wchar_t * FileName, const int LineNumber )
 {
 	if (g_Settings->LoadBool(Debugger_Enabled))
 	{
-		DisplayError(L"Break point found at\n%s\n%d",FileName, LineNumber);
+		DisplayError(stdstr_f("Break point found at\n%s\n%d",FileName, LineNumber).ToUTF16().c_str());
 		if (IsDebuggerPresent() != 0)
 		{
 			DebugBreak();

@@ -8,9 +8,6 @@
     <Filter Include="Source Files\Settings Files">
       <UniqueIdentifier>{60e2fd87-7b6b-4147-82fe-e12516efe43c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Settings Files\Setting Types Files">
-      <UniqueIdentifier>{305f064d-be0e-418e-a93e-7de72242550e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\User Interface Source">
       <UniqueIdentifier>{7b81a6a8-b20b-464e-8184-864886bb00fd}</UniqueIdentifier>
     </Filter>
@@ -22,9 +19,6 @@
     </Filter>
     <Filter Include="Source Files\User Interface Source\Debugger Source">
       <UniqueIdentifier>{89244064-68f5-44d9-9021-7a592d910e43}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Multilanguage Source">
-      <UniqueIdentifier>{94e87bf5-3b11-4f61-8a4a-333690ecf588}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\N64 System Source">
       <UniqueIdentifier>{4d3c9ef9-7903-4112-8356-1e7ab2112c20}</UniqueIdentifier>
@@ -129,66 +123,6 @@
     <ClCompile Include="Settings\Recompiler Settings.cpp">
       <Filter>Source Files\Settings Files</Filter>
     </ClCompile>
-    <ClCompile Include="Settings\Settings Class.cpp">
-      <Filter>Source Files\Settings Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\SettingType\SettingsType-Application.cpp">
-      <Filter>Source Files\Settings Files\Setting Types Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\SettingType\SettingsType-ApplicationIndex.cpp">
-      <Filter>Source Files\Settings Files\Setting Types Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\SettingType\SettingsType-ApplicationPath.cpp">
-      <Filter>Source Files\Settings Files\Setting Types Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\SettingType\SettingsType-Cheats.cpp">
-      <Filter>Source Files\Settings Files\Setting Types Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\SettingType\SettingsType-GameSetting.cpp">
-      <Filter>Source Files\Settings Files\Setting Types Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\SettingType\SettingsType-GameSettingIndex.cpp">
-      <Filter>Source Files\Settings Files\Setting Types Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\SettingType\SettingsType-RDBCpuType.cpp">
-      <Filter>Source Files\Settings Files\Setting Types Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\SettingType\SettingsType-RDBOnOff.cpp">
-      <Filter>Source Files\Settings Files\Setting Types Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\SettingType\SettingsType-RDBRamSize.cpp">
-      <Filter>Source Files\Settings Files\Setting Types Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\SettingType\SettingsType-RDBSaveChip.cpp">
-      <Filter>Source Files\Settings Files\Setting Types Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\SettingType\SettingsType-RDBYesNo.cpp">
-      <Filter>Source Files\Settings Files\Setting Types Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\SettingType\SettingsType-RelativePath.cpp">
-      <Filter>Source Files\Settings Files\Setting Types Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\SettingType\SettingsType-RomDatabase.cpp">
-      <Filter>Source Files\Settings Files\Setting Types Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\SettingType\SettingsType-RomDatabaseIndex.cpp">
-      <Filter>Source Files\Settings Files\Setting Types Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\SettingType\SettingsType-RomDatabaseSetting.cpp">
-      <Filter>Source Files\Settings Files\Setting Types Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\SettingType\SettingsType-SelectedDirectory.cpp">
-      <Filter>Source Files\Settings Files\Setting Types Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\SettingType\SettingsType-TempBool.cpp">
-      <Filter>Source Files\Settings Files\Setting Types Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\SettingType\SettingsType-TempNumber.cpp">
-      <Filter>Source Files\Settings Files\Setting Types Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\SettingType\SettingsType-TempString.cpp">
-      <Filter>Source Files\Settings Files\Setting Types Files</Filter>
-    </ClCompile>
     <ClCompile Include="User Interface\Frame Per Second Class.cpp">
       <Filter>Source Files\User Interface Source</Filter>
     </ClCompile>
@@ -266,9 +200,6 @@
     </ClCompile>
     <ClCompile Include="N64 System\Debugger\Debugger.cpp">
       <Filter>Source Files\User Interface Source\Debugger Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Multilanguage\Language Class.cpp">
-      <Filter>Source Files\Multilanguage Source</Filter>
     </ClCompile>
     <ClCompile Include="N64 System\Cheat Class.cpp">
       <Filter>Source Files\N64 System Source</Filter>

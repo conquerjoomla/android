@@ -55,13 +55,13 @@ public:
     bool   LoadBool         ( SettingID Type, bool & Value );
     bool   LoadBoolIndex    ( SettingID Type, int index  );
     bool   LoadBoolIndex    ( SettingID Type, int index , bool & Value );
-    uint32_t LoadDword        ( SettingID Type );
+    uint32_t LoadDword      ( SettingID Type );
     bool   LoadDword        ( SettingID Type, uint32_t & Value);
-    uint32_t LoadDwordIndex   ( SettingID Type, int index );
+    uint32_t LoadDwordIndex ( SettingID Type, int index );
     bool   LoadDwordIndex   ( SettingID Type, int index, uint32_t & Value);
-    stdstr LoadString       ( SettingID Type );
-    bool   LoadString       ( SettingID Type, stdstr & Value );
-    bool   LoadString       ( SettingID Type, char * Buffer, int BufferSize );
+    stdstr LoadStringVal    ( SettingID Type );
+	bool   LoadStringVal    (SettingID Type, stdstr & Value);
+	bool   LoadStringVal    (SettingID Type, char * Buffer, int BufferSize);
     stdstr LoadStringIndex  ( SettingID Type, int index );
     bool   LoadStringIndex  ( SettingID Type, int index, stdstr & Value );
     bool   LoadStringIndex  ( SettingID Type, int index, char * Buffer, int BufferSize );

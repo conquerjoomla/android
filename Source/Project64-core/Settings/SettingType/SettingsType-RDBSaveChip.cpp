@@ -12,7 +12,6 @@
 #include "SettingsType-RomDatabase.h"
 #include "SettingsType-RDBSaveChip.h"
 #include "../../N64 System/N64 Types.h"
-#include "../Settings Class.h"
 
 CSettingTypeRDBSaveChip::CSettingTypeRDBSaveChip(const char * Name, SettingID DefaultSetting ) :
     CSettingTypeRomDatabase(Name,DefaultSetting)

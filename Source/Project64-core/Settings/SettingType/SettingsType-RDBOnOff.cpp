@@ -11,7 +11,6 @@
 #include "stdafx.h"
 #include "SettingsType-RomDatabase.h"
 #include "SettingsType-RDBOnOff.h"
-#include "../Settings Class.h"
 
 CSettingTypeRDBOnOff::CSettingTypeRDBOnOff(const char * Name, SettingID DefaultSetting ) :
     CSettingTypeRomDatabase(Name,DefaultSetting)

@@ -11,6 +11,7 @@
 #include "stdafx.h"
 #include "SettingsType-Application.h"
 #include "SettingsType-ApplicationPath.h"
+#include <common/path.h>
 
 CSettingTypeApplicationPath::CSettingTypeApplicationPath(const char * Section, const char * Name, SettingID DefaultSetting ) :
 	CSettingTypeApplication(Section,Name,DefaultSetting)
@@ -34,7 +35,7 @@ bool CSettingTypeApplicationPath::Load ( int Index, stdstr & Value ) const
 			FullFilePath.SetNameExtension(RelativePath.GetNameExtension().c_str());
 			FullFilePath.AppendDirectory(RelativePath.GetDirectory().c_str());
 
-			Value = FullFilePath;
+			Value = (std::string &)FullFilePath;
 		}
 	}
 	return bRes;

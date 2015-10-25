@@ -11,6 +11,7 @@
 #pragma once
 
 #include "SettingsType-Base.h"
+#include <Common/Ini File Class.h>
 
 class CSettingTypeCheats :
     public CSettingType

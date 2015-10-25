@@ -32,6 +32,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemGroup>
+    <ClCompile Include="CriticalSection.cpp" />
     <ClCompile Include="File Class.cpp" />
     <ClCompile Include="Ini File Class.cpp" />
     <ClCompile Include="Log Class.cpp" />

@@ -44,7 +44,7 @@ bool CSettingTypeGameIndex::Load ( int Index, bool & Value ) const
     return CSettingTypeGame::Load(Index,Value);
 }
 
-bool CSettingTypeGameIndex::Load ( int /*Index*/, ULONG & /*Value*/ ) const
+bool CSettingTypeGameIndex::Load ( int /*Index*/, uint32_t & /*Value*/ ) const
 {
     g_Notify->BreakPoint(__FILEW__,__LINE__);
     return false;
@@ -80,7 +80,7 @@ void CSettingTypeGameIndex::Save ( int Index, bool Value )
     CSettingTypeGame::Save(Index,Value);
 }
 
-void CSettingTypeGameIndex::Save ( int Index, ULONG Value )
+void CSettingTypeGameIndex::Save(int Index, uint32_t Value)
 {
     m_KeyNameIdex.Format("%s%d%s",m_PreIndex.c_str(),Index,m_PostIndex.c_str());
     CSettingTypeGame::Save(0,Value);

@@ -1,11 +1,13 @@
-#ifndef __LOG_CLASS__H__
-#define __LOG_CLASS__H__
+#pragma once
+#include "File Class.h"
 
-enum LOG_OPEN_MODE {
+enum LOG_OPEN_MODE
+{
 	Log_New, Log_Append
 };
 
-class CLog  {
+class CLog
+{
 	enum { MB               = 1024 * 1024 };
 	enum { MAX_FILE_SIZE    = 10 * MB      };
 
@@ -39,4 +41,3 @@ public:
 	inline const stdstr & FileName ( void ) const { return m_FileName; }
 };
 
-#endif

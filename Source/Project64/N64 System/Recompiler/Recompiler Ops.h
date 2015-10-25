@@ -10,6 +10,9 @@
 ****************************************************************************/
 #pragma once
 
+#include "../../Settings/N64System Settings.h"
+#include "../../Settings/Recompiler Settings.h"
+
 class CCodeSection;
 
 class CRecompilerOps :

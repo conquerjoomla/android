@@ -11,7 +11,6 @@
 #include "stdafx.h"
 #include "SettingsType-RomDatabase.h"
 #include "SettingsType-RDBYesNo.h"
-#include "../Settings Class.h"
 
 CSettingTypeRDBYesNo::CSettingTypeRDBYesNo(const char * Name, SettingID DefaultSetting ) :
     CSettingTypeRomDatabase(Name,DefaultSetting)

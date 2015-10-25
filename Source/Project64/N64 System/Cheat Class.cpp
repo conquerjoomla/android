@@ -12,7 +12,7 @@
 
 #include <commctrl.h>
 #include <windowsx.h>
-#include "Settings/SettingType/SettingsType-Cheats.h"
+#include <Project64-core/Settings/SettingType/SettingsType-Cheats.h>
 
 enum { WM_EDITCHEAT           = WM_USER + 0x120 };
 enum { UM_CHANGECODEEXTENSION = WM_USER + 0x121 };

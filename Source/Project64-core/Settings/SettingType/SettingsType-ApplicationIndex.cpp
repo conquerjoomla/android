@@ -12,7 +12,7 @@
 #include "SettingsType-Application.h"
 #include "SettingsType-ApplicationIndex.h"
 
-CSettingTypeApplicationIndex::CSettingTypeApplicationIndex(const char * Section, const char * Name, DWORD DefaultValue ) :
+CSettingTypeApplicationIndex::CSettingTypeApplicationIndex(const char * Section, const char * Name, uint32_t DefaultValue ) :
     CSettingTypeApplication(Section,Name,DefaultValue)
 {
 }
@@ -42,7 +42,7 @@ bool CSettingTypeApplicationIndex::Load ( int Index, bool & Value ) const
     return CSettingTypeApplication::Load(0,Value);
 }
 
-bool CSettingTypeApplicationIndex::Load ( int Index, ULONG & Value ) const
+bool CSettingTypeApplicationIndex::Load ( int Index, uint32_t & Value ) const
 {
     m_KeyNameIdex.Format("%s %d",m_KeyName.c_str(),Index);
     return CSettingTypeApplication::Load(0,Value);
@@ -80,7 +80,7 @@ void CSettingTypeApplicationIndex::Save ( int Index, bool Value )
     CSettingTypeApplication::Save(0,Value);
 }
 
-void CSettingTypeApplicationIndex::Save ( int Index, ULONG Value )
+void CSettingTypeApplicationIndex::Save ( int Index, uint32_t Value )
 {
     m_KeyNameIdex.Format("%s %d",m_KeyName.c_str(),Index);
     CSettingTypeApplication::Save(0,Value);

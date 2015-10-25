@@ -52,26 +52,6 @@
     <ClCompile Include="Settings\N64System Settings.cpp" />
     <ClCompile Include="Settings\Notification Settings.cpp" />
     <ClCompile Include="Settings\Recompiler Settings.cpp" />
-    <ClCompile Include="Settings\Settings Class.cpp" />
-    <ClCompile Include="Settings\SettingType\SettingsType-Application.cpp" />
-    <ClCompile Include="Settings\SettingType\SettingsType-ApplicationIndex.cpp" />
-    <ClCompile Include="Settings\SettingType\SettingsType-ApplicationPath.cpp" />
-    <ClCompile Include="Settings\SettingType\SettingsType-Cheats.cpp" />
-    <ClCompile Include="Settings\SettingType\SettingsType-GameSetting.cpp" />
-    <ClCompile Include="Settings\SettingType\SettingsType-GameSettingIndex.cpp" />
-    <ClCompile Include="Settings\SettingType\SettingsType-RDBCpuType.cpp" />
-    <ClCompile Include="Settings\SettingType\SettingsType-RDBOnOff.cpp" />
-    <ClCompile Include="Settings\SettingType\SettingsType-RDBRamSize.cpp" />
-    <ClCompile Include="Settings\SettingType\SettingsType-RDBSaveChip.cpp" />
-    <ClCompile Include="Settings\SettingType\SettingsType-RDBYesNo.cpp" />
-    <ClCompile Include="Settings\SettingType\SettingsType-RelativePath.cpp" />
-    <ClCompile Include="Settings\SettingType\SettingsType-RomDatabase.cpp" />
-    <ClCompile Include="Settings\SettingType\SettingsType-RomDatabaseIndex.cpp" />
-    <ClCompile Include="Settings\SettingType\SettingsType-RomDatabaseSetting.cpp" />
-    <ClCompile Include="Settings\SettingType\SettingsType-SelectedDirectory.cpp" />
-    <ClCompile Include="Settings\SettingType\SettingsType-TempBool.cpp" />
-    <ClCompile Include="Settings\SettingType\SettingsType-TempNumber.cpp" />
-    <ClCompile Include="Settings\SettingType\SettingsType-TempString.cpp" />
     <ClCompile Include="User Interface\Frame Per Second Class.cpp" />
     <ClCompile Include="User Interface\Gui Class.cpp" />
     <ClCompile Include="User Interface\Main Menu Class.cpp" />
@@ -98,7 +78,6 @@
     <ClCompile Include="N64 System\Debugger\Debugger - TLB.cpp" />
     <ClCompile Include="N64 System\Debugger\Debugger - View Memory.cpp" />
     <ClCompile Include="N64 System\Debugger\Debugger.cpp" />
-    <ClCompile Include="Multilanguage\Language Class.cpp" />
     <ClCompile Include="N64 System\Cheat Class.cpp" />
     <ClCompile Include="N64 System\N64 Class.cpp" />
     <ClCompile Include="N64 System\N64 Rom Class.cpp" />
@@ -312,6 +291,9 @@
     <ProjectReference Include="..\Common\Common.vcxproj">
       <Project>{b4a4b994-9111-42b1-93c2-6f1ca8bc4421}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\Project64-core\Project64-core.vcxproj">
+      <Project>{00c7b43a-ded7-4df0-b072-9a5783ef866d}</Project>
     </ProjectReference>
   </ItemGroup>
 </Project>

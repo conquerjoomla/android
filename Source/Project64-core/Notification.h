@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Multilanguage.h"
+
 __interface CNotification
 {
 public:
@@ -17,6 +19,9 @@ public:
     virtual void DisplayMessage2  ( const wchar_t * Message ) const = 0;
 
     virtual void BreakPoint       ( const wchar_t * FileName, const int LineNumber) = 0;
+
+	virtual void AppInitDone      ( void ) = 0;
+	
 };
 
 extern CNotification * g_Notify;

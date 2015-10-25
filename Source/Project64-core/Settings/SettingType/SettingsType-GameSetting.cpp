@@ -60,7 +60,7 @@ void CSettingTypeGame::UpdateSettings ( void * /*Data */ )
 {
     m_RdbEditor     = g_Settings->LoadBool(Setting_RdbEditor);
     m_EraseDefaults = g_Settings->LoadBool(Setting_EraseGameDefaults);
-    stdstr SectionIdent = g_Settings->LoadString(Game_IniKey);
+    stdstr SectionIdent = g_Settings->LoadStringVal(Game_IniKey);
 
     if (m_SectionIdent == NULL)
     {
@@ -88,7 +88,7 @@ bool CSettingTypeGame::Load ( int Index, bool & Value ) const
     return CSettingTypeApplication::Load(Index,Value);
 }
 
-bool CSettingTypeGame::Load ( int Index, ULONG & Value ) const
+bool CSettingTypeGame::Load ( int Index, uint32_t & Value ) const
 {
     if (m_RdbEditor && g_Settings->GetSettingType(m_DefaultSetting) == SettingType_RomDatabase)
     {
@@ -110,7 +110,7 @@ bool CSettingTypeGame::Load ( int Index,  stdstr & Value ) const
         {
             return g_Settings->LoadStringIndex(m_DefaultSetting,Index,Value);
         } else {
-            return g_Settings->LoadString(m_DefaultSetting,Value);
+            return g_Settings->LoadStringVal(m_DefaultSetting,Value);
         }
     }
     return CSettingTypeApplication::Load(Index,Value);
@@ -188,11 +188,11 @@ void CSettingTypeGame::Save ( int Index, bool Value )
     }
 }
 
-void CSettingTypeGame::Save ( int Index, ULONG Value )
+void CSettingTypeGame::Save ( int Index, uint32_t Value )
 {
     if (m_EraseDefaults)
     {
-        ULONG ulDefault;
+		uint32_t ulDefault;
         CSettingTypeGame::LoadDefault(Index,ulDefault);
         if (ulDefault == Value)
         {

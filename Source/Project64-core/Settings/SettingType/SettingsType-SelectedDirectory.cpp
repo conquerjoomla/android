@@ -10,7 +10,6 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "SettingsType-SelectedDirectory.h"
-#include "../Settings Class.h"
 
 CSettingTypeSelectedDirectory::CSettingTypeSelectedDirectory(const char * Name, SettingID InitialDir, SettingID SelectedDir, SettingID UseSelected ) :
     m_Name(Name),
@@ -39,7 +38,7 @@ bool CSettingTypeSelectedDirectory::Load ( int /*Index*/, uint32_t & /*Value*/ )
 bool CSettingTypeSelectedDirectory::Load ( int /*Index*/, stdstr & Value ) const
 {
     SettingID DirSettingId = g_Settings->LoadBool(m_UseSelected) ? m_SelectedDir : m_InitialDir;
-    return g_Settings->LoadString(DirSettingId, Value);
+    return g_Settings->LoadStringVal(DirSettingId, Value);
 }
 
 //return the default values

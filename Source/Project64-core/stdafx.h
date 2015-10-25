@@ -5,3 +5,4 @@
 #include "Multilanguage.h"
 #include "Notification.h"
 #include "version.h"
+#include "Settings/Settings Class.h"

@@ -1,39 +1,7 @@
 #include "stdafx.h"
-#include <Tlhelp32.h>
+#include "Multilanguage\LanguageSelector.h"
 
-CTraceFileLog * LogFile = NULL;
 
-void LogLevelChanged (CTraceFileLog * LogFile)
-{
-    LogFile->SetTraceLevel((TraceLevel)g_Settings->LoadDword(Debugger_AppLogLevel));
-}
-
-void LogFlushChanged (CTraceFileLog * LogFile)
-{
-    LogFile->SetFlushFile(g_Settings->LoadDword(Debugger_AppLogFlush) != 0);
-}
-
-void InitializeLog ( void)
-{
-    CPath LogFilePath(CPath::MODULE_DIRECTORY);
-    LogFilePath.AppendDirectory("Logs");
-    if (!LogFilePath.DirectoryExists())
-    {
-        LogFilePath.CreateDirectory();
-    }
-    LogFilePath.SetNameExtension("Project64.log");
-
-    LogFile = new CTraceFileLog(LogFilePath, g_Settings->LoadDword(Debugger_AppLogFlush) != 0, Log_New,500);
-#ifdef VALIDATE_DEBUG
-    LogFile->SetTraceLevel((TraceLevel)(g_Settings->LoadDword(Debugger_AppLogLevel) | TraceValidate | TraceDebug));
-#else
-    LogFile->SetTraceLevel((TraceLevel)g_Settings->LoadDword(Debugger_AppLogLevel));
-#endif
-    AddTraceModule(LogFile);
-
-    g_Settings->RegisterChangeCB(Debugger_AppLogLevel,LogFile,(CSettings::SettingChangedFunc)LogLevelChanged);
-    g_Settings->RegisterChangeCB(Debugger_AppLogFlush,LogFile,(CSettings::SettingChangedFunc)LogFlushChanged);
-}
 
 /*bool ChangeDirPermission ( const CPath & Dir)
 {
@@ -91,56 +59,6 @@ CloseHandle(hDir);
 return true;
 }*/
 
-bool TerminatedExistingEmu()
-{
-    bool bTerminated = false;
-    bool AskedUser = false;
-    DWORD pid = GetCurrentProcessId();
-
-    HANDLE nSearch = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if(nSearch != INVALID_HANDLE_VALUE)
-    {
-        PROCESSENTRY32 lppe;
-
-        memset(&lppe, 0, sizeof(PROCESSENTRY32));
-        lppe.dwSize = sizeof(PROCESSENTRY32);
-        stdstr ModuleName = CPath(CPath::MODULE_FILE).GetNameExtension();
-
-        if (Process32First(nSearch, &lppe))
-        {
-            do
-            {
-                if(_stricmp(lppe.szExeFile, ModuleName.c_str()) != 0 ||
-                    lppe.th32ProcessID == pid)
-                {
-                    continue;
-                }
-                if (!AskedUser)
-                {
-                    AskedUser = true;
-                    int res = MessageBox(NULL,stdstr_f("Project64.exe currently running\n\nTerminate pid %d now?",lppe.th32ProcessID).c_str(),"Terminate project64",MB_YESNO|MB_ICONEXCLAMATION);
-                    if (res != IDYES)
-                    {
-                        break;
-                    }
-                }
-                HANDLE hHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, lppe.th32ProcessID);
-                if(hHandle != NULL)
-                {
-                    if (TerminateProcess(hHandle, 0))
-                    {
-                        bTerminated = true;
-                    } else {
-                        MessageBox(NULL,stdstr_f("Failed to terminate pid %d",lppe.th32ProcessID).c_str(),"Terminate project64 failed!",MB_YESNO|MB_ICONEXCLAMATION);
-                    }
-                    CloseHandle(hHandle);
-                }
-            } while (Process32Next(nSearch, &lppe));
-        }
-        CloseHandle(nSearch);
-    }
-    return bTerminated;
-}
 
 const char * AppName ( void )
 {
@@ -164,22 +82,26 @@ int main(int argc, char* argv[])
     fprintf(
         stderr,
         "Cross-platform (graphical/terminal?) UI not yet implemented.\n"
-        );
+    );
     return 0;
 }
 #else
 int WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR /*lpszArgs*/, int /*nWinMode*/)
 {
-    AppInit(&Notify());
-
     try
     {
+		AppInit(&Notify());
+		if (!g_Lang->IsLanguageLoaded())
+		{
+			CLanguageSelector().Select();
+		}
+
         //Create the main window with Menu
         WriteTrace(TraceDebug,__FUNCTION__ ": Create Main Window");
         CMainGui  MainWindow(true,stdstr_f("Project64 %s", VER_FILE_VERSION_STR).c_str()), HiddenWindow(false);
         CMainMenu MainMenu(&MainWindow);
         g_Plugins->SetRenderWindows(&MainWindow,&HiddenWindow);
-        g_Notify->SetMainWindow(&MainWindow);
+		Notify().SetMainWindow(&MainWindow);
 
         if (__argc > 1)
         {
@@ -214,9 +136,6 @@ int WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR /
             g_BaseSystem = NULL;
         }
         WriteTrace(TraceDebug,__FUNCTION__ ": System Closed");
-
-        g_Settings->UnregisterChangeCB(Debugger_AppLogLevel,LogFile,(CSettings::SettingChangedFunc)LogLevelChanged);
-        g_Settings->UnregisterChangeCB(Debugger_AppLogFlush,LogFile,(CSettings::SettingChangedFunc)LogFlushChanged);
     }
     catch(...)
     {

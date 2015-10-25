@@ -10,7 +10,6 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "SettingsType-RomDatabase.h"
-#include "../Settings Class.h"
 
 CIniFile * CSettingTypeRomDatabase::m_SettingsIniFile = NULL;
 CIniFile * CSettingTypeRomDatabase::m_GlideIniFile    = NULL;
@@ -62,12 +61,12 @@ CSettingTypeRomDatabase::~CSettingTypeRomDatabase()
 
 void CSettingTypeRomDatabase::Initialize( void )
 {
-    m_SettingsIniFile = new CIniFile(g_Settings->LoadString(SupportFile_RomDatabase).c_str());
-    m_GlideIniFile = new CIniFile(g_Settings->LoadString(SupportFile_Glide64RDB).c_str());
+    m_SettingsIniFile = new CIniFile(g_Settings->LoadStringVal(SupportFile_RomDatabase).c_str());
+    m_GlideIniFile = new CIniFile(g_Settings->LoadStringVal(SupportFile_Glide64RDB).c_str());
 
     g_Settings->RegisterChangeCB(Game_IniKey,NULL,GameChanged);
 
-    m_SectionIdent = new stdstr(g_Settings->LoadString(Game_IniKey));
+    m_SectionIdent = new stdstr(g_Settings->LoadStringVal(Game_IniKey));
 }
 
 void CSettingTypeRomDatabase::CleanUp( void )
@@ -94,7 +93,7 @@ void CSettingTypeRomDatabase::GameChanged ( void * /*Data */ )
 {
     if (m_SectionIdent)
     {
-        *m_SectionIdent = g_Settings->LoadString(Game_IniKey);
+        *m_SectionIdent = g_Settings->LoadStringVal(Game_IniKey);
     }
 }
 
@@ -182,7 +181,7 @@ void CSettingTypeRomDatabase::LoadDefault ( int /*Index*/, stdstr & Value ) cons
         {
             Value = m_DefaultStr;
         } else {
-            g_Settings->LoadString(m_DefaultSetting,Value);
+            g_Settings->LoadStringVal(m_DefaultSetting,Value);
         }
     }
 }

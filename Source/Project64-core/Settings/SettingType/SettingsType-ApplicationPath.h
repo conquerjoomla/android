@@ -28,5 +28,5 @@ private:
 
     CSettingTypeApplicationPath(const char * Section, const char * Name, const char * DefaultValue );
     CSettingTypeApplicationPath(const char * Section, const char * Name, bool DefaultValue );
-    CSettingTypeApplicationPath(const char * Section, const char * Name, DWORD DefaultValue );
+    CSettingTypeApplicationPath(const char * Section, const char * Name, uint32_t DefaultValue );
 };

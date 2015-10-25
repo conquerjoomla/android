@@ -1,5 +1,8 @@
 #pragma once
 
+#include "CriticalSection.h"
+#include "Log Class.h"
+
 class CTraceModule
 {
     TraceLevel m_Type;
