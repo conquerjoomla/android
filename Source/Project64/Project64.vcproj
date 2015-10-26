@@ -517,10 +517,6 @@
 					>
 				</File>
 				<File
-					RelativePath="Plugins\Plugin Class.cpp"
-					>
-				</File>
-				<File
 					RelativePath="Plugins\Plugin List.cpp"
 					>
 				</File>
@@ -1114,10 +1110,6 @@
 				</File>
 				<File
 					RelativePath=".\Plugins\Plugin Base.h"
-					>
-				</File>
-				<File
-					RelativePath="Plugins\Plugin Class.h"
 					>
 				</File>
 				<File

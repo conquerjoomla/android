@@ -162,6 +162,10 @@
 				Name="Settings"
 				>
 				<File
+					RelativePath=".\Settings\Debug Settings.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\Settings\Settings Class.cpp"
 					>
 				</File>
@@ -250,6 +254,30 @@
 					</Filter>
 				</Filter>
 			</Filter>
+			<Filter
+				Name="Plugins"
+				>
+			</Filter>
+			<Filter
+				Name="N64 System"
+				>
+				<File
+					RelativePath=".\N64 System\Cheat Class.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\N64 System\N64 Class.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\N64 System\N64 Rom Class.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\N64 System\Profiling Class.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -288,13 +316,33 @@
 				Name="N64 System"
 				>
 				<File
+					RelativePath=".\N64 System\Cheat Class.h"
+					>
+				</File>
+				<File
+					RelativePath=".\N64 System\N64 Class.h"
+					>
+				</File>
+				<File
+					RelativePath=".\N64 System\N64 Rom Class.h"
+					>
+				</File>
+				<File
 					RelativePath=".\N64 System\N64 Types.h"
+					>
+				</File>
+				<File
+					RelativePath=".\N64 System\Profiling Class.h"
 					>
 				</File>
 			</Filter>
 			<Filter
 				Name="Setttings"
 				>
+				<File
+					RelativePath=".\Settings\Debug Settings.h"
+					>
+				</File>
 				<File
 					RelativePath=".\Settings\Settings Class.h"
 					>
@@ -391,6 +439,14 @@
 						>
 					</File>
 				</Filter>
+			</Filter>
+			<Filter
+				Name="Plugins"
+				>
+				<File
+					RelativePath=".\Plugins\Plugin Class.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

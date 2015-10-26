@@ -34,6 +34,15 @@
     <Filter Include="Header Files\N64 System">
       <UniqueIdentifier>{9ac6fa7e-446a-4954-8bf7-4597925ebc28}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\N64 System">
+      <UniqueIdentifier>{b55114a3-4311-4d2b-9bd6-586bc5d7430c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Plugins">
+      <UniqueIdentifier>{e3f8ea19-e06b-47a7-8d69-14a0c1cfa8f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Plugins">
+      <UniqueIdentifier>{ac92e812-22e1-4a1a-8dd5-5055073c882c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -104,6 +113,39 @@
     </ClCompile>
     <ClCompile Include="Settings\SettingType\SettingsType-TempString.cpp">
       <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="N64 System\Cheat Class.cpp">
+      <Filter>Source Files\N64 System</Filter>
+    </ClCompile>
+    <ClCompile Include="N64 System\N64 Class.cpp">
+      <Filter>Source Files\N64 System</Filter>
+    </ClCompile>
+    <ClCompile Include="N64 System\N64 Rom Class.cpp">
+      <Filter>Source Files\N64 System</Filter>
+    </ClCompile>
+    <ClCompile Include="N64 System\Profiling Class.cpp">
+      <Filter>Source Files\N64 System</Filter>
+    </ClCompile>
+    <ClCompile Include="N64 System\System Globals.cpp">
+      <Filter>Source Files\N64 System</Filter>
+    </ClCompile>
+    <ClCompile Include="Plugins\Plugin Class.cpp">
+      <Filter>Source Files\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="Plugins\Audio Plugin.cpp">
+      <Filter>Source Files\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="Plugins\Controller Plugin.cpp">
+      <Filter>Source Files\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="Plugins\GFX plugin.cpp">
+      <Filter>Source Files\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="Plugins\Plugin Base.cpp">
+      <Filter>Source Files\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="Plugins\RSP Plugin.cpp">
+      <Filter>Source Files\Plugins</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -190,6 +232,48 @@
     </ClInclude>
     <ClInclude Include="Notification.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="N64 System\Cheat Class.h">
+      <Filter>Header Files\N64 System</Filter>
+    </ClInclude>
+    <ClInclude Include="N64 System\N64 Class.h">
+      <Filter>Header Files\N64 System</Filter>
+    </ClInclude>
+    <ClInclude Include="N64 System\N64 Rom Class.h">
+      <Filter>Header Files\N64 System</Filter>
+    </ClInclude>
+    <ClInclude Include="N64 System\Profiling Class.h">
+      <Filter>Header Files\N64 System</Filter>
+    </ClInclude>
+    <ClInclude Include="N64 System\System Globals.h">
+      <Filter>Header Files\N64 System</Filter>
+    </ClInclude>
+    <ClInclude Include="Plugins\Plugin Class.h">
+      <Filter>Header Files\Plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="Plugins\Audio Plugin.h">
+      <Filter>Header Files\Plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="Plugins\Controller Plugin.h">
+      <Filter>Header Files\Plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="Plugins\GFX plugin.h">
+      <Filter>Header Files\Plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="Plugins\Plugin Base.h">
+      <Filter>Header Files\Plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="Plugins\RSP Plugin.h">
+      <Filter>Header Files\Plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\Debug Settings.h">
+      <Filter>Header Files\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\Game Settings.h">
+      <Filter>Header Files\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\N64System Settings.h">
+      <Filter>Header Files\Settings</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -26,6 +26,17 @@
   <ItemGroup>
     <ClCompile Include="AppInit.cpp" />
     <ClCompile Include="Multilanguage\Language Class.cpp" />
+    <ClCompile Include="N64 System\Cheat Class.cpp" />
+    <ClCompile Include="N64 System\N64 Class.cpp" />
+    <ClCompile Include="N64 System\N64 Rom Class.cpp" />
+    <ClCompile Include="N64 System\Profiling Class.cpp" />
+    <ClCompile Include="N64 System\System Globals.cpp" />
+    <ClCompile Include="Plugins\Audio Plugin.cpp" />
+    <ClCompile Include="Plugins\Controller Plugin.cpp" />
+    <ClCompile Include="Plugins\GFX plugin.cpp" />
+    <ClCompile Include="Plugins\Plugin Base.cpp" />
+    <ClCompile Include="Plugins\Plugin Class.cpp" />
+    <ClCompile Include="Plugins\RSP Plugin.cpp" />
     <ClCompile Include="Settings\Settings Class.cpp" />
     <ClCompile Include="Settings\SettingType\SettingsType-Application.cpp" />
     <ClCompile Include="Settings\SettingType\SettingsType-ApplicationIndex.cpp" />
@@ -53,8 +64,22 @@
   <ItemGroup>
     <ClInclude Include="AppInit.h" />
     <ClInclude Include="Multilanguage\Language Class.h" />
+    <ClInclude Include="N64 System\Cheat Class.h" />
+    <ClInclude Include="N64 System\N64 Class.h" />
+    <ClInclude Include="N64 System\N64 Rom Class.h" />
     <ClInclude Include="N64 System\N64 Types.h" />
+    <ClInclude Include="N64 System\Profiling Class.h" />
+    <ClInclude Include="N64 System\System Globals.h" />
     <ClInclude Include="Notification.h" />
+    <ClInclude Include="Plugins\Audio Plugin.h" />
+    <ClInclude Include="Plugins\Controller Plugin.h" />
+    <ClInclude Include="Plugins\GFX plugin.h" />
+    <ClInclude Include="Plugins\Plugin Base.h" />
+    <ClInclude Include="Plugins\Plugin Class.h" />
+    <ClInclude Include="Plugins\RSP Plugin.h" />
+    <ClInclude Include="Settings\Debug Settings.h" />
+    <ClInclude Include="Settings\Game Settings.h" />
+    <ClInclude Include="Settings\N64System Settings.h" />
     <ClInclude Include="Settings\Settings Class.h" />
     <ClInclude Include="Settings\Settings.h" />
     <ClInclude Include="Settings\SettingType\SettingsType-Application.h" />
