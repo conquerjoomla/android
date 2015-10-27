@@ -28,10 +28,13 @@
     <ClCompile Include="Multilanguage\Language Class.cpp" />
     <ClCompile Include="N64 System\Cheat Class.cpp" />
     <ClCompile Include="N64 System\Frame Per Second Class.cpp" />
+    <ClCompile Include="N64 System\Interpreter\Interpreter CPU.cpp" />
+    <ClCompile Include="N64 System\Interpreter\Interpreter Ops.cpp" />
     <ClCompile Include="N64 System\Mips\Audio.cpp" />
     <ClCompile Include="N64 System\Mips\Eeprom.cpp" />
     <ClCompile Include="N64 System\Mips\FlashRam.cpp" />
     <ClCompile Include="N64 System\Mips\Memory Virtual Mem.cpp" />
+    <ClCompile Include="N64 System\Mips\OpcodeName.cpp" />
     <ClCompile Include="N64 System\Mips\Pif Ram.cpp" />
     <ClCompile Include="N64 System\Mips\Register Class.cpp" />
     <ClCompile Include="N64 System\Mips\Sram.cpp" />
@@ -93,6 +96,7 @@
     <ClInclude Include="Multilanguage\Language Class.h" />
     <ClInclude Include="N64 System\Cheat Class.h" />
     <ClInclude Include="N64 System\Frame Per Second Class.h" />
+    <ClInclude Include="N64 System\Interpreter\Interpreter CPU.h" />
     <ClInclude Include="N64 System\Interpreter\Interpreter Ops.h" />
     <ClInclude Include="N64 System\Mips\Audio.h" />
     <ClInclude Include="N64 System\Mips\Dma.h" />
@@ -101,6 +105,7 @@
     <ClInclude Include="N64 System\Mips\Memory Class.h" />
     <ClInclude Include="N64 System\Mips\Memory Virtual Mem.h" />
     <ClInclude Include="N64 System\Mips\OpCode.h" />
+    <ClInclude Include="N64 System\Mips\OpcodeName.h" />
     <ClInclude Include="N64 System\Mips\Pif Ram.h" />
     <ClInclude Include="N64 System\Mips\Register Class.h" />
     <ClInclude Include="N64 System\Mips\Sram.h" />

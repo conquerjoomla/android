@@ -9,10 +9,12 @@
 *                                                                           *
 ****************************************************************************/
 #include "stdafx.h"
+#include "Function Map Class.h"
+#include <Project64-core\N64 System\System Globals.h>
 
 CFunctionMap::CFunctionMap() :
-	m_JumpTable(NULL),
-	m_FunctionTable(NULL)
+m_JumpTable(NULL),
+m_FunctionTable(NULL)
 {
 }
 
@@ -25,24 +27,24 @@ bool CFunctionMap::AllocateMemory()
 {
 	if (g_System->LookUpMode() == FuncFind_VirtualLookup && m_FunctionTable == NULL)
 	{
-		m_FunctionTable = (PCCompiledFunc_TABLE *)VirtualAlloc(NULL,0xFFFFF * sizeof(CCompiledFunc *),MEM_RESERVE|MEM_COMMIT,PAGE_READWRITE);
+		m_FunctionTable = (PCCompiledFunc_TABLE *)VirtualAlloc(NULL, 0xFFFFF * sizeof(CCompiledFunc *), MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 		if (m_FunctionTable == NULL) {
-			WriteTrace(TraceError,__FUNCTION__ ": failed to allocate function table");
+			WriteTrace(TraceError, __FUNCTION__ ": failed to allocate function table");
 			g_Notify->FatalError(MSG_MEM_ALLOC_ERROR);
 			return false;
 		}
-		memset(m_FunctionTable,0,0xFFFFF * sizeof(CCompiledFunc *));
+		memset(m_FunctionTable, 0, 0xFFFFF * sizeof(CCompiledFunc *));
 	}
 	if (g_System->LookUpMode() == FuncFind_PhysicalLookup && m_JumpTable == NULL)
 	{
 		m_JumpTable = new PCCompiledFunc[g_MMU->RdramSize() >> 2];
-		if (m_JumpTable == NULL) 
+		if (m_JumpTable == NULL)
 		{
-			WriteTrace(TraceError,__FUNCTION__ ": failed to allocate jump table");
+			WriteTrace(TraceError, __FUNCTION__ ": failed to allocate jump table");
 			g_Notify->FatalError(MSG_MEM_ALLOC_ERROR);
 			return false;
 		}
-		memset(m_JumpTable,0,(g_MMU->RdramSize() >> 2) * sizeof(PCCompiledFunc));
+		memset(m_JumpTable, 0, (g_MMU->RdramSize() >> 2) * sizeof(PCCompiledFunc));
 	}
 	return true;
 }
@@ -58,17 +60,17 @@ void CFunctionMap::CleanBuffers()
 				delete m_FunctionTable[i];
 			}
 		}
-		VirtualFree( m_FunctionTable, 0 , MEM_RELEASE);
+		VirtualFree(m_FunctionTable, 0, MEM_RELEASE);
 		m_FunctionTable = NULL;
 	}
 	if (m_JumpTable)
 	{
-		delete [] m_JumpTable;
+		delete[] m_JumpTable;
 		m_JumpTable = NULL;
 	}
 }
 
-void CFunctionMap::Reset ( bool bAllocate )
+void CFunctionMap::Reset(bool bAllocate)
 {
 	CleanBuffers();
 	if (bAllocate && (g_System->LookUpMode() == FuncFind_VirtualLookup || g_System->LookUpMode() == FuncFind_PhysicalLookup))
