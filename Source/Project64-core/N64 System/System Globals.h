@@ -21,7 +21,7 @@ extern CN64System    * g_SyncSystem;
 class CRecompiler;
 extern CRecompiler   * g_Recompiler;
 
-class CMipsMemory;
+__interface CMipsMemory;
 extern CMipsMemory   * g_MMU; //Memory of the n64
 
 class CTLB;
@@ -42,7 +42,7 @@ extern CAudio        * g_Audio;
 class CSystemTimer;
 extern CSystemTimer  * g_SystemTimer;
 
-class CTransVaddr;
+__interface CTransVaddr;
 extern CTransVaddr   * g_TransVaddr;
 
 class CSystemEvents;

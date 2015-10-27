@@ -20,5 +20,3 @@
 #include "Plugins\Audio Plugin.h"
 #include "Plugins\Controller Plugin.h"
 #include "Plugins\RSP Plugin.h"
-
-#include "Plugins\Plugin List.h"
