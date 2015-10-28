@@ -10,6 +10,7 @@
 ****************************************************************************/
 #pragma once
 
+#include <Common\Log Class.h>
 #include <Project64-core/N64 System/N64 Types.h>
 
 class CSystemTimer
@@ -38,7 +39,7 @@ public:
     };
 
 public:
-    CSystemTimer ( int & NextTimer );
+    CSystemTimer ( int32_t & NextTimer );
     void      SetTimer             ( TimerType Type, uint32_t Cycles, bool bRelative );
     uint32_t  GetTimer             ( TimerType Type );
     void      StopTimer            ( TimerType Type );

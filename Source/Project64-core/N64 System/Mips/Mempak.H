@@ -8,19 +8,13 @@
 * GNU/GPLv2 http://www.gnu.org/licenses/gpl-2.0.html                        *
 *                                                                           *
 ****************************************************************************/
-#include "stdafx.h"
-#include "Function Info.h"
+#pragma once
 
-CCompiledFunc::CCompiledFunc( const CCodeBlock & CodeBlock ) :
-    m_EnterPC(CodeBlock.VAddrEnter()),
-    m_MinPC(CodeBlock.VAddrFirst()),
-    m_MaxPC(CodeBlock.VAddrLast()),
-    m_Hash(CodeBlock.Hash()),
-    m_Function((Func)CodeBlock.CompiledLocation()),
-    m_Next(NULL)
+class Mempak
 {
-    m_MemContents[0] = CodeBlock.MemContents(0);
-    m_MemContents[1] = CodeBlock.MemContents(1);
-    m_MemLocation[0] = CodeBlock.MemLocation(0);
-    m_MemLocation[1] = CodeBlock.MemLocation(1);
-}
+public:
+    static void Close();
+    static uint8_t CalculateCrc(uint8_t * DataToCrc);
+    static void ReadFrom(int Control, uint8_t * command);
+    static void WriteTo(int Control, uint8_t * command);
+};

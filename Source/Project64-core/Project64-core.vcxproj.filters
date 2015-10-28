@@ -237,9 +237,6 @@
     <ClCompile Include="N64 System\Recompiler\Code Block.cpp">
       <Filter>Source Files\N64 System\Recompiler</Filter>
     </ClCompile>
-    <ClCompile Include="N64 System\Recompiler\Exit Info.cpp">
-      <Filter>Source Files\N64 System\Recompiler</Filter>
-    </ClCompile>
     <ClCompile Include="N64 System\Recompiler\Recompiler Memory.cpp">
       <Filter>Source Files\N64 System\Recompiler</Filter>
     </ClCompile>
@@ -251,6 +248,12 @@
     </ClCompile>
     <ClCompile Include="N64 System\Interpreter\Interpreter Ops.cpp">
       <Filter>Source Files\N64 System\Interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="N64 System\Mips\Mempak.cpp">
+      <Filter>Source Files\N64 System\Mips</Filter>
+    </ClCompile>
+    <ClCompile Include="N64 System\Mips\Rumblepak.cpp">
+      <Filter>Source Files\N64 System\Mips</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -484,6 +487,12 @@
     </ClInclude>
     <ClInclude Include="N64 System\Interpreter\Interpreter CPU.h">
       <Filter>Header Files\N64 System\Interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="N64 System\Mips\Mempak.H">
+      <Filter>Header Files\N64 System\Mips</Filter>
+    </ClInclude>
+    <ClInclude Include="N64 System\Mips\Rumblepak.h">
+      <Filter>Header Files\N64 System\Mips</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

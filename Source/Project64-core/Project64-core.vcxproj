@@ -34,9 +34,11 @@
     <ClCompile Include="N64 System\Mips\Eeprom.cpp" />
     <ClCompile Include="N64 System\Mips\FlashRam.cpp" />
     <ClCompile Include="N64 System\Mips\Memory Virtual Mem.cpp" />
+    <ClCompile Include="N64 System\Mips\Mempak.cpp" />
     <ClCompile Include="N64 System\Mips\OpcodeName.cpp" />
     <ClCompile Include="N64 System\Mips\Pif Ram.cpp" />
     <ClCompile Include="N64 System\Mips\Register Class.cpp" />
+    <ClCompile Include="N64 System\Mips\Rumblepak.cpp" />
     <ClCompile Include="N64 System\Mips\Sram.cpp" />
     <ClCompile Include="N64 System\Mips\System Events.cpp" />
     <ClCompile Include="N64 System\Mips\System Timing.cpp" />
@@ -45,7 +47,6 @@
     <ClCompile Include="N64 System\N64 Rom Class.cpp" />
     <ClCompile Include="N64 System\Profiling Class.cpp" />
     <ClCompile Include="N64 System\Recompiler\Code Block.cpp" />
-    <ClCompile Include="N64 System\Recompiler\Exit Info.cpp" />
     <ClCompile Include="N64 System\Recompiler\Function Info.cpp" />
     <ClCompile Include="N64 System\Recompiler\Function Map Class.cpp" />
     <ClCompile Include="N64 System\Recompiler\Recompiler Class.cpp" />
@@ -104,10 +105,12 @@
     <ClInclude Include="N64 System\Mips\FlashRam.h" />
     <ClInclude Include="N64 System\Mips\Memory Class.h" />
     <ClInclude Include="N64 System\Mips\Memory Virtual Mem.h" />
+    <ClInclude Include="N64 System\Mips\Mempak.H" />
     <ClInclude Include="N64 System\Mips\OpCode.h" />
     <ClInclude Include="N64 System\Mips\OpcodeName.h" />
     <ClInclude Include="N64 System\Mips\Pif Ram.h" />
     <ClInclude Include="N64 System\Mips\Register Class.h" />
+    <ClInclude Include="N64 System\Mips\Rumblepak.h" />
     <ClInclude Include="N64 System\Mips\Sram.h" />
     <ClInclude Include="N64 System\Mips\System Events.h" />
     <ClInclude Include="N64 System\Mips\System Timing.h" />

@@ -10,9 +10,12 @@
 ****************************************************************************/
 #pragma once
 
+#include <Common/SyncEvent.h>
 #include <Project64-core/Settings/N64System Settings.h>
+#include <Project64-core\N64 System\Recompiler\Recompiler Class.h>
 #include <Project64-core/N64 System/Mips/Memory Virtual Mem.h>
 #include <Project64-core/Settings/Debug Settings.h>
+
 #include "Mips\System Events.h"
 #include "Mips\Memory Class.h"
 #include "Mips\TLB Class.h"
@@ -30,6 +33,7 @@ typedef std::map<uint32_t, uint32_t> FUNC_CALLS;
 
 class CPlugins;
 class CRSP_Plugin;
+class CRecompiler;
 
 //#define TEST_SP_TRACKING  //track the SP to make sure all ops pick it up fine
 
@@ -177,7 +181,7 @@ private:
     uint32_t  m_CPU_ThreadID;
 
     //Handle to pause mutex
-    void * m_hPauseEvent;
+    SyncEvent m_hPauseEvent;
 
     //No of Alist and Dlist sent to the RSP
     uint32_t m_AlistCount, m_DlistCount, m_UnknownCount;
