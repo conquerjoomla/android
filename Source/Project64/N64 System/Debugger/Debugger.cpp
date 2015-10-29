@@ -14,12 +14,12 @@
 #include "Debugger UI.h"
 
 CPj64Module _Module;
-
+#ifdef tofix
 CDebugger::CDebugger () :
-	m_MemoryDump(NULL),
-	m_MemoryView(NULL),
-	m_MemorySearch(NULL),
-	m_DebugTLB(NULL)
+m_MemoryDump(NULL),
+m_MemoryView(NULL),
+m_MemorySearch(NULL),
+m_DebugTLB(NULL)
 {
 }
 
@@ -94,7 +94,7 @@ void CDebugger::Debug_ShowMemoryLocation ( DWORD Address, bool VAddr )
 	if (m_MemoryView)
 	{
 		m_MemoryView->ShowAddress(Address,VAddr);
-	}	
+	}
 }
 
 void CDebugger::Debug_ShowTLBWindow (void)
@@ -132,4 +132,5 @@ void CDebugger::Debug_ShowMemorySearch()
 		m_MemorySearch->ShowWindow();
 	}
 }
+#endif
 #endif

@@ -12,10 +12,10 @@
 
 #ifdef WINDOWS_UI
 #include "Debugger UI.h"
-
+#ifdef tofix
 CDebugMemoryView::CDebugMemoryView(CDebugger * debugger) :
-	CDebugDialog<CDebugMemoryView>(debugger), 
-	m_MemoryList(NULL)
+CDebugDialog<CDebugMemoryView>(debugger),
+m_MemoryList(NULL)
 {
 	if (m_MemoryList== NULL)
 	{
@@ -23,6 +23,7 @@ CDebugMemoryView::CDebugMemoryView(CDebugger * debugger) :
 		m_MemoryList->RegisterClass();
 	}
 }
+#endif
 
 CDebugMemoryView::~CDebugMemoryView()
 {
@@ -46,8 +47,8 @@ LRESULT	CDebugMemoryView::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM 
 		si.nMax   = 0xFFFF;
 		si.nPos   = 0x8000;
 		si.nPage  = 100;
-		::SetScrollInfo(hScrlBar,SB_CTL,&si,TRUE);		
-	} 
+		::SetScrollInfo(hScrlBar,SB_CTL,&si,TRUE);
+	}
 
 	m_MemAddr.Attach(GetDlgItem(IDC_ADDR_EDIT));
 	m_MemAddr.SetDisplayType(CEditNumber::DisplayHex);
@@ -87,7 +88,7 @@ LRESULT	CDebugMemoryView::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM 
 	::SetWindowLongPtr(m_MemoryList->m_hWnd, GWL_EXSTYLE, WS_EX_CLIENTEDGE);
 	RefreshMemory(false);
 	int height = m_MemoryList->GetTotalHeight();
-	
+
 	RECT MemoryListRect = {0};
 	::GetClientRect(GetDlgItem( IDC_MEM_DETAILS ), &MemoryListRect);
 
@@ -133,10 +134,12 @@ LRESULT CDebugMemoryView::OnClicked (WORD /*wNotifyCode*/, WORD wID, HWND , BOOL
 		RefreshMemory(false);
 		break;
 	case IDC_DUMP_MEM:
+#ifdef tofix
 		m_Debugger->Debug_ShowMemoryDump();
 		break;
 	case IDC_SEARCH_MEM:
 		m_Debugger->Debug_ShowMemorySearch();
+#endif
 		break;
 	case IDCANCEL:
 		EndDialog(0);
@@ -173,18 +176,18 @@ LRESULT CDebugMemoryView::OnMemoryModified ( LPNMHDR lpNMHDR )
 	for (int i = 0; i < Finish; i++)
 	{
 		Value = (Value << 4);
-		if (strValue[i] <= '9' && strValue[i] >= '0') 
-		{ 
-			Value |= strValue[i] - '0'; 
-		} 
-		else if (strValue[i] <= 'f' && strValue[i] >= 'a') 
-		{ 
-			Value |= strValue[i] - 'a' + 10; 
-		} 
-		else if (strValue[i] <= 'F' && strValue[i] >= 'A') 
-		{ 
-			Value |= strValue[i] - 'A' + 10; 
-		} 
+		if (strValue[i] <= '9' && strValue[i] >= '0')
+		{
+			Value |= strValue[i] - '0';
+		}
+		else if (strValue[i] <= 'f' && strValue[i] >= 'a')
+		{
+			Value |= strValue[i] - 'a' + 10;
+		}
+		else if (strValue[i] <= 'F' && strValue[i] >= 'A')
+		{
+			Value |= strValue[i] - 'A' + 10;
+		}
 	}
 
 	if (m_CurrentData[Pos] == Value)
@@ -192,7 +195,7 @@ LRESULT CDebugMemoryView::OnMemoryModified ( LPNMHDR lpNMHDR )
 		return 0;
 	}
 
-	if (m_CompareStartLoc != m_DataStartLoc || 
+	if (m_CompareStartLoc != m_DataStartLoc ||
 		m_CompareVAddrr != m_DataVAddrr)
 	{
 		// copy current data for change comparison
@@ -206,7 +209,7 @@ LRESULT CDebugMemoryView::OnMemoryModified ( LPNMHDR lpNMHDR )
 	m_CurrentData[Pos] = (BYTE)Value;
 
 	//sb
-	if ( m_DataVAddrr ) 
+	if ( m_DataVAddrr )
 	{
 		if (!g_MMU->SB_VAddr(m_DataStartLoc + Pos,(BYTE)Value))
 		{
@@ -233,11 +236,11 @@ void CDebugMemoryView::ShowAddress(DWORD Address, bool VAddr)
 	}
 
 	SendDlgItemMessage( IDC_CHK_VADDR, BM_SETCHECK, VAddr ? BST_CHECKED : BST_UNCHECKED,0);
-	m_MemAddr.SetValue(Address,true,true); 
+	m_MemAddr.SetValue(Address,true,true);
 	RefreshMemory (true);
 }
 
-void CDebugMemoryView::Insert_MemoryLineDump ( int LineNumber ) 
+void CDebugMemoryView::Insert_MemoryLineDump ( int LineNumber )
 {
 	if (m_MemoryList == NULL || m_MemoryList->GetColumnCount() == 0)
 	{
@@ -260,7 +263,7 @@ void CDebugMemoryView::Insert_MemoryLineDump ( int LineNumber )
 	}
 	else
 	{
-		if ( strcmp( Output, m_MemoryList->GetItemText(LineNumber, 0) ) != 0 ) 
+		if ( strcmp( Output, m_MemoryList->GetItemText(LineNumber, 0) ) != 0 )
 		{
 			m_MemoryList->SetItemText(LineNumber,0,Output);
 		}
@@ -270,7 +273,7 @@ void CDebugMemoryView::Insert_MemoryLineDump ( int LineNumber )
 	Ascii[0] = 0;
 	int CompareStartPos = m_DataStartLoc - m_CompareStartLoc;
 
-	for (int i = 0, col = 1; i < 0x10; i ++, col ++) 
+	for (int i = 0, col = 1; i < 0x10; i ++, col ++)
 	{
 		int Pos = ((LineNumber << 4) + i);
 		if (m_DataValid[Pos])
@@ -279,7 +282,7 @@ void CDebugMemoryView::Insert_MemoryLineDump ( int LineNumber )
 			bool Changed = false;
 
 			if (ComparePos >= 0 && ComparePos < MemoryToDisplay &&
-				m_DataVAddrr == m_CompareVAddrr && 
+				m_DataVAddrr == m_CompareVAddrr &&
 				m_DataValid[ComparePos] &&
 				m_CurrentData[Pos] != m_CompareData[ComparePos])
 			{
@@ -289,9 +292,9 @@ void CDebugMemoryView::Insert_MemoryLineDump ( int LineNumber )
 			m_MemoryList->SetItemText(LineNumber,col,Hex);
 			m_MemoryList->SetItemFormat( LineNumber,col, ITEM_FORMAT_EDIT, ITEM_FLAGS_EDIT_HEX );
 			m_MemoryList->SetItemMaxEditLen( LineNumber,col , 2);
-			m_MemoryList->SetItemColours( LineNumber, col, GetSysColor( COLOR_WINDOW ), 
+			m_MemoryList->SetItemColours( LineNumber, col, GetSysColor( COLOR_WINDOW ),
 				Changed ? RGB( 255, 0, 0 ) : GetSysColor( COLOR_WINDOWTEXT ) );
-			m_MemoryList->SetItemHighlightColours( LineNumber, col, 
+			m_MemoryList->SetItemHighlightColours( LineNumber, col,
 				Changed ? RGB( 255, 0, 0 ) : GetSysColor( COLOR_HIGHLIGHTTEXT ) );
 			if (m_CurrentData[Pos] < 30)
 			{
@@ -318,8 +321,8 @@ void CDebugMemoryView::Insert_MemoryLineDump ( int LineNumber )
 			}
 		}
 	}
-	
-	if ( strcmp( Ascii, m_MemoryList->GetItemText(LineNumber, 20) ) != 0 ) 
+
+	if ( strcmp( Ascii, m_MemoryList->GetItemText(LineNumber, 20) ) != 0 )
 	{
 		m_MemoryList->SetItemText(LineNumber,20,Ascii);
 	}
@@ -337,17 +340,17 @@ void CDebugMemoryView::OnVScroll(int request, short Pos, HWND ctrl )
 		return;
 	}
 	DWORD Location = m_MemAddr.GetValue();
-	switch (request) 
-	{			
+	switch (request)
+	{
 	case SB_LINEDOWN:
 		m_MemAddr.SetValue(Location < 0xFFFFFFEF ? Location + 0x10 : 0xFFFFFFFF,true,true);
 		break;
 	case SB_LINEUP:
 		m_MemAddr.SetValue(Location > 0x10 ? Location - 0x10 : 0,true,true);
 		break;
-	case SB_PAGEDOWN:				
+	case SB_PAGEDOWN:
 		m_MemAddr.SetValue(Location < 0xFFFFFEFF ? Location + 0x100 : 0xFFFFFFFF,true,true);
-		break;			
+		break;
 	case SB_PAGEUP:
 		m_MemAddr.SetValue(Location > 0x100 ? Location - 0x100 : 0,true,true);
 		break;
@@ -370,16 +373,16 @@ void CDebugMemoryView::RefreshMemory ( bool ResetCompare )
 	if (NewAddress != m_DataStartLoc)
 	{
 		HWND hScrlBar = GetDlgItem(IDC_SCRL_BAR);
-		if (hScrlBar) 
+		if (hScrlBar)
 		{
 			SCROLLINFO si;
 
 			si.cbSize = sizeof(si);
 			si.fMask  = SIF_POS;
 			si.nPos   = NewAddress >> 0x10;
-			::SetScrollInfo(hScrlBar,SB_CTL,&si,TRUE);		
+			::SetScrollInfo(hScrlBar,SB_CTL,&si,TRUE);
 		}
-	} 
+	}
 
 	if (ResetCompare)
 	{
@@ -389,7 +392,7 @@ void CDebugMemoryView::RefreshMemory ( bool ResetCompare )
 		memcpy(m_CompareData,m_CurrentData,sizeof(m_CurrentData));
 		memcpy(m_CompareValid,m_DataValid,sizeof(m_CompareValid));
 	}
-	
+
 	m_DataStartLoc = m_MemAddr.GetValue();
 	if (m_DataStartLoc > 0xFFFFFF00) { m_DataStartLoc = 0xFFFFFF00; }
 	int WritePos = 0;
@@ -400,18 +403,18 @@ void CDebugMemoryView::RefreshMemory ( bool ResetCompare )
 	{
 		MIPS_WORD word;
 		bool ValidData = true;
-	
-		if ( m_DataVAddrr ) 
+
+		if ( m_DataVAddrr )
 		{
-			if (!g_MMU->LW_VAddr(m_DataStartLoc & ~3, word.UW)) 
-			{ 
+			if (!g_MMU->LW_VAddr(m_DataStartLoc & ~3, word.UW))
+			{
 				ValidData = false;
 			}
 		}
 		else
 		{
-			if (!g_MMU->LW_PAddr(m_DataStartLoc & ~3, word.UW)) 
-			{ 
+			if (!g_MMU->LW_PAddr(m_DataStartLoc & ~3, word.UW))
+			{
 				ValidData = false;
 			}
 		}
@@ -429,26 +432,25 @@ void CDebugMemoryView::RefreshMemory ( bool ResetCompare )
 				m_CurrentData[WritePos + i] = word.UB[3 - (i + Offset)];
 			}
 		}
-		WritePos = 4 - Offset; 
-		
-	} 
+		WritePos = 4 - Offset;
+	}
 
 	for (DWORD Pos = ((m_DataStartLoc + 3) & ~3); Pos < (m_DataStartLoc + MemoryToDisplay); WritePos += 4, Pos += 4)
 	{
 		MIPS_WORD word;
 		bool ValidData = true;
-	
-		if ( m_DataVAddrr ) 
+
+		if ( m_DataVAddrr )
 		{
-			if (!g_MMU->LW_VAddr(Pos, word.UW)) 
-			{ 
+			if (!g_MMU->LW_VAddr(Pos, word.UW))
+			{
 				ValidData = false;
 			}
 		}
 		else
 		{
-			if (!g_MMU->LW_PAddr(Pos, word.UW)) 
-			{ 
+			if (!g_MMU->LW_PAddr(Pos, word.UW))
+			{
 				ValidData = false;
 			}
 		}

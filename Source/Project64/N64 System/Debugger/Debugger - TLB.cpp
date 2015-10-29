@@ -13,10 +13,12 @@
 #ifdef WINDOWS_UI
 #include "Debugger UI.h"
 
+#ifdef tofix
 CDebugTlb::CDebugTlb(CDebugger * debugger) :
-	CDebugDialog<CDebugTlb>(debugger)
+CDebugDialog<CDebugTlb>(debugger)
 {
 }
+#endif
 
 CDebugTlb::~CDebugTlb()
 {
@@ -76,11 +78,11 @@ LRESULT	CDebugTlb::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lPara
 
 	RefreshTLBWindow();
 	SendMessage(GetDlgItem(IDC_TLB_ENTRIES),BM_SETCHECK, BST_CHECKED,0);
-	
-//	if (Settings().Load(TLBWindowLeft) <= 0)
-//	{
-//		SetWindowPos(NULL,Settings().Load(TLBWindowLeft),Settings().Load(TLBWindowTop),0,0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
-//	}
+
+	//	if (Settings().Load(TLBWindowLeft) <= 0)
+	//	{
+	//		SetWindowPos(NULL,Settings().Load(TLBWindowLeft),Settings().Load(TLBWindowTop),0,0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
+	//	}
 	WindowCreated();
 	return TRUE;
 }
@@ -104,19 +106,19 @@ LRESULT CDebugTlb::OnClicked (WORD /*wNotifyCode*/, WORD wID, HWND , BOOL& /*bHa
 	return FALSE;
 }
 
-void CDebugTlb::RefreshTLBWindow (void) 
+void CDebugTlb::RefreshTLBWindow (void)
 {
-	if (m_hWnd == NULL) 
+	if (m_hWnd == NULL)
 	{
-		return; 
+		return;
 	}
-	
+
 	HWND hList = GetDlgItem(IDC_LIST);
 	char Output[100], OldText[100];
 	LV_ITEM item, OldItem;
 	int count;
 
-	CTLB::TLB_ENTRY * tlb = g_TLB->m_tlb;	
+	CTLB::TLB_ENTRY * tlb = g_TLB->m_tlb;
 	for (count = 0; count < 32; count ++)
 	{
 		sprintf(Output,"0x%02X",count);
@@ -207,9 +209,9 @@ void CDebugTlb::RefreshTLBWindow (void)
 			ListView_SetItem(hList,&item);
 		}
 	}
-	
+
 	CTLB::FASTTLB   * FastTlb = g_TLB->m_FastTlb;
-	hList = GetDlgItem(IDC_LIST2);	
+	hList = GetDlgItem(IDC_LIST2);
 	for (count = 0; count < 64; count ++)
 	{
 		sprintf(Output,"0x%02X",count);

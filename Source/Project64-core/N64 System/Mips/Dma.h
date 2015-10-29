@@ -9,28 +9,30 @@
 *                                                                           *
 ****************************************************************************/
 #pragma once
-#include <Project64-core/Settings/Debug Settings.h>
+#include <Project64-core\Settings\Debug Settings.h>
+#include <Project64-core\N64 System\Mips\FlashRam.h>
+#include <Project64-core\N64 System\Mips\Sram.h>
 
 class CDMA :
-    private CDebugSettings
+	private CDebugSettings
 {
-    CDMA();
+	CDMA();
 
 public:
-    void SP_DMA_READ();
-    void SP_DMA_WRITE();
-    void PI_DMA_READ();
-    void PI_DMA_WRITE();
+	void SP_DMA_READ();
+	void SP_DMA_WRITE();
+	void PI_DMA_READ();
+	void PI_DMA_WRITE();
 
 protected:
-    CDMA (CFlashram & FlashRam, CSram & Sram);
+	CDMA(CFlashram & FlashRam, CSram & Sram);
 
 private:
-    CDMA(const CDMA&);              // Disable copy constructor
-    CDMA& operator=(const CDMA&);   // Disable assignment
+	CDMA(const CDMA&);              // Disable copy constructor
+	CDMA& operator=(const CDMA&);   // Disable assignment
 
-    CFlashram & m_FlashRam;
-    CSram     & m_Sram;
+	CFlashram & m_FlashRam;
+	CSram     & m_Sram;
 
-    void OnFirstDMA();
+	void OnFirstDMA();
 };

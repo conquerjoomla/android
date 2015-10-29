@@ -78,6 +78,7 @@
 #include "N64 System/Debugger/Debugger.h"
 
 //Main Files
-#include "N64 System/N64 Class.h"
-#include "N64 System/System Globals.h"
 #endif
+
+#include <Project64-core\N64 System\N64 Class.h>
+#include <Project64-core\N64 System\System Globals.h>

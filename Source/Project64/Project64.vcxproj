@@ -41,6 +41,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Multilanguage\LanguageSelector.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -72,8 +73,6 @@
     <ClCompile Include="N64 System\Debugger\Debugger - View Memory.cpp" />
     <ClCompile Include="N64 System\Debugger\Debugger.cpp" />
     <ClCompile Include="N64 System\Rom Information Class.cpp" />
-    <ClCompile Include="N64 System\C Core\Logging.cpp" />
-    <ClCompile Include="N64 System\Recompiler\Section Info.cpp" />
     <ClCompile Include="Plugins\Plugin List.cpp" />
     <ClCompile Include="..\3rd Party\zlib\contrib\minizip\unzip.c">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -105,6 +104,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Multilanguage\LanguageSelector.h" />
     <ClInclude Include="N64 System.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="User Interface.h" />

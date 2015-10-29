@@ -23,12 +23,6 @@
     <Filter Include="Source Files\N64 System Source">
       <UniqueIdentifier>{4d3c9ef9-7903-4112-8356-1e7ab2112c20}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\N64 System Source\C Core Source">
-      <UniqueIdentifier>{28ecfeb8-9360-4619-ae95-6f67d66f848d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\N64 System Source\Recompiler Files">
-      <UniqueIdentifier>{9a830b90-21d4-429d-b211-26ab691d6474}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Plugin Source">
       <UniqueIdentifier>{242ae4a5-b150-44e6-b31c-027acd6d38b0}</UniqueIdentifier>
     </Filter>
@@ -75,6 +69,12 @@
     </Filter>
     <Filter Include="Header Files\3rd Party Headers\Zlib Headers">
       <UniqueIdentifier>{ef4a164b-c5ed-4469-a0e2-4eb21f800b11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Multilanguage">
+      <UniqueIdentifier>{36977908-4b77-472f-b5ec-7afb609c8c1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Multilanguage">
+      <UniqueIdentifier>{9cdb1058-1745-49a8-b380-067f13a8b60f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -168,12 +168,6 @@
     <ClCompile Include="N64 System\Rom Information Class.cpp">
       <Filter>Source Files\N64 System Source</Filter>
     </ClCompile>
-    <ClCompile Include="N64 System\C Core\Logging.cpp">
-      <Filter>Source Files\N64 System Source\C Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Recompiler\Section Info.cpp">
-      <Filter>Source Files\N64 System Source\Recompiler Files</Filter>
-    </ClCompile>
     <ClCompile Include="Plugins\Plugin List.cpp">
       <Filter>Source Files\Plugin Source</Filter>
     </ClCompile>
@@ -182,6 +176,9 @@
     </ClCompile>
     <ClCompile Include="..\3rd Party\zlib\contrib\minizip\zip.c">
       <Filter>Source Files\3rd Party Source\ZLib Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Multilanguage\LanguageSelector.cpp">
+      <Filter>Source Files\Multilanguage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -355,6 +352,9 @@
     </ClInclude>
     <ClInclude Include="..\3rd Party\zlib\contrib\minizip\zip.h">
       <Filter>Header Files\3rd Party Headers\Zlib Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Multilanguage\LanguageSelector.h">
+      <Filter>Header Files\Multilanguage</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

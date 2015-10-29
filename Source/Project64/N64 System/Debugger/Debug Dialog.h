@@ -1,32 +1,36 @@
 template <class T>
 class CDebugDialog :
-	public CDialogImpl<T>
+	public CDialogImpl < T >
 {
 protected:
+#ifdef tofix
 	CDebugger   * m_Debugger;
+#endif
 	HANDLE        m_CreatedEvent;
 	HANDLE        m_DialogThread;
 
-	static DWORD CreateDebuggerWindow (CDebugDialog<T> * pThis)
+	static DWORD CreateDebuggerWindow(CDebugDialog<T> * pThis)
 	{
 		pThis->DoModal(NULL);
 		pThis->WindowCreated();
 		return 0;
 	}
 
-	void WindowCreated ( void )
+	void WindowCreated(void)
 	{
 		SetEvent(m_CreatedEvent);
 	}
 
 public:
-	CDebugDialog (CDebugger * debugger) :
+#ifdef tofix
+	CDebugDialog(CDebugger * debugger) :
 		m_Debugger(debugger),
-		m_CreatedEvent(CreateEvent(NULL,true,false,NULL)),
+		m_CreatedEvent(CreateEvent(NULL, true, false, NULL)),
 		m_DialogThread(NULL)
 	{
 	}
-	virtual ~CDebugDialog (void)
+#endif
+	virtual ~CDebugDialog(void)
 	{
 		HideWindow();
 		CloseHandle(m_CreatedEvent);
@@ -37,7 +41,7 @@ public:
 		}
 	}
 
-	void HideWindow ( void )
+	void HideWindow(void)
 	{
 		if (m_hWnd && ::IsWindow(m_hWnd))
 		{
@@ -47,7 +51,7 @@ public:
 		{
 			if (WaitForSingleObject(m_DialogThread, 5000) == WAIT_TIMEOUT)
 			{
-				WriteTrace(TraceError,"CDebugDialog - time out on close");
+				WriteTrace(TraceError, "CDebugDialog - time out on close");
 
 				TerminateThread(m_DialogThread, 1);
 			}
@@ -56,7 +60,7 @@ public:
 		}
 	}
 
-	void ShowWindow ( void )
+	void ShowWindow(void)
 	{
 		if (m_hWnd)
 		{
@@ -66,10 +70,10 @@ public:
 		{
 			DWORD ThreadID;
 			ResetEvent(m_CreatedEvent);
-			m_DialogThread = CreateThread(NULL,0,(LPTHREAD_START_ROUTINE)CreateDebuggerWindow,(LPVOID)this,0, &ThreadID);
-			if (WaitForSingleObject(m_CreatedEvent,20000) == WAIT_TIMEOUT)
+			m_DialogThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)CreateDebuggerWindow, (LPVOID)this, 0, &ThreadID);
+			if (WaitForSingleObject(m_CreatedEvent, 20000) == WAIT_TIMEOUT)
 			{
-				WriteTrace(TraceError,"Failed to get window create notification");
+				WriteTrace(TraceError, "Failed to get window create notification");
 			}
 		}
 	}

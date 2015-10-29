@@ -61,6 +61,12 @@
     <Filter Include="Source Files\N64 System\Interpreter">
       <UniqueIdentifier>{22470874-76c8-4c5b-bbf2-d054e022422a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\3rd Party">
+      <UniqueIdentifier>{609b09f8-142c-4090-a682-27095d71c8ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\3rd Party">
+      <UniqueIdentifier>{d92afe8c-f660-4a4d-b5bc-7785de1f14d3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -257,6 +263,21 @@
     </ClCompile>
     <ClCompile Include="N64 System\Interpreter\Interpreter Ops 32.cpp">
       <Filter>Source Files\N64 System\Interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="N64 System\Mips\Dma.cpp">
+      <Filter>Source Files\N64 System\Mips</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd Party\7zip.cpp">
+      <Filter>Source Files\3rd Party</Filter>
+    </ClCompile>
+    <ClCompile Include="N64 System\Recompiler\Code Section.cpp">
+      <Filter>Source Files\N64 System\Recompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="N64 System\Recompiler\Loop Analysis.cpp">
+      <Filter>Source Files\N64 System\Recompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="N64 System\Recompiler\Section Info.cpp">
+      <Filter>Source Files\N64 System\Recompiler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -499,6 +520,18 @@
     </ClInclude>
     <ClInclude Include="N64 System\Interpreter\Interpreter Ops 32.h">
       <Filter>Header Files\N64 System\Interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd Party\7zip.h">
+      <Filter>Header Files\3rd Party</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd Party\zip.h">
+      <Filter>Header Files\3rd Party</Filter>
+    </ClInclude>
+    <ClInclude Include="N64 System\Recompiler\Loop Analysis.h">
+      <Filter>Header Files\N64 System\Recompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="N64 System\Recompiler\Section Info.h">
+      <Filter>Header Files\N64 System\Recompiler</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

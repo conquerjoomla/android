@@ -24,6 +24,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemGroup>
+    <ClCompile Include="3rd Party\7zip.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="AppInit.cpp" />
     <ClCompile Include="Multilanguage\Language Class.cpp" />
     <ClCompile Include="N64 System\Cheat Class.cpp" />
@@ -32,6 +35,7 @@
     <ClCompile Include="N64 System\Interpreter\Interpreter Ops 32.cpp" />
     <ClCompile Include="N64 System\Interpreter\Interpreter Ops.cpp" />
     <ClCompile Include="N64 System\Mips\Audio.cpp" />
+    <ClCompile Include="N64 System\Mips\Dma.cpp" />
     <ClCompile Include="N64 System\Mips\Eeprom.cpp" />
     <ClCompile Include="N64 System\Mips\FlashRam.cpp" />
     <ClCompile Include="N64 System\Mips\Memory Virtual Mem.cpp" />
@@ -48,12 +52,15 @@
     <ClCompile Include="N64 System\N64 Rom Class.cpp" />
     <ClCompile Include="N64 System\Profiling Class.cpp" />
     <ClCompile Include="N64 System\Recompiler\Code Block.cpp" />
+    <ClCompile Include="N64 System\Recompiler\Code Section.cpp" />
     <ClCompile Include="N64 System\Recompiler\Function Info.cpp" />
     <ClCompile Include="N64 System\Recompiler\Function Map Class.cpp" />
+    <ClCompile Include="N64 System\Recompiler\Loop Analysis.cpp" />
     <ClCompile Include="N64 System\Recompiler\Recompiler Class.cpp" />
     <ClCompile Include="N64 System\Recompiler\Recompiler Memory.cpp" />
     <ClCompile Include="N64 System\Recompiler\Recompiler Ops.cpp" />
     <ClCompile Include="N64 System\Recompiler\Reg Info.cpp" />
+    <ClCompile Include="N64 System\Recompiler\Section Info.cpp" />
     <ClCompile Include="N64 System\Recompiler\x86CodeLog.cpp" />
     <ClCompile Include="N64 System\Recompiler\X86ops.cpp" />
     <ClCompile Include="N64 System\Speed Limitor Class.cpp" />
@@ -93,6 +100,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="3rd Party\7zip.h" />
+    <ClInclude Include="3rd Party\zip.h" />
     <ClInclude Include="AppInit.h" />
     <ClInclude Include="Multilanguage.h" />
     <ClInclude Include="Multilanguage\Language Class.h" />
@@ -128,10 +137,12 @@
     <ClInclude Include="N64 System\Recompiler\Function Info.h" />
     <ClInclude Include="N64 System\Recompiler\Function Map Class.h" />
     <ClInclude Include="N64 System\Recompiler\Jump Info.h" />
+    <ClInclude Include="N64 System\Recompiler\Loop Analysis.h" />
     <ClInclude Include="N64 System\Recompiler\Recompiler Class.h" />
     <ClInclude Include="N64 System\Recompiler\Recompiler Memory.h" />
     <ClInclude Include="N64 System\Recompiler\Recompiler Ops.h" />
     <ClInclude Include="N64 System\Recompiler\Reg Info.h" />
+    <ClInclude Include="N64 System\Recompiler\Section Info.h" />
     <ClInclude Include="N64 System\Recompiler\x86CodeLog.h" />
     <ClInclude Include="N64 System\Recompiler\X86ops.h" />
     <ClInclude Include="N64 System\Speed Limitor Class.h" />

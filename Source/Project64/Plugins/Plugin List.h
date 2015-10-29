@@ -1,9 +1,9 @@
 #include <Project64-core/Settings/Settings.h>
 
-class CPluginList  
+class CPluginList
 {
 public:
-	typedef struct 
+	typedef struct
 	{
 		PLUGIN_INFO Info;
 		bool        AboutFunction;
@@ -12,13 +12,12 @@ public:
 	} PLUGIN;
 
 public:
-	   CPluginList(bool bAutoFill = true);
-	  ~CPluginList();
+	CPluginList(bool bAutoFill = true);
+	~CPluginList();
 
-	bool     LoadList       ( void );
-	int      GetPluginCount ( void ) const;
-	const PLUGIN * GetPluginInfo  ( int indx ) const;
-	static bool ValidPluginVersion ( PLUGIN_INFO & PluginInfo );
+	bool     LoadList(void);
+	int      GetPluginCount(void) const;
+	const PLUGIN * GetPluginInfo(int indx) const;
 
 private:
 	typedef std::vector<PLUGIN>   PluginList;
