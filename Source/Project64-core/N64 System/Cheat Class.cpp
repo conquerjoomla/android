@@ -14,7 +14,12 @@
 #include <commctrl.h>
 #include <windowsx.h>
 #endif
-#include <Project64-core/Settings/SettingType/SettingsType-Cheats.h>
+#include "Cheat Class.h"
+#include <Project64-core\Settings\SettingType\SettingsType-Cheats.h>
+#include <Project64-core\Plugins\GFX plugin.h>
+#include <Project64-core\Plugins\Audio Plugin.h>
+#include <Project64-core\Plugins\RSP Plugin.h>
+#include <Project64-core\Plugins\Controller Plugin.h>
 
 #ifdef tofix
 enum { WM_EDITCHEAT = WM_USER + 0x120 };
@@ -23,25 +28,31 @@ enum { UM_CHANGECODEEXTENSION = WM_USER + 0x121 };
 
 CCheats::CCheats(const CN64Rom * Rom) :
     m_Rom(Rom),
+#ifdef tofix
     m_rcList(new RECT),
     m_rcAdd(new RECT),
     m_EditCheat(-1),
     m_DeleteingEntries(false),
+#endif
     m_CheatSelectionChanged(false)
 {
+#ifdef tofix
     m_Window = NULL;
     m_hSelectCheat = NULL;
     m_AddCheat = NULL;
     m_hCheatTree = NULL;
+#endif
 }
 
 CCheats::~CCheats()
 {
+#ifdef tofix
     delete m_rcList;
     delete m_rcAdd;
+#endif
 }
 
-bool CCheats::LoadCode(int CheatNo, LPCSTR CheatString)
+bool CCheats::LoadCode(int CheatNo, const char * CheatString)
 {
     if (!IsValid16BitCode(CheatString))
     {
@@ -60,28 +71,32 @@ bool CCheats::LoadCode(int CheatNo, LPCSTR CheatString)
         if (ReadPos == NULL) { break; }
         ReadPos += 1;
 
-        if (strncmp(ReadPos, "????", 4) == 0) {
+        if (strncmp(ReadPos, "????", 4) == 0)
+        {
             if (CheatNo < 0 || CheatNo > MaxCheats) { return false; }
             stdstr CheatExt = g_Settings->LoadStringIndex(Cheat_Extension, CheatNo);
             if (CheatExt.empty()) { return false; }
-            CodeEntry.Value = CheatExt[0] == '$' ? (WORD)AsciiToHex(&CheatExt.c_str()[1]) : (WORD)atol(CheatExt.c_str());
+            CodeEntry.Value = CheatExt[0] == '$' ? (uint16_t)AsciiToHex(&CheatExt.c_str()[1]) : (uint16_t)atol(CheatExt.c_str());
         }
-        else if (strncmp(ReadPos, "??", 2) == 0) {
+        else if (strncmp(ReadPos, "??", 2) == 0)
+        {
             if (CheatNo < 0 || CheatNo > MaxCheats) { return false; }
             stdstr CheatExt = g_Settings->LoadStringIndex(Cheat_Extension, CheatNo);
             if (CheatExt.empty()) { return false; }
-            CodeEntry.Value = (BYTE)(AsciiToHex(ReadPos));
-            CodeEntry.Value |= (CheatExt[0] == '$' ? (BYTE)AsciiToHex(&CheatExt.c_str()[1]) : (BYTE)atol(CheatExt.c_str())) << 16;
+            CodeEntry.Value = (uint8_t)(AsciiToHex(ReadPos));
+            CodeEntry.Value |= (CheatExt[0] == '$' ? (uint8_t)AsciiToHex(&CheatExt.c_str()[1]) : (uint8_t)atol(CheatExt.c_str())) << 16;
         }
-        else if (strncmp(&ReadPos[2], "??", 2) == 0) {
+        else if (strncmp(&ReadPos[2], "??", 2) == 0)
+        {
             if (CheatNo < 0 || CheatNo > MaxCheats) { return false; }
             stdstr CheatExt = g_Settings->LoadStringIndex(Cheat_Extension, CheatNo);
             if (CheatExt.empty()) { return false; }
-            CodeEntry.Value = (WORD)(AsciiToHex(ReadPos) << 16);
-            CodeEntry.Value |= CheatExt[0] == '$' ? (BYTE)AsciiToHex(&CheatExt.c_str()[1]) : (BYTE)atol(CheatExt.c_str());
+            CodeEntry.Value = (uint16_t)(AsciiToHex(ReadPos) << 16);
+            CodeEntry.Value |= CheatExt[0] == '$' ? (uint8_t)AsciiToHex(&CheatExt.c_str()[1]) : (uint8_t)atol(CheatExt.c_str());
         }
-        else {
-            CodeEntry.Value = (WORD)AsciiToHex(ReadPos);
+        else
+        {
+            CodeEntry.Value = (uint16_t)AsciiToHex(ReadPos);
         }
         Code.push_back(CodeEntry);
 
@@ -194,8 +209,9 @@ Returns:
 Author: Witten
 
 ********************************************************************************************/
-DWORD ConvertXP64Address(DWORD Address) {
-    DWORD tmpAddress;
+uint32_t ConvertXP64Address(uint32_t Address)
+{
+    uint32_t tmpAddress;
 
     tmpAddress = (Address ^ 0x68000000) & 0xFF000000;
     tmpAddress += ((Address + 0x002B0000) ^ 0x00810000) & 0x00FF0000;
@@ -213,8 +229,9 @@ Returns:
 Author: Witten
 
 ********************************************************************************************/
-WORD ConvertXP64Value(WORD Value) {
-    WORD  tmpValue;
+uint16_t ConvertXP64Value(uint16_t Value)
+{
+    uint16_t  tmpValue;
 
     tmpValue = ((Value + 0x2B00) ^ 0x8400) & 0xFF00;
     tmpValue += ((Value + 0x002B) ^ 0x0085) & 0x00FF;
@@ -235,7 +252,7 @@ void CCheats::ApplyCheats(CMipsMemory * MMU)
 
 void CCheats::ApplyGSButton(CMipsMemory * MMU)
 {
-    DWORD Address;
+    uint32_t Address;
     for (size_t CurrentCheat = 0; CurrentCheat < m_Codes.size(); CurrentCheat++)
     {
         const CODES & CodeEntry = m_Codes[CurrentCheat];
@@ -245,7 +262,7 @@ void CCheats::ApplyGSButton(CMipsMemory * MMU)
             switch (Code.Command & 0xFF000000) {
             case 0x88000000:
                 Address = 0x80000000 | (Code.Command & 0xFFFFFF);
-                MMU->SB_VAddr(Address, (BYTE)Code.Value);
+                MMU->SB_VAddr(Address, (uint8_t)Code.Value);
                 break;
             case 0x89000000:
                 Address = 0x80000000 | (Code.Command & 0xFFFFFF);
@@ -254,7 +271,7 @@ void CCheats::ApplyGSButton(CMipsMemory * MMU)
                 // Xplorer64
             case 0xA8000000:
                 Address = 0x80000000 | (ConvertXP64Address(Code.Command) & 0xFFFFFF);
-                MMU->SB_VAddr(Address, (BYTE)ConvertXP64Value(Code.Value));
+                MMU->SB_VAddr(Address, (uint8_t)ConvertXP64Value(Code.Value));
                 break;
             case 0xA9000000:
                 Address = 0x80000000 | (ConvertXP64Address(Code.Command) & 0xFFFFFF);
@@ -265,7 +282,7 @@ void CCheats::ApplyGSButton(CMipsMemory * MMU)
     }
 }
 
-bool CCheats::IsValid16BitCode(LPCSTR CheatString) const
+bool CCheats::IsValid16BitCode(const char * CheatString) const
 {
     const char * ReadPos = CheatString;
     bool GSButtonCheat = false, FirstEntry = true;
@@ -351,11 +368,12 @@ int CCheats::ApplyCheatEntry(CMipsMemory * MMU, const CODES & CodeEntry, int Cur
         return 0;
     }
     const GAMESHARK_CODE & Code = CodeEntry[CurrentEntry];
-    DWORD Address;
-    WORD  wMemory;
-    BYTE  bMemory;
+    uint32_t Address;
+    uint16_t  wMemory;
+    uint8_t  bMemory;
 
-    switch (Code.Command & 0xFF000000) {
+    switch (Code.Command & 0xFF000000)
+    {
         // Gameshark / AR
     case 0x50000000:													// Added by Witten (witten@pj64cheats.net)
         {
@@ -375,20 +393,22 @@ int CCheats::ApplyCheatEntry(CMipsMemory * MMU, const CODES & CodeEntry, int Cur
             case 0x80000000:
                 Address = 0x80000000 | (NextCodeEntry.Command & 0xFFFFFF);
                 wMemory = NextCodeEntry.Value;
-                for (i = 0; i < numrepeats; i++) {
-                    MMU->SB_VAddr(Address, (BYTE)wMemory);
+                for (i = 0; i < numrepeats; i++)
+                {
+                    MMU->SB_VAddr(Address, (uint8_t)wMemory);
                     Address += offset;
-                    wMemory += (WORD)incr;
+                    wMemory += (uint16_t)incr;
                 }
                 return 2;
             case 0x11000000: // Xplorer64
             case 0x81000000:
                 Address = 0x80000000 | (NextCodeEntry.Command & 0xFFFFFF);
                 wMemory = NextCodeEntry.Value;
-                for (i = 0; i < numrepeats; i++) {
+                for (i = 0; i < numrepeats; i++)
+                {
                     MMU->SH_VAddr(Address, wMemory);
                     Address += offset;
-                    wMemory += (WORD)incr;
+                    wMemory += (uint16_t)incr;
                 }
                 return 2;
             default: return 1;
@@ -397,7 +417,7 @@ int CCheats::ApplyCheatEntry(CMipsMemory * MMU, const CODES & CodeEntry, int Cur
         break;
     case 0x80000000:
         Address = 0x80000000 | (Code.Command & 0xFFFFFF);
-        if (Execute) { MMU->SB_VAddr(Address, (BYTE)Code.Value); }
+        if (Execute) { MMU->SB_VAddr(Address, (uint8_t)Code.Value); }
         break;
     case 0x81000000:
         Address = 0x80000000 | (Code.Command & 0xFFFFFF);
@@ -405,7 +425,7 @@ int CCheats::ApplyCheatEntry(CMipsMemory * MMU, const CODES & CodeEntry, int Cur
         break;
     case 0xA0000000:
         Address = 0xA0000000 | (Code.Command & 0xFFFFFF);
-        if (Execute) { MMU->SB_VAddr(Address, (BYTE)Code.Value); }
+        if (Execute) { MMU->SB_VAddr(Address, (uint8_t)Code.Value); }
         break;
     case 0xA1000000:
         Address = 0xA0000000 | (Code.Command & 0xFFFFFF);
@@ -437,7 +457,7 @@ int CCheats::ApplyCheatEntry(CMipsMemory * MMU, const CODES & CodeEntry, int Cur
     case 0x82000000:
     case 0x84000000:
         Address = 0x80000000 | (Code.Command & 0xFFFFFF);
-        if (Execute) { MMU->SB_VAddr(Address, (BYTE)Code.Value); }
+        if (Execute) { MMU->SB_VAddr(Address, (uint8_t)Code.Value); }
         break;
     case 0x31000000:
     case 0x83000000:
@@ -447,7 +467,7 @@ int CCheats::ApplyCheatEntry(CMipsMemory * MMU, const CODES & CodeEntry, int Cur
         break;
     case 0xE8000000:
         Address = 0x80000000 | (ConvertXP64Address(Code.Command) & 0xFFFFFF);
-        if (Execute) { MMU->SB_VAddr(Address, (BYTE)ConvertXP64Value(Code.Value)); }
+        if (Execute) { MMU->SB_VAddr(Address, (uint8_t)ConvertXP64Value(Code.Value)); }
         break;
     case 0xE9000000:
         Address = 0x80000000 | (ConvertXP64Address(Code.Command) & 0xFFFFFF);
@@ -455,7 +475,7 @@ int CCheats::ApplyCheatEntry(CMipsMemory * MMU, const CODES & CodeEntry, int Cur
         break;
     case 0xC8000000:
         Address = 0xA0000000 | (ConvertXP64Address(Code.Command) & 0xFFFFFF);
-        if (Execute) { MMU->SB_VAddr(Address, (BYTE)Code.Value); }
+        if (Execute) { MMU->SB_VAddr(Address, (uint8_t)Code.Value); }
         break;
     case 0xC9000000:
         Address = 0xA0000000 | (ConvertXP64Address(Code.Command) & 0xFFFFFF);
@@ -486,15 +506,17 @@ int CCheats::ApplyCheatEntry(CMipsMemory * MMU, const CODES & CodeEntry, int Cur
     return 1;
 }
 
-DWORD CCheats::AsciiToHex(const char * HexValue) {
-    DWORD Count, Finish, Value = 0;
+uint32_t CCheats::AsciiToHex(const char * HexValue)
+{
+    uint32_t Count, Finish, Value = 0;
 
     Finish = strlen(HexValue);
     if (Finish > 8) { Finish = 8; }
 
     for (Count = 0; Count < Finish; Count++){
         Value = (Value << 4);
-        switch (HexValue[Count]) {
+        switch (HexValue[Count])
+        {
         case '0': break;
         case '1': Value += 1; break;
         case '2': Value += 2; break;
@@ -525,7 +547,9 @@ DWORD CCheats::AsciiToHex(const char * HexValue) {
     return Value;
 }
 
-void CCheats::AddCodeLayers(int CheatNumber, const stdstr &CheatName, HWND hParent, bool CheatActive) {
+#ifdef tofix
+void CCheats::AddCodeLayers(int CheatNumber, const stdstr &CheatName, HWND hParent, bool CheatActive)
+{
     TV_INSERTSTRUCT tv;
 
     //Work out text to add
@@ -539,12 +563,15 @@ void CCheats::AddCodeLayers(int CheatNumber, const stdstr &CheatName, HWND hPare
     tv.item.pszText = Item;
     tv.item.cchTextMax = sizeof(Item);
     tv.item.hItem = TreeView_GetChild((HWND)m_hCheatTree, hParent);
-    while (tv.item.hItem) {
+    while (tv.item.hItem)
+    {
         TreeView_GetItem((HWND)m_hCheatTree, &tv.item);
-        if (strcmp(Text, Item) == 0) {
+        if (strcmp(Text, Item) == 0)
+        {
             //If already exists then just use existing one
             int State = TV_GetCheckState(m_hCheatTree, (HWND)tv.item.hItem);
-            if ((CheatActive && State == TV_STATE_CLEAR) || (!CheatActive && State == TV_STATE_CHECKED)) {
+            if ((CheatActive && State == TV_STATE_CLEAR) || (!CheatActive && State == TV_STATE_CHECKED))
+            {
                 TV_SetCheckState(m_hCheatTree, (HWND)tv.item.hItem, TV_STATE_INDETERMINATE);
             }
             size_t StartPos = strlen(Text) + 1;
@@ -571,6 +598,7 @@ void CCheats::AddCodeLayers(int CheatNumber, const stdstr &CheatName, HWND hPare
     if (strcmp(Text, CheatName.c_str()) == 0) { return; }
     AddCodeLayers(CheatNumber, (stdstr)(CheatName.substr(strlen(Text) + 1)), hParent, CheatActive);
 }
+#endif
 
 stdstr CCheats::GetCheatName(int CheatNo, bool AddExtension) const
 {
@@ -585,13 +613,14 @@ stdstr CCheats::GetCheatName(int CheatNo, bool AddExtension) const
     if (EndOfName == -1) { return stdstr(""); }
 
     stdstr Name = LineEntry.substr(StartOfName + 1, EndOfName - StartOfName - 1);
-    LPCSTR CodeString = &(LineEntry.c_str())[EndOfName + 2];
+    const char * CodeString = &(LineEntry.c_str())[EndOfName + 2];
     if (!IsValid16BitCode(CodeString))
     {
         Name.Format("*** %s", Name.c_str());
         Name.Replace("\\", "\\*** ");
     }
-    if (AddExtension && CheatUsesCodeExtensions(LineEntry)) {
+    if (AddExtension && CheatUsesCodeExtensions(LineEntry))
+    {
         stdstr CheatValue(g_Settings->LoadStringIndex(Cheat_Extension, CheatNo));
         Name.Format("%s (=>%s)", Name.c_str(), CheatValue.c_str());
     }
@@ -599,7 +628,8 @@ stdstr CCheats::GetCheatName(int CheatNo, bool AddExtension) const
     return Name;
 }
 
-bool CCheats::CheatUsesCodeExtensions(const stdstr &LineEntry) {
+bool CCheats::CheatUsesCodeExtensions(const stdstr &LineEntry)
+{
     //Find the start and end of the name which is surronded in ""
     if (LineEntry.length() == 0){ return false; }
     int StartOfName = LineEntry.find("\"");
@@ -611,7 +641,8 @@ bool CCheats::CheatUsesCodeExtensions(const stdstr &LineEntry) {
     const char *ReadPos = &(LineEntry.c_str())[EndOfName + 2];
     bool CodeExtension = false;
 
-    for (int i = 0; i < MaxGSEntries && CodeExtension == false; i++) {
+    for (int i = 0; i < MaxGSEntries && CodeExtension == false; i++)
+    {
         if (strchr(ReadPos, ' ') == NULL) { break; }
         ReadPos = strchr(ReadPos, ' ') + 1;
         if (ReadPos[0] == '?' && ReadPos[1] == '?') { CodeExtension = true; }
@@ -622,6 +653,7 @@ bool CCheats::CheatUsesCodeExtensions(const stdstr &LineEntry) {
     return CodeExtension;
 }
 
+#ifdef tofix
 void CCheats::RefreshCheatManager()
 {
     if (m_Window == NULL) { return; }
@@ -629,7 +661,8 @@ void CCheats::RefreshCheatManager()
     m_DeleteingEntries = true;
     TreeView_DeleteAllItems((HWND)m_hCheatTree);
     m_DeleteingEntries = false;
-    for (int i = 0; i < MaxCheats; i++) {
+    for (int i = 0; i < MaxCheats; i++)
+    {
         stdstr Name = GetCheatName(i, true);
         if (Name.length() == 0) { break; }
 
@@ -654,8 +687,10 @@ stdstr CCheats::GetDlgItemStr(HWND hDlg, int nIDDlgItem)
     return Result;
 }
 
-void CCheats::SelectCheats(HWND hParent, bool BlockExecution) {
-    if (m_Window != NULL) {
+void CCheats::SelectCheats(HWND hParent, bool BlockExecution)
+{
+    if (m_Window != NULL)
+    {
         SetForegroundWindow((HWND)m_Window);
         return;
     }
@@ -666,7 +701,8 @@ void CCheats::SelectCheats(HWND hParent, bool BlockExecution) {
             DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_Cheats_Select),
                 (HWND)hParent, (DLGPROC)ManageCheatsProc, (LPARAM)this);
         }
-        else {
+        else
+        {
             CreateDialogParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_Cheats_Select),
                 (HWND)hParent, (DLGPROC)ManageCheatsProc, (LPARAM)this);
         }
@@ -707,7 +743,7 @@ void CCheats::RecordCheatValues(HWND hDlg)
     m_EditNotes = GetDlgItemStr(hDlg, IDC_NOTES);
 }
 
-int CALLBACK CCheats::CheatAddProc(HWND hDlg, DWORD uMsg, DWORD wParam, DWORD lParam)
+int CALLBACK CCheats::CheatAddProc(HWND hDlg, uint32_t uMsg, uint32_t wParam, uint32_t lParam)
 {
     switch (uMsg)
     {
@@ -891,7 +927,7 @@ int CALLBACK CCheats::CheatAddProc(HWND hDlg, DWORD uMsg, DWORD wParam, DWORD lP
             }
 
             stdstr CheatEntryStr = g_Settings->LoadStringIndex(Cheat_Entry, _this->m_EditCheat);
-            LPCSTR String = CheatEntryStr.c_str();
+            const char * String = CheatEntryStr.c_str();
 
             //Set Cheat Name
             int len = strrchr(String, '"') - strchr(String, '"') - 1;
@@ -900,7 +936,7 @@ int CALLBACK CCheats::CheatAddProc(HWND hDlg, DWORD uMsg, DWORD wParam, DWORD lP
             SetDlgItemText(hDlg, IDC_CODE_NAME, CheatName.c_str());
 
             //Add Gameshark codes to screen
-            LPCSTR ReadPos = strrchr(String, '"') + 2;
+            const char * ReadPos = strrchr(String, '"') + 2;
             stdstr Buffer;
             do
             {
@@ -967,7 +1003,8 @@ int CALLBACK CCheats::CheatAddProc(HWND hDlg, DWORD uMsg, DWORD wParam, DWORD lP
     return true;
 }
 
-int CALLBACK CCheats::CheatListProc(HWND hDlg, DWORD uMsg, DWORD wParam, DWORD lParam) {
+int CALLBACK CCheats::CheatListProc(HWND hDlg, uint32_t uMsg, uint32_t wParam, uint32_t lParam)
+{
     switch (uMsg)
     {
     case WM_INITDIALOG:
@@ -975,7 +1012,7 @@ int CALLBACK CCheats::CheatListProc(HWND hDlg, DWORD uMsg, DWORD wParam, DWORD l
             CCheats   * _this = (CCheats *)lParam;
             SetProp(hDlg, "Class", _this);
 
-            DWORD Style;
+            uint32_t Style;
             RECT rcList;
             RECT rcButton;
 
@@ -1062,7 +1099,7 @@ int CALLBACK CCheats::CheatListProc(HWND hDlg, DWORD uMsg, DWORD wParam, DWORD l
             {
                 //Work out what item is selected
                 TVHITTESTINFO ht = { 0 };
-                DWORD dwpos = GetMessagePos();
+                uint32_t dwpos = GetMessagePos();
 
                 // include <windowsx.h> and <windows.h> header files
                 ht.pt.x = GET_X_LPARAM(dwpos);
@@ -1097,7 +1134,7 @@ int CALLBACK CCheats::CheatListProc(HWND hDlg, DWORD uMsg, DWORD wParam, DWORD l
             if ((lpnmh->code == NM_CLICK) && (lpnmh->idFrom == IDC_MYTREE))
             {
                 TVHITTESTINFO ht = { 0 };
-                DWORD dwpos = GetMessagePos();
+                uint32_t dwpos = GetMessagePos();
 
                 // include <windowsx.h> and <windows.h> header files
                 ht.pt.x = GET_X_LPARAM(dwpos);
@@ -1151,7 +1188,7 @@ int CALLBACK CCheats::CheatListProc(HWND hDlg, DWORD uMsg, DWORD wParam, DWORD l
             if ((lpnmh->code == NM_DBLCLK) && (lpnmh->idFrom == IDC_MYTREE))
             {
                 TVHITTESTINFO ht = { 0 };
-                DWORD dwpos = GetMessagePos();
+                uint32_t dwpos = GetMessagePos();
 
                 // include <windowsx.h> and <windows.h> header files
                 ht.pt.x = GET_X_LPARAM(dwpos);
@@ -1238,8 +1275,10 @@ int CALLBACK CCheats::CheatListProc(HWND hDlg, DWORD uMsg, DWORD wParam, DWORD l
     return true;
 }
 
-int CALLBACK CCheats::CheatsCodeExProc(HWND hDlg, DWORD uMsg, DWORD wParam, DWORD lParam) {
-    switch (uMsg) {
+int CALLBACK CCheats::CheatsCodeExProc(HWND hDlg, uint32_t uMsg, uint32_t wParam, uint32_t lParam)
+{
+    switch (uMsg)
+    {
     case WM_INITDIALOG:
         {
             CCheats   * _this = (CCheats *)lParam;
@@ -1263,13 +1302,15 @@ int CALLBACK CCheats::CheatsCodeExProc(HWND hDlg, DWORD uMsg, DWORD wParam, DWOR
             stdstr Options(g_Settings->LoadStringIndex(Cheat_Options, item.lParam));
             stdstr CurrentExt(g_Settings->LoadStringIndex(Cheat_Extension, item.lParam));
             const char * ReadPos = Options.c_str();
-            while (*ReadPos != 0) {
+            while (*ReadPos != 0)
+            {
                 const char * NextComma = strchr(ReadPos, ',');
                 int len = NextComma == NULL ? strlen(ReadPos) : NextComma - ReadPos;
                 stdstr CheatExt(ReadPos);
                 CheatExt.resize(len);
                 int index = SendMessage(GetDlgItem(hDlg, IDC_CHEAT_LIST), LB_ADDSTRING, 0, (LPARAM)CheatExt.c_str());
-                if (CheatExt == CurrentExt) {
+                if (CheatExt == CurrentExt)
+                {
                     SendMessage(GetDlgItem(hDlg, IDC_CHEAT_LIST), LB_SETCURSEL, index, 0);
                 }
                 //Move to next entry or end
@@ -1278,7 +1319,8 @@ int CALLBACK CCheats::CheatsCodeExProc(HWND hDlg, DWORD uMsg, DWORD wParam, DWOR
         }
         break;
     case WM_COMMAND:
-        switch (LOWORD(wParam)) {
+        switch (LOWORD(wParam))
+        {
         case IDC_CHEAT_LIST:
             if (HIWORD(wParam) == LBN_DBLCLK) { PostMessage(hDlg, WM_COMMAND, IDOK, 0); break; }
             break;
@@ -1315,10 +1357,12 @@ int CALLBACK CCheats::CheatsCodeExProc(HWND hDlg, DWORD uMsg, DWORD wParam, DWOR
     return true;
 }
 
-int CALLBACK CCheats::CheatsCodeQuantProc(HWND hDlg, DWORD uMsg, DWORD wParam, DWORD lParam) {
-    static WORD Start, Stop, SelStart, SelStop;
+int CALLBACK CCheats::CheatsCodeQuantProc(HWND hDlg, uint32_t uMsg, uint32_t wParam, uint32_t lParam)
+{
+    static uint16_t Start, Stop, SelStart, SelStop;
 
-    switch (uMsg) {
+    switch (uMsg)
+    {
     case WM_INITDIALOG:
         {
             CCheats   * _this = (CCheats *)lParam;
@@ -1343,12 +1387,14 @@ int CALLBACK CCheats::CheatsCodeQuantProc(HWND hDlg, DWORD uMsg, DWORD wParam, D
             SetDlgItemText(hDlg, IDC_CHEAT_NAME, CheatName.c_str());
             SetDlgItemText(hDlg, IDC_VALUE, Value.c_str());
 
-            Start = (WORD)(Range.c_str()[0] == '$' ? AsciiToHex(&Range.c_str()[1]) : atol(Range.c_str()));
+            Start = (uint16_t)(Range.c_str()[0] == '$' ? AsciiToHex(&Range.c_str()[1]) : atol(Range.c_str()));
             const char * ReadPos = strrchr(Range.c_str(), '-');
-            if (ReadPos != NULL) {
-                Stop = (WORD)(ReadPos[1] == '$' ? AsciiToHex(&ReadPos[2]) : atol(&ReadPos[1]));
+            if (ReadPos != NULL)
+            {
+                Stop = (uint16_t)(ReadPos[1] == '$' ? AsciiToHex(&ReadPos[2]) : atol(&ReadPos[1]));
             }
-            else {
+            else
+            {
                 Stop = 0;
             }
 
@@ -1358,23 +1404,27 @@ int CALLBACK CCheats::CheatsCodeQuantProc(HWND hDlg, DWORD uMsg, DWORD wParam, D
         }
         break;
     case WM_COMMAND:
-        switch (LOWORD(wParam)) {
+        switch (LOWORD(wParam))
+        {
         case IDC_VALUE:
-            if (HIWORD(wParam) == EN_UPDATE) {
+            if (HIWORD(wParam) == EN_UPDATE)
+            {
                 TCHAR szTmp[10], szTmp2[10];
-                DWORD Value;
+                uint32_t Value;
                 GetDlgItemText(hDlg, IDC_VALUE, szTmp, sizeof(szTmp));
                 Value = szTmp[0] == '$' ? AsciiToHex(&szTmp[1]) : AsciiToHex(szTmp);
                 if (Value > Stop)  { Value = Stop; }
                 if (Value < Start) { Value = Start; }
                 sprintf(szTmp2, "$%X", Value);
-                if (strcmp(szTmp, szTmp2) != 0) {
+                if (strcmp(szTmp, szTmp2) != 0)
+                {
                     SetDlgItemText(hDlg, IDC_VALUE, szTmp2);
-                    if (SelStop == 0) { SelStop = (WORD)strlen(szTmp2); SelStart = SelStop; }
+                    if (SelStop == 0) { SelStop = (uint16_t)strlen(szTmp2); SelStart = SelStop; }
                     SendDlgItemMessage(hDlg, IDC_VALUE, EM_SETSEL, (WPARAM)SelStart, (LPARAM)SelStop);
                 }
-                else {
-                    WORD NewSelStart, NewSelStop;
+                else
+                {
+                    uint16_t NewSelStart, NewSelStop;
                     SendDlgItemMessage(hDlg, IDC_VALUE, EM_GETSEL, (WPARAM)&NewSelStart, (LPARAM)&NewSelStop);
                     if (NewSelStart != 0) { SelStart = NewSelStart; SelStop = NewSelStop; }
                 }
@@ -1392,7 +1442,7 @@ int CALLBACK CCheats::CheatsCodeQuantProc(HWND hDlg, DWORD uMsg, DWORD wParam, D
 
                 //Get the selected cheat extension
                 TCHAR CheatExten[300], szTmp[10];
-                DWORD Value;
+                uint32_t Value;
 
                 GetDlgItemText(hDlg, IDC_VALUE, szTmp, sizeof(szTmp));
                 Value = szTmp[0] == '$' ? AsciiToHex(&szTmp[1]) : AsciiToHex(szTmp);
@@ -1417,7 +1467,6 @@ int CALLBACK CCheats::CheatsCodeQuantProc(HWND hDlg, DWORD uMsg, DWORD wParam, D
     return true;
 }
 
-#ifdef tofix
 bool CCheats::IsCheatMessage(MSG * msg)
 {
     if (m_Window)
@@ -1427,7 +1476,7 @@ bool CCheats::IsCheatMessage(MSG * msg)
     return false;
 }
 
-int CALLBACK CCheats::ManageCheatsProc(HWND hDlg, DWORD uMsg, DWORD wParam, DWORD lParam)
+int CALLBACK CCheats::ManageCheatsProc(HWND hDlg, uint32_t uMsg, uint32_t wParam, uint32_t lParam)
 {
     switch (uMsg)
     {
@@ -1707,6 +1756,7 @@ void CCheats::DeleteCheat(int Index)
     CSettingTypeCheats::FlushChanges();
 }
 
+#ifdef tofix
 void CCheats::ChangeChildrenStatus(HWND hParent, bool Checked)
 {
     HTREEITEM hItem = TreeView_GetChild((HWND)m_hCheatTree, hParent);
@@ -1811,7 +1861,7 @@ stdstr CCheats::ReadCodeString(HWND hDlg, bool &validcodes, bool &validoptions, 
 
         //str[0] = sizeof(str) > 255?255:sizeof(str);
         *(LPWORD)str = sizeof(str);
-        len = SendDlgItemMessage(hDlg, IDC_CHEAT_CODES, EM_GETLINE, (WPARAM)linecount, (LPARAM)(LPCSTR)str);
+        len = SendDlgItemMessage(hDlg, IDC_CHEAT_CODES, EM_GETLINE, (WPARAM)linecount, (LPARAM)(const char *)str);
         str[len] = 0;
 
         if (len <= 0) { continue; }
@@ -1892,7 +1942,7 @@ stdstr CCheats::ReadOptionsString(HWND hDlg, bool &/*validcodes*/, bool &validop
         memset(str, 0, sizeof(str));
         //str[0] = sizeof(str) > 255?255:sizeof(str);
         *(LPWORD)str = sizeof(str);
-        len = SendDlgItemMessage(hDlg, IDC_CHEAT_OPTIONS, EM_GETLINE, (WPARAM)linecount, (LPARAM)(LPCSTR)str);
+        len = SendDlgItemMessage(hDlg, IDC_CHEAT_OPTIONS, EM_GETLINE, (WPARAM)linecount, (LPARAM)(const char *)str);
         str[len] = 0;
 
         if (len > 0)
@@ -1981,3 +2031,4 @@ stdstr CCheats::ReadOptionsString(HWND hDlg, bool &/*validcodes*/, bool &validop
     if (numoptions < 1) validoptions = false;
     return optionsstring;
 }
+#endif

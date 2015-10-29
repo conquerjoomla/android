@@ -29,6 +29,7 @@
     <ClCompile Include="N64 System\Cheat Class.cpp" />
     <ClCompile Include="N64 System\Frame Per Second Class.cpp" />
     <ClCompile Include="N64 System\Interpreter\Interpreter CPU.cpp" />
+    <ClCompile Include="N64 System\Interpreter\Interpreter Ops 32.cpp" />
     <ClCompile Include="N64 System\Interpreter\Interpreter Ops.cpp" />
     <ClCompile Include="N64 System\Mips\Audio.cpp" />
     <ClCompile Include="N64 System\Mips\Eeprom.cpp" />
@@ -98,6 +99,7 @@
     <ClInclude Include="N64 System\Cheat Class.h" />
     <ClInclude Include="N64 System\Frame Per Second Class.h" />
     <ClInclude Include="N64 System\Interpreter\Interpreter CPU.h" />
+    <ClInclude Include="N64 System\Interpreter\Interpreter Ops 32.h" />
     <ClInclude Include="N64 System\Interpreter\Interpreter Ops.h" />
     <ClInclude Include="N64 System\Mips\Audio.h" />
     <ClInclude Include="N64 System\Mips\Dma.h" />

@@ -255,6 +255,9 @@
     <ClCompile Include="N64 System\Mips\Rumblepak.cpp">
       <Filter>Source Files\N64 System\Mips</Filter>
     </ClCompile>
+    <ClCompile Include="N64 System\Interpreter\Interpreter Ops 32.cpp">
+      <Filter>Source Files\N64 System\Interpreter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -493,6 +496,9 @@
     </ClInclude>
     <ClInclude Include="N64 System\Mips\Rumblepak.h">
       <Filter>Header Files\N64 System\Mips</Filter>
+    </ClInclude>
+    <ClInclude Include="N64 System\Interpreter\Interpreter Ops 32.h">
+      <Filter>Header Files\N64 System\Interpreter</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
