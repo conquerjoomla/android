@@ -18,16 +18,17 @@
 #include <Project64-core\AppInit.h>
 
 #include "User Interface.h"
-#include "N64 System/Types.h"
+#include <Project64-core\N64 System\N64 Types.h>
 
-#include "N64 System/Profiling Class.h"
+#include <Project64-core\N64 System\Profiling Class.h>
 
 //General Mips Information
-#include "N64 System/N64 Rom Class.h"
+#include <Project64-core\N64 System\N64 Rom Class.h>
 #include "N64 System/Rom Information Class.h"
-#include "N64 System/Speed Limitor Class.h"
-#include "N64 System/Mips/OpCode.h"
-#include "N64 System/Recompiler/X86ops.h"
+#include <Project64-core\N64 System\Speed Limitor Class.h>
+#include <Project64-core\N64 System\Mips\OpCode.h>
+#include <Project64-core\N64 System\Recompiler\X86ops.h>
+#ifdef tofix
 #include "N64 System/Mips/Mempak.h"
 #include "N64 System/Mips/Rumblepak.h"
 #include "N64 System/Mips/FlashRam.h"
@@ -79,3 +80,4 @@
 //Main Files
 #include "N64 System/N64 Class.h"
 #include "N64 System/System Globals.h"
+#endif

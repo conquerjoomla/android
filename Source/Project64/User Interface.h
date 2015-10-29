@@ -25,10 +25,10 @@ typedef const char *     LPCSTR;
 
 struct RECT_STRUCT
 {
-	long left;
-	long top;
-	long right;
-	long bottom;
+    long left;
+    long top;
+    long right;
+    long bottom;
 };
 
 struct WINDOWS_PAINTSTRUCT {
@@ -57,7 +57,7 @@ class CN64System;
 #include ".\\User Interface\\Menu Class.h"
 #include ".\\User Interface\\Main Menu Class.h"
 #include ".\\User Interface\\Notification Class.h"
-#include ".\\User Interface\\Frame Per Second Class.h"
+#include <Project64-core\N64 System\Frame Per Second Class.h>
 #include ".\\User Interface\\resource.h"
 #ifdef WINDOWS_UI
 #include ".\\User Interface\\Settings Config.h"

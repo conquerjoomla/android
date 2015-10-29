@@ -19,12 +19,12 @@
 #include <Project64-core\Multilanguage.h>
 #include "User Interface.h"
 #include "N64 System.h"
-#include "Plugin.h"
+#include <Project64-core\Plugin.h>
 #include "Support.h"
 #include <Project64-core\Version.h>
 #include <windows.h>
 #include <mmsystem.h>
 #include <Aclapi.h>
 
-#include "3rd Party/Zip.h"
-#include "3rd Party/7zip.h"
+#include <Project64-core\3rd Party\Zip.h>
+#include <Project64-core\3rd Party\7zip.h>

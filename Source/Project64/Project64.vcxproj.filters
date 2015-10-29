@@ -23,17 +23,11 @@
     <Filter Include="Source Files\N64 System Source">
       <UniqueIdentifier>{4d3c9ef9-7903-4112-8356-1e7ab2112c20}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\N64 System Source\Mips Source">
-      <UniqueIdentifier>{2b25c9d1-e1ec-46b6-988a-034edc1fc184}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\N64 System Source\C Core Source">
       <UniqueIdentifier>{28ecfeb8-9360-4619-ae95-6f67d66f848d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\N64 System Source\Recompiler Files">
       <UniqueIdentifier>{9a830b90-21d4-429d-b211-26ab691d6474}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\N64 System Source\Interpreter Files">
-      <UniqueIdentifier>{b5142b69-6b3b-4221-a3cb-2c6c0a35e1d7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Plugin Source">
       <UniqueIdentifier>{242ae4a5-b150-44e6-b31c-027acd6d38b0}</UniqueIdentifier>
@@ -55,9 +49,6 @@
     <Filter Include="Header Files\Settings Headers">
       <UniqueIdentifier>{80441979-1696-4aca-8652-199a9db22d06}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Settings Headers\Setting Types Header">
-      <UniqueIdentifier>{024d5b64-27a9-466b-9388-5c08c5eb5a47}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\User Interface Headers">
       <UniqueIdentifier>{54e8f51f-d81d-4f8f-b4f1-76584c1b29a5}</UniqueIdentifier>
     </Filter>
@@ -67,26 +58,14 @@
     <Filter Include="Header Files\User Interface Headers\WTL Controls Headers">
       <UniqueIdentifier>{838a58e7-e1d2-45d3-bcf0-dcedad19610c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Multilanguage Headers">
-      <UniqueIdentifier>{5531af4d-33bb-4e84-8a55-c971a18ec7bf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\N64 System Headers">
       <UniqueIdentifier>{6cfab019-2f8d-4e09-be41-1df513b5a680}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\N64 System Headers\Mips Headers">
-      <UniqueIdentifier>{34662870-e7f3-4ab8-8788-a659bf32f764}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\N64 System Headers\C Core Headers">
       <UniqueIdentifier>{4db18f2d-3c89-4a86-adf7-46731ca35087}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\N64 System Headers\Debugger Headers">
       <UniqueIdentifier>{c4249d55-df70-4453-b017-b548514ad094}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\N64 System Headers\Recompiler Headers">
-      <UniqueIdentifier>{a3157468-d5a6-4167-b28f-9de5719ec1e9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\N64 System Headers\Interpreter Headers">
-      <UniqueIdentifier>{d87d7401-c716-40f7-a51b-2d9803936b23}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Plugin Headers">
       <UniqueIdentifier>{93ec15cf-1fb2-4095-ae07-95128a67d3df}</UniqueIdentifier>
@@ -105,26 +84,11 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Settings\Debug Settings.cpp">
-      <Filter>Source Files\Settings Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\Game Settings.cpp">
-      <Filter>Source Files\Settings Files</Filter>
-    </ClCompile>
     <ClCompile Include="Settings\Gui Settings.cpp">
-      <Filter>Source Files\Settings Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\N64System Settings.cpp">
       <Filter>Source Files\Settings Files</Filter>
     </ClCompile>
     <ClCompile Include="Settings\Notification Settings.cpp">
       <Filter>Source Files\Settings Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\Recompiler Settings.cpp">
-      <Filter>Source Files\Settings Files</Filter>
-    </ClCompile>
-    <ClCompile Include="User Interface\Frame Per Second Class.cpp">
-      <Filter>Source Files\User Interface Source</Filter>
     </ClCompile>
     <ClCompile Include="User Interface\Gui Class.cpp">
       <Filter>Source Files\User Interface Source</Filter>
@@ -201,149 +165,23 @@
     <ClCompile Include="N64 System\Debugger\Debugger.cpp">
       <Filter>Source Files\User Interface Source\Debugger Source</Filter>
     </ClCompile>
-    <ClCompile Include="N64 System\Cheat Class.cpp">
-      <Filter>Source Files\N64 System Source</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\N64 Class.cpp">
-      <Filter>Source Files\N64 System Source</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\N64 Rom Class.cpp">
-      <Filter>Source Files\N64 System Source</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Profiling Class.cpp">
-      <Filter>Source Files\N64 System Source</Filter>
-    </ClCompile>
     <ClCompile Include="N64 System\Rom Information Class.cpp">
       <Filter>Source Files\N64 System Source</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Speed Limitor Class.cpp">
-      <Filter>Source Files\N64 System Source</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\System Globals.cpp">
-      <Filter>Source Files\N64 System Source</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Mips\Audio.cpp">
-      <Filter>Source Files\N64 System Source\Mips Source</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Mips\Dma.cpp">
-      <Filter>Source Files\N64 System Source\Mips Source</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Mips\Eeprom.cpp">
-      <Filter>Source Files\N64 System Source\Mips Source</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Mips\FlashRam.cpp">
-      <Filter>Source Files\N64 System Source\Mips Source</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Mips\Memory Labels Class.cpp">
-      <Filter>Source Files\N64 System Source\Mips Source</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Mips\Memory Virtual Mem.cpp">
-      <Filter>Source Files\N64 System Source\Mips Source</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Mips\Mempak.cpp">
-      <Filter>Source Files\N64 System Source\Mips Source</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Mips\Pif Ram.cpp">
-      <Filter>Source Files\N64 System Source\Mips Source</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Mips\Register Class.cpp">
-      <Filter>Source Files\N64 System Source\Mips Source</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Mips\Sram.cpp">
-      <Filter>Source Files\N64 System Source\Mips Source</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Mips\System Events.cpp">
-      <Filter>Source Files\N64 System Source\Mips Source</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Mips\System Timing.cpp">
-      <Filter>Source Files\N64 System Source\Mips Source</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Mips\TLB class.cpp">
-      <Filter>Source Files\N64 System Source\Mips Source</Filter>
     </ClCompile>
     <ClCompile Include="N64 System\C Core\Logging.cpp">
       <Filter>Source Files\N64 System Source\C Core Source</Filter>
     </ClCompile>
-    <ClCompile Include="N64 System\C Core\r4300i Commands.cpp">
-      <Filter>Source Files\N64 System Source\C Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Recompiler\Code Block.cpp">
-      <Filter>Source Files\N64 System Source\Recompiler Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Recompiler\Code Section.cpp">
-      <Filter>Source Files\N64 System Source\Recompiler Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Recompiler\Function Info.cpp">
-      <Filter>Source Files\N64 System Source\Recompiler Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Recompiler\Function Map Class.cpp">
-      <Filter>Source Files\N64 System Source\Recompiler Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Recompiler\Loop Analysis.cpp">
-      <Filter>Source Files\N64 System Source\Recompiler Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Recompiler\Recompiler Class.cpp">
-      <Filter>Source Files\N64 System Source\Recompiler Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Recompiler\Recompiler Memory.cpp">
-      <Filter>Source Files\N64 System Source\Recompiler Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Recompiler\Recompiler Ops.cpp">
-      <Filter>Source Files\N64 System Source\Recompiler Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Recompiler\Reg Info.cpp">
-      <Filter>Source Files\N64 System Source\Recompiler Files</Filter>
-    </ClCompile>
     <ClCompile Include="N64 System\Recompiler\Section Info.cpp">
       <Filter>Source Files\N64 System Source\Recompiler Files</Filter>
     </ClCompile>
-    <ClCompile Include="N64 System\Recompiler\x86CodeLog.cpp">
-      <Filter>Source Files\N64 System Source\Recompiler Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Recompiler\X86ops.cpp">
-      <Filter>Source Files\N64 System Source\Recompiler Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Interpreter\Interpreter CPU.cpp">
-      <Filter>Source Files\N64 System Source\Interpreter Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Interpreter\Interpreter Ops 32.cpp">
-      <Filter>Source Files\N64 System Source\Interpreter Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Interpreter\Interpreter Ops.cpp">
-      <Filter>Source Files\N64 System Source\Interpreter Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Plugins\Audio Plugin.cpp">
-      <Filter>Source Files\Plugin Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Plugins\Controller Plugin.cpp">
-      <Filter>Source Files\Plugin Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Plugins\GFX plugin.cpp">
-      <Filter>Source Files\Plugin Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Plugins\Plugin Class.cpp">
-      <Filter>Source Files\Plugin Source</Filter>
-    </ClCompile>
     <ClCompile Include="Plugins\Plugin List.cpp">
       <Filter>Source Files\Plugin Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Plugins\RSP Plugin.cpp">
-      <Filter>Source Files\Plugin Source</Filter>
-    </ClCompile>
-    <ClCompile Include="3rd Party\7zip.cpp">
-      <Filter>Source Files\3rd Party Source</Filter>
     </ClCompile>
     <ClCompile Include="..\3rd Party\zlib\contrib\minizip\unzip.c">
       <Filter>Source Files\3rd Party Source\ZLib Source</Filter>
     </ClCompile>
     <ClCompile Include="..\3rd Party\zlib\contrib\minizip\zip.c">
       <Filter>Source Files\3rd Party Source\ZLib Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Plugins\Plugin Base.cpp">
-      <Filter>Source Files\Plugin Source</Filter>
-    </ClCompile>
-    <ClCompile Include="N64 System\Mips\Rumblepak.cpp">
-      <Filter>Source Files\N64 System Source\Mips Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -395,16 +233,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Multilanguage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="N64 System.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Plugin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
@@ -416,89 +245,11 @@
     <ClInclude Include="WTL App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Settings\Debug Settings.h">
-      <Filter>Header Files\Settings Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\Game Settings.h">
-      <Filter>Header Files\Settings Headers</Filter>
-    </ClInclude>
     <ClInclude Include="Settings\Gui Settings.h">
-      <Filter>Header Files\Settings Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\N64System Settings.h">
       <Filter>Header Files\Settings Headers</Filter>
     </ClInclude>
     <ClInclude Include="Settings\Notification Settings.h">
       <Filter>Header Files\Settings Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\Recompiler Settings.h">
-      <Filter>Header Files\Settings Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\Settings Class.h">
-      <Filter>Header Files\Settings Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\SettingType\SettingsType-Application.h">
-      <Filter>Header Files\Settings Headers\Setting Types Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\SettingType\SettingsType-ApplicationIndex.h">
-      <Filter>Header Files\Settings Headers\Setting Types Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\SettingType\SettingsType-ApplicationPath.h">
-      <Filter>Header Files\Settings Headers\Setting Types Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\SettingType\SettingsType-Base.h">
-      <Filter>Header Files\Settings Headers\Setting Types Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\SettingType\SettingsType-Cheats.h">
-      <Filter>Header Files\Settings Headers\Setting Types Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\SettingType\SettingsType-GameSetting.h">
-      <Filter>Header Files\Settings Headers\Setting Types Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\SettingType\SettingsType-GameSettingIndex.h">
-      <Filter>Header Files\Settings Headers\Setting Types Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\SettingType\SettingsType-RDBCpuType.h">
-      <Filter>Header Files\Settings Headers\Setting Types Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\SettingType\SettingsType-RDBOnOff.h">
-      <Filter>Header Files\Settings Headers\Setting Types Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\SettingType\SettingsType-RDBRamSize.h">
-      <Filter>Header Files\Settings Headers\Setting Types Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\SettingType\SettingsType-RDBSaveChip.h">
-      <Filter>Header Files\Settings Headers\Setting Types Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\SettingType\SettingsType-RDBYesNo.h">
-      <Filter>Header Files\Settings Headers\Setting Types Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\SettingType\SettingsType-RelativePath.h">
-      <Filter>Header Files\Settings Headers\Setting Types Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\SettingType\SettingsType-RomDatabase.h">
-      <Filter>Header Files\Settings Headers\Setting Types Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\SettingType\SettingsType-RomDatabaseIndex.h">
-      <Filter>Header Files\Settings Headers\Setting Types Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\SettingType\SettingsType-RomDatabaseSetting.h">
-      <Filter>Header Files\Settings Headers\Setting Types Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\SettingType\SettingsType-SelectedDirectory.h">
-      <Filter>Header Files\Settings Headers\Setting Types Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\SettingType\SettingsType-TempBool.h">
-      <Filter>Header Files\Settings Headers\Setting Types Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\SettingType\SettingsType-TempNumber.h">
-      <Filter>Header Files\Settings Headers\Setting Types Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings\SettingType\SettingsType-TempString.h">
-      <Filter>Header Files\Settings Headers\Setting Types Header</Filter>
-    </ClInclude>
-    <ClInclude Include="User Interface\Frame Per Second Class.h">
-      <Filter>Header Files\User Interface Headers</Filter>
     </ClInclude>
     <ClInclude Include="User Interface\Gui Class.h">
       <Filter>Header Files\User Interface Headers</Filter>
@@ -569,88 +320,10 @@
     <ClInclude Include="User Interface\WTL Controls\PartialGroupBox.h">
       <Filter>Header Files\User Interface Headers\WTL Controls Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Multilanguage\Language Class.h">
-      <Filter>Header Files\Multilanguage Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Cheat Class.h">
-      <Filter>Header Files\N64 System Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\N64 Class.h">
-      <Filter>Header Files\N64 System Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\N64 Rom Class.h">
-      <Filter>Header Files\N64 System Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\N64 Types.h">
-      <Filter>Header Files\N64 System Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Profiling Class.h">
-      <Filter>Header Files\N64 System Headers</Filter>
-    </ClInclude>
     <ClInclude Include="N64 System\Rom Information Class.h">
       <Filter>Header Files\N64 System Headers</Filter>
     </ClInclude>
-    <ClInclude Include="N64 System\Speed Limitor Class.h">
-      <Filter>Header Files\N64 System Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\System Globals.h">
-      <Filter>Header Files\N64 System Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Types.h">
-      <Filter>Header Files\N64 System Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Mips\Audio.h">
-      <Filter>Header Files\N64 System Headers\Mips Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Mips\Dma.h">
-      <Filter>Header Files\N64 System Headers\Mips Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Mips\Eeprom.h">
-      <Filter>Header Files\N64 System Headers\Mips Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Mips\FlashRam.h">
-      <Filter>Header Files\N64 System Headers\Mips Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Mips\Memory Class.h">
-      <Filter>Header Files\N64 System Headers\Mips Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Mips\Memory Labels Class.h">
-      <Filter>Header Files\N64 System Headers\Mips Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Mips\Memory Virtual Mem.h">
-      <Filter>Header Files\N64 System Headers\Mips Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Mips\Mempak.H">
-      <Filter>Header Files\N64 System Headers\Mips Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Mips\OpCode.h">
-      <Filter>Header Files\N64 System Headers\Mips Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Mips\Pif Ram.h">
-      <Filter>Header Files\N64 System Headers\Mips Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Mips\Register Class.h">
-      <Filter>Header Files\N64 System Headers\Mips Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Mips\Sram.h">
-      <Filter>Header Files\N64 System Headers\Mips Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Mips\System Events.h">
-      <Filter>Header Files\N64 System Headers\Mips Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Mips\System Timing.h">
-      <Filter>Header Files\N64 System Headers\Mips Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Mips\TLB Class.h">
-      <Filter>Header Files\N64 System Headers\Mips Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Mips\TranslateVaddr.h">
-      <Filter>Header Files\N64 System Headers\Mips Headers</Filter>
-    </ClInclude>
     <ClInclude Include="N64 System\C Core\Logging.h">
-      <Filter>Header Files\N64 System Headers\C Core Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\C Core\r4300i Commands.h">
       <Filter>Header Files\N64 System Headers\C Core Headers</Filter>
     </ClInclude>
     <ClInclude Include="N64 System\Debugger\Debugger - Memory Dump.h">
@@ -668,83 +341,8 @@
     <ClInclude Include="N64 System\Debugger\debugger.h">
       <Filter>Header Files\N64 System Headers\Debugger Headers</Filter>
     </ClInclude>
-    <ClInclude Include="N64 System\Recompiler\Code Block.h">
-      <Filter>Header Files\N64 System Headers\Recompiler Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Recompiler\Code Section.h">
-      <Filter>Header Files\N64 System Headers\Recompiler Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Recompiler\Delay Slot Map Class.h">
-      <Filter>Header Files\N64 System Headers\Recompiler Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Recompiler\Exit Info.h">
-      <Filter>Header Files\N64 System Headers\Recompiler Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Recompiler\Function Info.h">
-      <Filter>Header Files\N64 System Headers\Recompiler Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Recompiler\Function Map Class.h">
-      <Filter>Header Files\N64 System Headers\Recompiler Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Recompiler\Jump Info.h">
-      <Filter>Header Files\N64 System Headers\Recompiler Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Recompiler\Loop Analysis.h">
-      <Filter>Header Files\N64 System Headers\Recompiler Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Recompiler\Recompiler Class.h">
-      <Filter>Header Files\N64 System Headers\Recompiler Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Recompiler\Recompiler Memory.h">
-      <Filter>Header Files\N64 System Headers\Recompiler Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Recompiler\Recompiler Ops.h">
-      <Filter>Header Files\N64 System Headers\Recompiler Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Recompiler\Reg Info.h">
-      <Filter>Header Files\N64 System Headers\Recompiler Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Recompiler\Section Info.h">
-      <Filter>Header Files\N64 System Headers\Recompiler Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Recompiler\x86CodeLog.h">
-      <Filter>Header Files\N64 System Headers\Recompiler Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Recompiler\X86ops.h">
-      <Filter>Header Files\N64 System Headers\Recompiler Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Interpreter\Interpreter CPU.h">
-      <Filter>Header Files\N64 System Headers\Interpreter Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Interpreter\Interpreter Ops 32.h">
-      <Filter>Header Files\N64 System Headers\Interpreter Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Interpreter\Interpreter Ops.h">
-      <Filter>Header Files\N64 System Headers\Interpreter Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Plugins\Audio Plugin.h">
-      <Filter>Header Files\Plugin Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Plugins\Controller Plugin.h">
-      <Filter>Header Files\Plugin Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Plugins\GFX plugin.h">
-      <Filter>Header Files\Plugin Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Plugins\Plugin Class.h">
-      <Filter>Header Files\Plugin Headers</Filter>
-    </ClInclude>
     <ClInclude Include="Plugins\Plugin List.h">
       <Filter>Header Files\Plugin Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Plugins\RSP Plugin.h">
-      <Filter>Header Files\Plugin Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="3rd Party\7zip.h">
-      <Filter>Header Files\3rd Party Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="3rd Party\zip.h">
-      <Filter>Header Files\3rd Party Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\3rd Party\zlib\zconf.h">
       <Filter>Header Files\3rd Party Headers\Zlib Headers</Filter>
@@ -757,15 +355,6 @@
     </ClInclude>
     <ClInclude Include="..\3rd Party\zlib\contrib\minizip\zip.h">
       <Filter>Header Files\3rd Party Headers\Zlib Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Plugins\Plugin Base.h">
-      <Filter>Header Files\Plugin Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Version.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="N64 System\Mips\Rumblepak.h">
-      <Filter>Source Files\N64 System Source\Mips Source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

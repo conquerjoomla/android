@@ -10,7 +10,7 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "Frame Per Second Class.h"
-#include <Project64-core/N64 System/N64 Types.h>
+#include <Project64-core\N64 System\N64 Types.h>
 #include <Windows.h>
 
 CFramePerSecond::CFramePerSecond()

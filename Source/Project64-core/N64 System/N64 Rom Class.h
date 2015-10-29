@@ -10,7 +10,7 @@
 ****************************************************************************/
 #pragma once
 
-#include <Project64-core/N64 System/N64 Types.h>
+#include <Project64-core\N64 System\N64 Types.h>
 #include <Project64-core/Settings/Debug Settings.h>
 
 class CN64Rom :
