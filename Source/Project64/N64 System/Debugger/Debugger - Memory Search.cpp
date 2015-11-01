@@ -10,7 +10,6 @@
 ****************************************************************************/
 #include "stdafx.h"
 
-#ifdef WINDOWS_UI
 #include "Debugger UI.h"
 
 #ifdef tofix
@@ -797,4 +796,3 @@ bool CDebugMemorySearch::SearchForValue(DWORD Value, MemorySize Size, DWORD &Sta
 	}
 	return false;
 }
-#endif

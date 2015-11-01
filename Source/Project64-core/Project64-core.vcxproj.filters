@@ -67,6 +67,12 @@
     <Filter Include="Header Files\3rd Party">
       <UniqueIdentifier>{d92afe8c-f660-4a4d-b5bc-7785de1f14d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\3rd Party\Zlib">
+      <UniqueIdentifier>{1478740a-b66b-41bd-833c-917c0cb85047}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\3rd Party\ZLib">
+      <UniqueIdentifier>{38964c77-041e-44e5-9177-c00d82a1add5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -278,6 +284,15 @@
     </ClCompile>
     <ClCompile Include="N64 System\Recompiler\Section Info.cpp">
       <Filter>Source Files\N64 System\Recompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rd Party\zlib\contrib\minizip\unzip.c">
+      <Filter>Source Files\3rd Party\ZLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rd Party\zlib\contrib\minizip\zip.c">
+      <Filter>Source Files\3rd Party\ZLib</Filter>
+    </ClCompile>
+    <ClCompile Include="Emulation Thread.cpp">
+      <Filter>Source Files\N64 System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -532,6 +547,24 @@
     </ClInclude>
     <ClInclude Include="N64 System\Recompiler\Section Info.h">
       <Filter>Header Files\N64 System\Recompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rd Party\zlib\zconf.h">
+      <Filter>Header Files\3rd Party\Zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rd Party\zlib\zlib.h">
+      <Filter>Header Files\3rd Party\Zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rd Party\zlib\contrib\minizip\unzip.h">
+      <Filter>Header Files\3rd Party\Zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rd Party\zlib\contrib\minizip\zip.h">
+      <Filter>Header Files\3rd Party\Zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception Handler.h">
+      <Filter>Header Files\N64 System</Filter>
+    </ClInclude>
+    <ClInclude Include="Emulation Thread.h">
+      <Filter>Header Files\N64 System</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

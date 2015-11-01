@@ -26,12 +26,6 @@
     <Filter Include="Source Files\Plugin Source">
       <UniqueIdentifier>{242ae4a5-b150-44e6-b31c-027acd6d38b0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\3rd Party Source">
-      <UniqueIdentifier>{0b08dc3f-d3a6-453b-98ab-169c510f34a5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\3rd Party Source\ZLib Source">
-      <UniqueIdentifier>{547023e2-7478-40d0-9123-eef7659a97ab}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{1e3eb4f7-a0b1-4d09-9e50-b5c699f24050}</UniqueIdentifier>
       <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
@@ -63,12 +57,6 @@
     </Filter>
     <Filter Include="Header Files\Plugin Headers">
       <UniqueIdentifier>{93ec15cf-1fb2-4095-ae07-95128a67d3df}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\3rd Party Headers">
-      <UniqueIdentifier>{21f6da31-289d-4d03-80bb-b77fe60355d7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\3rd Party Headers\Zlib Headers">
-      <UniqueIdentifier>{ef4a164b-c5ed-4469-a0e2-4eb21f800b11}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Multilanguage">
       <UniqueIdentifier>{36977908-4b77-472f-b5ec-7afb609c8c1f}</UniqueIdentifier>
@@ -170,12 +158,6 @@
     </ClCompile>
     <ClCompile Include="Plugins\Plugin List.cpp">
       <Filter>Source Files\Plugin Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\3rd Party\zlib\contrib\minizip\unzip.c">
-      <Filter>Source Files\3rd Party Source\ZLib Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\3rd Party\zlib\contrib\minizip\zip.c">
-      <Filter>Source Files\3rd Party Source\ZLib Source</Filter>
     </ClCompile>
     <ClCompile Include="Multilanguage\LanguageSelector.cpp">
       <Filter>Source Files\Multilanguage</Filter>
@@ -340,18 +322,6 @@
     </ClInclude>
     <ClInclude Include="Plugins\Plugin List.h">
       <Filter>Header Files\Plugin Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\3rd Party\zlib\zconf.h">
-      <Filter>Header Files\3rd Party Headers\Zlib Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\3rd Party\zlib\zlib.h">
-      <Filter>Header Files\3rd Party Headers\Zlib Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\3rd Party\zlib\contrib\minizip\unzip.h">
-      <Filter>Header Files\3rd Party Headers\Zlib Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\3rd Party\zlib\contrib\minizip\zip.h">
-      <Filter>Header Files\3rd Party Headers\Zlib Headers</Filter>
     </ClInclude>
     <ClInclude Include="Multilanguage\LanguageSelector.h">
       <Filter>Header Files\Multilanguage</Filter>

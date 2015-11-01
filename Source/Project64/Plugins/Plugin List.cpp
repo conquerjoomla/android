@@ -99,7 +99,7 @@ void CPluginList::AddPluginFromDir(CPath Dir)
 			}
 
 			Plugin.FullPath = Dir;
-			Plugin.FileName = ((stdstr &)Dir).substr(((stdstr &)m_PluginDir).length());
+			Plugin.FileName = stdstr((const char *)Dir).substr(strlen(m_PluginDir));
 
 			if (GetProcAddress(hLib, "DllAbout") != NULL)
 			{

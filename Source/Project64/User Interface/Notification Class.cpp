@@ -1,18 +1,18 @@
 #include "stdafx.h"
 #include <time.h>
 
-CNotificationImp & Notify ( void )
+CNotificationImp & Notify(void)
 {
 	static CNotificationImp g_Notify;
 	return g_Notify;
 }
 
 CNotificationImp::CNotificationImp() :
-	m_hWnd(NULL), 
-	m_gfxPlugin(NULL),
-	m_NextMsg(0)
+m_hWnd(NULL),
+m_gfxPlugin(NULL),
+m_NextMsg(0)
 {
-	 _tzset();
+	_tzset();
 }
 
 void CNotificationImp::AppInitDone(void)
@@ -20,12 +20,12 @@ void CNotificationImp::AppInitDone(void)
 	CNotificationSettings::RegisterNotifications();
 }
 
-void CNotificationImp::SetMainWindow  ( CMainGui * Gui ) 
+void CNotificationImp::SetMainWindow(CMainGui * Gui)
 {
 	m_hWnd = Gui;
 }
 
-void CNotificationImp::WindowMode ( void ) const
+void CNotificationImp::WindowMode(void) const
 {
 	static bool InsideFunc = false;
 	if (InsideFunc)
@@ -57,16 +57,16 @@ void CNotificationImp::DisplayError(const wchar_t * Message) const
 {
 	if (this == NULL) { return; }
 
-    stdstr TraceMessage;
+	stdstr TraceMessage;
 	TraceMessage.FromUTF16(Message);
-	WriteTrace(TraceError,TraceMessage.c_str());
+	WriteTrace(TraceError, TraceMessage.c_str());
 	WindowMode();
 
 	HWND Parent = NULL;
 	if (m_hWnd)
-    { 
-        Parent = m_hWnd->GetHandle(); 
-    }
+	{
+		Parent = reinterpret_cast<HWND>(m_hWnd->GetWindowHandle());
+	}
 	MessageBoxW(Parent, Message, GS(MSG_MSGBOX_TITLE), MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
 }
 
@@ -94,57 +94,35 @@ void CNotificationImp::DisplayMessage(int DisplayTime, const wchar_t * Message) 
 		{
 			m_NextMsg = 0;
 		}
-	}	
-	
+	}
+
 	if (InFullScreen())
 	{
 		if (m_gfxPlugin && m_gfxPlugin->DrawStatus)
 		{
-			WriteTrace(TraceGfxPlugin,__FUNCTION__ ": DrawStatus - Starting");
+			WriteTrace(TraceGfxPlugin, __FUNCTION__ ": DrawStatus - Starting");
 			stdstr PluginMessage;
 			PluginMessage.FromUTF16(Message);
 			m_gfxPlugin->DrawStatus(PluginMessage.c_str(), FALSE);
-			WriteTrace(TraceGfxPlugin,__FUNCTION__ ": DrawStatus - Done");
+			WriteTrace(TraceGfxPlugin, __FUNCTION__ ": DrawStatus - Done");
 		}
-	} 
-    else 
-    {
-#if defined(WINDOWS_UI)
+	}
+	else
+	{
 		m_hWnd->SetStatusText(0, Message);
-#else
-		g_Notify -> BreakPoint(__FILEW__, __LINE__);
-#endif
 	}
 }
 
-void CNotificationImp::DisplayMessage2 ( const wchar_t * Message ) const 
+void CNotificationImp::DisplayMessage2(const wchar_t * Message) const
 {
 	if (!m_hWnd) { return; }
 
-#if defined(WINDOWS_UI)
 	m_hWnd->SetStatusText(1, Message);
-#else
-    g_Notify -> BreakPoint(__FILEW__, __LINE__);
-#endif
 }
 
-void CNotificationImp::SetGfxPlugin( CGfxPlugin * Plugin )
+void CNotificationImp::SetGfxPlugin(CGfxPlugin * Plugin)
 {
 	m_gfxPlugin = Plugin;
-}
-
-void CNotificationImp::SetWindowCaption (const wchar_t * Caption)
-{
-	static const size_t TITLE_SIZE = 256;
-	wchar_t WinTitle[TITLE_SIZE];
-
-	_snwprintf(WinTitle, TITLE_SIZE, L"%s - %s", Caption, g_Settings->LoadStringVal(Setting_ApplicationName).ToUTF16().c_str());
-	WinTitle[TITLE_SIZE - 1] = 0;
-#if defined(WINDOWS_UI)
-	m_hWnd->Caption(WinTitle);
-#else
-	g_Notify -> BreakPoint(__FILEW__, __LINE__);
-#endif
 }
 
 void CNotificationImp::FatalError(LanguageStringID StringID) const
@@ -157,12 +135,12 @@ void CNotificationImp::FatalError(const wchar_t * Message) const
 	WindowMode();
 
 	HWND Parent = NULL;
-	if (m_hWnd) { Parent = reinterpret_cast<HWND>(m_hWnd->GetHandle()); }
+	if (m_hWnd) { Parent = reinterpret_cast<HWND>(m_hWnd->GetWindowHandle()); }
 	MessageBoxW(Parent, Message, L"Error", MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
 	ExitThread(0);
 }
 
-void CNotificationImp::AddRecentDir ( const char * RomDir ) 
+void CNotificationImp::AddRecentDir(const char * RomDir)
 {
 	//Validate the passed string
 	if (HIWORD(RomDir) == NULL) { return; }
@@ -171,10 +149,10 @@ void CNotificationImp::AddRecentDir ( const char * RomDir )
 	size_t MaxRememberedDirs = g_Settings->LoadDword(Directory_RecentGameDirCount);
 	strlist RecentDirs;
 	size_t i;
-	for (i = 0; i < MaxRememberedDirs; i ++ ) 
+	for (i = 0; i < MaxRememberedDirs; i++)
 	{
-		stdstr RecentDir = g_Settings->LoadStringIndex(Directory_RecentGameDirIndex,i);
-		if (RecentDir.empty()) 
+		stdstr RecentDir = g_Settings->LoadStringIndex(Directory_RecentGameDirIndex, i);
+		if (RecentDir.empty())
 		{
 			break;
 		}
@@ -185,7 +163,7 @@ void CNotificationImp::AddRecentDir ( const char * RomDir )
 	strlist::iterator iter;
 	for (iter = RecentDirs.begin(); iter != RecentDirs.end(); iter++)
 	{
-		if (_stricmp(RomDir,iter->c_str()) != 0)
+		if (_stricmp(RomDir, iter->c_str()) != 0)
 		{
 			continue;
 		}
@@ -197,138 +175,80 @@ void CNotificationImp::AddRecentDir ( const char * RomDir )
 	{
 		RecentDirs.pop_back();
 	}
-	
+
 	for (i = 0, iter = RecentDirs.begin(); iter != RecentDirs.end(); iter++, i++)
 	{
-		g_Settings->SaveStringIndex(Directory_RecentGameDirIndex,i,*iter);
+		g_Settings->SaveStringIndex(Directory_RecentGameDirIndex, i, *iter);
 	}
 }
 
-void CNotificationImp::AddRecentRom ( const char * ImagePath ) 
-{
-	if (HIWORD(ImagePath) == NULL) { return; }
-
-	//Get Information about the stored rom list
-	size_t MaxRememberedFiles = g_Settings->LoadDword(File_RecentGameFileCount);
-	strlist RecentGames;
-	size_t i;
-	for (i = 0; i < MaxRememberedFiles; i ++ ) 
-	{
-		stdstr RecentGame = g_Settings->LoadStringIndex(File_RecentGameFileIndex,i);
-		if (RecentGame.empty()) 
-		{
-			break;
-		}
-		RecentGames.push_back(RecentGame);
-	}
-
-	//See if the dir is already in the list if so then move it to the top of the list
-	strlist::iterator iter;
-	for (iter = RecentGames.begin(); iter != RecentGames.end(); iter++)
-	{
-		if (_stricmp(ImagePath,iter->c_str()) != 0)
-		{
-			continue;
-		}
-		RecentGames.erase(iter);
-		break;
-	}
-	RecentGames.push_front(ImagePath);
-	if (RecentGames.size() > MaxRememberedFiles)
-	{
-		RecentGames.pop_back();
-	}
-	
-	for (i = 0, iter = RecentGames.begin(); iter != RecentGames.end(); iter++, i++)
-	{
-		g_Settings->SaveStringIndex(File_RecentGameFileIndex,i,*iter);
-	}
-}
-
-void CNotificationImp::RefreshMenu ( void )
+void CNotificationImp::RefreshMenu(void)
 {
 	if (m_hWnd == NULL) { return; }
 
-#if defined(WINDOWS_UI)
 	m_hWnd->RefreshMenu();
-#else
-	g_Notify -> BreakPoint(__FILEW__, __LINE__);
-#endif
 }
 
-void CNotificationImp::HideRomBrowser ( void )
+void CNotificationImp::HideRomBrowser(void)
 {
 	if (m_hWnd == NULL) { return; }
 	m_hWnd->HideRomList();
 }
 
-void CNotificationImp::ShowRomBrowser ( void )
+void CNotificationImp::ShowRomBrowser(void)
 {
 	if (m_hWnd == NULL) { return; }
 	if (g_Settings->LoadDword(RomBrowser_Enabled))
-    {
+	{
 		//Display the rom browser
 		m_hWnd->ShowRomList();
 		m_hWnd->HighLightLastRom();
 	}
 }
 
-void CNotificationImp::BringToTop ( void )
+void CNotificationImp::BringToTop(void)
 {
 	if (m_hWnd == NULL) { return; }
 
-#if defined(WINDOWS_UI)
 	m_hWnd->BringToTop();
-#else
-	g_Notify -> BreakPoint(__FILEW__, __LINE__);
-#endif
 }
 
-void CNotificationImp::MakeWindowOnTop ( bool OnTop )
+void CNotificationImp::MakeWindowOnTop(bool OnTop)
 {
 	if (m_hWnd == NULL) { return; }
 
-#if defined(WINDOWS_UI)
 	m_hWnd->MakeWindowOnTop(OnTop);
-#else
-	g_Notify -> BreakPoint(__FILEW__, __LINE__);
-#endif
 }
 
-void CNotificationImp::ChangeFullScreen ( void ) const
+void CNotificationImp::ChangeFullScreen(void) const
 {
 	if (m_hWnd == NULL) { return; }
-	SendMessage((HWND)(m_hWnd->GetHandle()),WM_COMMAND,MAKELPARAM(ID_OPTIONS_FULLSCREEN2,false),0);
+	SendMessage((HWND)(m_hWnd->GetWindowHandle()), WM_COMMAND, MAKELPARAM(ID_OPTIONS_FULLSCREEN2, false), 0);
 }
 
-bool CNotificationImp::ProcessGuiMessages ( void ) const
+bool CNotificationImp::ProcessGuiMessages(void) const
 {
 	if (m_hWnd == NULL) { return false; }
 
-#if defined(WINDOWS_UI)
 	return m_hWnd->ProcessGuiMessages();
-#else
-	g_Notify -> BreakPoint(__FILEW__, __LINE__);
-	return false;
-#endif
 }
 
-void CNotificationImp::BreakPoint ( const wchar_t * FileName, const int LineNumber )
+void CNotificationImp::BreakPoint(const wchar_t * FileName, const int LineNumber)
 {
 	if (g_Settings->LoadBool(Debugger_Enabled))
 	{
-		DisplayError(stdstr_f("Break point found at\n%s\n%d",FileName, LineNumber).ToUTF16().c_str());
+		DisplayError(stdstr_f("Break point found at\n%ws\n%d", FileName, LineNumber).ToUTF16().c_str());
 		if (IsDebuggerPresent() != 0)
 		{
 			DebugBreak();
 		}
-        else 
-        {
+		else
+		{
 			g_BaseSystem->CloseCpu();
 		}
 	}
-    else 
-    {
+	else
+	{
 		DisplayError(L"Fatal Error: Stopping emulation");
 		g_BaseSystem->CloseCpu();
 	}

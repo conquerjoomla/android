@@ -10,7 +10,6 @@
 ****************************************************************************/
 #include "stdafx.h"
 
-#ifdef WINDOWS_UI
 #include "Debugger UI.h"
 
 CPj64Module _Module;
@@ -132,5 +131,4 @@ void CDebugger::Debug_ShowMemorySearch()
 		m_MemorySearch->ShowWindow();
 	}
 }
-#endif
 #endif

@@ -25,31 +25,26 @@ typedef const char *     LPCSTR;
 
 struct RECT_STRUCT
 {
-    long left;
-    long top;
-    long right;
-    long bottom;
+	long left;
+	long top;
+	long right;
+	long bottom;
 };
 
 struct WINDOWS_PAINTSTRUCT {
-    HDC         hdc;
-    int         fErase;
-    RECT_STRUCT rcPaint;
-    int         fRestore;
-    int         fIncUpdate;
-    BYTE        rgbReserved[32];
+	HDC         hdc;
+	int         fErase;
+	RECT_STRUCT rcPaint;
+	int         fRestore;
+	int         fIncUpdate;
+	BYTE        rgbReserved[32];
 };
 
 #define CALLBACK    __stdcall
 
 class CN64System;
 
-#define WINDOWS_UI
-// Remove this to test compilation outside of the Windows ATL environment.
-
-#ifdef WINDOWS_UI
 #include <WTL App.h>
-#endif
 #include <User Interface/MenuShortCuts.h>
 
 #include ".\\User Interface\\Rom Browser.h"
@@ -59,6 +54,4 @@ class CN64System;
 #include ".\\User Interface\\Notification Class.h"
 #include <Project64-core\N64 System\Frame Per Second Class.h>
 #include ".\\User Interface\\resource.h"
-#ifdef WINDOWS_UI
 #include ".\\User Interface\\Settings Config.h"
-#endif

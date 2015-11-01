@@ -1,19 +1,18 @@
 #include "stdafx.h"
 
-#ifdef WINDOWS_UI
 #include "Settings Config.h"
 #include "Settings/Settings Page.h"
 #include <Project64-core/Settings/SettingType/SettingsType-Application.h>
 
-CSettingConfig::CSettingConfig(bool bJustGameSetting /* = false */)	:
-	m_CurrentPage(NULL),
-	m_GeneralOptionsPage(NULL),
-	m_AdvancedPage(NULL),
-	m_GameConfig(bJustGameSetting)
+CSettingConfig::CSettingConfig(bool bJustGameSetting /* = false */) :
+m_CurrentPage(NULL),
+m_GeneralOptionsPage(NULL),
+m_AdvancedPage(NULL),
+m_GameConfig(bJustGameSetting)
 {
 }
 
-CSettingConfig::~CSettingConfig ()
+CSettingConfig::~CSettingConfig()
 {
 	for (SETTING_SECTIONS::const_iterator iter = m_Sections.begin(); iter != m_Sections.end(); iter++)
 	{
@@ -26,7 +25,7 @@ void CSettingConfig::Display(void * ParentWindow)
 {
 	if (g_BaseSystem)
 	{
-		g_BaseSystem->ExternalEvent(SysEvent_PauseCPU_Settings); 
+		g_BaseSystem->ExternalEvent(SysEvent_PauseCPU_Settings);
 	}
 
 	BOOL result = m_thunk.Init(NULL, NULL);
@@ -38,24 +37,24 @@ void CSettingConfig::Display(void * ParentWindow)
 #endif //_DEBUG
 		::DialogBoxParamW(_AtlBaseModule.GetResourceInstance(), MAKEINTRESOURCEW(IDD), (HWND)ParentWindow, StartDialogProc, NULL);
 	}
- 
+
 	if (g_BaseSystem)
 	{
-		g_BaseSystem->ExternalEvent(SysEvent_ResumeCPU_Settings); 
+		g_BaseSystem->ExternalEvent(SysEvent_ResumeCPU_Settings);
 	}
 }
 
-void CSettingConfig::UpdateAdvanced ( bool AdvancedMode )
+void CSettingConfig::UpdateAdvanced(bool AdvancedMode)
 {
-	UpdateAdvanced(AdvancedMode,m_PagesTreeList.GetRootItem());
+	UpdateAdvanced(AdvancedMode, m_PagesTreeList.GetRootItem());
 	BoldChangedPages(m_PagesTreeList.GetRootItem());
 }
 
-bool CSettingConfig::UpdateAdvanced ( bool AdvancedMode, HTREEITEM hItem )
+bool CSettingConfig::UpdateAdvanced(bool AdvancedMode, HTREEITEM hItem)
 {
 	while (hItem)
 	{
-		CSettingsPage * Page = (CSettingsPage * )m_PagesTreeList.GetItemData(hItem);
+		CSettingsPage * Page = (CSettingsPage *)m_PagesTreeList.GetItemData(hItem);
 		if (!AdvancedMode && Page == m_AdvancedPage)
 		{
 			m_PagesTreeList.DeleteItem(hItem);
@@ -63,10 +62,10 @@ bool CSettingConfig::UpdateAdvanced ( bool AdvancedMode, HTREEITEM hItem )
 		}
 		if (AdvancedMode && Page == m_GeneralOptionsPage)
 		{
-			m_PagesTreeList.InsertItemW(TVIF_TEXT | TVIF_PARAM,GS(m_AdvancedPage->PageTitle()),0,0,0,0,(ULONG)m_AdvancedPage,hItem,TVI_FIRST);
+			m_PagesTreeList.InsertItemW(TVIF_TEXT | TVIF_PARAM, GS(m_AdvancedPage->PageTitle()), 0, 0, 0, 0, (ULONG)m_AdvancedPage, hItem, TVI_FIRST);
 			return true;
 		}
-		if (UpdateAdvanced(AdvancedMode,m_PagesTreeList.GetChildItem(hItem)))
+		if (UpdateAdvanced(AdvancedMode, m_PagesTreeList.GetChildItem(hItem)))
 		{
 			return true;
 		}
@@ -81,12 +80,12 @@ LRESULT	CSettingConfig::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*
 
 	if (!GameIni.empty())
 	{
-		ConfigRomTitle.Format("Config: %s",g_Settings->LoadStringVal(Game_GoodName).c_str());
+		ConfigRomTitle.Format("Config: %s", g_Settings->LoadStringVal(Game_GoodName).c_str());
 	}
 
 	RECT rcSettingInfo;
-	::GetWindowRect(GetDlgItem(IDC_SETTING_INFO),&rcSettingInfo);
-	::MapWindowPoints(NULL,m_hWnd,(LPPOINT)&rcSettingInfo,2);
+	::GetWindowRect(GetDlgItem(IDC_SETTING_INFO), &rcSettingInfo);
+	::MapWindowPoints(NULL, m_hWnd, (LPPOINT)&rcSettingInfo, 2);
 
 	CConfigSettingSection * SettingsSection;
 
@@ -101,50 +100,51 @@ LRESULT	CSettingConfig::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*
 	{
 		if (g_Settings->LoadBool(Setting_RdbEditor))
 		{
-			SetWindowText(stdstr_f("%s ** RDB Edit Mode **",ConfigRomTitle.c_str()).c_str());
-		} 
-		else 
+			SetWindowText(stdstr_f("%s ** RDB Edit Mode **", ConfigRomTitle.c_str()).c_str());
+		}
+		else
 		{
 			SetWindowText(ConfigRomTitle.c_str());
-		}		
+		}
 	}
-	else 
+	else
 	{
 		if (g_Settings->LoadBool(Setting_RdbEditor))
 		{
-			SetWindowText(stdstr_f("%s ** RDB Edit Mode **",GS(OPTIONS_TITLE)).c_str());
-		} else {
+			SetWindowText(stdstr_f("%s ** RDB Edit Mode **", GS(OPTIONS_TITLE)).c_str());
+		}
+		else {
 			::SetWindowTextW(m_hWnd, GS(OPTIONS_TITLE));
 		}
 
 		if (g_Settings->LoadBool(Setting_PluginPageFirst))
 		{
 			SettingsSection = new CConfigSettingSection(GS(TAB_PLUGIN));
-			SettingsSection->AddPage(new COptionPluginPage(this->m_hWnd,rcSettingInfo ));
+			SettingsSection->AddPage(new COptionPluginPage(this->m_hWnd, rcSettingInfo));
 			m_Sections.push_back(SettingsSection);
 		}
 
-		m_GeneralOptionsPage = new CGeneralOptionsPage(this,this->m_hWnd,rcSettingInfo );
-		m_AdvancedPage = new CAdvancedOptionsPage(this->m_hWnd,rcSettingInfo );
+		m_GeneralOptionsPage = new CGeneralOptionsPage(this, this->m_hWnd, rcSettingInfo);
+		m_AdvancedPage = new CAdvancedOptionsPage(this->m_hWnd, rcSettingInfo);
 
 		SettingsSection = new CConfigSettingSection(GS(TAB_OPTIONS));
 		SettingsSection->AddPage(m_GeneralOptionsPage);
 		SettingsSection->AddPage(m_AdvancedPage);
-		SettingsSection->AddPage(new COptionsDirectoriesPage(this->m_hWnd,rcSettingInfo ));
+		SettingsSection->AddPage(new COptionsDirectoriesPage(this->m_hWnd, rcSettingInfo));
 		m_Sections.push_back(SettingsSection);
 
 		SettingsSection = new CConfigSettingSection(GS(TAB_ROMSELECTION));
-		SettingsSection->AddPage(new COptionsGameBrowserPage(this->m_hWnd,rcSettingInfo ));
+		SettingsSection->AddPage(new COptionsGameBrowserPage(this->m_hWnd, rcSettingInfo));
 		m_Sections.push_back(SettingsSection);
 
 		SettingsSection = new CConfigSettingSection(GS(TAB_SHORTCUTS));
-		SettingsSection->AddPage(new COptionsShortCutsPage(this->m_hWnd,rcSettingInfo ));
+		SettingsSection->AddPage(new COptionsShortCutsPage(this->m_hWnd, rcSettingInfo));
 		m_Sections.push_back(SettingsSection);
 
 		if (!g_Settings->LoadBool(Setting_PluginPageFirst))
 		{
 			SettingsSection = new CConfigSettingSection(GS(TAB_PLUGIN));
-			SettingsSection->AddPage(new COptionPluginPage(this->m_hWnd,rcSettingInfo ));
+			SettingsSection->AddPage(new COptionPluginPage(this->m_hWnd, rcSettingInfo));
 			m_Sections.push_back(SettingsSection);
 		}
 	}
@@ -152,18 +152,17 @@ LRESULT	CSettingConfig::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*
 	//Game Settings
 	if (!GameIni.empty())
 	{
-        CConfigSettingSection * GameSettings = new CConfigSettingSection(ConfigRomTitle.ToUTF16().c_str());
-		GameSettings->AddPage(new CGameGeneralPage(this->m_hWnd,rcSettingInfo ));
-		GameSettings->AddPage(new CGameRecompilePage(this->m_hWnd,rcSettingInfo ));
-		GameSettings->AddPage(new CGamePluginPage(this->m_hWnd,rcSettingInfo ));
+		CConfigSettingSection * GameSettings = new CConfigSettingSection(ConfigRomTitle.ToUTF16().c_str());
+		GameSettings->AddPage(new CGameGeneralPage(this->m_hWnd, rcSettingInfo));
+		GameSettings->AddPage(new CGameRecompilePage(this->m_hWnd, rcSettingInfo));
+		GameSettings->AddPage(new CGamePluginPage(this->m_hWnd, rcSettingInfo));
 		if (g_Settings->LoadBool(Setting_RdbEditor))
 		{
-			GameSettings->AddPage(new CGameStatusPage(this->m_hWnd,rcSettingInfo ));
+			GameSettings->AddPage(new CGameStatusPage(this->m_hWnd, rcSettingInfo));
 		}
 		m_Sections.push_back(GameSettings);
 	}
 
-	
 	m_PagesTreeList.Attach(GetDlgItem(IDC_PAGELIST));
 
 	bool bFirstItem = true;
@@ -171,8 +170,8 @@ LRESULT	CSettingConfig::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*
 	for (SETTING_SECTIONS::const_iterator iter = m_Sections.begin(); iter != m_Sections.end(); iter++)
 	{
 		CConfigSettingSection * Section = *iter;
-		
-		HTREEITEM hSectionItem = NULL;	
+
+		HTREEITEM hSectionItem = NULL;
 
 		for (size_t i = 0; i < Section->GetPageCount(); i++)
 		{
@@ -183,14 +182,14 @@ LRESULT	CSettingConfig::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*
 			}
 			if (i == 0)
 			{
-				hSectionItem = m_PagesTreeList.InsertItemW(TVIF_TEXT | TVIF_PARAM,Section->GetPageTitle(),0,0,0,0,(ULONG)Page,TVI_ROOT,TVI_LAST);
+				hSectionItem = m_PagesTreeList.InsertItemW(TVIF_TEXT | TVIF_PARAM, Section->GetPageTitle(), 0, 0, 0, 0, (ULONG)Page, TVI_ROOT, TVI_LAST);
 				continue;
 			}
 			if (hSectionItem == NULL)
 			{
 				continue;
 			}
-			m_PagesTreeList.InsertItemW(TVIF_TEXT | TVIF_PARAM,GS(Page->PageTitle()),0,0,0,0,(ULONG)Page,hSectionItem,TVI_LAST);
+			m_PagesTreeList.InsertItemW(TVIF_TEXT | TVIF_PARAM, GS(Page->PageTitle()), 0, 0, 0, 0, (ULONG)Page, hSectionItem, TVI_LAST);
 		}
 		if (bFirstItem && hSectionItem != NULL)
 		{
@@ -204,9 +203,9 @@ LRESULT	CSettingConfig::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*
 	return TRUE;
 }
 
-LRESULT CSettingConfig::OnClicked (WORD /*wNotifyCode*/, WORD wID, HWND , BOOL& /*bHandled*/)
+LRESULT CSettingConfig::OnClicked(WORD /*wNotifyCode*/, WORD wID, HWND, BOOL& /*bHandled*/)
 {
-	switch(wID)
+	switch (wID)
 	{
 	case IDAPPLY:
 		ApplySettings(true);
@@ -228,8 +227,8 @@ LRESULT CSettingConfig::OnClicked (WORD /*wNotifyCode*/, WORD wID, HWND , BOOL& 
 		for (SETTING_SECTIONS::const_iterator iter = m_Sections.begin(); iter != m_Sections.end(); iter++)
 		{
 			CConfigSettingSection * Section = *iter;
-			
-			for (size_t i = 0; i < Section->GetPageCount(); i++ )
+
+			for (size_t i = 0; i < Section->GetPageCount(); i++)
 			{
 				CSettingsPage * Page = Section->GetPage(i);
 				if (Page->EnableReset())
@@ -244,24 +243,24 @@ LRESULT CSettingConfig::OnClicked (WORD /*wNotifyCode*/, WORD wID, HWND , BOOL& 
 	return FALSE;
 }
 
-void CSettingConfig::ApplySettings( bool UpdateScreen )
+void CSettingConfig::ApplySettings(bool UpdateScreen)
 {
 	stdstr GameIni(g_Settings->LoadStringVal(Game_IniKey));
 
 	if (!GameIni.empty())
 	{
 		stdstr GoodName;
-		if (!g_Settings->LoadStringVal(Game_GoodName,GoodName))
+		if (!g_Settings->LoadStringVal(Game_GoodName, GoodName))
 		{
-			g_Settings->SaveString(Game_GoodName,GoodName);
+			g_Settings->SaveString(Game_GoodName, GoodName);
 		}
 	}
 
 	for (SETTING_SECTIONS::const_iterator iter = m_Sections.begin(); iter != m_Sections.end(); iter++)
 	{
 		CConfigSettingSection * Section = *iter;
-		
-		for (size_t i = 0; i < Section->GetPageCount(); i++ )
+
+		for (size_t i = 0; i < Section->GetPageCount(); i++)
 		{
 			CSettingsPage * Page = Section->GetPage(i);
 			Page->ApplySettings(UpdateScreen);
@@ -270,17 +269,16 @@ void CSettingConfig::ApplySettings( bool UpdateScreen )
 
 	if (UpdateScreen)
 	{
-		::EnableWindow(GetDlgItem(IDAPPLY),false);
+		::EnableWindow(GetDlgItem(IDAPPLY), false);
 		::EnableWindow(GetDlgItem(IDC_RESET_PAGE), m_CurrentPage->EnableReset());
 	}
-	
 
 	if (!g_Settings->LoadStringVal(Game_IniKey).empty())
 	{
 		stdstr GoodName = g_Settings->LoadStringVal(Rdb_GoodName);
 		if (GoodName.length() > 0)
 		{
-			g_Settings->SaveString(Game_GoodName,GoodName);
+			g_Settings->SaveString(Game_GoodName, GoodName);
 		}
 	}
 	CSettingTypeApplication::Flush();
@@ -289,9 +287,9 @@ void CSettingConfig::ApplySettings( bool UpdateScreen )
 LRESULT CSettingConfig::OnPageListItemChanged(NMHDR* /*phdr*/)
 {
 	HTREEITEM hItem = m_PagesTreeList.GetSelectedItem();
-	CSettingsPage * Page = (CSettingsPage * )m_PagesTreeList.GetItemData(hItem);
-	
-	if (Page) 
+	CSettingsPage * Page = (CSettingsPage *)m_PagesTreeList.GetItemData(hItem);
+
+	if (Page)
 	{
 		if (m_CurrentPage)
 		{
@@ -304,15 +302,15 @@ LRESULT CSettingConfig::OnPageListItemChanged(NMHDR* /*phdr*/)
 	return 0;   // retval ignored
 }
 
-LRESULT	CSettingConfig::OnSettingPageChanged ( UINT /*uMsg*/, WPARAM /*wPage*/, LPARAM /*lParam*/)
+LRESULT	CSettingConfig::OnSettingPageChanged(UINT /*uMsg*/, WPARAM /*wPage*/, LPARAM /*lParam*/)
 {
-	::EnableWindow(GetDlgItem(IDAPPLY),true);
+	::EnableWindow(GetDlgItem(IDAPPLY), true);
 	::EnableWindow(GetDlgItem(IDC_RESET_PAGE), m_CurrentPage->EnableReset());
 	BoldChangedPages(m_PagesTreeList.GetRootItem());
 	return 0;
 }
 
-void CSettingConfig::BoldChangedPages ( HTREEITEM hItem )
+void CSettingConfig::BoldChangedPages(HTREEITEM hItem)
 {
 	if (hItem == m_PagesTreeList.GetRootItem())
 	{
@@ -322,10 +320,10 @@ void CSettingConfig::BoldChangedPages ( HTREEITEM hItem )
 
 	while (hItem)
 	{
-		CSettingsPage * Page = (CSettingsPage * )m_PagesTreeList.GetItemData(hItem);
+		CSettingsPage * Page = (CSettingsPage *)m_PagesTreeList.GetItemData(hItem);
 		if (Page)
 		{
-			m_PagesTreeList.SetItemState(hItem,Page->EnableReset() ? TVIS_BOLD : 0,TVIS_BOLD);
+			m_PagesTreeList.SetItemState(hItem, Page->EnableReset() ? TVIS_BOLD : 0, TVIS_BOLD);
 			if (Page->EnableReset())
 			{
 				bEnableResetAll = true;
@@ -341,4 +339,3 @@ void CSettingConfig::BoldChangedPages ( HTREEITEM hItem )
 		::EnableWindow(GetDlgItem(IDC_RESET_ALL), true);
 	}
 }
-#endif

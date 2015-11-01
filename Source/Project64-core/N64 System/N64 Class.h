@@ -49,12 +49,6 @@ public:
 	CN64System(CPlugins * Plugins, bool SavesReadOnly);
 	virtual ~CN64System(void);
 
-	struct ThreadInfo
-	{
-		void * ThreadHandle;
-		uint32_t ThreadID;
-	};
-
 	CProfiling m_Profile;
 	CCheats    m_Cheats;
 	bool  m_EndEmulation;
@@ -67,7 +61,6 @@ public:
 	void   CloseCpu();
 	void   ExternalEvent(SystemEvent action); //covers gui interacting and timers etc..
 #ifdef tofix
-	stdstr ChooseFileToOpen ( HWND hParent );
 	void   DisplayRomInfo   ( HWND hParent );
 	void   SelectCheats     ( HWND hParent );
 #endif
@@ -113,8 +106,15 @@ private:
 	friend CSystemTimer;
 
 	//Used for loading and potentially executing the CPU in its own thread.
+	struct ThreadInfo
+	{
+		void * ThreadHandle;
+		uint32_t ThreadID;
+	};
+
 	static void StartEmulationThread(ThreadInfo * Info);
 	static bool EmulationStarting(void * hThread, uint32_t ThreadId);
+	static void StartEmulationThead();
 
 	void   ExecuteCPU();
 	void   RefreshScreen();
@@ -143,9 +143,6 @@ private:
 	CPlugins      * const m_Plugins;  //The plugin container
 	CN64System    * m_SyncCPU;
 	CPlugins      * m_SyncPlugins;
-#ifdef tofix
-	CMainGui      * m_SyncWindow;
-#endif
 	CMipsMemoryVM   m_MMU_VM;   //Memory of the n64
 	CTLB            m_TLB;
 	CRegisters      m_Reg;
@@ -161,13 +158,13 @@ private:
 	bool            m_bInitialized;
 	bool            m_RspBroke;
 	bool            m_DMAUsed;
-	uint32_t           m_Buttons[4];
+	uint32_t        m_Buttons[4];
 	bool            m_TestTimer;
-	uint32_t           m_NextInstruction;
-	uint32_t           m_JumpToLocation;
-	uint32_t           m_TLBLoadAddress;
-	uint32_t           m_TLBStoreAddress;
-	uint32_t           m_SyncCount;
+	uint32_t        m_NextInstruction;
+	uint32_t        m_JumpToLocation;
+	uint32_t        m_TLBLoadAddress;
+	uint32_t        m_TLBStoreAddress;
+	uint32_t        m_SyncCount;
 
 	//When Syncing cores this is the PC where it last Sync'ed correctly
 	uint32_t m_LastSuccessSyncPC[10];

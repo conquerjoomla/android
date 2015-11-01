@@ -74,12 +74,6 @@
     <ClCompile Include="N64 System\Debugger\Debugger.cpp" />
     <ClCompile Include="N64 System\Rom Information Class.cpp" />
     <ClCompile Include="Plugins\Plugin List.cpp" />
-    <ClCompile Include="..\3rd Party\zlib\contrib\minizip\unzip.c">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\3rd Party\zlib\contrib\minizip\zip.c">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="User Interface\Bitmaps\AboutScreenBottom.bmp" />
@@ -142,10 +136,6 @@
     <ClInclude Include="N64 System\Debugger\Debugger - View Memory.h" />
     <ClInclude Include="N64 System\Debugger\debugger.h" />
     <ClInclude Include="Plugins\Plugin List.h" />
-    <ClInclude Include="..\3rd Party\zlib\zconf.h" />
-    <ClInclude Include="..\3rd Party\zlib\zlib.h" />
-    <ClInclude Include="..\3rd Party\zlib\contrib\minizip\unzip.h" />
-    <ClInclude Include="..\3rd Party\zlib\contrib\minizip\zip.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\3rd Party\7zip\7zip.vcxproj">

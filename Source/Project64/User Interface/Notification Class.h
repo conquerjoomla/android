@@ -15,17 +15,17 @@
 
 class CSettings;
 
-class CNotificationImp : 
+class CNotificationImp :
 	public CNotification,
 	CNotificationSettings
 {
 public:
-		CNotificationImp(void);
-	
-	void AppInitDone ( void );
+	CNotificationImp(void);
+
+	void AppInitDone(void);
 
 	// Make sure we are not in full screen
-	void WindowMode       ( void ) const;
+	void WindowMode(void) const;
 
 	//Error Messages
 	virtual void DisplayError(const wchar_t * Message) const;
@@ -33,7 +33,7 @@ public:
 
 	virtual void FatalError(const wchar_t * Message) const;
 	virtual void FatalError(LanguageStringID StringID) const;
-		
+
 	//User Feedback
 	virtual void DisplayMessage(int DisplayTime, const wchar_t * Message) const;
 	virtual void DisplayMessage(int DisplayTime, LanguageStringID StringID) const;
@@ -41,22 +41,19 @@ public:
 	virtual void DisplayMessage2(const wchar_t * Message) const;
 	virtual void BreakPoint(const wchar_t * FileName, const int LineNumber);
 
-	void SetWindowCaption ( const wchar_t * Caption );
-	
 	//Remember roms loaded and Rom Dir selected
-	void AddRecentDir     ( const char * RomDir );
-	void AddRecentRom     ( const char * ImagePath );
+	void AddRecentDir(const char * RomDir);
 
 	//Gui for responses
-	void SetMainWindow      ( CMainGui * Gui );
-	void RefreshMenu        ( void );
-	void HideRomBrowser     ( void );
-	void ShowRomBrowser     ( void );
-	void MakeWindowOnTop    ( bool OnTop );
-	void BringToTop         ( void );
-	bool ProcessGuiMessages ( void ) const;
-	void ChangeFullScreen   ( void ) const;
-	void SetGfxPlugin       ( CGfxPlugin * Plugin );
+	void SetMainWindow(CMainGui * Gui);
+	void RefreshMenu(void);
+	void HideRomBrowser(void);
+	void ShowRomBrowser(void);
+	void MakeWindowOnTop(bool OnTop);
+	void BringToTop(void);
+	bool ProcessGuiMessages(void) const;
+	void ChangeFullScreen(void) const;
+	void SetGfxPlugin(CGfxPlugin * Plugin);
 
 private:
 	CNotificationImp(const CNotificationImp&);				// Disable copy constructor
