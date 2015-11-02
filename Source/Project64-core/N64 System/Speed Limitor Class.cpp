@@ -10,6 +10,7 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "Speed Limitor Class.h"
+#include <common/util.h>
 #include <Windows.h>
 #include <Mmsystem.h>
 
@@ -17,107 +18,107 @@
 
 CSpeedLimitor::CSpeedLimitor()
 {
-	m_Frames = 0;
-	m_LastTime = 0;
-	m_Speed = 60;
-	m_BaseSpeed = 60;
-	m_Ratio = 1000.0F / (float)m_Speed;
+    m_Frames = 0;
+    m_LastTime = 0;
+    m_Speed = 60;
+    m_BaseSpeed = 60;
+    m_Ratio = 1000.0F / (float)m_Speed;
 
-	TIMECAPS Caps;
-	timeGetDevCaps(&Caps, sizeof(Caps));
-	if (timeBeginPeriod(Caps.wPeriodMin) == TIMERR_NOCANDO)
-	{
-		g_Notify->DisplayError(L"Error during timer begin");
-	}
+    TIMECAPS Caps;
+    timeGetDevCaps(&Caps, sizeof(Caps));
+    if (timeBeginPeriod(Caps.wPeriodMin) == TIMERR_NOCANDO)
+    {
+        g_Notify->DisplayError(L"Error during timer begin");
+    }
 }
 
 CSpeedLimitor::~CSpeedLimitor()
 {
-	TIMECAPS Caps;
-	timeGetDevCaps(&Caps, sizeof(Caps));
-	timeEndPeriod(Caps.wPeriodMin);
+    TIMECAPS Caps;
+    timeGetDevCaps(&Caps, sizeof(Caps));
+    timeEndPeriod(Caps.wPeriodMin);
 }
 
 void CSpeedLimitor::SetHertz(uint32_t Hertz)
 {
-	m_Speed = Hertz;
-	m_BaseSpeed = Hertz;
-	FixSpeedRatio();
+    m_Speed = Hertz;
+    m_BaseSpeed = Hertz;
+    FixSpeedRatio();
 }
 
 void CSpeedLimitor::FixSpeedRatio()
 {
-	m_Ratio = 1000.0f / static_cast<double>(m_Speed);
-	m_Frames = 0;
-	m_LastTime = timeGetTime();
+    m_Ratio = 1000.0f / static_cast<double>(m_Speed);
+    m_Frames = 0;
+    m_LastTime = timeGetTime();
 }
 
 bool CSpeedLimitor::Timer_Process(uint32_t * FrameRate)
 {
-	m_Frames += 1;
-	uint32_t CurrentTime = timeGetTime();
+    m_Frames += 1;
+    uint32_t CurrentTime = timeGetTime();
 
-	/* Calculate time that should of elapsed for this frame */
-	double CalculatedTime = (double)m_LastTime + (m_Ratio * (double)m_Frames);
-	if ((double)CurrentTime < CalculatedTime)
-	{
-		long time = (int)(CalculatedTime - (double)CurrentTime);
-		if (time > 0)
-		{
-			Sleep(time);
-		}
+    /* Calculate time that should of elapsed for this frame */
+    double CalculatedTime = (double)m_LastTime + (m_Ratio * (double)m_Frames);
+    if ((double)CurrentTime < CalculatedTime)
+    {
+        long time = (int)(CalculatedTime - (double)CurrentTime);
+        if (time > 0)
+        {
+            pjutil::Sleep(time);
+        }
 
-		/* Refresh current time */
-		CurrentTime = timeGetTime();
-	}
+        /* Refresh current time */
+        CurrentTime = timeGetTime();
+    }
 
-	if (CurrentTime - m_LastTime >= 1000)
-	{
-		/* Output FPS */
-		if (FrameRate != NULL) { *FrameRate = m_Frames; }
-		m_Frames = 0;
-		m_LastTime = CurrentTime;
+    if (CurrentTime - m_LastTime >= 1000)
+    {
+        /* Output FPS */
+        if (FrameRate != NULL) { *FrameRate = m_Frames; }
+        m_Frames = 0;
+        m_LastTime = CurrentTime;
 
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 void CSpeedLimitor::IncreaseSpeed()
 {
-	if (m_Speed >= 60)
-	{
-		m_Speed += 10;
-	}
-	else if (m_Speed >= 15)
-	{
-		m_Speed += 5;
-	}
-	else
-	{
-		m_Speed += 1;
-	}
-	SpeedChanged(m_Speed);
-	FixSpeedRatio();
+    if (m_Speed >= 60)
+    {
+        m_Speed += 10;
+    }
+    else if (m_Speed >= 15)
+    {
+        m_Speed += 5;
+    }
+    else
+    {
+        m_Speed += 1;
+    }
+    SpeedChanged(m_Speed);
+    FixSpeedRatio();
 }
 
 void CSpeedLimitor::DecreaseSpeed()
 {
-	if (m_Speed > 60)
-	{
-		m_Speed -= 10;
-	}
-	else if (m_Speed > 15)
-	{
-		m_Speed -= 5;
-	}
-	else if (m_Speed > 1)
-	{
-		m_Speed -= 1;
-	}
-	SpeedChanged(m_Speed);
-	FixSpeedRatio();
+    if (m_Speed > 60)
+    {
+        m_Speed -= 10;
+    }
+    else if (m_Speed > 15)
+    {
+        m_Speed -= 5;
+    }
+    else if (m_Speed > 1)
+    {
+        m_Speed -= 1;
+    }
+    SpeedChanged(m_Speed);
+    FixSpeedRatio();
 }

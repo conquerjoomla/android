@@ -17,15 +17,15 @@
 
 typedef struct
 {
-	uint16_t Version;        /* Should be set to 1 */
-	uint16_t Type;           /* Set to PLUGIN_TYPE_GFX */
-	char Name[100];      /* Name of the DLL */
+    uint16_t Version;        /* Should be set to 1 */
+    uint16_t Type;           /* Set to PLUGIN_TYPE_GFX */
+    char Name[100];      /* Name of the DLL */
 
-	/* If DLL supports memory these memory options then set them to TRUE or FALSE
-	   if it does not support it */
-	int32_t NormalMemory;   /* a normal BYTE array */
-	int32_t MemoryBswaped;  /* a normal BYTE array where the memory has been pre
-							  bswap on a dword (32 bits) boundry */
+    /* If DLL supports memory these memory options then set them to TRUE or FALSE
+    if it does not support it */
+    int32_t NormalMemory;   /* a normal BYTE array */
+    int32_t MemoryBswaped;  /* a normal BYTE array where the memory has been pre
+                            bswap on a dword (32 bits) boundry */
 } PLUGIN_INFO;
 
 #endif
@@ -33,51 +33,51 @@ typedef struct
 // enum's
 enum SETTING_DATA_TYPE
 {
-	Data_DWORD_General = 0, // A unsigned int setting used anywhere
-	Data_String_General = 1, // A string setting used anywhere
-	Data_DWORD_Game = 2, // A unsigned int associated with the current game
-	Data_String_Game = 3, // A string associated with the current game
-	Data_DWORD_RDB = 4, // A unsigned int associated with the current game in the rom database
-	Data_String_RDB = 5, // A string associated with the current game in the rom database
-	Data_DWORD_RDB_Setting = 6, // A unsigned int read from the rom database, with config file
-	Data_String_RDB_Setting = 7, // A string read from the rom database, with config file
+    Data_DWORD_General = 0, // A unsigned int setting used anywhere
+    Data_String_General = 1, // A string setting used anywhere
+    Data_DWORD_Game = 2, // A unsigned int associated with the current game
+    Data_String_Game = 3, // A string associated with the current game
+    Data_DWORD_RDB = 4, // A unsigned int associated with the current game in the rom database
+    Data_String_RDB = 5, // A string associated with the current game in the rom database
+    Data_DWORD_RDB_Setting = 6, // A unsigned int read from the rom database, with config file
+    Data_String_RDB_Setting = 7, // A string read from the rom database, with config file
 };
 
 typedef struct
 {
-	uint32_t  dwSize;
-	int32_t    DefaultStartRange;
-	int32_t    SettingStartRange;
-	int32_t    MaximumSettings;
-	int32_t    NoDefault;
-	int32_t    DefaultLocation;
-	void * handle;
-	uint32_t(*GetSetting)      (void * handle, int32_t ID);
-	const char * (*GetSettingSz)    (void * handle, int32_t ID, char * Buffer, int32_t BufferLen);
-	void(*SetSetting)      (void * handle, int32_t ID, uint32_t Value);
-	void(*SetSettingSz)    (void * handle, int32_t ID, const char * Value);
-	void(*RegisterSetting) (void * handle, int32_t ID, int32_t DefaultID, SettingDataType Type,
-		SettingType Location, const char * Category, const char * DefaultStr, uint32_t Value);
-	void(*UseUnregisteredSetting) (int32_t ID);
+    uint32_t  dwSize;
+    int32_t    DefaultStartRange;
+    int32_t    SettingStartRange;
+    int32_t    MaximumSettings;
+    int32_t    NoDefault;
+    int32_t    DefaultLocation;
+    void * handle;
+    uint32_t(*GetSetting)      (void * handle, int32_t ID);
+    const char * (*GetSettingSz)    (void * handle, int32_t ID, char * Buffer, int32_t BufferLen);
+    void(*SetSetting)      (void * handle, int32_t ID, uint32_t Value);
+    void(*SetSettingSz)    (void * handle, int32_t ID, const char * Value);
+    void(*RegisterSetting) (void * handle, int32_t ID, int32_t DefaultID, SettingDataType Type,
+        SettingType Location, const char * Category, const char * DefaultStr, uint32_t Value);
+    void(*UseUnregisteredSetting) (int32_t ID);
 } PLUGIN_SETTINGS;
 
 typedef struct
 {
-	uint32_t(*FindSystemSettingId) (void * handle, const char * Name);
+    uint32_t(*FindSystemSettingId) (void * handle, const char * Name);
 } PLUGIN_SETTINGS2;
 
 typedef struct
 {
-	void(*FlushSettings) (void * handle);
+    void(*FlushSettings) (void * handle);
 } PLUGIN_SETTINGS3;
 
 enum PLUGIN_TYPE
 {
-	PLUGIN_TYPE_NONE = 0,
-	PLUGIN_TYPE_RSP = 1,
-	PLUGIN_TYPE_GFX = 2,
-	PLUGIN_TYPE_AUDIO = 3,
-	PLUGIN_TYPE_CONTROLLER = 4,
+    PLUGIN_TYPE_NONE = 0,
+    PLUGIN_TYPE_RSP = 1,
+    PLUGIN_TYPE_GFX = 2,
+    PLUGIN_TYPE_AUDIO = 3,
+    PLUGIN_TYPE_CONTROLLER = 4,
 };
 
 class CSettings;
@@ -87,69 +87,65 @@ class CPlugins;
 
 __interface RenderWindow
 {
-	bool ResetPluginsInUiThread(CPlugins * plugins, CN64System * System) = 0;
-	void * GetWindowHandle(void) const = 0;
-	void * GetStatusBar(void) const = 0;
+    bool ResetPluginsInUiThread(CPlugins * plugins, CN64System * System) = 0;
+    void * GetWindowHandle(void) const = 0;
+    void * GetStatusBar(void) const = 0;
 };
 
 class CPlugins :
-	private CDebugSettings
+    private CDebugSettings
 {
 public:
-	//Functions
-	CPlugins(const stdstr & PluginDir);
-	~CPlugins();
+    //Functions
+    CPlugins(const stdstr & PluginDir);
+    ~CPlugins();
 
-	bool Initiate(CN64System * System);
-	void RomOpened(void);
-	void RomClosed(void);
-	void SetRenderWindows(RenderWindow * MainWindow, RenderWindow * SyncWindow);
-	void ConfigPlugin(uint32_t hParent, PLUGIN_TYPE Type);
-	bool CopyPlugins(const stdstr & DstDir) const;
-	void CreatePlugins(void);
-	bool Reset(CN64System * System);
-	bool ResetInUiThread(CN64System * System);
-	void GameReset(void);
+    bool Initiate(CN64System * System);
+    void RomOpened(void);
+    void RomClosed(void);
+    void SetRenderWindows(RenderWindow * MainWindow, RenderWindow * SyncWindow);
+    void ConfigPlugin(uint32_t hParent, PLUGIN_TYPE Type);
+    bool CopyPlugins(const stdstr & DstDir) const;
+    void CreatePlugins(void);
+    bool Reset(CN64System * System);
+    bool ResetInUiThread(CN64System * System);
+    void GameReset(void);
 
-	inline CGfxPlugin      * Gfx(void) const { return m_Gfx; }
-	inline CAudioPlugin    * Audio(void) const { return m_Audio; }
-	inline CRSP_Plugin     * RSP(void) const { return m_RSP; }
-	inline CControl_Plugin * Control(void) const { return m_Control; }
+    inline CGfxPlugin      * Gfx(void) const { return m_Gfx; }
+    inline CAudioPlugin    * Audio(void) const { return m_Audio; }
+    inline CRSP_Plugin     * RSP(void) const { return m_RSP; }
+    inline CControl_Plugin * Control(void) const { return m_Control; }
 
-	inline RenderWindow * MainWindow(void) const { return m_MainWindow; }
-	inline RenderWindow * SyncWindow(void) const { return m_SyncWindow; }
+    inline RenderWindow * MainWindow(void) const { return m_MainWindow; }
+    inline RenderWindow * SyncWindow(void) const { return m_SyncWindow; }
 
 private:
-	CPlugins(void);							// Disable default constructor
-	CPlugins(const CPlugins&);				// Disable copy constructor
-	CPlugins& operator=(const CPlugins&);	// Disable assignment
+    CPlugins(void);							// Disable default constructor
+    CPlugins(const CPlugins&);				// Disable copy constructor
+    CPlugins& operator=(const CPlugins&);	// Disable assignment
 
-	// void Reset              ( PLUGIN_TYPE Type );
+    void DestroyGfxPlugin(void);
+    void DestroyAudioPlugin(void);
+    void DestroyRspPlugin(void);
+    void DestroyControlPlugin(void);
 
-	void CreatePluginDir(const stdstr & DstDir) const;
+    static void PluginChanged(CPlugins * _this);
 
-	void DestroyGfxPlugin(void);
-	void DestroyAudioPlugin(void);
-	void DestroyRspPlugin(void);
-	void DestroyControlPlugin(void);
+    RenderWindow * m_MainWindow;
+    RenderWindow * m_SyncWindow;
 
-	static void PluginChanged(CPlugins * _this);
+    stdstr  const m_PluginDir;
 
-	RenderWindow * m_MainWindow;
-	RenderWindow * m_SyncWindow;
+    //Plugins
+    CGfxPlugin      * m_Gfx;
+    CAudioPlugin    * m_Audio;
+    CRSP_Plugin     * m_RSP;
+    CControl_Plugin * m_Control;
 
-	stdstr  const m_PluginDir;
-
-	//Plugins
-	CGfxPlugin      * m_Gfx;
-	CAudioPlugin    * m_Audio;
-	CRSP_Plugin     * m_RSP;
-	CControl_Plugin * m_Control;
-
-	stdstr m_GfxFile;
-	stdstr m_AudioFile;
-	stdstr m_RSPFile;
-	stdstr m_ControlFile;
+    stdstr m_GfxFile;
+    stdstr m_AudioFile;
+    stdstr m_RSPFile;
+    stdstr m_ControlFile;
 };
 
 //Dummy Functions

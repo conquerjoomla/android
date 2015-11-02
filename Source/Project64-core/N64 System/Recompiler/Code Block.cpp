@@ -755,8 +755,9 @@ void CCodeBlock::CompileExitCode()
     }
 }
 
-#include <windows.h>
 uint32_t CCodeBlock::NextTest()
 {
-    return InterlockedIncrement(&m_Test);
+    uint32_t next_test = m_Test;
+    m_Test += 1;
+    return next_test;
 }

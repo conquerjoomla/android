@@ -16,53 +16,49 @@
 class CSettings;
 
 class CNotificationImp :
-	public CNotification,
-	CNotificationSettings
+    public CNotification,
+    CNotificationSettings
 {
 public:
-	CNotificationImp(void);
+    CNotificationImp(void);
 
-	void AppInitDone(void);
+    void AppInitDone(void);
 
-	// Make sure we are not in full screen
-	void WindowMode(void) const;
+    // Make sure we are not in full screen
+    void WindowMode(void) const;
 
-	//Error Messages
-	virtual void DisplayError(const wchar_t * Message) const;
-	virtual void DisplayError(LanguageStringID StringID) const;
+    //Error Messages
+    virtual void DisplayError(const wchar_t * Message) const;
+    virtual void DisplayError(LanguageStringID StringID) const;
 
-	virtual void FatalError(const wchar_t * Message) const;
-	virtual void FatalError(LanguageStringID StringID) const;
+    virtual void FatalError(const wchar_t * Message) const;
+    virtual void FatalError(LanguageStringID StringID) const;
 
-	//User Feedback
-	virtual void DisplayMessage(int DisplayTime, const wchar_t * Message) const;
-	virtual void DisplayMessage(int DisplayTime, LanguageStringID StringID) const;
+    //User Feedback
+    virtual void DisplayMessage(int DisplayTime, const wchar_t * Message) const;
+    virtual void DisplayMessage(int DisplayTime, LanguageStringID StringID) const;
 
-	virtual void DisplayMessage2(const wchar_t * Message) const;
-	virtual void BreakPoint(const wchar_t * FileName, const int LineNumber);
+    virtual void DisplayMessage2(const wchar_t * Message) const;
+    virtual void BreakPoint(const wchar_t * FileName, const int LineNumber);
 
-	//Remember roms loaded and Rom Dir selected
-	void AddRecentDir(const char * RomDir);
+    //Remember roms loaded and Rom Dir selected
+    void AddRecentDir(const char * RomDir);
 
-	//Gui for responses
-	void SetMainWindow(CMainGui * Gui);
-	void RefreshMenu(void);
-	void HideRomBrowser(void);
-	void ShowRomBrowser(void);
-	void MakeWindowOnTop(bool OnTop);
-	void BringToTop(void);
-	bool ProcessGuiMessages(void) const;
-	void ChangeFullScreen(void) const;
-	void SetGfxPlugin(CGfxPlugin * Plugin);
+    //Gui for responses
+    void SetMainWindow(CMainGui * Gui);
+    void RefreshMenu(void);
+    bool ProcessGuiMessages(void) const;
+    void ChangeFullScreen(void) const;
+    void SetGfxPlugin(CGfxPlugin * Plugin);
 
 private:
-	CNotificationImp(const CNotificationImp&);				// Disable copy constructor
-	CNotificationImp& operator=(const CNotificationImp&);		// Disable assignment
+    CNotificationImp(const CNotificationImp&);				// Disable copy constructor
+    CNotificationImp& operator=(const CNotificationImp&);		// Disable assignment
 
-	CMainGui   * m_hWnd;
-	CGfxPlugin * m_gfxPlugin;
+    CMainGui   * m_hWnd;
+    CGfxPlugin * m_gfxPlugin;
 
-	mutable time_t m_NextMsg;
+    mutable time_t m_NextMsg;
 };
 
 CNotificationImp & Notify(void);
