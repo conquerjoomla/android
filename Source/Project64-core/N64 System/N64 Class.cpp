@@ -1912,8 +1912,8 @@ void CN64System::RefreshScreen()
 		{
 			g_BaseSystem->m_Cheats.LoadCheats(false, g_BaseSystem->m_Plugins);
 		}
-		g_BaseSystem->m_Cheats.ApplyCheats(g_MMU);
 #endif
+		g_BaseSystem->m_Cheats.ApplyCheats(g_MMU);
 	}
 	//	if (bProfiling)    { m_Profile.StartTimer(ProfilingAddr != Timer_None ? ProfilingAddr : Timer_R4300); }
 }
