@@ -31,7 +31,8 @@ struct RECT_STRUCT
 	long bottom;
 };
 
-struct WINDOWS_PAINTSTRUCT {
+struct WINDOWS_PAINTSTRUCT
+{
 	HDC         hdc;
 	int         fErase;
 	RECT_STRUCT rcPaint;
@@ -55,3 +56,4 @@ class CN64System;
 #include <Project64-core\N64 System\Frame Per Second Class.h>
 #include ".\\User Interface\\resource.h"
 #include ".\\User Interface\\Settings Config.h"
+#include ".\\User Interface\\Cheat Class UI.h"

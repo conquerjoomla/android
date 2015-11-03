@@ -62,7 +62,6 @@ public:
 	void   ExternalEvent(SystemEvent action); //covers gui interacting and timers etc..
 #ifdef tofix
 	void   DisplayRomInfo   ( HWND hParent );
-	void   SelectCheats     ( HWND hParent );
 #endif
 	void   StartEmulation(bool NewThread);
 	void   SyncToAudio();

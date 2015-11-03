@@ -47,6 +47,7 @@
     </ClCompile>
     <ClCompile Include="Settings\Gui Settings.cpp" />
     <ClCompile Include="Settings\Notification Settings.cpp" />
+    <ClCompile Include="User Interface\Cheat Class UI.cpp" />
     <ClCompile Include="User Interface\Gui Class.cpp" />
     <ClCompile Include="User Interface\Main Menu Class.cpp" />
     <ClCompile Include="User Interface\Menu Class.cpp" />
@@ -102,6 +103,7 @@
     <ClInclude Include="N64 System.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="User Interface.h" />
+    <ClInclude Include="User Interface\Cheat Class UI.h" />
     <ClInclude Include="WTL App.h" />
     <ClInclude Include="Settings\Gui Settings.h" />
     <ClInclude Include="Settings\Notification Settings.h" />
