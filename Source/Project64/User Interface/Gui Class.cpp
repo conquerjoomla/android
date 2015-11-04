@@ -474,12 +474,11 @@ WPARAM CMainGui::ProcessAllMessages(void)
 
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
-#ifdef tofix
-		if (g_BaseSystem && g_BaseSystem->IsDialogMsg(&msg))
-		{
+        if (g_cheatUI != NULL && g_cheatUI->IsCheatMessage(&msg))
+        {
 			continue;
-		}
-#endif
+        }
+
 		if (m_ResetPlugins)
 		{
 			m_ResetPlugins = false;

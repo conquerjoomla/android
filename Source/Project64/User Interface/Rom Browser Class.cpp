@@ -420,20 +420,20 @@ void CRomBrowser::FillRomExtensionInfo(ROM_INFO * pRomInfo)
 	//Get the text color
 	char String[100];
 	m_RomIniFile->GetString("Rom Status", pRomInfo->Status, "000000", String, 7);
-	pRomInfo->TextColor = (std::strtoll(String, 0, 16) & 0xFFFFFF);
+	pRomInfo->TextColor = (std::strtoul(String, 0, 16) & 0xFFFFFF);
 	pRomInfo->TextColor = (pRomInfo->TextColor & 0x00FF00) | ((pRomInfo->TextColor >> 0x10) & 0xFF) | ((pRomInfo->TextColor & 0xFF) << 0x10);
 
 	//Get the selected color
 	sprintf(String, "%s.Sel", pRomInfo->Status);
 	m_RomIniFile->GetString("Rom Status", String, "FFFFFFFF", String, 9);
-	int selcol = std::strtoll(String, 0, 16);
+	int selcol = std::strtoul(String, 0, 16);
 	if (selcol < 0)
 	{
 		pRomInfo->SelColor = -1;
 	}
 	else
 	{
-		selcol = (std::strtoll(String, 0, 16) & 0xFFFFFF);
+		selcol = (std::strtoul(String, 0, 16) & 0xFFFFFF);
 		selcol = (selcol & 0x00FF00) | ((selcol >> 0x10) & 0xFF) | ((selcol & 0xFF) << 0x10);
 		pRomInfo->SelColor = selcol;
 	}
@@ -441,7 +441,7 @@ void CRomBrowser::FillRomExtensionInfo(ROM_INFO * pRomInfo)
 	//Get the selected text color
 	sprintf(String, "%s.Seltext", pRomInfo->Status);
 	m_RomIniFile->GetString("Rom Status", String, "FFFFFF", String, 7);
-	pRomInfo->SelTextColor = (std::strtoll(String, 0, 16) & 0xFFFFFF);
+	pRomInfo->SelTextColor = (std::strtoul(String, 0, 16) & 0xFFFFFF);
 	pRomInfo->SelTextColor = (pRomInfo->SelTextColor & 0x00FF00) | ((pRomInfo->SelTextColor >> 0x10) & 0xFF) | ((pRomInfo->SelTextColor & 0xFF) << 0x10);
 }
 
@@ -693,7 +693,7 @@ void CRomBrowser::FillRomList(strlist & FileList, const CPath & BaseDirectory, c
 
 					for (int x = 0; x < 0x40; x += 4)
 					{
-						*((DWORD *)&RomData[x]) = std::strtoll(&szHeader[x * 2], 0, 16);
+						*((DWORD *)&RomData[x]) = std::strtoul(&szHeader[x * 2], 0, 16);
 					}
 
 					WriteTrace(TraceDebug, __FUNCTION__ ": 14");
