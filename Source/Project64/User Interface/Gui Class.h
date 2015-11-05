@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../Settings/Gui Settings.h"
+#include <Project64\N64 System\Debugger\debugger.h>
 #include <Project64-core\Plugins\Plugin Class.h>
 
 class CGfxPlugin;      //Plugin that controls the rendering
@@ -31,6 +32,7 @@ enum
 class CMainGui :
     public RenderWindow,
     public CRomBrowser,
+    public CDebuggerUI,
     private CGuiSettings
 {
     enum { StatusBarID = 400 };

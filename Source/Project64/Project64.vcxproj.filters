@@ -332,5 +332,8 @@
     <ClInclude Include="User Interface\Cheat Class UI.h">
       <Filter>Header Files\User Interface Headers</Filter>
     </ClInclude>
+    <ClInclude Include="N64 System\Debugger\Debug Dialog.h">
+      <Filter>Header Files\N64 System Headers\Debugger Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
