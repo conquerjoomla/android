@@ -12,6 +12,7 @@
 #include "Register Class.h"
 #include <Project64-core\N64 System\N64 Class.h>
 #include <Project64-core\N64 System\System Globals.h>
+#include <Project64-core\Logging.h>
 
 const char * CRegName::GPR[32] = {"r0","at","v0","v1","a0","a1","a2","a3",
     "t0","t1","t2","t3","t4","t5","t6","t7",
@@ -454,12 +455,10 @@ bool CRegisters::DoIntrException(bool DelaySlot)
         return false;
     }
 
-#ifdef tofix
-    if (LogOptions.GenerateLog && LogOptions.LogExceptions && !LogOptions.NoInterrupts)
+    if (g_LogOptions.GenerateLog && g_LogOptions.LogExceptions && !g_LogOptions.NoInterrupts)
     {
         LogMessage("%08X: Interrupt Generated", m_PROGRAM_COUNTER);
     }
-#endif
 
     CAUSE_REGISTER = FAKE_CAUSE_REGISTER;
     CAUSE_REGISTER |= EXC_INT;

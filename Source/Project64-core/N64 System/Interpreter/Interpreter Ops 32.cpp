@@ -14,6 +14,7 @@
 #include <Project64-core\N64 System\Mips\Memory Class.h>
 #include <Project64-core\N64 System\Mips\System Timing.h>
 #include <Project64-core\N64 System\Interpreter\Interpreter CPU.h>
+#include <Project64-core\Logging.h>
 
 bool DelaySlotEffectsCompare ( uint32_t PC, uint32_t Reg1, uint32_t Reg2 );
 
@@ -954,12 +955,10 @@ void R4300iOp32::LW()
         ADDRESS_ERROR_EXCEPTION(Address, true);
     }
 
-#ifdef tofix
-    if (LogOptions.GenerateLog)
+    if (g_LogOptions.GenerateLog)
     {
         Log_LW((*_PROGRAM_COUNTER),Address);
     }
-#endif
 
     if (!g_MMU->LW_VAddr(Address,_GPR[m_Opcode.rt].UW[0]))
     {
@@ -1329,12 +1328,10 @@ void R4300iOp32::REGIMM_BGEZAL()
 /************************** COP0 functions **************************/
 void R4300iOp32::COP0_MF()
 {
-#ifdef tofix
-    if (LogOptions.LogCP0reads)
+    if (g_LogOptions.LogCP0reads)
     {
         LogMessage("%08X: R4300i Read from %s (0x%08X)", (*_PROGRAM_COUNTER), CRegName::Cop0[m_Opcode.rd], _CP0[m_Opcode.rd]);
     }
-#endif
 
     if (m_Opcode.rd == 9)
     {
@@ -1345,8 +1342,7 @@ void R4300iOp32::COP0_MF()
 
 void R4300iOp32::COP0_MT()
 {
-#ifdef tofix
-    if (LogOptions.LogCP0changes)
+    if (g_LogOptions.LogCP0changes)
     {
         LogMessage("%08X: Writing 0x%X to %s register (Originally: 0x%08X)",(*_PROGRAM_COUNTER), _GPR[m_Opcode.rt].UW[0],CRegName::Cop0[m_Opcode.rd], _CP0[m_Opcode.rd]);
         if (m_Opcode.rd == 11) //Compare
@@ -1354,7 +1350,6 @@ void R4300iOp32::COP0_MT()
             LogMessage("%08X: Cause register changed from %08X to %08X",(*_PROGRAM_COUNTER), g_Reg->CAUSE_REGISTER, (g_Reg->CAUSE_REGISTER & ~CAUSE_IP7));
         }
     }
-#endif
 
     switch (m_Opcode.rd)
     {

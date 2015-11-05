@@ -294,6 +294,9 @@
     <ClCompile Include="Emulation Thread.cpp">
       <Filter>Source Files\N64 System</Filter>
     </ClCompile>
+    <ClCompile Include="logging.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -565,6 +568,9 @@
     </ClInclude>
     <ClInclude Include="Emulation Thread.h">
       <Filter>Header Files\N64 System</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

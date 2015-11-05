@@ -12,14 +12,12 @@
 
 #include "Debugger UI.h"
 
-#ifdef tofix
-CDebugMemorySearch::CDebugMemorySearch(CDebugger * debugger) :
+CDebugMemorySearch::CDebugMemorySearch(CDebuggerUI * debugger) :
     CDebugDialog<CDebugMemorySearch>(debugger),
     m_MemoryState(NULL),
     m_MemoryStateSize(0)
 {
 }
-#endif
 
 CDebugMemorySearch::~CDebugMemorySearch()
 {
@@ -111,10 +109,8 @@ LRESULT	CDebugMemorySearch::OnClicked(WORD /*wNotifyCode*/, WORD wID, HWND hWndC
             }
 
             int ItemId = m_SearchResults.GetItemData(iItem);
-#ifdef tofix
             SearchResultItem & Result = m_SearchResult[ItemId];
             m_Debugger->Debug_ShowMemoryLocation(Result.PAddr, false);
-#endif
         }
         break;
     case IDC_RADIO_UNKNOWN:
@@ -310,7 +306,7 @@ void CDebugMemorySearch::SearchForValue(void)
             int ItemId = m_SearchResults.GetItemData(i);
             SearchResultItem & Result = m_SearchResult[ItemId];
 
-            DWORD NewValue = 0;
+            uint32_t NewValue = 0;
             bool valid = false;
 
             switch (Size)
@@ -330,9 +326,7 @@ void CDebugMemorySearch::SearchForValue(void)
                 }
                 break;
             case _32Bit:
-#ifdef tofix
                 valid = g_MMU->LW_PAddr(Result.PAddr, NewValue);
-#endif
                 break;
             default:
                 g_Notify->BreakPoint(__FILEW__, __LINE__);
@@ -447,7 +441,7 @@ void CDebugMemorySearch::SearchForUnknown()
             SearchResultItem & Result = m_SearchResult[ItemId];
 
             bool UpdateResult = false;
-            DWORD NewValue = 0;
+            uint32_t NewValue = 0;
             bool valid = false;
 
             switch (Size)
@@ -467,9 +461,7 @@ void CDebugMemorySearch::SearchForUnknown()
                 }
                 break;
             case _32Bit:
-#ifdef tofix
                 valid = g_MMU->LW_PAddr(Result.PAddr, NewValue);
-#endif
                 break;
             default:
                 g_Notify->BreakPoint(__FILEW__, __LINE__);

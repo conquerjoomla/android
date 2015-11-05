@@ -17,6 +17,7 @@
 #include <Project64-core\N64 System\Mips\TLB Class.h>
 #include <Project64-core\N64 System\Mips\OpcodeName.h>
 #include <Project64-core\N64 System\Interpreter\Interpreter CPU.h>
+#include <Project64-core\Logging.h>
 
 void InPermLoop();
 void TestInterpreterJump(uint32_t PC, uint32_t TargetPC, int Reg1, int Reg2);
@@ -1121,12 +1122,10 @@ void R4300iOp::LW()
         ADDRESS_ERROR_EXCEPTION(Address, true);
     }
 
-#ifdef tofix
-    if (LogOptions.GenerateLog)
+    if (g_LogOptions.GenerateLog)
     {
         Log_LW((*_PROGRAM_COUNTER),Address);
     }
-#endif
 
     if (!g_MMU->LW_VAddr(Address,_GPR[m_Opcode.rt].UW[0]))
     {
@@ -1302,12 +1301,10 @@ void R4300iOp::SW()
     {
         ADDRESS_ERROR_EXCEPTION(Address, false);
     }
-#ifdef tofix
-    if (LogOptions.GenerateLog)
+    if (g_LogOptions.GenerateLog)
     {
         Log_SW((*_PROGRAM_COUNTER),Address,_GPR[m_Opcode.rt].UW[0]);
     }
-#endif
     if (!g_MMU->SW_VAddr(Address,_GPR[m_Opcode.rt].UW[0]))
     {
         if (bHaveDebugger())
@@ -1454,13 +1451,11 @@ void R4300iOp::SWR()
 
 void R4300iOp::CACHE()
 {
-#ifdef tofix
-    if (!LogOptions.LogCache)
+    if (!g_LogOptions.LogCache)
     {
         return;
     }
     LogMessage("%08X: Cache operation %d, 0x%08X", (*_PROGRAM_COUNTER), m_Opcode.rt, _GPR[m_Opcode.base].UW[0] + (short)m_Opcode.offset );
-#endif
 }
 
 void R4300iOp::LL()
@@ -1511,9 +1506,7 @@ void R4300iOp::SC()
     {
         ADDRESS_ERROR_EXCEPTION(Address, false);
     }
-#ifdef tofix
     Log_SW((*_PROGRAM_COUNTER),Address,_GPR[m_Opcode.rt].UW[0]);
-#endif
     if ((*_LLBit) == 1)
     {
         if (!g_MMU->SW_VAddr(Address,_GPR[m_Opcode.rt].UW[0]))
@@ -2104,12 +2097,10 @@ void R4300iOp::REGIMM_BGEZAL()
 /************************** COP0 functions **************************/
 void R4300iOp::COP0_MF()
 {
-#ifdef tofix
-    if (LogOptions.LogCP0reads)
+    if (g_LogOptions.LogCP0reads)
     {
         LogMessage("%08X: R4300i Read from %s (0x%08X)", (*_PROGRAM_COUNTER), CRegName::Cop0[m_Opcode.rd], _CP0[m_Opcode.rd]);
     }
-#endif
 
     if (m_Opcode.rd == 9)
     {
@@ -2120,8 +2111,7 @@ void R4300iOp::COP0_MF()
 
 void R4300iOp::COP0_MT()
 {
-#ifdef tofix
-    if (LogOptions.LogCP0changes)
+    if (g_LogOptions.LogCP0changes)
     {
         LogMessage("%08X: Writing 0x%X to %s register (Originally: 0x%08X)",(*_PROGRAM_COUNTER), _GPR[m_Opcode.rt].UW[0],CRegName::Cop0[m_Opcode.rd], _CP0[m_Opcode.rd]);
         if (m_Opcode.rd == 11)  //Compare
@@ -2129,7 +2119,6 @@ void R4300iOp::COP0_MT()
             LogMessage("%08X: Cause register changed from %08X to %08X",(*_PROGRAM_COUNTER), g_Reg->CAUSE_REGISTER, (g_Reg->CAUSE_REGISTER & ~CAUSE_IP7));
         }
     }
-#endif
 
     switch (m_Opcode.rd)
     {
@@ -2844,7 +2833,6 @@ void R4300iOp::UnknownOpcode()
         R4300iOpcodeName(m_Opcode.Hex,(*_PROGRAM_COUNTER))).ToUTF16().c_str());
     g_System->m_EndEmulation = true;
 
-    g_Notify->BreakPoint(__FILEW__,__LINE__);
 #ifdef tofix
     if (HaveDebugger && !inFullScreen)
     {
@@ -2857,11 +2845,6 @@ void R4300iOp::UnknownOpcode()
         {
             Enter_R4300i_Commands_Window ();
         }
-        ExitThread(0);
-    }
-    else
-    {
-        g_Notify->DisplayError(Message);
         ExitThread(0);
     }
 #endif
