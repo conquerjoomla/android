@@ -15,6 +15,7 @@
 #include <Project64-core\N64 System\Interpreter\Interpreter CPU.h>
 #include <Project64-core\N64 System\Mips\OpcodeName.h>
 #include <Project64-core\Exception Handler.h>
+#include <Project64-core\Logging.h>
 #include <Common\Util.h>
 
 #pragma warning(disable:4355) // Disable 'this' : used in base member initializer list
@@ -271,11 +272,9 @@ void  CN64System::StartEmulation2(bool NewThread)
         WriteTrace(TraceDebug, __FUNCTION__ ": Starting");
         if (bHaveDebugger())
         {
-#ifdef tofix
-            LogOptions.GenerateLog = g_Settings->LoadDword(Debugger_GenerateDebugLog);
-            LoadLogOptions(&LogOptions, FALSE);
+            g_LogOptions.GenerateLog = g_Settings->LoadBool(Debugger_GenerateDebugLog);
+            LoadLogOptions(&g_LogOptions, false);
             StartLog();
-#endif
         }
 
         CInterpreterCPU::BuildCPU();

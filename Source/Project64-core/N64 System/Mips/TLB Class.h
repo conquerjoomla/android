@@ -22,6 +22,9 @@ __interface CTLB_CB
     virtual void TLB_Changed() = 0;
 };
 
+#pragma warning(push)
+#pragma warning(disable : 4201) // warning C4201: nonstandard extension used : nameless struct/union
+
 class CTLB :
     protected CSystemRegisters
 {
@@ -145,3 +148,5 @@ private:
     CTLB(const CTLB&);				// Disable copy constructor
     CTLB& operator=(const CTLB&);	// Disable assignment
 };
+
+#pragma warning(pop)
