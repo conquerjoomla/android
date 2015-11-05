@@ -24,8 +24,7 @@ CCheatsUI::CCheatsUI(void) :
 m_rcList(new RECT),
 m_rcAdd(new RECT),
 m_EditCheat(-1),
-m_DeleteingEntries(false),
-m_CheatSelectionChanged(false)
+m_DeleteingEntries(false)
 {
 	m_Window = NULL;
 	m_hSelectCheat = NULL;
@@ -124,6 +123,10 @@ stdstr CCheatsUI::GetDlgItemStr(HWND hDlg, int nIDDlgItem)
 
 void CCheatsUI::SelectCheats(HWND hParent, bool BlockExecution)
 {
+	if (g_BaseSystem)
+	{
+		g_BaseSystem->ExternalEvent(SysEvent_PauseCPU_Cheats);
+	}
 	if (m_Window != NULL)
 	{
 		SetForegroundWindow(m_Window);
@@ -133,11 +136,11 @@ void CCheatsUI::SelectCheats(HWND hParent, bool BlockExecution)
 	{
 		if (BlockExecution)
 		{
-			DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_Cheats_Select), hParent, (DLGPROC)ManageCheatsProc, (LPARAM)this);
+			DialogBoxParamW(GetModuleHandle(NULL), MAKEINTRESOURCEW(IDD_Cheats_Select), hParent, (DLGPROC)ManageCheatsProc, (LPARAM)this);
 		}
 		else
 		{
-			CreateDialogParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_Cheats_Select), hParent, (DLGPROC)ManageCheatsProc, (LPARAM)this);
+			CreateDialogParamW(GetModuleHandle(NULL), MAKEINTRESOURCEW(IDD_Cheats_Select), hParent, (DLGPROC)ManageCheatsProc, (LPARAM)this);
 		}
 	}
 }
@@ -509,7 +512,10 @@ int CALLBACK CCheatsUI::CheatListProc(HWND hDlg, uint32_t uMsg, uint32_t wParam,
 		break;
 		case IDC_UNMARK:
 			_this->ChangeChildrenStatus((HWND)TVI_ROOT, false);
-			_this->m_CheatSelectionChanged = true;
+			if (g_BaseSystem)
+			{
+				g_BaseSystem->SetCheatsSlectionChanged(true);
+			}
 			break;
 		}
 	}
@@ -614,7 +620,10 @@ int CALLBACK CCheatsUI::CheatListProc(HWND hDlg, uint32_t uMsg, uint32_t wParam,
 				case TV_STATE_INDETERMINATE: TV_SetCheckState(_this->m_hCheatTree, (HWND)ht.hItem, TV_STATE_CLEAR); break;
 				}
 
-				_this->m_CheatSelectionChanged = true;
+				if (g_BaseSystem)
+				{
+					g_BaseSystem->SetCheatsSlectionChanged(true);
+				}
 			}
 		}
 		if ((lpnmh->code == NM_DBLCLK) && (lpnmh->idFrom == IDC_MYTREE))
@@ -670,7 +679,10 @@ int CALLBACK CCheatsUI::CheatListProc(HWND hDlg, uint32_t uMsg, uint32_t wParam,
 		TVITEM item;
 		item.mask = TVIF_PARAM;
 		item.hItem = (HTREEITEM)_this->m_hSelectedItem;
-		TreeView_GetItem(_this->m_hCheatTree, &item);
+		if (!TreeView_GetItem(_this->m_hCheatTree, &item))
+		{
+			break;
+		}
 
 		//Make sure the selected line can use code extensions
 		stdstr LineEntry = g_Settings->LoadStringIndex(Cheat_Entry, item.lParam);
@@ -679,14 +691,14 @@ int CALLBACK CCheatsUI::CheatListProc(HWND hDlg, uint32_t uMsg, uint32_t wParam,
 		stdstr Options;
 		if (g_Settings->LoadStringIndex(Cheat_Options, item.lParam, Options) && Options.length() > 0)
 		{
-			DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_Cheats_CodeEx), hDlg, (DLGPROC)CheatsCodeExProc, (LPARAM)_this);
+			DialogBoxParamW(GetModuleHandle(NULL), MAKEINTRESOURCEW(IDD_Cheats_CodeEx), hDlg, (DLGPROC)CheatsCodeExProc, (LPARAM)_this);
 		}
 		else
 		{
 			stdstr Range;
 			if (g_Settings->LoadStringIndex(Cheat_Range, item.lParam, Range) && Range.length() > 0)
 			{
-				DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_Cheats_Range), hDlg, (DLGPROC)CheatsCodeQuantProc, (LPARAM)_this);
+				DialogBoxParamW(GetModuleHandle(NULL), MAKEINTRESOURCEW(IDD_Cheats_Range), hDlg, (DLGPROC)CheatsCodeQuantProc, (LPARAM)_this);
 			}
 		}
 
@@ -779,7 +791,10 @@ int CALLBACK CCheatsUI::CheatsCodeExProc(HWND hDlg, uint32_t uMsg, uint32_t wPar
 			SendMessage(GetDlgItem(hDlg, IDC_CHEAT_LIST), LB_GETTEXT, index, (LPARAM)CheatExten);
 
 			g_Settings->SaveStringIndex(Cheat_Extension, item.lParam, CheatExten);
-			_this->m_CheatSelectionChanged = true;
+			if (g_BaseSystem)
+			{
+				g_BaseSystem->SetCheatsSlectionChanged(true);
+			}
 		}
 		RemoveProp(hDlg, "Class");
 		EndDialog(hDlg, 0);
@@ -889,7 +904,10 @@ int CALLBACK CCheatsUI::CheatsCodeQuantProc(HWND hDlg, uint32_t uMsg, uint32_t w
 			sprintf(CheatExten, "$%X", Value);
 
 			g_Settings->SaveStringIndex(Cheat_Extension, item.lParam, CheatExten);
-			_this->m_CheatSelectionChanged = true;
+			if (g_BaseSystem)
+			{
+				g_BaseSystem->SetCheatsSlectionChanged(true);
+			}
 		}
 		RemoveProp(hDlg, "Class");
 		EndDialog(hDlg, 0);
@@ -928,11 +946,8 @@ int CALLBACK CCheatsUI::ManageCheatsProc(HWND hDlg, uint32_t uMsg, uint32_t wPar
 		WndPlac.length = sizeof(WndPlac);
 		GetWindowPlacement(hDlg, &WndPlac);
 
-		LONG_PTR originalWndProc = GetWindowLongPtrW(hDlg, GWLP_WNDPROC);
-		SetWindowLongPtrW(hDlg, GWLP_WNDPROC, (LONG_PTR)DefWindowProcW);
 		SetWindowTextW(hDlg, GS(CHEAT_TITLE));
-		SetWindowLongPtrW(hDlg, GWLP_WNDPROC, originalWndProc);
-		_this->m_hSelectCheat = CreateDialogParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_Cheats_List), hDlg, (DLGPROC)CheatListProc, (LPARAM)_this);
+		_this->m_hSelectCheat = CreateDialogParamW(GetModuleHandle(NULL), MAKEINTRESOURCEW(IDD_Cheats_List), hDlg, (DLGPROC)CheatListProc, (LPARAM)_this);
 		SetWindowPos(_this->m_hSelectCheat, HWND_TOP, 5, 8, 0, 0, SWP_NOSIZE);
 		ShowWindow(_this->m_hSelectCheat, SW_SHOW);
 
@@ -952,7 +967,7 @@ int CALLBACK CCheatsUI::ManageCheatsProc(HWND hDlg, uint32_t uMsg, uint32_t wPar
 		}
 		else
 		{
-			_this->m_AddCheat = CreateDialogParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_Cheats_Add), hDlg, (DLGPROC)CheatAddProc, (LPARAM)_this);
+			_this->m_AddCheat = CreateDialogParamW(GetModuleHandle(NULL), MAKEINTRESOURCEW(IDD_Cheats_Add), hDlg, (DLGPROC)CheatAddProc, (LPARAM)_this);
 			SetWindowPos(_this->m_AddCheat, HWND_TOP, (rc->right - rc->left) / 2, 8, 0, 0, SWP_NOSIZE);
 			ShowWindow(_this->m_AddCheat, SW_HIDE);
 
@@ -995,7 +1010,8 @@ int CALLBACK CCheatsUI::ManageCheatsProc(HWND hDlg, uint32_t uMsg, uint32_t wPar
 		case IDCANCEL:
 		{
 			CCheatsUI * _this = (CCheatsUI *)GetProp(hDlg, "Class");
-			if (_this->m_AddCheat) {
+			if (_this->m_AddCheat)
+			{
 				DestroyWindow(_this->m_AddCheat);
 				_this->m_AddCheat = NULL;
 			}
@@ -1003,6 +1019,15 @@ int CALLBACK CCheatsUI::ManageCheatsProc(HWND hDlg, uint32_t uMsg, uint32_t wPar
 		}
 		RemoveProp(hDlg, "Class");
 		EndDialog(hDlg, 0);
+		if (g_BaseSystem)
+		{
+			g_BaseSystem->ExternalEvent(SysEvent_ResumeCPU_Cheats);
+		}
+		if (g_cheatUI)
+		{
+			delete g_cheatUI;
+			g_cheatUI = NULL;
+		}
 		break;
 		case IDC_STATE:
 		{

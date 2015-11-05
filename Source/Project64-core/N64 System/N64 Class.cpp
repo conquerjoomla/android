@@ -45,7 +45,8 @@ m_TLBStoreAddress(0),
 m_SyncCount(0),
 m_CPU_Handle(NULL),
 m_CPU_ThreadID(0),
-m_hPauseEvent(true)
+m_hPauseEvent(true),
+m_CheatsSlectionChanged(false)
 {
 	uint32_t gameHertz = g_Settings->LoadDword(Game_ScreenHertz);
 	if (gameHertz == 0)
@@ -112,6 +113,7 @@ void CN64System::ExternalEvent(SystemEvent action)
 	case SysEvent_PauseCPU_DumpMemory:
 	case SysEvent_PauseCPU_SearchMemory:
 	case SysEvent_PauseCPU_Settings:
+	case SysEvent_PauseCPU_Cheats:
 		if (!g_Settings->LoadBool(GameRunning_CPU_Paused))
 		{
 			QueueEvent(action);
@@ -159,6 +161,12 @@ void CN64System::ExternalEvent(SystemEvent action)
 		break;
 	case SysEvent_ResumeCPU_Settings:
 		if (g_Settings->LoadDword(GameRunning_CPU_PausedType) == PauseType_Settings)
+		{
+			m_hPauseEvent.Trigger();
+		}
+		break;
+	case SysEvent_ResumeCPU_Cheats:
+		if (g_Settings->LoadDword(GameRunning_CPU_PausedType) == PauseType_Cheats)
 		{
 			m_hPauseEvent.Trigger();
 		}
@@ -1691,7 +1699,7 @@ bool CN64System::LoadState(const char * /*FileName*/)
 			SyncCPU(m_SyncCPU);
 		}
 	}
-	WriteTrace(TraceDebug,__FUNCTION__ ": 13");
+	WriteTrace(TraceDebug, __FUNCTION__ ": 13");
 	std::wstring LoadMsg = g_Lang->GetString(MSG_LOADED_STATE);
 	g_Notify->DisplayMessage(5, stdstr_f("%s %s", LoadMsg.c_str(), CPath(FileNameStr).GetNameExtension()).ToUTF16().c_str());
 	WriteTrace(TraceDebug, __FUNCTION__ ": Done");
@@ -1907,12 +1915,10 @@ void CN64System::RefreshScreen()
 		{
 			return;
 		}
-#ifdef tofix
-		if (g_BaseSystem->m_Cheats.CheatsSlectionChanged())
+		if (g_BaseSystem->HasCheatsSlectionChanged())
 		{
 			g_BaseSystem->m_Cheats.LoadCheats(false, g_BaseSystem->m_Plugins);
 		}
-#endif
 		g_BaseSystem->m_Cheats.ApplyCheats(g_MMU);
 	}
 	//	if (bProfiling)    { m_Profile.StartTimer(ProfilingAddr != Timer_None ? ProfilingAddr : Timer_R4300); }

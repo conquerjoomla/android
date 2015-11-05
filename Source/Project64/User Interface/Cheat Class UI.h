@@ -18,10 +18,8 @@ public:
 
 	bool IsCheatMessage(MSG * msg);
 	void SelectCheats(HWND hParent, bool BlockExecution);
-	inline bool CheatsSlectionChanged(void) const { return m_CheatSelectionChanged; }
 
 private:
-
 	static int CALLBACK CheatAddProc(HWND hDlg, uint32_t uMsg, uint32_t wParam, uint32_t lParam);
 	static int CALLBACK CheatListProc(HWND hDlg, uint32_t uMsg, uint32_t wParam, uint32_t lParam);
 	static int CALLBACK ManageCheatsProc(HWND hDlg, uint32_t uMsg, uint32_t wParam, uint32_t lParam);
@@ -34,7 +32,6 @@ private:
 	int  m_MinSizeDlg, m_MaxSizeDlg;
 	int  m_EditCheat;
 	bool m_DeleteingEntries;
-	bool m_CheatSelectionChanged;
 
 	//Information about the current cheat we are editing
 	stdstr        m_EditName;

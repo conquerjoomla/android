@@ -235,14 +235,13 @@ bool CMainMenu::ProcessMessage(HWND hWnd, DWORD /*FromAccelerator*/, DWORD MenuI
 	break;
 	case ID_SYSTEM_CHEAT:
 	{
+		if (g_cheatUI != NULL)
+		{
+			g_Notify->BreakPoint(__FILEW__, __LINE__);
+		}
 		CCheatsUI * cheatUI = new CCheatsUI;
 		g_cheatUI = cheatUI;
 		cheatUI->SelectCheats(hWnd, false);
-		if (g_cheatUI == cheatUI)
-		{
-			g_cheatUI = NULL;
-		}
-		delete cheatUI;
 	}
 	break;
 	case ID_SYSTEM_GSBUTTON:

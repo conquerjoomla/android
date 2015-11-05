@@ -82,6 +82,8 @@ public:
 
 	bool   DmaUsed() const { return m_DMAUsed; }
 	void   SetDmaUsed(bool DMAUsed) { m_DMAUsed = DMAUsed; }
+	void   SetCheatsSlectionChanged(bool changed) { m_CheatsSlectionChanged = changed; }
+	bool   HasCheatsSlectionChanged(void) const { return m_CheatsSlectionChanged; }
 	uint32_t  GetButtons(int Control) const { return m_Buttons[Control]; }
 
 	//Variable used to track that the SP is being handled and stays the same as the real SP in sync core
@@ -94,6 +96,7 @@ public:
 	void   SyncCPUPC(CN64System * const SecondCPU);
 	void   SyncSystem();
 	void   SyncSystemPC();
+
 private:
 	//Make sure plugins can directly access this information
 	friend CGfxPlugin;
@@ -164,6 +167,7 @@ private:
 	uint32_t        m_TLBLoadAddress;
 	uint32_t        m_TLBStoreAddress;
 	uint32_t        m_SyncCount;
+	bool            m_CheatsSlectionChanged;
 
 	//When Syncing cores this is the PC where it last Sync'ed correctly
 	uint32_t m_LastSuccessSyncPC[10];
