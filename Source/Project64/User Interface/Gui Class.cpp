@@ -234,13 +234,7 @@ void CMainGui::GameCpuRunning(CMainGui * Gui)
 	}
 	else
 	{
-		Notify().WindowMode();
-		if (g_Settings->LoadDword(RomBrowser_Enabled))
-		{
-			Gui->ShowRomBrowser();
-		}
-		Gui->RefreshMenu();
-		Gui->MakeWindowOnTop(false);
+		PostMessage(Gui->m_hMainWindow, WM_GAME_CLOSED, 0, 0);
 	}
 }
 
@@ -474,10 +468,10 @@ WPARAM CMainGui::ProcessAllMessages(void)
 
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
-        if (g_cheatUI != NULL && g_cheatUI->IsCheatMessage(&msg))
-        {
+		if (g_cheatUI != NULL && g_cheatUI->IsCheatMessage(&msg))
+		{
 			continue;
-        }
+		}
 
 		if (m_ResetPlugins)
 		{
@@ -486,7 +480,7 @@ WPARAM CMainGui::ProcessAllMessages(void)
 			SetEvent(m_ResetInfo->hEvent);
 			m_ResetInfo = NULL;
 		}
-		//if (IsDialogMessage( hManageWindow,&msg)) { continue; }
+		if (g_cheatUI && g_cheatUI->IsCheatMessage(&msg)) { continue; }
 		if (m_Menu->ProcessAccelerator(m_hMainWindow, &msg)) { continue; }
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
@@ -961,6 +955,20 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
 		_this->m_ResetPlugins = true;
 	}
 	break;
+	case WM_GAME_CLOSED:
+	{
+		CMainGui * _this = (CMainGui *)GetProp((HWND)hWnd, "Class");
+		Notify().WindowMode();
+		if (g_Settings->LoadDword(RomBrowser_Enabled))
+		{
+			_this->ShowRomBrowser();
+		}
+		_this->RefreshMenu();
+		_this->MakeWindowOnTop(false);
+		_this->SetStatusText(0, L"");
+		_this->SetStatusText(1, L"");
+	}
+	break;
 	case WM_COMMAND:
 	{
 		CMainGui * _this = (CMainGui *)GetProp((HWND)hWnd, "Class");
@@ -998,13 +1006,12 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
 				{
 					g_cheatUI = NULL;
 				}
-				delete cheatUI;
 			}
 
 			if (g_Rom)
 			{
 				g_Rom->SaveRomSettingID(false);
-		}
+			}
 			else
 			{
 				Rom.ClearRomSettingID();
@@ -1060,7 +1067,7 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
 					return true;
 				}
 			}
-	}
+		}
 	}
 	break;
 	case WM_DROPFILES:
@@ -1099,7 +1106,7 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
 		break;
 	default:
 		return DefWindowProc((HWND)hWnd, uMsg, wParam, lParam);
-}
+	}
 	return TRUE;
 }
 

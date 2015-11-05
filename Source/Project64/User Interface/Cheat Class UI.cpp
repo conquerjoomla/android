@@ -487,12 +487,6 @@ int CALLBACK CCheatsUI::CheatListProc(HWND hDlg, uint32_t uMsg, uint32_t wParam,
 
 		switch (LOWORD(wParam))
 		{
-		case ID_POPUP_ADDNEWCHEAT:
-			//DialogBox(hInst, MAKEINTRESOURCE(IDD_Cheats_Add),hDlg,(DLGPROC)CheatAddProc);
-			break;
-		case ID_POPUP_EDIT:
-			//DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_Cheats_Edit),hDlg,(DLGPROC)CheatEditProc,(LPARAM)hSelectedItem);
-			break;
 		case ID_POPUP_DELETE:
 		{
 			TVITEM item;
@@ -552,18 +546,13 @@ int CALLBACK CCheatsUI::CheatListProc(HWND hDlg, uint32_t uMsg, uint32_t wParam,
 
 			GetCursorPos(&Mouse);
 
-			MenuSetText(hPopupMenu, 0, GS(CHEAT_ADDNEW), NULL);
-			MenuSetText(hPopupMenu, 1, GS(CHEAT_EDIT), NULL);
-			MenuSetText(hPopupMenu, 3, GS(CHEAT_DELETE), NULL);
+			MenuSetText(hPopupMenu, 0, GS(CHEAT_DELETE), NULL);
 
-			if (_this->m_hSelectedItem == NULL ||
-				TreeView_GetChild(_this->m_hCheatTree, _this->m_hSelectedItem) != NULL)
+			if (_this->m_hSelectedItem != NULL &&
+				TreeView_GetChild(_this->m_hCheatTree, _this->m_hSelectedItem) == NULL)
 			{
-				DeleteMenu(hPopupMenu, 3, MF_BYPOSITION);
-				DeleteMenu(hPopupMenu, 2, MF_BYPOSITION);
-				DeleteMenu(hPopupMenu, 1, MF_BYPOSITION);
+				TrackPopupMenu(hPopupMenu, 0, Mouse.x, Mouse.y, 0, hDlg, NULL);
 			}
-			TrackPopupMenu(hPopupMenu, 0, Mouse.x, Mouse.y, 0, hDlg, NULL);
 			DestroyMenu(hMenu);
 		}
 		if ((lpnmh->code == NM_CLICK) && (lpnmh->idFrom == IDC_MYTREE))
@@ -1016,17 +1005,17 @@ int CALLBACK CCheatsUI::ManageCheatsProc(HWND hDlg, uint32_t uMsg, uint32_t wPar
 				_this->m_AddCheat = NULL;
 			}
 			_this->m_Window = NULL;
-		}
-		RemoveProp(hDlg, "Class");
-		EndDialog(hDlg, 0);
-		if (g_BaseSystem)
-		{
-			g_BaseSystem->ExternalEvent(SysEvent_ResumeCPU_Cheats);
-		}
-		if (g_cheatUI)
-		{
-			delete g_cheatUI;
-			g_cheatUI = NULL;
+			RemoveProp(hDlg, "Class");
+			EndDialog(hDlg, 0);
+			if (g_BaseSystem)
+			{
+				g_BaseSystem->ExternalEvent(SysEvent_ResumeCPU_Cheats);
+			}
+			if (g_cheatUI == _this)
+			{
+				delete g_cheatUI;
+				g_cheatUI = NULL;
+			}
 		}
 		break;
 		case IDC_STATE:
