@@ -27,7 +27,7 @@ public:
     uint32_t    VAddrFirst() const { return m_VAddrFirst; }
     uint32_t    VAddrLast()  const { return m_VAddrLast; }
     uint8_t *   CompiledLocation() const { return m_CompiledLocation; }
-    int      NoOfSections() const { return m_Sections.size(); }
+    int32_t      NoOfSections() const { return m_Sections.size(); }
     const CCodeSection & EnterSection() const { return *m_EnterSection; }
     const MD5Digest & Hash() const { return m_Hash; }
 
@@ -37,8 +37,8 @@ public:
     CCodeSection * ExistingSection(uint32_t Addr) { return m_EnterSection->ExistingSection(Addr, NextTest()); }
     bool SectionAccessible(uint32_t m_SectionID) { return m_EnterSection->SectionAccessible(m_SectionID, NextTest()); }
 
-    uint64_t   MemContents(int i) const { return m_MemContents[i]; }
-    uint64_t * MemLocation(int i) const { return m_MemLocation[i]; }
+    uint64_t   MemContents(int32_t i) const { return m_MemContents[i]; }
+    uint64_t * MemLocation(int32_t i) const { return m_MemLocation[i]; }
 
     uint32_t NextTest();
 

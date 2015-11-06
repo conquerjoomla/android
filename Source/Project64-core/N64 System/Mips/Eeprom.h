@@ -26,8 +26,8 @@ private:
     CEeprom& operator=(const CEeprom&);   // Disable assignment
 
     void LoadEeprom ();
-    void ReadFrom   ( uint8_t * Buffer, int line );
-    void WriteTo    ( uint8_t * Buffer, int line );
+    void ReadFrom   ( uint8_t * Buffer, int32_t line );
+    void WriteTo    ( uint8_t * Buffer, int32_t line );
 
     uint8_t m_EEPROM[0x800];
     bool    m_ReadOnly;

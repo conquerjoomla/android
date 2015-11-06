@@ -48,6 +48,6 @@ extern CTransVaddr   * g_TransVaddr;
 class CSystemEvents;
 extern CSystemEvents * g_SystemEvents;
 
-extern int           * g_NextTimer;
+extern int32_t       * g_NextTimer;
 extern uint32_t      * g_TLBLoadAddress;
 extern uint32_t      * g_TLBStoreAddress;

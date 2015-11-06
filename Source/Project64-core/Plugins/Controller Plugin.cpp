@@ -56,7 +56,7 @@ bool CControl_Plugin::LoadFunctions(void)
 
     // Allocate our own controller
     m_AllocatedControllers = true;
-    for (int i = 0; i < 4; i++)
+    for (int32_t i = 0; i < 4; i++)
     {
         m_Controllers[i] = new CCONTROL(m_PluginControllers[i].Present, m_PluginControllers[i].RawData, m_PluginControllers[i].Plugin);
     }
@@ -65,7 +65,7 @@ bool CControl_Plugin::LoadFunctions(void)
 
 bool CControl_Plugin::Initiate(CN64System * System, RenderWindow * Window)
 {
-    for (int i = 0; i < 4; i++)
+    for (int32_t i = 0; i < 4; i++)
     {
         m_PluginControllers[i].Present = FALSE;
         m_PluginControllers[i].RawData = FALSE;
@@ -128,7 +128,7 @@ void CControl_Plugin::UnloadPluginDetails(void)
 {
     if (m_AllocatedControllers)
     {
-        for (int count = 0; count < sizeof(m_Controllers) / sizeof(m_Controllers[0]); count++)
+        for (int32_t count = 0; count < sizeof(m_Controllers) / sizeof(m_Controllers[0]); count++)
         {
             delete m_Controllers[count];
             m_Controllers[count] = NULL;
@@ -146,7 +146,7 @@ void CControl_Plugin::UnloadPluginDetails(void)
 void CControl_Plugin::UpdateKeys(void)
 {
     if (!m_AllocatedControllers) { return; }
-    for (int cont = 0; cont < sizeof(m_Controllers) / sizeof(m_Controllers[0]); cont++)
+    for (int32_t cont = 0; cont < sizeof(m_Controllers) / sizeof(m_Controllers[0]); cont++)
     {
         if (!m_Controllers[cont]->m_Present) { continue; }
         if (!m_Controllers[cont]->m_RawData)
@@ -165,14 +165,14 @@ void CControl_Plugin::SetControl(CControl_Plugin const * const Plugin)
 {
     if (m_AllocatedControllers)
     {
-        for (int count = 0; count < sizeof(m_Controllers) / sizeof(m_Controllers[0]); count++)
+        for (int32_t count = 0; count < sizeof(m_Controllers) / sizeof(m_Controllers[0]); count++)
         {
             delete m_Controllers[count];
             m_Controllers[count] = NULL;
         }
     }
     m_AllocatedControllers = false;
-    for (int count = 0; count < sizeof(m_Controllers) / sizeof(m_Controllers[0]); count++)
+    for (int32_t count = 0; count < sizeof(m_Controllers) / sizeof(m_Controllers[0]); count++)
     {
         m_Controllers[count] = Plugin->m_Controllers[count];
     }

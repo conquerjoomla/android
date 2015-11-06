@@ -86,8 +86,8 @@ public:
     bool  SW_PAddr     ( uint32_t PAddr, uint32_t Value );
     bool  SD_PAddr     ( uint32_t PAddr, uint64_t Value );
 
-    int   MemoryFilter(uint32_t dwExptCode, void * lpExceptionPointer);
-    void  UpdateFieldSerration(unsigned int interlaced);
+    int32_t   MemoryFilter(uint32_t dwExptCode, void * lpExceptionPointer);
+    void  UpdateFieldSerration(uint32_t interlaced);
 
     //Protect the Memory from being written to
     void  ProtectMemory(uint32_t StartVaddr, uint32_t EndVaddr);
@@ -166,7 +166,7 @@ private:
     bool SH_NonMemory         ( uint32_t PAddr, uint16_t Value );
     bool SW_NonMemory         ( uint32_t PAddr, uint32_t Value );
 
-    void Compile_StoreInstructClean (x86Reg AddressReg, int Length );
+    void Compile_StoreInstructClean (x86Reg AddressReg, int32_t Length );
 
     CMipsMemory_CallBack * const m_CBClass;
 

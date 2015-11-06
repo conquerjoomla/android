@@ -46,7 +46,7 @@ CGfxPlugin::~CGfxPlugin()
 bool CGfxPlugin::LoadFunctions(void)
 {
     // Find entries for functions in DLL
-    int(__cdecl *InitiateGFX) (void * Gfx_Info);
+    int32_t(__cdecl *InitiateGFX) (void * Gfx_Info);
     LoadFunction(InitiateGFX);
     LoadFunction(ChangeWindow);
     LoadFunction(DrawScreen);
@@ -260,7 +260,7 @@ void CGfxPlugin::UnloadPluginDetails(void)
     OnRomBrowserMenuItem = NULL;
 }
 
-void CGfxPlugin::ProcessMenuItem(int id)
+void CGfxPlugin::ProcessMenuItem(int32_t id)
 {
     if (m_GFXDebug.ProcessMenuItem)
     {

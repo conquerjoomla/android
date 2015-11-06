@@ -771,7 +771,7 @@ void R4300iOp32::SLTI()
 
 void R4300iOp32::SLTIU()
 {
-    int imm32 = (int16_t)m_Opcode.immediate;
+    int32_t imm32 = (int16_t)m_Opcode.immediate;
     int64_t imm64;
 
     imm64 = imm32;
@@ -943,8 +943,8 @@ void R4300iOp32::LWL()
         return;
     }
 
-    _GPR[m_Opcode.rt].W[0] = (int)(_GPR[m_Opcode.rt].W[0] & LWL_MASK[Offset]);
-    _GPR[m_Opcode.rt].W[0] += (int)(Value << LWL_SHIFT[Offset]);
+    _GPR[m_Opcode.rt].W[0] = (int32_t)(_GPR[m_Opcode.rt].W[0] & LWL_MASK[Offset]);
+    _GPR[m_Opcode.rt].W[0] += (int32_t)(Value << LWL_SHIFT[Offset]);
 }
 
 void R4300iOp32::LW()
@@ -1029,8 +1029,8 @@ void R4300iOp32::LWR()
         return;
     }
 
-    _GPR[m_Opcode.rt].W[0] = (int)(_GPR[m_Opcode.rt].W[0] & LWR_MASK[Offset]);
-    _GPR[m_Opcode.rt].W[0] += (int)(Value >> LWR_SHIFT[Offset]);
+    _GPR[m_Opcode.rt].W[0] = (int32_t)(_GPR[m_Opcode.rt].W[0] & LWR_MASK[Offset]);
+    _GPR[m_Opcode.rt].W[0] += (int32_t)(Value >> LWR_SHIFT[Offset]);
 }
 
 void R4300iOp32::LWU()
@@ -1086,7 +1086,7 @@ void R4300iOp32::SPECIAL_SLL()
 
 void R4300iOp32::SPECIAL_SRL()
 {
-    _GPR[m_Opcode.rd].W[0] = (int)(_GPR[m_Opcode.rt].UW[0] >> m_Opcode.sa);
+    _GPR[m_Opcode.rd].W[0] = (int32_t)(_GPR[m_Opcode.rt].UW[0] >> m_Opcode.sa);
 }
 
 void R4300iOp32::SPECIAL_SRA()
@@ -1101,7 +1101,7 @@ void R4300iOp32::SPECIAL_SLLV()
 
 void R4300iOp32::SPECIAL_SRLV()
 {
-    _GPR[m_Opcode.rd].W[0] = (int)(_GPR[m_Opcode.rt].UW[0] >> (_GPR[m_Opcode.rs].UW[0] & 0x1F));
+    _GPR[m_Opcode.rd].W[0] = (int32_t)(_GPR[m_Opcode.rt].UW[0] >> (_GPR[m_Opcode.rs].UW[0] & 0x1F));
 }
 
 void R4300iOp32::SPECIAL_SRAV()
@@ -1337,7 +1337,7 @@ void R4300iOp32::COP0_MF()
     {
         g_SystemTimer->UpdateTimers();
     }
-    _GPR[m_Opcode.rt].W[0] = (int)_CP0[m_Opcode.rd];
+    _GPR[m_Opcode.rt].W[0] = (int32_t)_CP0[m_Opcode.rd];
 }
 
 void R4300iOp32::COP0_MT()
@@ -1417,7 +1417,7 @@ void R4300iOp32::COP0_MT()
 void R4300iOp32::COP1_MF()
 {
     TEST_COP1_USABLE_EXCEPTION
-        _GPR[m_Opcode.rt].W[0] = *(int *)_FPR_S[m_Opcode.fs];
+        _GPR[m_Opcode.rt].W[0] = *(int32_t *)_FPR_S[m_Opcode.fs];
 }
 
 void R4300iOp32::COP1_CF()
@@ -1428,7 +1428,7 @@ void R4300iOp32::COP1_CF()
             if (g_Settings->LoadBool(Debugger_Enabled)) { g_Notify->DisplayError(L"CFC1 what register are you writing to ?"); }
             return;
         }
-        _GPR[m_Opcode.rt].W[0] = (int)_FPCR[m_Opcode.fs];
+        _GPR[m_Opcode.rt].W[0] = (int32_t)_FPCR[m_Opcode.fs];
 }
 
 void R4300iOp32::COP1_DMT()

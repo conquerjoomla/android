@@ -18,7 +18,7 @@ class CInterpreterCPU :
 public:
     static void BuildCPU();
     static void ExecuteCPU();
-    static void ExecuteOps(int Cycles);
+    static void ExecuteOps(int32_t Cycles);
     static void InPermLoop();
 
 private:

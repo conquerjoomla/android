@@ -15,6 +15,6 @@ class Mempak
 public:
     static void Close();
     static uint8_t CalculateCrc(uint8_t * DataToCrc);
-    static void ReadFrom(int Control, uint8_t * command);
-    static void WriteTo(int Control, uint8_t * command);
+    static void ReadFrom(int32_t Control, uint8_t * command);
+    static void WriteTo(int32_t Control, uint8_t * command);
 };

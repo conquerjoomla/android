@@ -37,6 +37,6 @@ private:
     static bool m_bShowTLBMisses;
     static bool m_bShowDivByZero;
 
-    static int  m_RefCount;
+    static int32_t m_RefCount;
     static bool m_Registered;
 };

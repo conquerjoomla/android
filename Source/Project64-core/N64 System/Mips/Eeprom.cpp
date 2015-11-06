@@ -31,7 +31,7 @@ CEeprom::~CEeprom()
     }
 }
 
-uint8_t byte2bcd(int n)
+uint8_t byte2bcd(int32_t n)
 {
     n %= 100;
     return (uint8_t)(((n / 10) << 4) | (n % 10));
@@ -168,9 +168,9 @@ void CEeprom::LoadEeprom()
     ReadFile(m_hFile, m_EEPROM, sizeof(m_EEPROM), &dwRead, NULL);
 }
 
-void CEeprom::ReadFrom(uint8_t * Buffer, int line)
+void CEeprom::ReadFrom(uint8_t * Buffer, int32_t line)
 {
-    int i;
+    int32_t i;
 
     if (m_hFile == NULL)
     {
@@ -183,10 +183,10 @@ void CEeprom::ReadFrom(uint8_t * Buffer, int line)
     }
 }
 
-void CEeprom::WriteTo(uint8_t * Buffer, int line)
+void CEeprom::WriteTo(uint8_t * Buffer, int32_t line)
 {
     DWORD dwWritten;
-    int i;
+    int32_t i;
 
     if (m_hFile == NULL)
     {

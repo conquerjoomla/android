@@ -17,10 +17,10 @@ class CRSP_Plugin : public CPlugin
         /* Menu */
         /* Items should have an ID between 5001 and 5100 */
         void * hRSPMenu;
-        void(__cdecl *ProcessMenuItem) (int ID);
+        void(__cdecl *ProcessMenuItem) (int32_t ID);
 
         /* Break Points */
-        int UseBPoints;
+        int32_t UseBPoints;
         char BPPanelName[20];
         void(__cdecl *Add_BPoint)      (void);
         void(__cdecl *CreateBPPanel)   (void);
@@ -28,7 +28,7 @@ class CRSP_Plugin : public CPlugin
         void(__cdecl *PaintBPPanel)    (void);
         void(__cdecl *ShowBPPanel)     (void);
         void(__cdecl *RefreshBpoints)  (void * hList);
-        void(__cdecl *RemoveBpoint)    (void * hList, int index);
+        void(__cdecl *RemoveBpoint)    (void * hList, int32_t index);
         void(__cdecl *RemoveAllBpoint) (void);
         /* RSP command Window */
         void(__cdecl *Enter_RSP_Commands_Window) (void);
@@ -52,18 +52,18 @@ public:
     bool Initiate(CPlugins * Plugins, CN64System * System);
 
     uint32_t(__cdecl *DoRspCycles)	(uint32_t);
-    void(__cdecl *EnableDebugging)(int Enable);
+    void(__cdecl *EnableDebugging)(int32_t Enable);
 
     void * GetDebugMenu(void) { return m_RSPDebug.hRSPMenu; }
-    void ProcessMenuItem(int id);
+    void ProcessMenuItem(int32_t id);
 
 private:
     CRSP_Plugin(const CRSP_Plugin&);			// Disable copy constructor
     CRSP_Plugin& operator=(const CRSP_Plugin&);	// Disable assignment
 
     PLUGIN_TYPE type() { return PLUGIN_TYPE_RSP; }
-    virtual int GetDefaultSettingStartRange() const { return FirstRSPDefaultSet; }
-    virtual int GetSettingStartRange() const { return FirstRSPSettings; }
+    virtual int32_t GetDefaultSettingStartRange() const { return FirstRSPDefaultSet; }
+    virtual int32_t GetSettingStartRange() const { return FirstRSPSettings; }
 
     bool LoadFunctions(void);
     void UnloadPluginDetails(void);

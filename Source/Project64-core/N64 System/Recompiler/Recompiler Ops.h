@@ -227,44 +227,44 @@ protected:
     /********* Helper Functions *********/
     typedef CRegInfo::REG_STATE REG_STATE;
 
-    static REG_STATE         GetMipsRegState ( int Reg ) { return m_RegWorkingSet.GetMipsRegState(Reg); }
-    static uint64_t          GetMipsReg      ( int Reg ) { return m_RegWorkingSet.GetMipsReg(Reg); }
-    static int64_t           GetMipsReg_S    ( int Reg ) { return m_RegWorkingSet.GetMipsReg_S(Reg); }
-    static uint32_t          GetMipsRegLo    ( int Reg ) { return m_RegWorkingSet.GetMipsRegLo(Reg); }
-    static int32_t           GetMipsRegLo_S  ( int Reg ) { return m_RegWorkingSet.GetMipsRegLo_S(Reg); }
-    static uint32_t          GetMipsRegHi    ( int Reg ) { return m_RegWorkingSet.GetMipsRegHi(Reg); }
-    static int32_t           GetMipsRegHi_S  ( int Reg ) { return m_RegWorkingSet.GetMipsRegHi_S(Reg); }
-    static CX86Ops::x86Reg   GetMipsRegMapLo ( int Reg ) { return m_RegWorkingSet.GetMipsRegMapLo(Reg); }
-    static CX86Ops::x86Reg   GetMipsRegMapHi ( int Reg ) { return m_RegWorkingSet.GetMipsRegMapHi(Reg); }
+    static REG_STATE         GetMipsRegState ( int32_t Reg ) { return m_RegWorkingSet.GetMipsRegState(Reg); }
+    static uint64_t          GetMipsReg      ( int32_t Reg ) { return m_RegWorkingSet.GetMipsReg(Reg); }
+    static int64_t           GetMipsReg_S    ( int32_t Reg ) { return m_RegWorkingSet.GetMipsReg_S(Reg); }
+    static uint32_t          GetMipsRegLo    ( int32_t Reg ) { return m_RegWorkingSet.GetMipsRegLo(Reg); }
+    static int32_t           GetMipsRegLo_S  ( int32_t Reg ) { return m_RegWorkingSet.GetMipsRegLo_S(Reg); }
+    static uint32_t          GetMipsRegHi    ( int32_t Reg ) { return m_RegWorkingSet.GetMipsRegHi(Reg); }
+    static int32_t           GetMipsRegHi_S  ( int32_t Reg ) { return m_RegWorkingSet.GetMipsRegHi_S(Reg); }
+    static CX86Ops::x86Reg   GetMipsRegMapLo ( int32_t Reg ) { return m_RegWorkingSet.GetMipsRegMapLo(Reg); }
+    static CX86Ops::x86Reg   GetMipsRegMapHi ( int32_t Reg ) { return m_RegWorkingSet.GetMipsRegMapHi(Reg); }
 
-    static bool IsKnown       ( int Reg ) { return m_RegWorkingSet.IsKnown(Reg); }
-    static bool IsUnknown     ( int Reg ) { return m_RegWorkingSet.IsUnknown(Reg); }
-    static bool IsMapped      ( int Reg ) { return m_RegWorkingSet.IsMapped(Reg); }
-    static bool IsConst       ( int Reg ) { return m_RegWorkingSet.IsConst(Reg); }
-    static bool IsSigned      ( int Reg ) { return m_RegWorkingSet.IsSigned(Reg); }
-    static bool IsUnsigned    ( int Reg ) { return m_RegWorkingSet.IsUnsigned(Reg); }
-    static bool Is32Bit       ( int Reg ) { return m_RegWorkingSet.Is32Bit(Reg); }
-    static bool Is64Bit       ( int Reg ) { return m_RegWorkingSet.Is64Bit(Reg); }
-    static bool Is32BitMapped ( int Reg ) { return m_RegWorkingSet.Is32BitMapped(Reg); }
-    static bool Is64BitMapped ( int Reg ) { return m_RegWorkingSet.Is64BitMapped(Reg); }
+    static bool IsKnown       ( int32_t Reg ) { return m_RegWorkingSet.IsKnown(Reg); }
+    static bool IsUnknown     ( int32_t Reg ) { return m_RegWorkingSet.IsUnknown(Reg); }
+    static bool IsMapped      ( int32_t Reg ) { return m_RegWorkingSet.IsMapped(Reg); }
+    static bool IsConst       ( int32_t Reg ) { return m_RegWorkingSet.IsConst(Reg); }
+    static bool IsSigned      ( int32_t Reg ) { return m_RegWorkingSet.IsSigned(Reg); }
+    static bool IsUnsigned    ( int32_t Reg ) { return m_RegWorkingSet.IsUnsigned(Reg); }
+    static bool Is32Bit       ( int32_t Reg ) { return m_RegWorkingSet.Is32Bit(Reg); }
+    static bool Is64Bit       ( int32_t Reg ) { return m_RegWorkingSet.Is64Bit(Reg); }
+    static bool Is32BitMapped ( int32_t Reg ) { return m_RegWorkingSet.Is32BitMapped(Reg); }
+    static bool Is64BitMapped ( int32_t Reg ) { return m_RegWorkingSet.Is64BitMapped(Reg); }
 
     static void FixRoundModel ( CRegInfo::FPU_ROUND RoundMethod )
     {
         m_RegWorkingSet.FixRoundModel(RoundMethod);
     }
-    static void ChangeFPURegFormat ( int Reg, CRegInfo::FPU_STATE OldFormat, CRegInfo::FPU_STATE NewFormat, CRegInfo::FPU_ROUND RoundingModel )
+    static void ChangeFPURegFormat ( int32_t Reg, CRegInfo::FPU_STATE OldFormat, CRegInfo::FPU_STATE NewFormat, CRegInfo::FPU_ROUND RoundingModel )
     {
         m_RegWorkingSet.ChangeFPURegFormat(Reg,OldFormat,NewFormat,RoundingModel);
     }
-    static void Load_FPR_ToTop ( int Reg, int RegToLoad, CRegInfo::FPU_STATE Format)
+    static void Load_FPR_ToTop ( int32_t Reg, int32_t RegToLoad, CRegInfo::FPU_STATE Format)
     {
         m_RegWorkingSet.Load_FPR_ToTop(Reg,RegToLoad,Format);
     }
-    static bool RegInStack ( int Reg, CRegInfo::FPU_STATE Format )
+    static bool RegInStack ( int32_t Reg, CRegInfo::FPU_STATE Format )
     {
         return m_RegWorkingSet.RegInStack(Reg,Format);
     }
-    static x86FpuValues StackPosition ( int Reg )
+    static x86FpuValues StackPosition ( int32_t Reg )
     {
         return m_RegWorkingSet.StackPosition(Reg);
     }
@@ -285,11 +285,11 @@ protected:
     {
         return m_RegWorkingSet.Free8BitX86Reg();
     }
-    static void Map_GPR_32bit ( int Reg, bool SignValue, int MipsRegToLoad )
+    static void Map_GPR_32bit ( int32_t Reg, bool SignValue, int32_t MipsRegToLoad )
     {
         m_RegWorkingSet.Map_GPR_32bit(Reg,SignValue,MipsRegToLoad);
     }
-    static void Map_GPR_64bit ( int Reg, int MipsRegToLoad )
+    static void Map_GPR_64bit ( int32_t Reg, int32_t MipsRegToLoad )
     {
         m_RegWorkingSet.Map_GPR_64bit(Reg,MipsRegToLoad);
     }
@@ -301,7 +301,7 @@ protected:
     {
         return m_RegWorkingSet.Map_MemoryStack(Reg,bMapRegister,LoadValue);
     }
-    static x86Reg Map_TempReg ( x86Reg Reg, int MipsReg, bool LoadHiWord )
+    static x86Reg Map_TempReg ( x86Reg Reg, int32_t MipsReg, bool LoadHiWord )
     {
         return m_RegWorkingSet.Map_TempReg(Reg,MipsReg,LoadHiWord);
     }

@@ -88,7 +88,7 @@ bool CPlugin::Load (const char * FileName)
     if (SetSettingInfo2)
     {
         PLUGIN_SETTINGS2 info;
-        info.FindSystemSettingId = (unsigned int (*)( void * handle, const char * ))CSettings::FindSetting;
+        info.FindSystemSettingId = (uint32_t (*)( void * handle, const char * ))CSettings::FindSetting;
         SetSettingInfo2(&info);
     }
 
@@ -104,9 +104,9 @@ bool CPlugin::Load (const char * FileName)
         info.DefaultLocation = g_Settings->LoadDword(Setting_UseFromRegistry) ? SettingType_Registry : SettingType_CfgFile;
         info.handle = g_Settings;
         info.RegisterSetting = (void(*)(void *, int, int, SettingDataType, SettingType, const char *, const char *, uint32_t))&CSettings::RegisterSetting;
-        info.GetSetting = (unsigned int(*)(void *, int))&CSettings::GetSetting;
+        info.GetSetting = (uint32_t(*)(void *, int))&CSettings::GetSetting;
         info.GetSettingSz = (const char * (*)(void *, int, char *, int))&CSettings::GetSettingSz;
-        info.SetSetting = (void(*)(void *, int, unsigned int))&CSettings::SetSetting;
+        info.SetSetting = (void(*)(void *, int, uint32_t))&CSettings::SetSetting;
         info.SetSettingSz = (void(*)(void *, int, const char *))&CSettings::SetSettingSz;
         info.UseUnregisteredSetting = NULL;
 

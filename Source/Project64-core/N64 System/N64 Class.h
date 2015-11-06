@@ -76,9 +76,9 @@ public:
 
     bool   DmaUsed() const { return m_DMAUsed; }
     void   SetDmaUsed(bool DMAUsed) { m_DMAUsed = DMAUsed; }
-	void   SetCheatsSlectionChanged(bool changed) { m_CheatsSlectionChanged = changed; }
-	bool   HasCheatsSlectionChanged(void) const { return m_CheatsSlectionChanged; }
-    uint32_t  GetButtons(int Control) const { return m_Buttons[Control]; }
+    void   SetCheatsSlectionChanged(bool changed) { m_CheatsSlectionChanged = changed; }
+    bool   HasCheatsSlectionChanged(void) const { return m_CheatsSlectionChanged; }
+    uint32_t  GetButtons(int32_t Control) const { return m_Buttons[Control]; }
 
     //Variable used to track that the SP is being handled and stays the same as the real SP in sync core
 #ifdef TEST_SP_TRACKING
@@ -128,7 +128,7 @@ private:
     void   CpuStopped();
 
     //Function in CMipsMemory_CallBack
-    virtual bool WriteToProtectedMemory(uint32_t Address, int length);
+    virtual bool WriteToProtectedMemory(uint32_t Address, int32_t length);
 
     //Functions in CTLB_CB
     void TLB_Mapped(uint32_t VAddr, uint32_t Len, uint32_t PAddr, bool bReadOnly);
@@ -147,7 +147,7 @@ private:
     CAudio          m_Audio;
     CSpeedLimitor   m_Limitor;
     bool            m_InReset;
-    int             m_NextTimer;
+    int32_t         m_NextTimer;
     CSystemTimer    m_SystemTimer;
     bool            m_bCleanFrameBox;
     bool            m_bInitialized;
@@ -160,11 +160,11 @@ private:
     uint32_t        m_TLBLoadAddress;
     uint32_t        m_TLBStoreAddress;
     uint32_t        m_SyncCount;
-	bool            m_CheatsSlectionChanged;
+    bool            m_CheatsSlectionChanged;
 
     //When Syncing cores this is the PC where it last Sync'ed correctly
     uint32_t m_LastSuccessSyncPC[10];
-    int   m_CyclesToSkip;
+    int32_t  m_CyclesToSkip;
 
     //Handle to the cpu thread
     void * m_CPU_Handle;

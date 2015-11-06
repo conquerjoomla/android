@@ -13,7 +13,7 @@
 __interface CMipsMemory_CallBack
 {
     //Protected memory has been written to, returns true if that memory has been unprotected
-    virtual bool WriteToProtectedMemory (uint32_t Address, int length) = 0;
+    virtual bool WriteToProtectedMemory (uint32_t Address, int32_t length) = 0;
 };
 
 __interface CMipsMemory
@@ -46,8 +46,8 @@ __interface CMipsMemory
 
     virtual bool  ValidVaddr   ( uint32_t VAddr ) const = 0;
 
-    virtual int   MemoryFilter ( uint32_t dwExptCode, void * lpExceptionPointer ) = 0;
-    virtual void  UpdateFieldSerration ( unsigned int interlaced ) = 0;
+    virtual int32_t   MemoryFilter ( uint32_t dwExptCode, void * lpExceptionPointer ) = 0;
+    virtual void  UpdateFieldSerration ( uint32_t interlaced ) = 0;
 
     //Protect the Memory from being written to
     virtual void  ProtectMemory    ( uint32_t StartVaddr, uint32_t EndVaddr ) = 0;

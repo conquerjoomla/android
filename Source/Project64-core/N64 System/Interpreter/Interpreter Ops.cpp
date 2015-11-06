@@ -20,7 +20,7 @@
 #include <Project64-core\Logging.h>
 
 void InPermLoop();
-void TestInterpreterJump(uint32_t PC, uint32_t TargetPC, int Reg1, int Reg2);
+void TestInterpreterJump(uint32_t PC, uint32_t TargetPC, int32_t Reg1, int32_t Reg2);
 
 bool        R4300iOp::m_TestTimer = false;
 uint32_t    R4300iOp::m_NextInstruction;
@@ -44,10 +44,10 @@ const uint32_t R4300iOp::SWR_MASK[4]  = { 0x00FFFFFF, 0x0000FFFF,0x000000FF,0x00
 const uint32_t R4300iOp::LWL_MASK[4]  = { 0x00000000, 0x000000FF,0x0000FFFF,0x00FFFFFF };
 const uint32_t R4300iOp::LWR_MASK[4]  = { 0xFFFFFF00, 0xFFFF0000,0xFF000000,0x0000000 };
 
-const int   R4300iOp::SWL_SHIFT[4] = { 0, 8, 16, 24 };
-const int   R4300iOp::SWR_SHIFT[4] = { 24, 16 , 8, 0 };
-const int   R4300iOp::LWL_SHIFT[4] = { 0, 8, 16, 24};
-const int   R4300iOp::LWR_SHIFT[4] = { 24, 16 ,8, 0 };
+const int32_t   R4300iOp::SWL_SHIFT[4] = { 0, 8, 16, 24 };
+const int32_t   R4300iOp::SWR_SHIFT[4] = { 24, 16 , 8, 0 };
+const int32_t   R4300iOp::LWL_SHIFT[4] = { 0, 8, 16, 24};
+const int32_t   R4300iOp::LWR_SHIFT[4] = { 24, 16 ,8, 0 };
 
 #define ADDRESS_ERROR_EXCEPTION(Address,FromRead) \
     g_Reg->DoAddressError(m_NextInstruction == JUMP,Address,FromRead);\
@@ -716,7 +716,7 @@ R4300iOp::Func * R4300iOp::BuildInterpreter()
 
 bool DelaySlotEffectsCompare (uint32_t PC, uint32_t Reg1, uint32_t Reg2);
 
-void TestInterpreterJump (uint32_t PC, uint32_t TargetPC, int Reg1, int Reg2)
+void TestInterpreterJump (uint32_t PC, uint32_t TargetPC, int32_t Reg1, int32_t Reg2)
 {
     if (PC != TargetPC)
     {
@@ -881,7 +881,7 @@ void R4300iOp::SLTI()
 
 void R4300iOp::SLTIU()
 {
-    int imm32 = (int16_t)m_Opcode.immediate;
+    int32_t imm32 = (int16_t)m_Opcode.immediate;
     int64_t imm64;
 
     imm64 = imm32;
@@ -1004,7 +1004,7 @@ void R4300iOp::DADDIU()
 }
 
 uint64_t LDL_MASK[8] = { 0,0xFF,0xFFFF,0xFFFFFF,0xFFFFFFFF,0xFFFFFFFFFF, 0xFFFFFFFFFFFF, 0xFFFFFFFFFFFFFF };
-int LDL_SHIFT[8] = { 0, 8, 16, 24, 32, 40, 48, 56 };
+int32_t LDL_SHIFT[8] = { 0, 8, 16, 24, 32, 40, 48, 56 };
 
 void R4300iOp::LDL()
 {
@@ -1031,7 +1031,7 @@ uint64_t LDR_MASK[8] = { 0xFFFFFFFFFFFFFF00, 0xFFFFFFFFFFFF0000,
     0xFFFFFFFFFF000000, 0xFFFFFFFF00000000,
     0xFFFFFF0000000000, 0xFFFF000000000000,
     0xFF00000000000000, 0 };
-int LDR_SHIFT[8] = { 56, 48, 40, 32, 24, 16, 8, 0 };
+int32_t LDR_SHIFT[8] = { 56, 48, 40, 32, 24, 16, 8, 0 };
 
 void R4300iOp::LDR()
 {
@@ -1110,8 +1110,8 @@ void R4300iOp::LWL()
         return;
     }
 
-    _GPR[m_Opcode.rt].DW = (int)(_GPR[m_Opcode.rt].W[0] & LWL_MASK[Offset]);
-    _GPR[m_Opcode.rt].DW += (int)(Value << LWL_SHIFT[Offset]);
+    _GPR[m_Opcode.rt].DW = (int32_t)(_GPR[m_Opcode.rt].W[0] & LWL_MASK[Offset]);
+    _GPR[m_Opcode.rt].DW += (int32_t)(Value << LWL_SHIFT[Offset]);
 }
 
 void R4300iOp::LW()
@@ -1196,8 +1196,8 @@ void R4300iOp::LWR()
         return;
     }
 
-    _GPR[m_Opcode.rt].DW = (int)(_GPR[m_Opcode.rt].W[0] & LWR_MASK[Offset]);
-    _GPR[m_Opcode.rt].DW += (int)(Value >> LWR_SHIFT[Offset]);
+    _GPR[m_Opcode.rt].DW = (int32_t)(_GPR[m_Opcode.rt].W[0] & LWR_MASK[Offset]);
+    _GPR[m_Opcode.rt].DW += (int32_t)(Value >> LWR_SHIFT[Offset]);
 }
 
 void R4300iOp::LWU()
@@ -1326,7 +1326,7 @@ uint64_t SDL_MASK[8] = { 0,0xFF00000000000000,
     0xFFFFFFFFFFFF0000,
     0xFFFFFFFFFFFFFF00 };
 
-int SDL_SHIFT[8] = { 0, 8, 16, 24, 32, 40, 48, 56 };
+int32_t SDL_SHIFT[8] = { 0, 8, 16, 24, 32, 40, 48, 56 };
 
 void R4300iOp::SDL()
 {
@@ -1374,7 +1374,7 @@ uint64_t SDR_MASK[8] = { 0x00FFFFFFFFFFFFFF,
     0x00000000000000FF,
     0x0000000000000000 };
 
-int SDR_SHIFT[8] = { 56,48,40,32,24,16,8,0 };
+int32_t SDR_SHIFT[8] = { 56,48,40,32,24,16,8,0 };
 
 void R4300iOp::SDR()
 {
@@ -1641,7 +1641,7 @@ void R4300iOp::SPECIAL_SLL()
 
 void R4300iOp::SPECIAL_SRL()
 {
-    _GPR[m_Opcode.rd].DW = (int)(_GPR[m_Opcode.rt].UW[0] >> m_Opcode.sa);
+    _GPR[m_Opcode.rd].DW = (int32_t)(_GPR[m_Opcode.rt].UW[0] >> m_Opcode.sa);
 }
 
 void R4300iOp::SPECIAL_SRA()
@@ -1656,7 +1656,7 @@ void R4300iOp::SPECIAL_SLLV()
 
 void R4300iOp::SPECIAL_SRLV()
 {
-    _GPR[m_Opcode.rd].DW = (int)(_GPR[m_Opcode.rt].UW[0] >> (_GPR[m_Opcode.rs].UW[0] & 0x1F));
+    _GPR[m_Opcode.rd].DW = (int32_t)(_GPR[m_Opcode.rt].UW[0] >> (_GPR[m_Opcode.rs].UW[0] & 0x1F));
 }
 
 void R4300iOp::SPECIAL_SRAV()
@@ -1768,8 +1768,8 @@ void R4300iOp::SPECIAL_DIVU()
 {
     if (_GPR[m_Opcode.rt].UW[0] != 0)
     {
-        _RegLO->DW = (int)(_GPR[m_Opcode.rs].UW[0] / _GPR[m_Opcode.rt].UW[0]);
-        _RegHI->DW = (int)(_GPR[m_Opcode.rs].UW[0] % _GPR[m_Opcode.rt].UW[0]);
+        _RegLO->DW = (int32_t)(_GPR[m_Opcode.rs].UW[0] / _GPR[m_Opcode.rt].UW[0]);
+        _RegHI->DW = (int32_t)(_GPR[m_Opcode.rs].UW[0] % _GPR[m_Opcode.rt].UW[0]);
     }
     else
     {
@@ -2106,7 +2106,7 @@ void R4300iOp::COP0_MF()
     {
         g_SystemTimer->UpdateTimers();
     }
-    _GPR[m_Opcode.rt].DW = (int)_CP0[m_Opcode.rd];
+    _GPR[m_Opcode.rt].DW = (int32_t)_CP0[m_Opcode.rd];
 }
 
 void R4300iOp::COP0_MT()
@@ -2241,7 +2241,7 @@ void R4300iOp::COP0_CO_ERET()
 void R4300iOp::COP1_MF()
 {
     TEST_COP1_USABLE_EXCEPTION
-        _GPR[m_Opcode.rt].DW = *(int *)_FPR_S[m_Opcode.fs];
+        _GPR[m_Opcode.rt].DW = *(int32_t *)_FPR_S[m_Opcode.fs];
 }
 
 void R4300iOp::COP1_DMF()
@@ -2261,13 +2261,13 @@ void R4300iOp::COP1_CF()
             }
             return;
         }
-        _GPR[m_Opcode.rt].DW = (int)_FPCR[m_Opcode.fs];
+        _GPR[m_Opcode.rt].DW = (int32_t)_FPCR[m_Opcode.fs];
 }
 
 void R4300iOp::COP1_MT()
 {
     TEST_COP1_USABLE_EXCEPTION
-        *(int *)_FPR_S[m_Opcode.fs] = _GPR[m_Opcode.rt].W[0];
+        *(int32_t *)_FPR_S[m_Opcode.fs] = _GPR[m_Opcode.rt].W[0];
 }
 
 void R4300iOp::COP1_DMT()
@@ -2355,7 +2355,7 @@ void R4300iOp::COP1_BCTL()
         }
 }
 /************************** COP1: S functions ************************/
-__inline void Float_RoundToInteger32( int * Dest, float * Source )
+__inline void Float_RoundToInteger32( int32_t * Dest, float * Source )
 {
 #ifdef _M_IX86
     _asm
@@ -2492,28 +2492,28 @@ void R4300iOp::COP1_S_ROUND_W()
 {
     TEST_COP1_USABLE_EXCEPTION
         _controlfp(_RC_NEAR,_MCW_RC);
-    Float_RoundToInteger32(&*(int *)_FPR_S[m_Opcode.fd],&*(float *)_FPR_S[m_Opcode.fs]);
+    Float_RoundToInteger32(&*(int32_t *)_FPR_S[m_Opcode.fd],&*(float *)_FPR_S[m_Opcode.fs]);
 }
 
 void R4300iOp::COP1_S_TRUNC_W()
 {
     TEST_COP1_USABLE_EXCEPTION
         _controlfp(_RC_CHOP,_MCW_RC);
-    Float_RoundToInteger32(&*(int *)_FPR_S[m_Opcode.fd],&*(float *)_FPR_S[m_Opcode.fs]);
+    Float_RoundToInteger32(&*(int32_t *)_FPR_S[m_Opcode.fd],&*(float *)_FPR_S[m_Opcode.fs]);
 }
 
 void R4300iOp::COP1_S_CEIL_W()
 {	//added by Witten
     TEST_COP1_USABLE_EXCEPTION
         _controlfp(_RC_UP,_MCW_RC);
-    Float_RoundToInteger32(&*(int *)_FPR_S[m_Opcode.fd],&*(float *)_FPR_S[m_Opcode.fs]);
+    Float_RoundToInteger32(&*(int32_t *)_FPR_S[m_Opcode.fd],&*(float *)_FPR_S[m_Opcode.fs]);
 }
 
 void R4300iOp::COP1_S_FLOOR_W()
 {
     TEST_COP1_USABLE_EXCEPTION
         _controlfp(_RC_DOWN,_MCW_RC);
-    Float_RoundToInteger32(&*(int *)_FPR_S[m_Opcode.fd],&*(float *)_FPR_S[m_Opcode.fs]);
+    Float_RoundToInteger32(&*(int32_t *)_FPR_S[m_Opcode.fd],&*(float *)_FPR_S[m_Opcode.fs]);
 }
 
 void R4300iOp::COP1_S_CVT_D()
@@ -2527,7 +2527,7 @@ void R4300iOp::COP1_S_CVT_W()
 {
     TEST_COP1_USABLE_EXCEPTION
         _controlfp(*_RoundingModel,_MCW_RC);
-    Float_RoundToInteger32(&*(int *)_FPR_S[m_Opcode.fd],&*(float *)_FPR_S[m_Opcode.fs]);
+    Float_RoundToInteger32(&*(int32_t *)_FPR_S[m_Opcode.fd],&*(float *)_FPR_S[m_Opcode.fs]);
 }
 
 void R4300iOp::COP1_S_CVT_L()
@@ -2540,7 +2540,7 @@ void R4300iOp::COP1_S_CVT_L()
 void R4300iOp::COP1_S_CMP()
 {
     bool less, equal, unorded;
-    int condition;
+    int32_t condition;
     float Temp0, Temp1;
 
     TEST_COP1_USABLE_EXCEPTION
@@ -2751,7 +2751,7 @@ void R4300iOp::COP1_D_CVT_L()
 void R4300iOp::COP1_D_CMP()
 {
     bool less, equal, unorded;
-    int condition;
+    int32_t condition;
     MIPS_DWORD Temp0, Temp1;
 
     TEST_COP1_USABLE_EXCEPTION
@@ -2801,14 +2801,14 @@ void R4300iOp::COP1_W_CVT_S()
 {
     TEST_COP1_USABLE_EXCEPTION
         _controlfp(*_RoundingModel,_MCW_RC);
-    *(float *)_FPR_S[m_Opcode.fd] = (float)*(int *)_FPR_S[m_Opcode.fs];
+    *(float *)_FPR_S[m_Opcode.fd] = (float)*(int32_t *)_FPR_S[m_Opcode.fs];
 }
 
 void R4300iOp::COP1_W_CVT_D()
 {
     TEST_COP1_USABLE_EXCEPTION
         _controlfp(*_RoundingModel,_MCW_RC);
-    *(double *)_FPR_D[m_Opcode.fd] = (double)*(int *)_FPR_S[m_Opcode.fs];
+    *(double *)_FPR_D[m_Opcode.fd] = (double)*(int32_t *)_FPR_S[m_Opcode.fs];
 }
 
 /************************** COP1: L functions ************************/
@@ -2836,7 +2836,7 @@ void R4300iOp::UnknownOpcode()
 #ifdef tofix
     if (HaveDebugger && !inFullScreen)
     {
-        int response;
+        int32_t response;
 
         strcat(Message,"\n\nDo you wish to enter the debugger ?");
 

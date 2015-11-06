@@ -14,8 +14,9 @@
 #include <string>   //stl string
 #include <map>      //stl map
 #include <list>     //stl list
+#include <common/stdtypes.h>
 
-typedef std::map<int, std::wstring, std::less<int> > LANG_STRINGS;
+typedef std::map<int32_t, std::wstring, std::less<int32_t> > LANG_STRINGS;
 typedef LANG_STRINGS::value_type               LANG_STR;
 
 struct LanguageFile
@@ -36,7 +37,7 @@ public:
     void SetLanguage ( const wchar_t * LanguageName );
     bool LoadCurrentStrings ( void );
     bool IsCurrentLang ( LanguageFile & File );
-	bool IsLanguageLoaded ( void ) const { return m_LanguageLoaded; }
+    bool IsLanguageLoaded ( void ) const { return m_LanguageLoaded; }
 
 private:
     CLanguage(const CLanguage&);				// Disable copy constructor
@@ -52,7 +53,7 @@ private:
     LANG_STR GetNextLangString ( void * OpenFile );
     void LoadDefaultStrings ( void );
 
-	bool m_LanguageLoaded;
+    bool m_LanguageLoaded;
 };
 
 extern CLanguage * g_Lang;

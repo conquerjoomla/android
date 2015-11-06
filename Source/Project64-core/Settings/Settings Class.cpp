@@ -173,9 +173,9 @@ void CSettings::AddHowToHandleSetting ()
     AddHandler(Rdb_CRC_Recalc,          new CSettingTypeRDBYesNo("CRC-Recalc", false));
 
     AddHandler(Game_IniKey,             new CSettingTypeTempString(""));
-	AddHandler(Game_File, new CSettingTypeTempString(""));
-	AddHandler(Game_GameName, new CSettingTypeTempString(""));
-	AddHandler(Game_GoodName, new CSettingTypeGame("Good Name", Rdb_GoodName));
+    AddHandler(Game_File, new CSettingTypeTempString(""));
+    AddHandler(Game_GameName, new CSettingTypeTempString(""));
+    AddHandler(Game_GoodName, new CSettingTypeGame("Good Name", Rdb_GoodName));
     AddHandler(Game_TempLoaded,         new CSettingTypeTempBool(false));
     AddHandler(Game_SystemType,         new CSettingTypeTempNumber(SYSTEM_NTSC));
     AddHandler(Game_EditPlugin_Gfx,     new CSettingTypeGame("Plugin-Gfx",Default_None));
@@ -392,7 +392,7 @@ const char * CSettings::GetSettingSz ( CSettings * _this, SettingID Type, char *
     return Buffer;
 }
 
-void CSettings::SetSetting ( CSettings * _this, SettingID ID, unsigned int Value )
+void CSettings::SetSetting ( CSettings * _this, SettingID ID, uint32_t Value )
 {
     _this->SaveDword(ID,Value);
 }

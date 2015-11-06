@@ -27,8 +27,8 @@ public:
     CFlashram(bool ReadOnly);
     ~CFlashram();
 
-    void     DmaFromFlashram     ( uint8_t * dest, int StartOffset, int len );
-    void     DmaToFlashram       ( uint8_t * Source, int StartOffset, int len );
+    void     DmaFromFlashram     ( uint8_t * dest, int32_t StartOffset, int32_t len );
+    void     DmaToFlashram       ( uint8_t * Source, int32_t StartOffset, int32_t len );
     uint32_t ReadFromFlashStatus ( uint32_t PAddr );
     void     WriteToFlashCommand ( uint32_t Value );
 

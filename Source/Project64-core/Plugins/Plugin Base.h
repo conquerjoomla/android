@@ -22,8 +22,8 @@ public:
     inline const char * PluginName() const { return m_PluginInfo.Name; }
     inline bool Initialized() { return m_Initialized; }
 
-    virtual int GetDefaultSettingStartRange() const = 0;
-    virtual int GetSettingStartRange() const = 0;
+    virtual int32_t GetDefaultSettingStartRange() const = 0;
+    virtual int32_t GetSettingStartRange() const = 0;
 
     bool Load(const char * FileName);
 

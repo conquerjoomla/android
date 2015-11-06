@@ -497,13 +497,13 @@ void CLanguage::LoadDefaultStrings (void)
 
 CLanguage::CLanguage() :
     m_emptyString(L""),
-	m_LanguageLoaded(false)
+    m_LanguageLoaded(false)
 {
     LoadDefaultStrings();
-	if (g_Settings)
-	{
-		m_SelectedLanguage = g_Settings->LoadStringVal(Setting_CurrentLanguage).ToUTF16();
-	}
+    if (g_Settings)
+    {
+        m_SelectedLanguage = g_Settings->LoadStringVal(Setting_CurrentLanguage).ToUTF16();
+    }
 }
 
 bool CLanguage::LoadCurrentStrings ( void )
@@ -553,8 +553,8 @@ bool CLanguage::LoadCurrentStrings ( void )
         m_CurrentStrings.insert(GetNextLangString(file));
     }
     fclose(file);
-	m_LanguageLoaded = true;
-	return true;
+    m_LanguageLoaded = true;
+    return true;
 }
 
 LanguageList & CLanguage::GetLangList (void)
@@ -571,7 +571,7 @@ LanguageList & CLanguage::GetLangList (void)
         {
             LanguageFile File; //We temporally store the values in here to added to the list
 
-			File.Filename = (std::string &)LanguageFiles;
+            File.Filename = (std::string &)LanguageFiles;
             File.LanguageName = GetLangString(LanguageFiles,LANGUAGE_NAME);
 
             if (File.LanguageName.length() == 0)
@@ -641,7 +641,7 @@ std::wstring CLanguage::GetLangString ( const char * FileName, LanguageStringID 
 LANG_STR CLanguage::GetNextLangString (void * OpenFile)
 {
     enum { MAX_STRING_LEN = 400 };
-    int  StringID;
+    int32_t  StringID;
     char szString[MAX_STRING_LEN];  //temp store the string from the file
 
     FILE * file = (FILE *)OpenFile;
@@ -686,7 +686,7 @@ LANG_STR CLanguage::GetNextLangString (void * OpenFile)
         StringID = EMPTY_STRING; return LANG_STR(0,L"");
     }
 
-    int pos = 0;
+    int32_t pos = 0;
     fread(&token, 1, 1, file);
     while (token!='"' && !feof(file))
     {
@@ -707,11 +707,11 @@ void CLanguage::SetLanguage ( const wchar_t * LanguageName )
 {
     m_SelectedLanguage = LanguageName;
     if (LoadCurrentStrings())
-	{
-		stdstr Language;
-		Language.FromUTF16(LanguageName);
-		g_Settings->SaveString(Setting_CurrentLanguage,Language);
-	}
+    {
+        stdstr Language;
+        Language.FromUTF16(LanguageName);
+        g_Settings->SaveString(Setting_CurrentLanguage,Language);
+    }
 }
 
 bool CLanguage::IsCurrentLang( LanguageFile & File )

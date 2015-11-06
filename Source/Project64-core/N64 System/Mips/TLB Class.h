@@ -101,12 +101,12 @@ public:
     //Used by opcodes of the same name to manipulate the tlb (reads the registers)
     void Probe();
     void ReadEntry();
-    void WriteEntry(int index, bool Random);
+    void WriteEntry(int32_t index, bool Random);
 
     //See if a VAddr has an entry to translate to a PAddr
     bool AddressDefined(uint32_t VAddr);
 
-    const TLB_ENTRY & TlbEntry(int Entry) const
+    const TLB_ENTRY & TlbEntry(int32_t Entry) const
     {
         return m_tlb[Entry];
     }
@@ -141,7 +141,7 @@ private:
     TLB_ENTRY m_tlb[32];
     FASTTLB   m_FastTlb[64];
 
-    void SetupTLB_Entry(int index, bool Random);
+    void SetupTLB_Entry(int32_t index, bool Random);
 
 private:
     CTLB();							// Disable default constructor

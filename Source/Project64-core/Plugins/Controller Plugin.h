@@ -48,7 +48,7 @@ typedef struct
 {
     uint32_t Present;
     uint32_t RawData;
-    int   Plugin;
+    int32_t   Plugin;
 } CONTROL;
 
 enum PluginType
@@ -74,7 +74,7 @@ private:
 
     uint32_t & m_Present;
     uint32_t & m_RawData;
-    int      & m_PlugType;
+    int32_t      & m_PlugType;
     BUTTONS    m_Buttons;
 
     CCONTROL(void);                         // Disable default constructor
@@ -94,20 +94,20 @@ public:
 
     void(__cdecl *WM_KeyDown)       (uint32_t wParam, uint32_t lParam);
     void(__cdecl *WM_KeyUp)         (uint32_t wParam, uint32_t lParam);
-    void(__cdecl *RumbleCommand)	(int Control, int bRumble);
-    void(__cdecl *GetKeys)          (int Control, BUTTONS * Keys);
-    void(__cdecl *ReadController)   (int Control, uint8_t * Command);
-    void(__cdecl *ControllerCommand)(int Control, uint8_t * Command);
+    void(__cdecl *RumbleCommand)	(int32_t Control, int32_t bRumble);
+    void(__cdecl *GetKeys)          (int32_t Control, BUTTONS * Keys);
+    void(__cdecl *ReadController)   (int32_t Control, uint8_t * Command);
+    void(__cdecl *ControllerCommand)(int32_t Control, uint8_t * Command);
 
-    inline CCONTROL const * Controller(int control) { return m_Controllers[control]; }
+    inline CCONTROL const * Controller(int32_t control) { return m_Controllers[control]; }
     inline CONTROL * PluginControllers(void) { return m_PluginControllers; }
 
 private:
     CControl_Plugin(const CControl_Plugin&);			// Disable copy constructor
     CControl_Plugin& operator=(const CControl_Plugin&);	// Disable assignment
 
-    virtual int GetDefaultSettingStartRange() const { return FirstCtrlDefaultSet; }
-    virtual int GetSettingStartRange() const { return FirstCtrlSettings; }
+    virtual int32_t GetDefaultSettingStartRange() const { return FirstCtrlDefaultSet; }
+    virtual int32_t GetSettingStartRange() const { return FirstCtrlSettings; }
     PLUGIN_TYPE type() { return PLUGIN_TYPE_CONTROLLER; }
     bool LoadFunctions(void);
     void UnloadPluginDetails(void);

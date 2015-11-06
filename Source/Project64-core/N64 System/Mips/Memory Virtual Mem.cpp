@@ -1962,7 +1962,7 @@ void CMipsMemoryVM::ResetMemoryStack()
 {
     x86Reg Reg, TempReg;
 
-    int MipsReg = 29;
+    int32_t MipsReg = 29;
     CPU_Message("    ResetMemoryStack");
     Reg = Get_MemoryStack();
     if (Reg == x86_Unknown)
@@ -2001,7 +2001,7 @@ void CMipsMemoryVM::ResetMemoryStack()
     MoveX86regToVariable(Reg, &(g_Recompiler->MemoryStackPos()), "MemoryStack");
 }
 
-int CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPointer)
+int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPointer)
 {
 #if defined(_M_IX86) && defined(_WIN32)
     // to do:  Remove the _M_IX86 criteria.  This can compile on 64-bit Windows.
@@ -2026,7 +2026,7 @@ int CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPointer)
     LPEXCEPTION_POINTERS lpEP = (LPEXCEPTION_POINTERS)lpExceptionPointer;
 
     uint32_t MemAddress = (char *)lpEP->ExceptionRecord->ExceptionInformation[1] - (char *)g_MMU->Rdram();
-    if ((int)(MemAddress) < 0 || MemAddress > 0x1FFFFFFF)
+    if ((int32_t)(MemAddress) < 0 || MemAddress > 0x1FFFFFFF)
     {
         //		if (bHaveDebugger())
         //		{
@@ -2043,7 +2043,7 @@ int CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPointer)
     {
         uint32_t Start = (lpEP->ContextRecord->Edi - (uint32_t)m_RDRAM);
         uint32_t End = Start + lpEP->ContextRecord->Ecx;
-        if ((int)Start < 0)
+        if ((int32_t)Start < 0)
         {
             if (bHaveDebugger())
             {
@@ -2413,7 +2413,7 @@ bool CMipsMemoryVM::LB_NonMemory(uint32_t PAddr, uint32_t* Value, bool /*SignExt
         {
             if (SignExtend)
             {
-                *Value = (int)((char)ROM[PAddr - 0x10000000]);
+                *Value = (int32_t)((char)ROM[PAddr - 0x10000000]);
             }
             else
             {
@@ -3428,7 +3428,7 @@ void CMipsMemoryVM::UpdateHalfLine()
         return;
     }
 
-    int check_value = (int)(m_HalfLineCheck - NextViTimer);
+    int32_t check_value = (int32_t)(m_HalfLineCheck - NextViTimer);
     if (check_value > 0 && check_value < 40)
     {
         *g_NextTimer -= g_System->ViRefreshRate();
@@ -3446,7 +3446,7 @@ void CMipsMemoryVM::UpdateHalfLine()
     m_HalfLineCheck = NextViTimer;
 }
 
-void CMipsMemoryVM::UpdateFieldSerration(unsigned int interlaced)
+void CMipsMemoryVM::UpdateFieldSerration(uint32_t interlaced)
 {
     m_FieldSerration ^= 1;
     m_FieldSerration &= interlaced;
@@ -3472,7 +3472,7 @@ void CMipsMemoryVM::ProtectMemory(uint32_t StartVaddr, uint32_t EndVaddr)
     }
 
     //Get Length of memory being protected
-    int Length = ((EndPAddr + 3) - StartPAddr) & ~3;
+    int32_t Length = ((EndPAddr + 3) - StartPAddr) & ~3;
     if (Length < 0)
     {
         g_Notify->BreakPoint(__FILEW__, __LINE__);
@@ -3503,7 +3503,7 @@ void CMipsMemoryVM::UnProtectMemory(uint32_t StartVaddr, uint32_t EndVaddr)
     }
 
     //Get Length of memory being protected
-    int Length = ((EndPAddr + 3) - StartPAddr) & ~3;
+    int32_t Length = ((EndPAddr + 3) - StartPAddr) & ~3;
     if (Length < 0)
     {
         g_Notify->BreakPoint(__FILEW__, __LINE__);
@@ -5026,7 +5026,7 @@ void CMipsMemoryVM::Compile_SWR()
     }
 }
 
-void CMipsMemoryVM::Compile_StoreInstructClean(x86Reg AddressReg, int Length)
+void CMipsMemoryVM::Compile_StoreInstructClean(x86Reg AddressReg, int32_t Length)
 {
     if (!g_System->bSMM_StoreInstruc())
     {

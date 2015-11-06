@@ -37,6 +37,6 @@ private:
     uint32_t  m_SecondBuff;
     uint32_t  m_Status;
     uint32_t  m_BytesPerSecond;
-    int    m_CountsPerByte;
-    int    m_FramesPerSecond;
+    int32_t   m_CountsPerByte;
+    int32_t   m_FramesPerSecond;
 };

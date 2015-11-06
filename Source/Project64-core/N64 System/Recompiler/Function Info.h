@@ -28,8 +28,8 @@ public:
     CCompiledFunc*    Next () const { return m_Next; }
     void SetNext(CCompiledFunc* Next) { m_Next = Next; }
 
-    uint64_t MemContents(int i) { return m_MemContents[i]; }
-    uint64_t* MemLocation(int i) { return m_MemLocation[i]; }
+    uint64_t MemContents(int32_t i) { return m_MemContents[i]; }
+    uint64_t* MemLocation(int32_t i) { return m_MemLocation[i]; }
 
 private:
     CCompiledFunc(void);                              // Disable default constructor

@@ -15,7 +15,7 @@
 #include "Recompiler class.h"
 #include "x86CodeLog.h"
 
-unsigned int CRegInfo::m_fpuControl = 0;
+uint32_t CRegInfo::m_fpuControl = 0;
 
 char *Format_Name[] = {"Unknown","dword","qword","float","double"};
 
@@ -30,20 +30,20 @@ CRegInfo::CRegInfo() :
     m_RegMapLo[0] = x86_Unknown;
     m_RegMapHi[0] = x86_Unknown;
 
-    for (int i = 1; i < 32; i++ )
+    for (int32_t i = 1; i < 32; i++ )
     {
         m_MIPS_RegState[i]   = STATE_UNKNOWN;
         m_MIPS_RegVal[i].DW = 0;
         m_RegMapLo[i] = x86_Unknown;
         m_RegMapHi[i] = x86_Unknown;
     }
-    for (int i = 0, n = sizeof(m_x86reg_MappedTo) / sizeof(m_x86reg_MappedTo[0]); i < n; i++ )
+    for (int32_t i = 0, n = sizeof(m_x86reg_MappedTo) / sizeof(m_x86reg_MappedTo[0]); i < n; i++ )
     {
         m_x86reg_MappedTo[i]  = NotMapped;
         m_x86reg_Protected[i] = false;
         m_x86reg_MapOrder[i]  = 0;
     }
-    for (int i = 0, n = sizeof(m_x86fpu_MappedTo) / sizeof(m_x86fpu_MappedTo[0]); i < n; i++ )
+    for (int32_t i = 0, n = sizeof(m_x86fpu_MappedTo) / sizeof(m_x86fpu_MappedTo[0]); i < n; i++ )
     {
         m_x86fpu_MappedTo[i] = -1;
         m_x86fpu_State[i] = FPU_Unknown;
@@ -92,7 +92,7 @@ CRegInfo& CRegInfo::operator=(const CRegInfo& right)
 
 bool CRegInfo::operator==(const CRegInfo& right) const
 {
-    int count;
+    int32_t count;
 
     for (count = 0; count < 32; count ++ ) {
         if (m_MIPS_RegState[count] != right.m_MIPS_RegState[count])
@@ -175,7 +175,7 @@ void CRegInfo::FixRoundModel(FPU_ROUND RoundMethod )
     SetRoundingModel(RoundMethod);
 }
 
-void CRegInfo::ChangeFPURegFormat (int Reg, FPU_STATE OldFormat, FPU_STATE NewFormat, FPU_ROUND RoundingModel)
+void CRegInfo::ChangeFPURegFormat (int32_t Reg, FPU_STATE OldFormat, FPU_STATE NewFormat, FPU_ROUND RoundingModel)
 {
     for (uint32_t i = 0; i < 8; i++)
     {
@@ -202,14 +202,14 @@ void CRegInfo::ChangeFPURegFormat (int Reg, FPU_STATE OldFormat, FPU_STATE NewFo
     }
 }
 
-void CRegInfo::Load_FPR_ToTop ( int Reg, int RegToLoad, FPU_STATE Format)
+void CRegInfo::Load_FPR_ToTop ( int32_t Reg, int32_t RegToLoad, FPU_STATE Format)
 {
     if (GetRoundingModel() != RoundDefault)
     {
         FixRoundModel(RoundDefault);
     }
     CPU_Message("CurrentRoundingModel: %s  FpuRoundingModel(StackTopPos()): %s",RoundingModelName(GetRoundingModel()),RoundingModelName(FpuRoundingModel(StackTopPos())));
-    int i;
+    int32_t i;
 
     if (RegToLoad < 0) { g_Notify->DisplayError(L"Load_FPR_ToTop\nRegToLoad < 0 ???"); return; }
     if (Reg < 0) { g_Notify->DisplayError(L"Load_FPR_ToTop\nReg < 0 ???"); return; }
@@ -383,9 +383,9 @@ void CRegInfo::Load_FPR_ToTop ( int Reg, int RegToLoad, FPU_STATE Format)
     }
 }
 
-CRegInfo::x86FpuValues CRegInfo::StackPosition (int Reg)
+CRegInfo::x86FpuValues CRegInfo::StackPosition (int32_t Reg)
 {
-    int i;
+    int32_t i;
 
     for (i = 0; i < 8; i++)
     {
@@ -409,7 +409,7 @@ CX86Ops::x86Reg CRegInfo::FreeX86Reg()
     x86Reg Reg = UnMap_TempReg();
     if (Reg != x86_Unknown) { return Reg; }
 
-    int count, MapCount[10];
+    int32_t count, MapCount[10];
     x86Reg MapReg[10];
 
     for (count = 0; count < 10; count ++)
@@ -419,7 +419,7 @@ CX86Ops::x86Reg CRegInfo::FreeX86Reg()
     }
     for (count = 0; count < 10; count ++)
     {
-        int i;
+        int32_t i;
 
         for (i = 0; i < 9; i ++)
         {
@@ -469,7 +469,7 @@ CX86Ops::x86Reg CRegInfo::Free8BitX86Reg()
     x86Reg Reg = UnMap_8BitTempReg();
     if (Reg > 0) { return Reg; }
 
-    int count, MapCount[10], MapReg[10];
+    int32_t count, MapCount[10], MapReg[10];
     for (count = 0; count < 10; count ++)
     {
         MapCount[count] = GetX86MapOrder((x86Reg)count);
@@ -477,11 +477,11 @@ CX86Ops::x86Reg CRegInfo::Free8BitX86Reg()
     }
     for (count = 0; count < 10; count ++)
     {
-        int i;
+        int32_t i;
 
         for (i = 0; i < 9; i ++)
         {
-            int temp;
+            int32_t temp;
 
             if (MapCount[i] < MapCount[i+1])
             {
@@ -510,7 +510,7 @@ CX86Ops::x86Reg CRegInfo::Free8BitX86Reg()
 
 CX86Ops::x86Reg CRegInfo::UnMap_8BitTempReg()
 {
-    int count;
+    int32_t count;
 
     for (count = 0; count < 10; count ++)
     {
@@ -530,7 +530,7 @@ CX86Ops::x86Reg CRegInfo::UnMap_8BitTempReg()
 
 CRegInfo::x86Reg CRegInfo::Get_MemoryStack() const
 {
-    for (int i = 0, n = sizeof(x86_Registers)/ sizeof(x86_Registers[0]); i < n; i++)
+    for (int32_t i = 0, n = sizeof(x86_Registers)/ sizeof(x86_Registers[0]); i < n; i++)
     {
         if (GetX86Mapped(x86_Registers[i]) == Stack_Mapped)
         {
@@ -595,9 +595,9 @@ CRegInfo::x86Reg CRegInfo::Map_MemoryStack ( x86Reg Reg, bool bMapRegister, bool
     return Reg;
 }
 
-void CRegInfo::Map_GPR_32bit (int MipsReg, bool SignValue, int MipsRegToLoad)
+void CRegInfo::Map_GPR_32bit (int32_t MipsReg, bool SignValue, int32_t MipsRegToLoad)
 {
-    int count;
+    int32_t count;
 
     x86Reg Reg;
     if (MipsReg == 0)
@@ -665,10 +665,10 @@ void CRegInfo::Map_GPR_32bit (int MipsReg, bool SignValue, int MipsRegToLoad)
     SetMipsRegState(MipsReg,SignValue ? STATE_MAPPED_32_SIGN : STATE_MAPPED_32_ZERO);
 }
 
-void CRegInfo::Map_GPR_64bit ( int MipsReg, int MipsRegToLoad)
+void CRegInfo::Map_GPR_64bit ( int32_t MipsReg, int32_t MipsRegToLoad)
 {
     x86Reg x86Hi, x86lo;
-    int count;
+    int32_t count;
 
     if (MipsReg == 0)
     {
@@ -718,7 +718,7 @@ void CRegInfo::Map_GPR_64bit ( int MipsReg, int MipsRegToLoad)
 
     for (count = 0; count < 10; count ++)
     {
-        int MapOrder = GetX86MapOrder((x86Reg)count);
+        int32_t MapOrder = GetX86MapOrder((x86Reg)count);
         if (MapOrder > 0)
         {
             SetX86MapOrder((x86Reg)count,MapOrder + 1);
@@ -794,9 +794,9 @@ void CRegInfo::Map_GPR_64bit ( int MipsReg, int MipsRegToLoad)
     SetMipsRegState(MipsReg,STATE_MAPPED_64);
 }
 
-CX86Ops::x86Reg CRegInfo::Map_TempReg (CX86Ops::x86Reg Reg, int MipsReg, bool LoadHiWord)
+CX86Ops::x86Reg CRegInfo::Map_TempReg (CX86Ops::x86Reg Reg, int32_t MipsReg, bool LoadHiWord)
 {
-    int count;
+    int32_t count;
 
     if (Reg == x86_Any)
     {
@@ -953,7 +953,7 @@ CX86Ops::x86Reg CRegInfo::Map_TempReg (CX86Ops::x86Reg Reg, int MipsReg, bool Lo
     SetX86Protected(Reg, true);
     for (count = 0; count < 10; count++)
     {
-        int MapOrder = GetX86MapOrder((x86Reg)count);
+        int32_t MapOrder = GetX86MapOrder((x86Reg)count);
         if (MapOrder > 0)
         {
             SetX86MapOrder((x86Reg)count,MapOrder + 1);
@@ -993,15 +993,15 @@ void CRegInfo::UnProtectGPR(uint32_t Reg)
 
 void CRegInfo::ResetX86Protection()
 {
-    for (int count = 0; count < 10; count ++)
+    for (int32_t count = 0; count < 10; count ++)
     {
         SetX86Protected((x86Reg)count, false);
     }
 }
 
-bool CRegInfo::RegInStack( int Reg, FPU_STATE Format)
+bool CRegInfo::RegInStack( int32_t Reg, FPU_STATE Format)
 {
-    for (int i = 0; i < 8; i++)
+    for (int32_t i = 0; i < 8; i++)
     {
         if (m_x86fpu_MappedTo[i] == Reg)
         {
@@ -1021,15 +1021,15 @@ void CRegInfo::UnMap_AllFPRs()
 {
     for (;;)
     {
-        int StackPos = StackTopPos();
+        int32_t StackPos = StackTopPos();
         if (m_x86fpu_MappedTo[StackPos] != -1 )
         {
             UnMap_FPR(m_x86fpu_MappedTo[StackPos], true);
             continue;
         }
         //see if any more registers mapped
-        int StartPos = StackTopPos();
-        for (int i = 0; i < 8; i++)
+        int32_t StartPos = StackTopPos();
+        for (int32_t i = 0; i < 8; i++)
         {
             if (m_x86fpu_MappedTo[(StartPos + i) & 7] != -1 ) { fpuIncStack(&StackTopPos()); }
         }
@@ -1038,18 +1038,19 @@ void CRegInfo::UnMap_AllFPRs()
     }
 }
 
-void CRegInfo::UnMap_FPR (int Reg, int WriteBackValue )
+void CRegInfo::UnMap_FPR (int32_t Reg, bool WriteBackValue )
 {
     char Name[50];
-    int i;
+    int32_t i;
 
     if (Reg < 0) { return; }
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < 8; i++)
+    {
         if (m_x86fpu_MappedTo[i] != Reg) { continue; }
         CPU_Message("    regcache: unallocate %s from ST(%d)",CRegName::FPR[Reg],(i - StackTopPos() + 8) & 7);
         if (WriteBackValue)
         {
-            int RegPos;
+            int32_t RegPos;
 
             if (((i - StackTopPos() + 8) & 7) != 0)
             {
@@ -1224,7 +1225,7 @@ CX86Ops::x86Reg CRegInfo::UnMap_TempReg()
 
 bool CRegInfo::UnMap_X86reg(CX86Ops::x86Reg Reg)
 {
-    int count;
+    int32_t count;
 
     if (GetX86Mapped(Reg) == NotMapped)
     {
@@ -1286,13 +1287,13 @@ void CRegInfo::WriteBackRegisters()
 {
     UnMap_AllFPRs();
 
-    int count;
+    int32_t count;
     bool bEdiZero = false;
     bool bEsiSign = false;
 
-    int X86RegCount = sizeof(x86_Registers)/ sizeof(x86_Registers[0]);
-    for (int i = 0; i < X86RegCount; i++) { SetX86Protected(x86_Registers[i], false); }
-    for (int i = 0; i < X86RegCount; i++) { UnMap_X86reg(x86_Registers[i]); }
+    int32_t X86RegCount = sizeof(x86_Registers)/ sizeof(x86_Registers[0]);
+    for (int32_t i = 0; i < X86RegCount; i++) { SetX86Protected(x86_Registers[i], false); }
+    for (int32_t i = 0; i < X86RegCount; i++) { UnMap_X86reg(x86_Registers[i]); }
 
     /*************************************/
 
