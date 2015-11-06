@@ -62,7 +62,7 @@ bool CSpeedLimitor::Timer_Process(uint32_t * FrameRate)
     double CalculatedTime = (double)m_LastTime + (m_Ratio * (double)m_Frames);
     if ((double)CurrentTime < CalculatedTime)
     {
-        long time = (int)(CalculatedTime - (double)CurrentTime);
+        int32_t time = (int)(CalculatedTime - (double)CurrentTime);
         if (time > 0)
         {
             pjutil::Sleep(time);

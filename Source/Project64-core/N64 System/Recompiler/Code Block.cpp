@@ -452,7 +452,7 @@ bool CCodeBlock::AnalyzeInstruction ( uint32_t PC, uint32_t & TargetPC, uint32_t
         {
         case R4300i_REGIMM_BLTZ:
         case R4300i_REGIMM_BLTZAL:
-            TargetPC = PC + ((short)Command.offset << 2) + 4;
+            TargetPC = PC + ((int16_t)Command.offset << 2) + 4;
             if (TargetPC == PC + 8)
             {
                 TargetPC = (uint32_t)-1;
@@ -469,7 +469,7 @@ bool CCodeBlock::AnalyzeInstruction ( uint32_t PC, uint32_t & TargetPC, uint32_t
             break;
         case R4300i_REGIMM_BGEZ:
         case R4300i_REGIMM_BGEZAL:
-            TargetPC = PC + ((short)Command.offset << 2) + 4;
+            TargetPC = PC + ((int16_t)Command.offset << 2) + 4;
             if (TargetPC == PC + 8)
             {
                 TargetPC = (uint32_t)-1;
@@ -500,7 +500,7 @@ bool CCodeBlock::AnalyzeInstruction ( uint32_t PC, uint32_t & TargetPC, uint32_t
             break;
         case R4300i_REGIMM_BLTZL:
         case R4300i_REGIMM_BGEZL:
-            TargetPC = PC + ((short)Command.offset << 2) + 4;
+            TargetPC = PC + ((int16_t)Command.offset << 2) + 4;
             if (TargetPC == PC)
             {
                 if (!DelaySlotEffectsCompare(PC,Command.rs,0))
@@ -535,7 +535,7 @@ bool CCodeBlock::AnalyzeInstruction ( uint32_t PC, uint32_t & TargetPC, uint32_t
         IncludeDelaySlot = true;
         break;
     case R4300i_BEQ:
-        TargetPC = PC + ((short)Command.offset << 2) + 4;
+        TargetPC = PC + ((int16_t)Command.offset << 2) + 4;
         if (TargetPC == PC + 8)
         {
             TargetPC = (uint32_t)-1;
@@ -557,7 +557,7 @@ bool CCodeBlock::AnalyzeInstruction ( uint32_t PC, uint32_t & TargetPC, uint32_t
     case R4300i_BNE:
     case R4300i_BLEZ:
     case R4300i_BGTZ:
-        TargetPC = PC + ((short)Command.offset << 2) + 4;
+        TargetPC = PC + ((int16_t)Command.offset << 2) + 4;
         if (TargetPC == PC + 8)
         {
             TargetPC = (uint32_t)-1;
@@ -615,7 +615,7 @@ bool CCodeBlock::AnalyzeInstruction ( uint32_t PC, uint32_t & TargetPC, uint32_t
             switch (Command.ft) {
             case R4300i_COP1_BC_BCF:
             case R4300i_COP1_BC_BCT:
-                TargetPC = PC + ((short)Command.offset << 2) + 4;
+                TargetPC = PC + ((int16_t)Command.offset << 2) + 4;
                 if (TargetPC == PC + 8)
                 {
                     TargetPC = (uint32_t)-1;
@@ -632,7 +632,7 @@ bool CCodeBlock::AnalyzeInstruction ( uint32_t PC, uint32_t & TargetPC, uint32_t
                 break;
             case R4300i_COP1_BC_BCFL:
             case R4300i_COP1_BC_BCTL:
-                TargetPC = PC + ((short)Command.offset << 2) + 4;
+                TargetPC = PC + ((int16_t)Command.offset << 2) + 4;
                 if (TargetPC == PC)
                 {
                     g_Notify->BreakPoint(__FILEW__,__LINE__);
@@ -661,7 +661,7 @@ bool CCodeBlock::AnalyzeInstruction ( uint32_t PC, uint32_t & TargetPC, uint32_t
     case R4300i_SC:    case R4300i_SWC1:   case R4300i_SDC1:  case R4300i_SD:
         break;
     case R4300i_BEQL:
-        TargetPC = PC + ((short)Command.offset << 2) + 4;
+        TargetPC = PC + ((int16_t)Command.offset << 2) + 4;
         if (TargetPC == PC)
         {
             if (!DelaySlotEffectsCompare(PC,Command.rs,Command.rt))
@@ -679,7 +679,7 @@ bool CCodeBlock::AnalyzeInstruction ( uint32_t PC, uint32_t & TargetPC, uint32_t
     case R4300i_BNEL:
     case R4300i_BLEZL:
     case R4300i_BGTZL:
-        TargetPC = PC + ((short)Command.offset << 2) + 4;
+        TargetPC = PC + ((int16_t)Command.offset << 2) + 4;
         ContinuePC = PC + 8;
         if (TargetPC == PC)
         {

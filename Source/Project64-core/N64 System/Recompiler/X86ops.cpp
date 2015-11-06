@@ -2660,7 +2660,7 @@ void CX86Ops::Setnz(x86Reg reg)
 
 void CX86Ops::ShiftLeftDouble(x86Reg Destination, x86Reg Source)
 {
-    unsigned char s = 0xC0;
+    uint8_t s = 0xC0;
 
     CPU_Message("      shld %s, %s, cl", x86_Name(Destination),x86_Name(Source));
     PUTDST16(m_RecompPos,0xA50F);
@@ -2698,7 +2698,7 @@ void CX86Ops::ShiftLeftDouble(x86Reg Destination, x86Reg Source)
 
 void CX86Ops::ShiftLeftDoubleImmed(x86Reg Destination, x86Reg Source, uint8_t Immediate)
 {
-    unsigned char s = 0xC0;
+    uint8_t s = 0xC0;
 
     CPU_Message("      shld %s, %s, %Xh", x86_Name(Destination),x86_Name(Source), Immediate);
     PUTDST16(m_RecompPos,0xA40F);
@@ -2829,7 +2829,7 @@ void CX86Ops::ShiftRightUnsign(x86Reg reg)
 
 void CX86Ops::ShiftRightDouble(x86Reg Destination, x86Reg Source)
 {
-    unsigned char s = 0xC0;
+    uint8_t s = 0xC0;
 
     CPU_Message("      shrd %s, %s, cl", x86_Name(Destination),x86_Name(Source));
     PUTDST16(m_RecompPos,0xAD0F);
@@ -2867,7 +2867,7 @@ void CX86Ops::ShiftRightDouble(x86Reg Destination, x86Reg Source)
 
 void CX86Ops::ShiftRightDoubleImmed(x86Reg Destination, x86Reg Source, uint8_t Immediate)
 {
-    unsigned char s = 0xC0;
+    uint8_t s = 0xC0;
 
     CPU_Message("      shrd %s, %s, %Xh", x86_Name(Destination),x86_Name(Source), Immediate);
     PUTDST16(m_RecompPos,0xAC0F);

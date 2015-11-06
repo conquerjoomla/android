@@ -70,7 +70,7 @@ private:
     SectionMap      m_SectionMap;
     SectionList     m_Sections;
     CCodeSection  * m_EnterSection;
-    long            m_Test;
+    int32_t            m_Test;
     MD5Digest       m_Hash;
     uint64_t        m_MemContents[2];
     uint64_t *      m_MemLocation[2];

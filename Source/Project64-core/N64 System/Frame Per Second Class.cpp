@@ -87,7 +87,7 @@ void CFramePerSecond::DisplayViCounter(uint32_t FrameRate)
         {
             if (m_CurrentFrame > (NoOfFrames << 3))
             {
-                __int64 Total;
+                int64_t Total;
 
                 Total = 0;
                 for (int count = 0; count < NoOfFrames; count++)
@@ -113,7 +113,7 @@ void CFramePerSecond::DisplayViCounter(uint32_t FrameRate)
         {
             if (m_CurrentFrame > (NoOfFrames << 3))
             {
-                __int64 Total;
+                int64_t Total;
 
                 Total = 0;
                 for (int count = 0; count < NoOfFrames; count++)
@@ -174,7 +174,7 @@ void CFramePerSecond::DisplayDlCounter(uint32_t FrameRate)
     {
         if (m_CurrentFrame > (NoOfFrames << 2))
         {
-            __int64 Total;
+            int64_t Total;
 
             Total = 0;
             for (int count = 0; count < NoOfFrames; count++)

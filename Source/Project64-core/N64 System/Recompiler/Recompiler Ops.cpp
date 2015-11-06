@@ -60,7 +60,7 @@ void CRecompilerOps::Compile_Branch(CRecompilerOps::BranchFunction CompareFunc, 
     {
         CPU_Message("  %X %s", m_CompilePC, R4300iOpcodeName(m_Opcode.Hex, m_CompilePC));
 
-        if (m_CompilePC + ((short)m_Opcode.offset << 2) + 4 == m_CompilePC + 8)
+        if (m_CompilePC + ((int16_t)m_Opcode.offset << 2) + 4 == m_CompilePC + 8)
         {
             return;
         }
@@ -100,7 +100,7 @@ void CRecompilerOps::Compile_Branch(CRecompilerOps::BranchFunction CompareFunc, 
             EffectDelaySlot = true;
         }
         m_Section->m_Jump.JumpPC = m_CompilePC;
-        m_Section->m_Jump.TargetPC = m_CompilePC + ((short)m_Opcode.offset << 2) + 4;
+        m_Section->m_Jump.TargetPC = m_CompilePC + ((int16_t)m_Opcode.offset << 2) + 4;
         if (m_Section->m_JumpSection != NULL)
         {
             m_Section->m_Jump.BranchLabel.Format("Section_%d", m_Section->m_JumpSection->m_SectionID);
@@ -372,7 +372,7 @@ void CRecompilerOps::Compile_BranchLikely(BranchFunction CompareFunc, bool Link)
         if (!g_System->bLinkBlocks() || (m_CompilePC & 0xFFC) == 0xFFC)
         {
             m_Section->m_Jump.JumpPC = m_CompilePC;
-            m_Section->m_Jump.TargetPC = m_CompilePC + ((short)m_Opcode.offset << 2) + 4;
+            m_Section->m_Jump.TargetPC = m_CompilePC + ((int16_t)m_Opcode.offset << 2) + 4;
             m_Section->m_Cont.JumpPC = m_CompilePC;
             m_Section->m_Cont.TargetPC = m_CompilePC + 8;
         }
@@ -1884,7 +1884,7 @@ void CRecompilerOps::ADDI()
 
     if (g_System->bFastSP() && m_Opcode.rs == 29 && m_Opcode.rt == 29)
     {
-        AddConstToX86Reg(Map_MemoryStack(x86_Any, true), (short)m_Opcode.immediate);
+        AddConstToX86Reg(Map_MemoryStack(x86_Any, true), (int16_t)m_Opcode.immediate);
     }
 
     if (IsConst(m_Opcode.rs))
@@ -1893,13 +1893,13 @@ void CRecompilerOps::ADDI()
         {
             UnMap_GPR(m_Opcode.rt, false);
         }
-        m_RegWorkingSet.SetMipsRegLo(m_Opcode.rt, GetMipsRegLo(m_Opcode.rs) + (short)m_Opcode.immediate);
+        m_RegWorkingSet.SetMipsRegLo(m_Opcode.rt, GetMipsRegLo(m_Opcode.rs) + (int16_t)m_Opcode.immediate);
         m_RegWorkingSet.SetMipsRegState(m_Opcode.rt, CRegInfo::STATE_CONST_32_SIGN);
     }
     else
     {
         Map_GPR_32bit(m_Opcode.rt, true, m_Opcode.rs);
-        AddConstToX86Reg(GetMipsRegMapLo(m_Opcode.rt), (short)m_Opcode.immediate);
+        AddConstToX86Reg(GetMipsRegMapLo(m_Opcode.rt), (int16_t)m_Opcode.immediate);
     }
     if (g_System->bFastSP() && m_Opcode.rt == 29 && m_Opcode.rs != 29)
     {
@@ -1921,7 +1921,7 @@ void CRecompilerOps::ADDIU()
     {
         if (m_Opcode.rs == 29 && m_Opcode.rt == 29)
         {
-            AddConstToX86Reg(Map_MemoryStack(x86_Any, true), (short)m_Opcode.immediate);
+            AddConstToX86Reg(Map_MemoryStack(x86_Any, true), (int16_t)m_Opcode.immediate);
         }
     }
 
@@ -1932,13 +1932,13 @@ void CRecompilerOps::ADDIU()
             UnMap_GPR(m_Opcode.rt, false);
         }
 
-        m_RegWorkingSet.SetMipsRegLo(m_Opcode.rt, GetMipsRegLo(m_Opcode.rs) + (short)m_Opcode.immediate);
+        m_RegWorkingSet.SetMipsRegLo(m_Opcode.rt, GetMipsRegLo(m_Opcode.rs) + (int16_t)m_Opcode.immediate);
         m_RegWorkingSet.SetMipsRegState(m_Opcode.rt, CRegInfo::STATE_CONST_32_SIGN);
     }
     else
     {
         Map_GPR_32bit(m_Opcode.rt, true, m_Opcode.rs);
-        AddConstToX86Reg(GetMipsRegMapLo(m_Opcode.rt), (short)m_Opcode.immediate);
+        AddConstToX86Reg(GetMipsRegMapLo(m_Opcode.rt), (int16_t)m_Opcode.immediate);
     }
 
     if (g_System->bFastSP() && m_Opcode.rt == 29 && m_Opcode.rs != 29)
@@ -1958,8 +1958,8 @@ void CRecompilerOps::SLTIU()
 
     if (IsConst(m_Opcode.rs))
     {
-        uint32_t Result = Is64Bit(m_Opcode.rs) ? GetMipsReg(m_Opcode.rs) < ((unsigned)((__int64)((short)m_Opcode.immediate))) ? 1 : 0 :
-            GetMipsRegLo(m_Opcode.rs) < ((unsigned)((short)m_Opcode.immediate)) ? 1 : 0;
+        uint32_t Result = Is64Bit(m_Opcode.rs) ? GetMipsReg(m_Opcode.rs) < ((unsigned)((int64_t)((int16_t)m_Opcode.immediate))) ? 1 : 0 :
+            GetMipsRegLo(m_Opcode.rs) < ((unsigned)((int16_t)m_Opcode.immediate)) ? 1 : 0;
         UnMap_GPR(m_Opcode.rt, false);
         m_RegWorkingSet.SetMipsRegState(m_Opcode.rt, CRegInfo::STATE_CONST_32_SIGN);
         m_RegWorkingSet.SetMipsRegLo(m_Opcode.rt, Result);
@@ -1970,7 +1970,7 @@ void CRecompilerOps::SLTIU()
         {
             uint8_t * Jump[2];
 
-            CompConstToX86reg(GetMipsRegMapHi(m_Opcode.rs), ((short)m_Opcode.immediate >> 31));
+            CompConstToX86reg(GetMipsRegMapHi(m_Opcode.rs), ((int16_t)m_Opcode.immediate >> 31));
             JeLabel8("Low Compare", 0);
             Jump[0] = m_RecompPos - 1;
             SetbVariable(&m_BranchCompare, "m_BranchCompare");
@@ -1979,7 +1979,7 @@ void CRecompilerOps::SLTIU()
             CPU_Message("");
             CPU_Message("      Low Compare:");
             SetJump8(Jump[0], m_RecompPos);
-            CompConstToX86reg(GetMipsRegMapLo(m_Opcode.rs), (short)m_Opcode.immediate);
+            CompConstToX86reg(GetMipsRegMapLo(m_Opcode.rs), (int16_t)m_Opcode.immediate);
             SetbVariable(&m_BranchCompare, "m_BranchCompare");
             CPU_Message("");
             CPU_Message("      Continue:");
@@ -1989,7 +1989,7 @@ void CRecompilerOps::SLTIU()
         }
         else
         {
-            CompConstToX86reg(GetMipsRegMapLo(m_Opcode.rs), (short)m_Opcode.immediate);
+            CompConstToX86reg(GetMipsRegMapLo(m_Opcode.rs), (int16_t)m_Opcode.immediate);
             SetbVariable(&m_BranchCompare, "m_BranchCompare");
             Map_GPR_32bit(m_Opcode.rt, false, -1);
             MoveVariableToX86reg(&m_BranchCompare, "m_BranchCompare", GetMipsRegMapLo(m_Opcode.rt));
@@ -1997,7 +1997,7 @@ void CRecompilerOps::SLTIU()
     }
     else if (g_System->b32BitCore())
     {
-        CompConstToVariable((short)m_Opcode.immediate, &_GPR[m_Opcode.rs].W[0], CRegName::GPR_Lo[m_Opcode.rs]);
+        CompConstToVariable((int16_t)m_Opcode.immediate, &_GPR[m_Opcode.rs].W[0], CRegName::GPR_Lo[m_Opcode.rs]);
         SetbVariable(&m_BranchCompare, "m_BranchCompare");
         Map_GPR_32bit(m_Opcode.rt, false, -1);
         MoveVariableToX86reg(&m_BranchCompare, "m_BranchCompare", GetMipsRegMapLo(m_Opcode.rt));
@@ -2006,10 +2006,10 @@ void CRecompilerOps::SLTIU()
     {
         uint8_t * Jump = NULL;
 
-        CompConstToVariable(((short)m_Opcode.immediate >> 31), &_GPR[m_Opcode.rs].W[1], CRegName::GPR_Hi[m_Opcode.rs]);
+        CompConstToVariable(((int16_t)m_Opcode.immediate >> 31), &_GPR[m_Opcode.rs].W[1], CRegName::GPR_Hi[m_Opcode.rs]);
         JneLabel8("CompareSet", 0);
         Jump = m_RecompPos - 1;
-        CompConstToVariable((short)m_Opcode.immediate, &_GPR[m_Opcode.rs].W[0], CRegName::GPR_Lo[m_Opcode.rs]);
+        CompConstToVariable((int16_t)m_Opcode.immediate, &_GPR[m_Opcode.rs].W[0], CRegName::GPR_Lo[m_Opcode.rs]);
         CPU_Message("");
         CPU_Message("      CompareSet:");
         SetJump8(Jump, m_RecompPos);
@@ -2030,8 +2030,8 @@ void CRecompilerOps::SLTI()
     if (IsConst(m_Opcode.rs))
     {
         uint32_t Result = Is64Bit(m_Opcode.rs) ?
-            ((__int64)GetMipsReg(m_Opcode.rs) < (__int64)((short)m_Opcode.immediate) ? 1 : 0) :
-            (GetMipsRegLo_S(m_Opcode.rs) < (short)m_Opcode.immediate ? 1 : 0);
+            ((int64_t)GetMipsReg(m_Opcode.rs) < (int64_t)((int16_t)m_Opcode.immediate) ? 1 : 0) :
+            (GetMipsRegLo_S(m_Opcode.rs) < (int16_t)m_Opcode.immediate ? 1 : 0);
 
         UnMap_GPR(m_Opcode.rt, false);
         m_RegWorkingSet.SetMipsRegState(m_Opcode.rt, CRegInfo::STATE_CONST_32_SIGN);
@@ -2043,7 +2043,7 @@ void CRecompilerOps::SLTI()
         {
             uint8_t * Jump[2];
 
-            CompConstToX86reg(GetMipsRegMapHi(m_Opcode.rs), ((short)m_Opcode.immediate >> 31));
+            CompConstToX86reg(GetMipsRegMapHi(m_Opcode.rs), ((int16_t)m_Opcode.immediate >> 31));
             JeLabel8("Low Compare", 0);
             Jump[0] = m_RecompPos - 1;
             SetlVariable(&m_BranchCompare, "m_BranchCompare");
@@ -2052,7 +2052,7 @@ void CRecompilerOps::SLTI()
             CPU_Message("");
             CPU_Message("      Low Compare:");
             SetJump8(Jump[0], m_RecompPos);
-            CompConstToX86reg(GetMipsRegMapLo(m_Opcode.rs), (short)m_Opcode.immediate);
+            CompConstToX86reg(GetMipsRegMapLo(m_Opcode.rs), (int16_t)m_Opcode.immediate);
             SetbVariable(&m_BranchCompare, "m_BranchCompare");
             CPU_Message("");
             CPU_Message("      Continue:");
@@ -2062,14 +2062,14 @@ void CRecompilerOps::SLTI()
         }
         else
         {
-            /*	CompConstToX86reg(GetMipsRegMapLo(m_Opcode.rs),(short)m_Opcode.immediate);
+            /*	CompConstToX86reg(GetMipsRegMapLo(m_Opcode.rs),(int16_t)m_Opcode.immediate);
             SetlVariable(&m_BranchCompare,"m_BranchCompare");
             Map_GPR_32bit(m_Opcode.rt, false, -1);
             MoveVariableToX86reg(&m_BranchCompare,"m_BranchCompare",GetMipsRegMapLo(m_Opcode.rt));
             */
             ProtectGPR(m_Opcode.rs);
             Map_GPR_32bit(m_Opcode.rt, false, -1);
-            CompConstToX86reg(GetMipsRegMapLo(m_Opcode.rs), (short)m_Opcode.immediate);
+            CompConstToX86reg(GetMipsRegMapLo(m_Opcode.rs), (int16_t)m_Opcode.immediate);
 
             if (GetMipsRegMapLo(m_Opcode.rt) > x86_EBX)
             {
@@ -2086,7 +2086,7 @@ void CRecompilerOps::SLTI()
     else if (g_System->b32BitCore())
     {
         Map_GPR_32bit(m_Opcode.rt, false, -1);
-        CompConstToVariable((short)m_Opcode.immediate, &_GPR[m_Opcode.rs].W[0], CRegName::GPR_Lo[m_Opcode.rs]);
+        CompConstToVariable((int16_t)m_Opcode.immediate, &_GPR[m_Opcode.rs].W[0], CRegName::GPR_Lo[m_Opcode.rs]);
 
         if (GetMipsRegMapLo(m_Opcode.rt) > x86_EBX)
         {
@@ -2102,7 +2102,7 @@ void CRecompilerOps::SLTI()
     else
     {
         uint8_t * Jump[2] = { NULL, NULL };
-        CompConstToVariable(((short)m_Opcode.immediate >> 31), &_GPR[m_Opcode.rs].W[1], CRegName::GPR_Hi[m_Opcode.rs]);
+        CompConstToVariable(((int16_t)m_Opcode.immediate >> 31), &_GPR[m_Opcode.rs].W[1], CRegName::GPR_Hi[m_Opcode.rs]);
         JeLabel8("Low Compare", 0);
         Jump[0] = m_RecompPos - 1;
         SetlVariable(&m_BranchCompare, "m_BranchCompare");
@@ -2111,7 +2111,7 @@ void CRecompilerOps::SLTI()
         CPU_Message("");
         CPU_Message("      Low Compare:");
         SetJump8(Jump[0], m_RecompPos);
-        CompConstToVariable((short)m_Opcode.immediate, &_GPR[m_Opcode.rs].W[0], CRegName::GPR_Lo[m_Opcode.rs]);
+        CompConstToVariable((int16_t)m_Opcode.immediate, &_GPR[m_Opcode.rs].W[0], CRegName::GPR_Lo[m_Opcode.rs]);
         SetbVariable(&m_BranchCompare, "m_BranchCompare");
         if (Jump[1])
         {
@@ -2267,7 +2267,7 @@ void CRecompilerOps::LUI()
         x86Reg Reg = Map_MemoryStack(x86_Any, true, false);
         uint32_t Address;
 
-        g_TransVaddr->TranslateVaddr(((short)m_Opcode.offset << 16), Address);
+        g_TransVaddr->TranslateVaddr(((int16_t)m_Opcode.offset << 16), Address);
         if (Reg < 0)
         {
             MoveConstToVariable((uint32_t)(Address + g_MMU->Rdram()), &(g_Recompiler->MemoryStackPos()), "MemoryStack");
@@ -2279,7 +2279,7 @@ void CRecompilerOps::LUI()
     }
 
     UnMap_GPR(m_Opcode.rt, false);
-    m_RegWorkingSet.SetMipsRegLo(m_Opcode.rt, ((short)m_Opcode.offset << 16));
+    m_RegWorkingSet.SetMipsRegLo(m_Opcode.rt, ((int16_t)m_Opcode.offset << 16));
     m_RegWorkingSet.SetMipsRegState(m_Opcode.rt, CRegInfo::STATE_CONST_32_SIGN);
 }
 
@@ -2321,18 +2321,18 @@ void CRecompilerOps::CACHE()
         PushImm32("0x20", 0x20);
         if (IsConst(m_Opcode.base))
         {
-            uint32_t Address = GetMipsRegLo(m_Opcode.base) + (short)m_Opcode.offset;
+            uint32_t Address = GetMipsRegLo(m_Opcode.base) + (int16_t)m_Opcode.offset;
             PushImm32("Address", Address);
         }
         else if (IsMapped(m_Opcode.base))
         {
-            AddConstToX86Reg(GetMipsRegMapLo(m_Opcode.base), (short)m_Opcode.offset);
+            AddConstToX86Reg(GetMipsRegMapLo(m_Opcode.base), (int16_t)m_Opcode.offset);
             Push(GetMipsRegMapLo(m_Opcode.base));
         }
         else
         {
             MoveVariableToX86reg(&_GPR[m_Opcode.base].UW[0], CRegName::GPR_Lo[m_Opcode.base], x86_EAX);
-            AddConstToX86Reg(x86_EAX, (short)m_Opcode.offset);
+            AddConstToX86Reg(x86_EAX, (int16_t)m_Opcode.offset);
             Push(x86_EAX);
         }
         MoveConstToX86reg((uint32_t)g_Recompiler, x86_ECX);
@@ -2895,7 +2895,7 @@ void CRecompilerOps::SPECIAL_DSRLV()
                 UnMap_GPR(m_Opcode.rd, false);
             }
 
-            m_RegWorkingSet.SetMipsReg(m_Opcode.rd, Is64Bit(m_Opcode.rt) ? GetMipsReg(m_Opcode.rt) : (__int64)GetMipsRegLo_S(m_Opcode.rt));
+            m_RegWorkingSet.SetMipsReg(m_Opcode.rd, Is64Bit(m_Opcode.rt) ? GetMipsReg(m_Opcode.rt) : (int64_t)GetMipsRegLo_S(m_Opcode.rt));
             m_RegWorkingSet.SetMipsReg(m_Opcode.rd, GetMipsReg(m_Opcode.rd) >> Shift);
             if ((GetMipsRegHi(m_Opcode.rd) == 0) && (GetMipsRegLo(m_Opcode.rd) & 0x80000000) == 0)
             {
@@ -3492,8 +3492,8 @@ void CRecompilerOps::SPECIAL_AND()
             if (Is64Bit(m_Opcode.rt) || Is64Bit(m_Opcode.rs))
             {
                 m_RegWorkingSet.SetMipsReg(m_Opcode.rd,
-                    (Is64Bit(m_Opcode.rt) ? GetMipsReg(m_Opcode.rt) : (__int64)GetMipsRegLo_S(m_Opcode.rt)) &
-                    (Is64Bit(m_Opcode.rs) ? GetMipsReg(m_Opcode.rs) : (__int64)GetMipsRegLo_S(m_Opcode.rs))
+                    (Is64Bit(m_Opcode.rt) ? GetMipsReg(m_Opcode.rt) : (int64_t)GetMipsRegLo_S(m_Opcode.rt)) &
+                    (Is64Bit(m_Opcode.rs) ? GetMipsReg(m_Opcode.rs) : (int64_t)GetMipsRegLo_S(m_Opcode.rs))
                     );
 
                 if (GetMipsRegLo_S(m_Opcode.rd) < 0 && GetMipsRegHi_S(m_Opcode.rd) == -1)
@@ -3578,7 +3578,7 @@ void CRecompilerOps::SPECIAL_AND()
                 }
                 else
                 {
-                    __int64 Value = GetMipsReg(ConstReg);
+                    int64_t Value = GetMipsReg(ConstReg);
                     Map_GPR_64bit(m_Opcode.rd, MappedReg);
                     AndConstToX86Reg(GetMipsRegMapHi(m_Opcode.rd), (uint32_t)(Value >> 32));
                     AndConstToX86Reg(GetMipsRegMapLo(m_Opcode.rd), (uint32_t)(Value & 0xFFFFFFFF));
@@ -3628,7 +3628,7 @@ void CRecompilerOps::SPECIAL_AND()
         {
             if (Is64Bit(KnownReg))
             {
-                unsigned __int64 Value = GetMipsReg(KnownReg);
+                uint64_t Value = GetMipsReg(KnownReg);
                 Map_GPR_64bit(m_Opcode.rd, UnknownReg);
                 AndConstToX86Reg(GetMipsRegMapHi(m_Opcode.rd), (uint32_t)(Value >> 32));
                 AndConstToX86Reg(GetMipsRegMapLo(m_Opcode.rd), (uint32_t)(Value & 0xFFFFFFFF));
@@ -3704,8 +3704,8 @@ void CRecompilerOps::SPECIAL_OR()
             if (Is64Bit(m_Opcode.rt) || Is64Bit(m_Opcode.rs))
             {
                 m_RegWorkingSet.SetMipsReg(m_Opcode.rd,
-                    (Is64Bit(m_Opcode.rt) ? GetMipsReg(m_Opcode.rt) : (__int64)GetMipsRegLo_S(m_Opcode.rt)) |
-                    (Is64Bit(m_Opcode.rs) ? GetMipsReg(m_Opcode.rs) : (__int64)GetMipsRegLo_S(m_Opcode.rs))
+                    (Is64Bit(m_Opcode.rt) ? GetMipsReg(m_Opcode.rt) : (int64_t)GetMipsRegLo_S(m_Opcode.rt)) |
+                    (Is64Bit(m_Opcode.rs) ? GetMipsReg(m_Opcode.rs) : (int64_t)GetMipsRegLo_S(m_Opcode.rs))
                     );
                 if (GetMipsRegLo_S(m_Opcode.rd) < 0 && GetMipsRegHi_S(m_Opcode.rd) == -1)
                 {
@@ -3759,7 +3759,7 @@ void CRecompilerOps::SPECIAL_OR()
 
             if (Is64Bit(m_Opcode.rt) || Is64Bit(m_Opcode.rs))
             {
-                unsigned __int64 Value;
+                uint64_t Value;
 
                 if (Is64Bit(ConstReg))
                 {
@@ -3767,7 +3767,7 @@ void CRecompilerOps::SPECIAL_OR()
                 }
                 else
                 {
-                    Value = IsSigned(ConstReg) ? (__int64)GetMipsRegLo_S(ConstReg) : GetMipsRegLo(ConstReg);
+                    Value = IsSigned(ConstReg) ? (int64_t)GetMipsRegLo_S(ConstReg) : GetMipsRegLo(ConstReg);
                 }
                 Map_GPR_64bit(m_Opcode.rd, MappedReg);
                 if ((Value >> 32) != 0)
@@ -3795,7 +3795,7 @@ void CRecompilerOps::SPECIAL_OR()
 
         if (IsConst(KnownReg))
         {
-            unsigned __int64 Value = Is64Bit(KnownReg) ? GetMipsReg(KnownReg) : GetMipsRegLo_S(KnownReg);
+            uint64_t Value = Is64Bit(KnownReg) ? GetMipsReg(KnownReg) : GetMipsRegLo_S(KnownReg);
             uint32_t dwValue = (uint32_t)(Value & 0xFFFFFFFF);
 
             if (g_System->b32BitCore() && Is32Bit(KnownReg))
@@ -3958,7 +3958,7 @@ void CRecompilerOps::SPECIAL_XOR()
 
         if (IsConst(KnownReg))
         {
-            unsigned __int64 Value;
+            uint64_t Value;
 
             if (Is64Bit(KnownReg))
             {
@@ -4029,8 +4029,8 @@ void CRecompilerOps::SPECIAL_NOR()
             if (Is64Bit(m_Opcode.rt) || Is64Bit(m_Opcode.rs))
             {
                 m_RegWorkingSet.SetMipsReg(m_Opcode.rd,
-                    ~((Is64Bit(m_Opcode.rt) ? GetMipsReg(m_Opcode.rt) : (__int64)GetMipsRegLo_S(m_Opcode.rt)) |
-                    (Is64Bit(m_Opcode.rs) ? GetMipsReg(m_Opcode.rs) : (__int64)GetMipsRegLo_S(m_Opcode.rs)))
+                    ~((Is64Bit(m_Opcode.rt) ? GetMipsReg(m_Opcode.rt) : (int64_t)GetMipsRegLo_S(m_Opcode.rt)) |
+                    (Is64Bit(m_Opcode.rs) ? GetMipsReg(m_Opcode.rs) : (int64_t)GetMipsRegLo_S(m_Opcode.rs)))
                     );
                 if (GetMipsRegLo_S(m_Opcode.rd) < 0 && GetMipsRegHi_S(m_Opcode.rd) == -1)
                 {
@@ -4084,7 +4084,7 @@ void CRecompilerOps::SPECIAL_NOR()
 
             if (Is64Bit(m_Opcode.rt) || Is64Bit(m_Opcode.rs))
             {
-                unsigned __int64 Value;
+                uint64_t Value;
 
                 if (Is64Bit(ConstReg))
                 {
@@ -4092,7 +4092,7 @@ void CRecompilerOps::SPECIAL_NOR()
                 }
                 else
                 {
-                    Value = IsSigned(ConstReg) ? (__int64)GetMipsRegLo_S(ConstReg) : GetMipsRegLo(ConstReg);
+                    Value = IsSigned(ConstReg) ? (int64_t)GetMipsRegLo_S(ConstReg) : GetMipsRegLo(ConstReg);
                 }
                 Map_GPR_64bit(m_Opcode.rd, MappedReg);
                 if ((Value >> 32) != 0)
@@ -4119,7 +4119,7 @@ void CRecompilerOps::SPECIAL_NOR()
 
         if (IsConst(KnownReg))
         {
-            unsigned __int64 Value = Is64Bit(KnownReg) ? GetMipsReg(KnownReg) : GetMipsRegLo_S(KnownReg);
+            uint64_t Value = Is64Bit(KnownReg) ? GetMipsReg(KnownReg) : GetMipsRegLo_S(KnownReg);
             uint32_t dwValue = (uint32_t)(Value & 0xFFFFFFFF);
 
             if (g_System->b32BitCore() && Is32Bit(KnownReg))
@@ -4796,8 +4796,8 @@ void CRecompilerOps::SPECIAL_DADD()
         }
 
         m_RegWorkingSet.SetMipsReg(m_Opcode.rd,
-            Is64Bit(m_Opcode.rs) ? GetMipsReg(m_Opcode.rs) : (__int64)GetMipsRegLo_S(m_Opcode.rs) +
-            Is64Bit(m_Opcode.rt) ? GetMipsReg(m_Opcode.rt) : (__int64)GetMipsRegLo_S(m_Opcode.rt)
+            Is64Bit(m_Opcode.rs) ? GetMipsReg(m_Opcode.rs) : (int64_t)GetMipsRegLo_S(m_Opcode.rs) +
+            Is64Bit(m_Opcode.rt) ? GetMipsReg(m_Opcode.rt) : (int64_t)GetMipsRegLo_S(m_Opcode.rt)
             );
         if (GetMipsRegLo_S(m_Opcode.rd) < 0 && GetMipsRegHi_S(m_Opcode.rd) == -1)
         {
@@ -4846,8 +4846,8 @@ void CRecompilerOps::SPECIAL_DADDU()
 
     if (IsConst(m_Opcode.rt) && IsConst(m_Opcode.rs))
     {
-        __int64 ValRs = Is64Bit(m_Opcode.rs) ? GetMipsReg(m_Opcode.rs) : (__int64)GetMipsRegLo_S(m_Opcode.rs);
-        __int64 ValRt = Is64Bit(m_Opcode.rt) ? GetMipsReg(m_Opcode.rt) : (__int64)GetMipsRegLo_S(m_Opcode.rt);
+        int64_t ValRs = Is64Bit(m_Opcode.rs) ? GetMipsReg(m_Opcode.rs) : (int64_t)GetMipsRegLo_S(m_Opcode.rs);
+        int64_t ValRt = Is64Bit(m_Opcode.rt) ? GetMipsReg(m_Opcode.rt) : (int64_t)GetMipsRegLo_S(m_Opcode.rt);
         if (IsMapped(m_Opcode.rd))
             UnMap_GPR(m_Opcode.rd, false);
 
@@ -4907,8 +4907,8 @@ void CRecompilerOps::SPECIAL_DSUB()
         }
 
         m_RegWorkingSet.SetMipsReg(m_Opcode.rd,
-            Is64Bit(m_Opcode.rs) ? GetMipsReg(m_Opcode.rs) : (__int64)GetMipsRegLo_S(m_Opcode.rs) -
-            Is64Bit(m_Opcode.rt) ? GetMipsReg(m_Opcode.rt) : (__int64)GetMipsRegLo_S(m_Opcode.rt)
+            Is64Bit(m_Opcode.rs) ? GetMipsReg(m_Opcode.rs) : (int64_t)GetMipsRegLo_S(m_Opcode.rs) -
+            Is64Bit(m_Opcode.rt) ? GetMipsReg(m_Opcode.rt) : (int64_t)GetMipsRegLo_S(m_Opcode.rt)
             );
         if (GetMipsRegLo_S(m_Opcode.rd) < 0 && GetMipsRegHi_S(m_Opcode.rd) == -1)
         {
@@ -4972,8 +4972,8 @@ void CRecompilerOps::SPECIAL_DSUBU()
         }
 
         m_RegWorkingSet.SetMipsReg(m_Opcode.rd,
-            Is64Bit(m_Opcode.rs) ? GetMipsReg(m_Opcode.rs) : (__int64)GetMipsRegLo_S(m_Opcode.rs) -
-            Is64Bit(m_Opcode.rt) ? GetMipsReg(m_Opcode.rt) : (__int64)GetMipsRegLo_S(m_Opcode.rt)
+            Is64Bit(m_Opcode.rs) ? GetMipsReg(m_Opcode.rs) : (int64_t)GetMipsRegLo_S(m_Opcode.rs) -
+            Is64Bit(m_Opcode.rt) ? GetMipsReg(m_Opcode.rt) : (int64_t)GetMipsRegLo_S(m_Opcode.rt)
             );
         if (GetMipsRegLo_S(m_Opcode.rd) < 0 && GetMipsRegHi_S(m_Opcode.rd) == -1)
         {
@@ -5036,7 +5036,7 @@ void CRecompilerOps::SPECIAL_DSLL()
             UnMap_GPR(m_Opcode.rd, false);
         }
 
-        __int64 Value = Is64Bit(m_Opcode.rt) ? GetMipsReg_S(m_Opcode.rt) : (__int64)GetMipsRegLo_S(m_Opcode.rt);
+        int64_t Value = Is64Bit(m_Opcode.rt) ? GetMipsReg_S(m_Opcode.rt) : (int64_t)GetMipsRegLo_S(m_Opcode.rt);
         m_RegWorkingSet.SetMipsReg(m_Opcode.rd, Value << m_Opcode.sa);
         if (GetMipsRegLo_S(m_Opcode.rd) < 0 && GetMipsRegHi_S(m_Opcode.rd) == -1)
         {
@@ -5073,7 +5073,7 @@ void CRecompilerOps::SPECIAL_DSRL()
         {
             UnMap_GPR(m_Opcode.rd, false);
         }
-        __int64 Value = Is64Bit(m_Opcode.rt) ? GetMipsReg_S(m_Opcode.rt) : (__int64)GetMipsRegLo_S(m_Opcode.rt);
+        int64_t Value = Is64Bit(m_Opcode.rt) ? GetMipsReg_S(m_Opcode.rt) : (int64_t)GetMipsRegLo_S(m_Opcode.rt);
         m_RegWorkingSet.SetMipsReg(m_Opcode.rd, Value >> m_Opcode.sa);
         if (GetMipsRegLo_S(m_Opcode.rd) < 0 && GetMipsRegHi_S(m_Opcode.rd) == -1)
         {
@@ -5110,7 +5110,7 @@ void CRecompilerOps::SPECIAL_DSRA()
             UnMap_GPR(m_Opcode.rd, false);
         }
 
-        __int64 Value = Is64Bit(m_Opcode.rt) ? GetMipsReg_S(m_Opcode.rt) : (__int64)GetMipsRegLo_S(m_Opcode.rt);
+        int64_t Value = Is64Bit(m_Opcode.rt) ? GetMipsReg_S(m_Opcode.rt) : (int64_t)GetMipsRegLo_S(m_Opcode.rt);
         m_RegWorkingSet.SetMipsReg_S(m_Opcode.rd, Value >> m_Opcode.sa);
         if (GetMipsRegLo_S(m_Opcode.rd) < 0 && GetMipsRegHi_S(m_Opcode.rd) == -1)
         {

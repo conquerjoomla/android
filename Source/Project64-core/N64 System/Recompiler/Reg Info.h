@@ -76,7 +76,7 @@ public:
     bool operator==(const CRegInfo& right) const;
     bool operator!=(const CRegInfo& right) const;
 
-    static REG_STATE ConstantsType ( __int64 Value );
+    static REG_STATE ConstantsType ( int64_t Value );
 
     void   FixRoundModel      ( FPU_ROUND RoundMethod );
     void   ChangeFPURegFormat ( int Reg, FPU_STATE OldFormat, FPU_STATE NewFormat, FPU_ROUND RoundingModel );

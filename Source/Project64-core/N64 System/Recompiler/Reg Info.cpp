@@ -131,7 +131,7 @@ bool CRegInfo::operator!=(const CRegInfo& right) const
     return !(right == *this);
 }
 
-CRegInfo::REG_STATE CRegInfo::ConstantsType (__int64 Value)
+CRegInfo::REG_STATE CRegInfo::ConstantsType (int64_t Value)
 {
     if (((Value >> 32) == -1) && ((Value & 0x80000000) != 0)) { return STATE_CONST_32_SIGN; }
     if (((Value >> 32) == 0) && ((Value & 0x80000000) == 0)) { return STATE_CONST_32_SIGN; }

@@ -42,7 +42,7 @@ void StopLog (void)
 void LoadLogSetting (HKEY hKey,char * String, bool * Value)
 {
     DWORD Type, dwResult, Bytes = 4;
-    long lResult;
+    int32_t lResult;
 
     lResult = RegQueryValueEx(hKey,String,0,&Type,(LPBYTE)(&dwResult),&Bytes);
     if (Type == REG_DWORD && lResult == ERROR_SUCCESS)
@@ -57,7 +57,7 @@ void LoadLogSetting (HKEY hKey,char * String, bool * Value)
 
 void LoadLogOptions (LOG_OPTIONS * g_LogOptions, bool AlwaysFill)
 {
-    long lResult;
+    int32_t lResult;
     HKEY hKeyResults = 0;
     char String[200];
 

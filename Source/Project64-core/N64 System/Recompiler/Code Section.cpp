@@ -197,11 +197,11 @@ void CCodeSection::CompileExit(uint32_t JumpPC, uint32_t TargetPC, CRegInfo &Exi
             if (LookUpMode() == FuncFind_ChangeMemory)
             {
                 g_Notify->BreakPoint(__FILEW__,__LINE__);
-                //			BYTE * Jump, * Jump2;
+                //			uint8_t * Jump, * Jump2;
                 //			if (TargetPC >= 0x80000000 && TargetPC < 0xC0000000) {
                 //				uint32_t pAddr = TargetPC & 0x1FFFFFFF;
                 //
-                //				MoveVariableToX86reg((BYTE *)RDRAM + pAddr,"RDRAM + pAddr",x86_EAX);
+                //				MoveVariableToX86reg((uint8_t *)RDRAM + pAddr,"RDRAM + pAddr",x86_EAX);
                 //				Jump2 = NULL;
                 //			} else {
                 //				MoveConstToX86reg((TargetPC >> 12),x86_ECX);
@@ -223,10 +223,10 @@ void CCodeSection::CompileExit(uint32_t JumpPC, uint32_t TargetPC, CRegInfo &Exi
                 //			MoveVariableDispToX86Reg(OrigMem,"OrigMem",x86_ECX,x86_EAX,1);
                 //			JmpDirectReg(x86_ECX);
                 //			CPU_Message("      NoCode:");
-                //			*((BYTE *)(Jump))=(BYTE)(m_RecompPos - Jump - 1);
+                //			*((uint8_t *)(Jump))=(uint8_t)(m_RecompPos - Jump - 1);
                 //			if (Jump2 != NULL) {
                 //				CPU_Message("      NoTlbEntry:");
-                //				*((BYTE *)(Jump2))=(BYTE)(m_RecompPos - Jump2 - 1);
+                //				*((uint8_t *)(Jump2))=(uint8_t)(m_RecompPos - Jump2 - 1);
                 //			}
             }
             else if (LookUpMode() == FuncFind_VirtualLookup)
@@ -236,19 +236,19 @@ void CCodeSection::CompileExit(uint32_t JumpPC, uint32_t TargetPC, CRegInfo &Exi
                 Call_Direct(AddressOf(&CFunctionMap::CompilerFindFunction), "CFunctionMap::CompilerFindFunction");
                 MoveX86RegToX86Reg(x86_EAX,x86_ECX);
                 JecxzLabel8("NullPointer",0);
-                BYTE * Jump = m_RecompPos - 1;
+                uint8_t * Jump = m_RecompPos - 1;
                 MoveX86PointerToX86regDisp(x86_EBX,x86_ECX,0xC);
                 JmpDirectReg(x86_EBX);
                 CPU_Message("      NullPointer:");
-                *((BYTE *)(Jump))=(BYTE)(m_RecompPos - Jump - 1);
+                *((uint8_t *)(Jump))=(uint8_t)(m_RecompPos - Jump - 1);
             }
             else if (LookUpMode() == FuncFind_PhysicalLookup)
             {
-                BYTE * Jump2 = NULL;
+                uint8_t * Jump2 = NULL;
                 if (TargetPC >= 0x80000000 && TargetPC < 0x90000000)
                 {
                     uint32_t pAddr = TargetPC & 0x1FFFFFFF;
-                    MoveVariableToX86reg((BYTE *)JumpTable + pAddr,"JumpTable + pAddr",x86_ECX);
+                    MoveVariableToX86reg((uint8_t *)JumpTable + pAddr,"JumpTable + pAddr",x86_ECX);
                 }
                 else if (TargetPC >= 0x90000000 && TargetPC < 0xC0000000)
                 {
@@ -267,15 +267,15 @@ void CCodeSection::CompileExit(uint32_t JumpPC, uint32_t TargetPC, CRegInfo &Exi
                 if (TargetPC < 0x90000000 || TargetPC >= 0xC0000000)
                 {
                     JecxzLabel8("NullPointer",0);
-                    BYTE * Jump = m_RecompPos - 1;
+                    uint8_t * Jump = m_RecompPos - 1;
                     MoveX86PointerToX86regDisp(x86_EAX,x86_ECX,0xC);
                     JmpDirectReg(x86_EAX);
                     CPU_Message("      NullPointer:");
-                    *((BYTE *)(Jump))=(BYTE)(m_RecompPos - Jump - 1);
+                    *((uint8_t *)(Jump))=(uint8_t)(m_RecompPos - Jump - 1);
                     if (Jump2 != NULL)
                     {
                         CPU_Message("      NoTlbEntry:");
-                        *((BYTE *)(Jump2))=(BYTE)(m_RecompPos - Jump2 - 1);
+                        *((uint8_t *)(Jump2))=(uint8_t)(m_RecompPos - Jump2 - 1);
                     }
                 }
             }
@@ -402,7 +402,7 @@ void CCodeSection::GenerateSectionLinkage()
         g_Notify->BreakPoint(__FILEW__, __LINE__);
 #ifdef tofix
         //Handle Fall througth
-        BYTE * Jump = NULL;
+        uint8_t * Jump = NULL;
         for (i = 0; i < 2; i ++) {
             if (!JumpInfo[i]->FallThrough) { continue; }
             JumpInfo[i]->FallThrough = false;

@@ -228,12 +228,12 @@ protected:
     typedef CRegInfo::REG_STATE REG_STATE;
 
     static REG_STATE         GetMipsRegState ( int Reg ) { return m_RegWorkingSet.GetMipsRegState(Reg); }
-    static unsigned __int64  GetMipsReg      ( int Reg ) { return m_RegWorkingSet.GetMipsReg(Reg); }
-    static __int64           GetMipsReg_S    ( int Reg ) { return m_RegWorkingSet.GetMipsReg_S(Reg); }
-    static uint32_t             GetMipsRegLo    ( int Reg ) { return m_RegWorkingSet.GetMipsRegLo(Reg); }
-    static long              GetMipsRegLo_S  ( int Reg ) { return m_RegWorkingSet.GetMipsRegLo_S(Reg); }
-    static uint32_t             GetMipsRegHi    ( int Reg ) { return m_RegWorkingSet.GetMipsRegHi(Reg); }
-    static long              GetMipsRegHi_S  ( int Reg ) { return m_RegWorkingSet.GetMipsRegHi_S(Reg); }
+    static uint64_t          GetMipsReg      ( int Reg ) { return m_RegWorkingSet.GetMipsReg(Reg); }
+    static int64_t           GetMipsReg_S    ( int Reg ) { return m_RegWorkingSet.GetMipsReg_S(Reg); }
+    static uint32_t          GetMipsRegLo    ( int Reg ) { return m_RegWorkingSet.GetMipsRegLo(Reg); }
+    static int32_t           GetMipsRegLo_S  ( int Reg ) { return m_RegWorkingSet.GetMipsRegLo_S(Reg); }
+    static uint32_t          GetMipsRegHi    ( int Reg ) { return m_RegWorkingSet.GetMipsRegHi(Reg); }
+    static int32_t           GetMipsRegHi_S  ( int Reg ) { return m_RegWorkingSet.GetMipsRegHi_S(Reg); }
     static CX86Ops::x86Reg   GetMipsRegMapLo ( int Reg ) { return m_RegWorkingSet.GetMipsRegMapLo(Reg); }
     static CX86Ops::x86Reg   GetMipsRegMapHi ( int Reg ) { return m_RegWorkingSet.GetMipsRegMapHi(Reg); }
 

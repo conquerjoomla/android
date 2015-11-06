@@ -38,7 +38,7 @@
 #define Eip     Rip
 #endif
 
-extern unsigned long swap32by8(unsigned long word);
+extern uint32_t swap32by8(uint32_t word);
 
 class CMipsMemoryVM :
     public CMipsMemory,

@@ -89,11 +89,11 @@ bool CControl_Plugin::Initiate(CN64System * System, RenderWindow * Window)
             HWND hMainWindow;
             HINSTANCE hinst;
 
-            BOOL MemoryBswaped;		// If this is set to TRUE, then the memory has been pre
+            int32_t MemoryBswaped;		// If this is set to TRUE, then the memory has been pre
             //   bswap on a dword (32 bits) boundry, only effects header.
             //	eg. the first 8 bytes are stored like this:
             //        4 3 2 1   8 7 6 5
-            BYTE * HEADER;			// This is the rom header (first 40h bytes of the rom)
+            uint8_t * HEADER;			// This is the rom header (first 40h bytes of the rom)
             CONTROL *Controls;		// A pointer to an array of 4 controllers .. eg:
             // CONTROL Controls[4];
         } CONTROL_INFO;
@@ -104,7 +104,7 @@ bool CControl_Plugin::Initiate(CN64System * System, RenderWindow * Window)
         if (InitiateControllers_1_1 == NULL) { return false; }
 
         CONTROL_INFO ControlInfo;
-        BYTE Buffer[100];
+        uint8_t Buffer[100];
 
         ControlInfo.Controls = m_PluginControllers;
         ControlInfo.HEADER = (System == NULL ? Buffer : g_Rom->GetRomAddress());
