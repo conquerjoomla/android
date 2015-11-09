@@ -62,7 +62,8 @@ void CModifiedEditBox::SetChanged(bool Changed)
 			::InvalidateRect(m_TextField, NULL, true);
 		}
 	}
-	else {
+	else
+	}
 		if (m_OriginalFont)
 		{
 			SendMessage(WM_SETFONT, (WPARAM)m_OriginalFont);

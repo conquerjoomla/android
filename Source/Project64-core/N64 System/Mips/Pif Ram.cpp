@@ -311,12 +311,7 @@ void CPifRam::SI_DMA_READ()
     {
         for (size_t i = 0; i < 64; i += 4)
         {
-            unsigned __int32 pif_ram_dword;
-            std::memcpy(&pif_ram_dword, &PifRamPos[i], sizeof(unsigned __int32));
-
-            pif_ram_dword = swap32by8(pif_ram_dword);
-
-            std::memcpy(&RDRAM[SI_DRAM_ADDR_REG + i], &pif_ram_dword, sizeof(unsigned __int32));
+			RDRAM[(SI_DRAM_ADDR_REG + i) ^ 3] = PifRamPos[i];
         }
     }
 
@@ -402,12 +397,7 @@ void CPifRam::SI_DMA_WRITE()
     {
         for (size_t i = 0; i < 64; i += 4)
         {
-            unsigned __int32 rdram_dword;
-            std::memcpy(&rdram_dword, &RDRAM[SI_DRAM_ADDR_REG + i], sizeof(unsigned __int32));
-
-            rdram_dword = swap32by8(rdram_dword);
-
-            std::memcpy(&PifRamPos[i], &rdram_dword, sizeof(unsigned __int32));
+			PifRamPos[i] = RDRAM[(SI_DRAM_ADDR_REG + i) ^ 3];
         }
     }
 

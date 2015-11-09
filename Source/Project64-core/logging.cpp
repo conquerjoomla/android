@@ -1,3 +1,13 @@
+/****************************************************************************
+*                                                                           *
+* Project 64 - A Nintendo 64 emulator.                                      *
+* http://www.pj64-emu.com/                                                  *
+* Copyright (C) 2012 Project64. All rights reserved.                        *
+*                                                                           *
+* License:                                                                  *
+* GNU/GPLv2 http://www.gnu.org/licenses/gpl-2.0.html                        *
+*                                                                           *
+****************************************************************************/
 #include "stdafx.h"
 #include "logging.h"
 #include <Common/path.h>
@@ -9,51 +19,6 @@
 
 static HANDLE g_hLogFile = NULL;
 LOG_OPTIONS g_LogOptions;
-
-void StartLog (void)
-{
-    if (!g_LogOptions.GenerateLog)
-    {
-        StopLog();
-        return;
-    }
-    if (g_hLogFile)
-    {
-        return;
-    }
-
-    CPath LogFile(CPath::MODULE_DIRECTORY);
-    LogFile.AppendDirectory("Logs");
-    LogFile.SetNameExtension("cpudebug.log");
-
-    g_hLogFile = CreateFile(LogFile,GENERIC_WRITE, FILE_SHARE_READ,NULL,CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
-    SetFilePointer(g_hLogFile,0,NULL,FILE_BEGIN);
-}
-
-void StopLog (void)
-{
-    if (g_hLogFile)
-    {
-        CloseHandle(g_hLogFile);
-    }
-    g_hLogFile = NULL;
-}
-
-void LoadLogSetting (HKEY hKey,char * String, bool * Value)
-{
-    DWORD Type, dwResult, Bytes = 4;
-    int32_t lResult;
-
-    lResult = RegQueryValueEx(hKey,String,0,&Type,(LPBYTE)(&dwResult),&Bytes);
-    if (Type == REG_DWORD && lResult == ERROR_SUCCESS)
-    {
-        *Value = dwResult != 0;
-    }
-    else
-    {
-        *Value = FALSE;
-    }
-}
 
 void LoadLogOptions (LOG_OPTIONS * g_LogOptions, bool AlwaysFill)
 {
@@ -125,6 +90,22 @@ void LoadLogOptions (LOG_OPTIONS * g_LogOptions, bool AlwaysFill)
     g_LogOptions->LogTLB               = FALSE;
     g_LogOptions->LogRomHeader         = FALSE;
     g_LogOptions->LogUnknown           = FALSE;
+}
+
+void LoadLogSetting (HKEY hKey,char * String, bool * Value)
+{
+    DWORD Type, dwResult, Bytes = 4;
+    int32_t lResult;
+
+    lResult = RegQueryValueEx(hKey,String,0,&Type,(LPBYTE)(&dwResult),&Bytes);
+    if (Type == REG_DWORD && lResult == ERROR_SUCCESS)
+    {
+        *Value = dwResult != 0;
+    }
+    else
+    {
+        *Value = FALSE;
+    }
 }
 
 void Log_LW (uint32_t PC, uint32_t VAddr)
@@ -707,4 +688,33 @@ void LogMessage (const char * Message, ...)
     strcat(Msg,"\r\n");
 
     WriteFile( g_hLogFile,Msg,strlen(Msg),&dwWritten,NULL );
+}
+
+void StartLog (void)
+{
+    if (!g_LogOptions.GenerateLog)
+    {
+        StopLog();
+        return;
+    }
+    if (g_hLogFile)
+    {
+        return;
+    }
+
+    CPath LogFile(CPath::MODULE_DIRECTORY);
+    LogFile.AppendDirectory("Logs");
+    LogFile.SetNameExtension("cpudebug.log");
+
+    g_hLogFile = CreateFile(LogFile,GENERIC_WRITE, FILE_SHARE_READ,NULL,CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+    SetFilePointer(g_hLogFile,0,NULL,FILE_BEGIN);
+}
+
+void StopLog (void)
+{
+    if (g_hLogFile)
+    {
+        CloseHandle(g_hLogFile);
+    }
+    g_hLogFile = NULL;
 }

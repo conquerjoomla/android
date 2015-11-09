@@ -572,5 +572,8 @@
     <ClInclude Include="Logging.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Debugger.h">
+      <Filter>Source Files\N64 System</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
