@@ -146,7 +146,8 @@ void CLog::Log( const char * Message )
 
 			// Find next end of line
 			uint32_t NextEnter = 0, dwRead = 0;
-			do {
+			do 
+			{
 				BYTE Data[300];
 				uint32_t dwRead;
 
@@ -171,7 +172,8 @@ void CLog::Log( const char * Message )
 			// copy content of log to the new file
 			uint32_t ReadPos = (end - m_MaxFileSize) + m_FileChangeSize + NextEnter;
 			uint32_t SizeToRead, WritePos = 0;
-			do {
+			do 
+			{
 				enum { fIS_MvSize  = 0x5000 };
 				unsigned char Data[fIS_MvSize + 1];
 

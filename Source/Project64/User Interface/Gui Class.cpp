@@ -738,7 +738,8 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
 			_this->m_SaveRomBrowserTop = WinRect.top;
 			_this->m_SaveRomBrowserLeft = WinRect.left;
 		}
-		else {
+		else
+		{
 			_this->m_SaveMainWindowPos = true;
 			_this->m_SaveMainWindowTop = WinRect.top;
 			_this->m_SaveMainWindowLeft = WinRect.left;
@@ -780,7 +781,8 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
 			}
 			_this->ResizeRomList(LOWORD(lParam), HIWORD(lParam));
 		}
-		if (_this) {
+		if (_this)
+		{
 			if (wParam == SIZE_RESTORED && _this->RomBrowserVisible())
 			{
 				_this->RomBrowserMaximize(false);

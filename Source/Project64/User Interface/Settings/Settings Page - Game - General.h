@@ -43,6 +43,4 @@ public:
     void             ApplySettings ( bool UpdateScreen );
     bool             EnableReset   ( void );
     void             ResetPage     ( void );
-
-private:
 };

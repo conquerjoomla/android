@@ -26,5 +26,6 @@ CTransVaddr   * g_TransVaddr = NULL;
 CSystemEvents * g_SystemEvents = NULL;
 uint32_t      * g_TLBLoadAddress = NULL;
 uint32_t      * g_TLBStoreAddress = NULL;
+CDebugger     * g_Debugger = NULL;
 
 int * g_NextTimer;

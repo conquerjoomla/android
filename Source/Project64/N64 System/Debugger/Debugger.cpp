@@ -19,11 +19,23 @@ CDebuggerUI::CDebuggerUI () :
     m_MemorySearch(NULL),
     m_DebugTLB(NULL)
 {
+	g_Settings->RegisterChangeCB(GameRunning_InReset,this,(CSettings::SettingChangedFunc)GameReset);
+	g_Debugger = this;
 }
 
 CDebuggerUI::~CDebuggerUI (void)
 {
+	g_Settings->UnregisterChangeCB(GameRunning_InReset,this,(CSettings::SettingChangedFunc)GameReset);
     Debug_Reset();
+}
+
+void CDebuggerUI::GameReset ( CDebuggerUI * _this )
+{
+	if (!g_Settings->LoadBool(GameRunning_InReset))
+	{
+		return;
+	}
+	_this->Debug_Reset();
 }
 
 void CDebuggerUI::Debug_Reset ( void )
@@ -129,4 +141,9 @@ void CDebuggerUI::Debug_ShowMemorySearch()
     {
         m_MemorySearch->ShowWindow();
     }
+}
+
+void CDebuggerUI::TLBChanged()
+{
+    Debug_RefreshTLBWindow();
 }

@@ -235,7 +235,8 @@ void COptionsShortCutsPage::OnShortCutChanged(UINT /*Code*/, int /*id*/, HWND /*
 	{
 		str.resize(std::remove(str.begin(), str.end(), '&') - str.begin());
 	}
-	else {
+	else
+	}
 		str = "None";
 	}
 	SetDlgItemText(IDC_ASSIGNED_MENU_ITEM, str.c_str());

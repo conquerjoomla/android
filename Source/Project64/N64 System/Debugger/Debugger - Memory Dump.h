@@ -32,12 +32,12 @@ private:
     BEGIN_MSG_MAP_EX(CDumpMemory)
         MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
         COMMAND_CODE_HANDLER(BN_CLICKED, OnClicked)
-        END_MSG_MAP()
+	END_MSG_MAP()
 
-        LRESULT				OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-        LRESULT				OnClicked(WORD wNotifyCode, WORD wID, HWND /*hWndCtl*/, BOOL& bHandled);
+	LRESULT				OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+	LRESULT				OnClicked(WORD wNotifyCode, WORD wID, HWND /*hWndCtl*/, BOOL& bHandled);
 
-        bool DumpMemory(LPCSTR FileName, DumpFormat Format, DWORD StartPC, DWORD EndPC, DWORD DumpPC);
+	bool DumpMemory(LPCSTR FileName, DumpFormat Format, DWORD StartPC, DWORD EndPC, DWORD DumpPC);
 
-        CEditNumber m_StartAddress, m_EndAddress, m_PC;
+	CEditNumber m_StartAddress, m_EndAddress, m_PC;
 };

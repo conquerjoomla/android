@@ -40,4 +40,3 @@ public:
 	inline bool Flush      ( void )       { return m_hLogFile.Flush(); }
 	inline const stdstr & FileName ( void ) const { return m_FileName; }
 };
-

@@ -159,6 +159,7 @@ enum SettingID
 	GameRunning_InstantSaveFile,
 	GameRunning_LimitFPS,
 	GameRunning_ScreenHertz,
+	GameRunning_InReset,
 
 	//User Interface
 	UserInterface_BasicMode,

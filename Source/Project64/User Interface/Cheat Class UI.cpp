@@ -350,7 +350,7 @@ int CALLBACK CCheatsUI::CheatAddProc(HWND hDlg, uint32_t uMsg, uint32_t wParam, 
 	break;
 	case WM_EDITCHEAT:
 	{
-		CCheatsUI       * _this = (CCheatsUI *)GetProp(hDlg, "Class");
+		CCheatsUI * _this = (CCheatsUI *)GetProp(hDlg, "Class");
 		_this->m_EditCheat = wParam;
 		if (_this->m_EditCheat < 0)
 		{
@@ -555,7 +555,7 @@ int CALLBACK CCheatsUI::CheatListProc(HWND hDlg, uint32_t uMsg, uint32_t wParam,
 			}
 			DestroyMenu(hMenu);
 		}
-		if ((lpnmh->code == NM_CLICK) && (lpnmh->idFrom == IDC_MYTREE))
+		else if ((lpnmh->code == NM_CLICK) && (lpnmh->idFrom == IDC_MYTREE))
 		{
 			TVHITTESTINFO ht = { 0 };
 			uint32_t dwpos = GetMessagePos();
@@ -615,7 +615,7 @@ int CALLBACK CCheatsUI::CheatListProc(HWND hDlg, uint32_t uMsg, uint32_t wParam,
 				}
 			}
 		}
-		if ((lpnmh->code == NM_DBLCLK) && (lpnmh->idFrom == IDC_MYTREE))
+		else if ((lpnmh->code == NM_DBLCLK) && (lpnmh->idFrom == IDC_MYTREE))
 		{
 			TVHITTESTINFO ht = { 0 };
 			uint32_t dwpos = GetMessagePos();
@@ -632,7 +632,7 @@ int CALLBACK CCheatsUI::CheatListProc(HWND hDlg, uint32_t uMsg, uint32_t wParam,
 				PostMessage(hDlg, UM_CHANGECODEEXTENSION, 0, (LPARAM)ht.hItem);
 			}
 		}
-		if ((lpnmh->code == TVN_SELCHANGED) && (lpnmh->idFrom == IDC_MYTREE))
+		else if ((lpnmh->code == TVN_SELCHANGEDW) && (lpnmh->idFrom == IDC_MYTREE))
 		{
 			HTREEITEM hItem;
 
