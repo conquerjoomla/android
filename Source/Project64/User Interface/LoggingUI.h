@@ -9,12 +9,5 @@
 *                                                                           *
 ****************************************************************************/
 #pragma once
-#ifdef __cplusplus
-extern "C" {
-#endif
 
-    void EnterLogOptions ( HWND hwndOwner );
-
-#ifdef __cplusplus
-}
-#endif
+void EnterLogOptions ( HWND hwndOwner );
