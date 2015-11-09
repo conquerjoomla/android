@@ -536,13 +536,6 @@ void CMainGui::Show(bool Visible)
     m_MakingVisible = false;
 }
 
-#ifdef tofix
-void CMainGui::EnterLogOptions(void)
-{
-    ::EnterLogOptions(m_hMainWindow);
-}
-#endif
-
 int CMainGui::Height(void)
 {
     if (!m_hMainWindow) { return 0; }
