@@ -326,6 +326,32 @@ void CSettings::AddHowToHandleSetting ()
     AddHandler(Plugin_UseHleGfx,     new CSettingTypeApplication("RSP","HLE GFX",true));
     AddHandler(Plugin_UseHleAudio,   new CSettingTypeApplication("RSP","HLE Audio",false));
 
+    //Logging
+    AddHandler(Logging_GenerateLog,          new CSettingTypeApplication("Logging","Generate Log Files", false));
+    AddHandler(Logging_LogRDRamRegisters,    new CSettingTypeApplication("Logging","Log RDRam Registers", false));
+    AddHandler(Logging_LogSPRegisters,       new CSettingTypeApplication("Logging","Log SP Registers", false));
+    AddHandler(Logging_LogDPCRegisters,      new CSettingTypeApplication("Logging","Log DPC Registers", false));
+    AddHandler(Logging_LogMIPSInterface,     new CSettingTypeApplication("Logging","Log MIPS Interface", false));
+    AddHandler(Logging_LogVideoInterface,    new CSettingTypeApplication("Logging","Log Video Interface", false));
+    AddHandler(Logging_LogAudioInterface,    new CSettingTypeApplication("Logging","Log Audio Interface", false));
+    AddHandler(Logging_LogPerInterface,      new CSettingTypeApplication("Logging","Log Per Interface", false));
+    AddHandler(Logging_LogRDRAMInterface,    new CSettingTypeApplication("Logging","Log RDRAM Interface", false));
+    AddHandler(Logging_LogSerialInterface,   new CSettingTypeApplication("Logging","Log Serial Interface", false));
+    AddHandler(Logging_LogPRDMAOperations,   new CSettingTypeApplication("Logging","Log PR DMA Operations", false));
+    AddHandler(Logging_LogPRDirectMemLoads,  new CSettingTypeApplication("Logging","Log PR Direct Mem Loads", false));
+    AddHandler(Logging_LogPRDMAMemLoads,     new CSettingTypeApplication("Logging","Log PR DMA Mem Loads", false));
+    AddHandler(Logging_LogPRDirectMemStores, new CSettingTypeApplication("Logging","Log PR Direct Mem Stores", false));
+    AddHandler(Logging_LogPRDMAMemStores,    new CSettingTypeApplication("Logging","Log PRDMA Mem Stores", false));
+    AddHandler(Logging_LogControllerPak,     new CSettingTypeApplication("Logging","Log Controller Pak", false));
+    AddHandler(Logging_LogCP0changes,        new CSettingTypeApplication("Logging","Log CP0 changes", false));
+    AddHandler(Logging_LogCP0reads,          new CSettingTypeApplication("Logging","Log CP0 reads", false));
+    AddHandler(Logging_LogTLB,               new CSettingTypeApplication("Logging","Log TLB", false));
+    AddHandler(Logging_LogExceptions,        new CSettingTypeApplication("Logging","Log Exceptions", false));
+    AddHandler(Logging_NoInterrupts,         new CSettingTypeApplication("Logging","No Interrupts", false));
+    AddHandler(Logging_LogCache,             new CSettingTypeApplication("Logging","Log Cache", false));
+    AddHandler(Logging_LogRomHeader,         new CSettingTypeApplication("Logging","Generate Log Files", false));
+    AddHandler(Logging_LogUnknown,           new CSettingTypeApplication("Logging","Log Rom Header", false));
+
     // cheats
     AddHandler(Cheat_Entry,          new CSettingTypeCheats(""));
     AddHandler(Cheat_Active,         new CSettingTypeGameIndex("Cheat","",(uint32_t)false));

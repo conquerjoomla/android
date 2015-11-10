@@ -297,6 +297,9 @@
     <ClCompile Include="logging.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Settings\Logging Settings.cpp">
+      <Filter>Source Files\Settings</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -574,6 +577,9 @@
     </ClInclude>
     <ClInclude Include="Debugger.h">
       <Filter>Source Files\N64 System</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\Logging Settings.h">
+      <Filter>Header Files\Settings</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
