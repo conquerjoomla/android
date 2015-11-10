@@ -18,6 +18,7 @@
 #include <Project64-core\Logging.h>
 #include <Project64-core\Debugger.h>
 #include <Common\Util.h>
+#include <float.h>
 
 #pragma warning(disable:4355) // Disable 'this' : used in base member initializer list
 
