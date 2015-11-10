@@ -83,6 +83,7 @@
     <ClCompile Include="Plugins\RSP Plugin.cpp" />
     <ClCompile Include="Settings\Debug Settings.cpp" />
     <ClCompile Include="Settings\Game Settings.cpp" />
+    <ClCompile Include="Settings\Logging Settings.cpp" />
     <ClCompile Include="Settings\N64System Settings.cpp" />
     <ClCompile Include="Settings\Recompiler Settings.cpp" />
     <ClCompile Include="Settings\Settings Class.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="Plugins\RSP Plugin.h" />
     <ClInclude Include="Settings\Debug Settings.h" />
     <ClInclude Include="Settings\Game Settings.h" />
+    <ClInclude Include="Settings\Logging Settings.h" />
     <ClInclude Include="Settings\N64System Settings.h" />
     <ClInclude Include="Settings\Recompiler Settings.h" />
     <ClInclude Include="Settings\Settings Class.h" />

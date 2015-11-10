@@ -10,6 +10,7 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include <Project64-core\Logging.h>
+#include <Project64-core\Settings\Logging Settings.h>
 #include <prsht.h>
 
 void LoadLogSetting (HKEY hKey,char * String, BOOL * Value);
@@ -25,6 +26,7 @@ void EnterLogOptions(HWND hwndOwner)
 {
     PROPSHEETPAGE psp[3];
     PROPSHEETHEADER psh;
+    CLogSettings logSettings;
 
     psp[0].dwSize = sizeof(PROPSHEETPAGE);
     psp[0].dwFlags = PSP_USETITLE;
@@ -32,7 +34,7 @@ void EnterLogOptions(HWND hwndOwner)
     psp[0].pszTemplate = MAKEINTRESOURCE(IDD_Logging_Registers);
     psp[0].pfnDlgProc = (DLGPROC)LogRegProc;
     psp[0].pszTitle = "Registers";
-    psp[0].lParam = 0;
+    psp[0].lParam = (LPARAM)&logSettings;
     psp[0].pfnCallback = NULL;
 
     psp[1].dwSize = sizeof(PROPSHEETPAGE);
@@ -41,7 +43,7 @@ void EnterLogOptions(HWND hwndOwner)
     psp[1].pszTemplate = MAKEINTRESOURCE(IDD_Logging_PifRam);
     psp[1].pfnDlgProc = (DLGPROC)LogPifProc;
     psp[1].pszTitle = "Pif Ram";
-    psp[1].lParam = 0;
+    psp[1].lParam = (LPARAM)&logSettings;
     psp[1].pfnCallback = NULL;
 
     psp[2].dwSize = sizeof(PROPSHEETPAGE);
@@ -50,7 +52,7 @@ void EnterLogOptions(HWND hwndOwner)
     psp[2].pszTemplate = MAKEINTRESOURCE(IDD_Logging_General);
     psp[2].pfnDlgProc = (DLGPROC)LogGeneralProc;
     psp[2].pszTitle = "General";
-    psp[2].lParam = 0;
+    psp[2].lParam = (LPARAM)&logSettings;
     psp[2].pfnCallback = NULL;
 
     psh.dwSize = sizeof(PROPSHEETHEADER);

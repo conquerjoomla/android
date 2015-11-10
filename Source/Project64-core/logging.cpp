@@ -20,6 +20,8 @@
 static HANDLE g_hLogFile = NULL;
 LOG_OPTIONS g_LogOptions;
 
+void LoadLogSetting (HKEY hKey,char * String, bool * Value);
+
 void LoadLogOptions (LOG_OPTIONS * g_LogOptions, bool AlwaysFill)
 {
     int32_t lResult;
