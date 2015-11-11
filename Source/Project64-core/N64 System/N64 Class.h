@@ -16,6 +16,7 @@
 #include <Project64-core\N64 System\Mips\Memory Virtual Mem.h>
 #include <Project64-core\Settings\Debug Settings.h>
 #include <Project64-core\Plugin.h>
+#include <Project64-core\Logging.h>
 
 #include "Mips\System Events.h"
 #include "Mips\Memory Class.h"
@@ -38,6 +39,7 @@ class CRecompiler;
 //#define TEST_SP_TRACKING  //track the SP to make sure all ops pick it up fine
 
 class CN64System :
+    public CLogging,
     public CMipsMemory_CallBack,
     public CTLB_CB,
     private CSystemEvents,

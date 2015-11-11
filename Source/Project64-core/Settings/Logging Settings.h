@@ -43,7 +43,7 @@ public:
     inline static bool  LogCP0reads          ( void ) { return m_LogCP0reads; }
     inline static bool  LogTLB               ( void ) { return m_LogTLB; }
     inline static bool  LogExceptions        ( void ) { return m_LogExceptions; }
-    inline static bool  NoInterrupts         ( void ) { return m_NoInterrupts; }
+    inline static bool  LogNoInterrupts      ( void ) { return m_NoInterrupts; }
     inline static bool  LogCache             ( void ) { return m_LogCache; }
     inline static bool  LogRomHeader         ( void ) { return m_LogRomHeader; }
     inline static bool  LogUnknown           ( void ) { return m_LogUnknown; }

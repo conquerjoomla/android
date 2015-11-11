@@ -15,103 +15,12 @@
 #include <Project64-core\N64 System\Mips\TranslateVaddr.h>
 #include <Project64-core\N64 System\Mips\Memory Class.h>
 #include <Project64-core\N64 System\N64 Rom Class.h>
-#include <Windows.h>
 
-static HANDLE g_hLogFile = NULL;
+CFile * CLogging::m_hLogFile = NULL;
 
-void LoadLogSetting(HKEY hKey, char * String, bool * Value);
-
-void LoadLogOptions(LOG_OPTIONS * g_LogOptions, bool AlwaysFill)
+void CLogging::Log_LW(uint32_t PC, uint32_t VAddr)
 {
-	int32_t lResult;
-	HKEY hKeyResults = 0;
-	char String[200];
-
-	sprintf(String, "Software\\N64 Emulation\\%s\\Logging", g_Settings->LoadStringVal(Setting_ApplicationName).c_str());
-	lResult = RegOpenKeyEx(HKEY_CURRENT_USER, String, 0, KEY_ALL_ACCESS,
-		&hKeyResults);
-
-	if (lResult == ERROR_SUCCESS)
-	{
-		//LoadLogSetting(hKeyResults,"Generate Log File",&g_LogOptions->GenerateLog);
-		if (g_LogOptions->GenerateLog || AlwaysFill)
-		{
-			LoadLogSetting(hKeyResults, "Log RDRAM", &g_LogOptions->LogRDRamRegisters);
-			LoadLogSetting(hKeyResults, "Log SP", &g_LogOptions->LogSPRegisters);
-			LoadLogSetting(hKeyResults, "Log DP Command", &g_LogOptions->LogDPCRegisters);
-			LoadLogSetting(hKeyResults, "Log DP Span", &g_LogOptions->LogDPSRegisters);
-			LoadLogSetting(hKeyResults, "Log MIPS Interface (MI)", &g_LogOptions->LogMIPSInterface);
-			LoadLogSetting(hKeyResults, "Log Video Interface (VI)", &g_LogOptions->LogVideoInterface);
-			LoadLogSetting(hKeyResults, "Log Audio Interface (AI)", &g_LogOptions->LogAudioInterface);
-			LoadLogSetting(hKeyResults, "Log Peripheral Interface (PI)", &g_LogOptions->LogPerInterface);
-			LoadLogSetting(hKeyResults, "Log RDRAM Interface (RI)", &g_LogOptions->LogRDRAMInterface);
-			LoadLogSetting(hKeyResults, "Log Serial Interface (SI)", &g_LogOptions->LogSerialInterface);
-			LoadLogSetting(hKeyResults, "Log PifRam DMA Operations", &g_LogOptions->LogPRDMAOperations);
-			LoadLogSetting(hKeyResults, "Log PifRam Direct Memory Loads", &g_LogOptions->LogPRDirectMemLoads);
-			LoadLogSetting(hKeyResults, "Log PifRam DMA Memory Loads", &g_LogOptions->LogPRDMAMemLoads);
-			LoadLogSetting(hKeyResults, "Log PifRam Direct Memory Stores", &g_LogOptions->LogPRDirectMemStores);
-			LoadLogSetting(hKeyResults, "Log PifRam DMA Memory Stores", &g_LogOptions->LogPRDMAMemStores);
-			LoadLogSetting(hKeyResults, "Log Controller Pak", &g_LogOptions->LogControllerPak);
-			LoadLogSetting(hKeyResults, "Log CP0 changes", &g_LogOptions->LogCP0changes);
-			LoadLogSetting(hKeyResults, "Log CP0 reads", &g_LogOptions->LogCP0reads);
-			LoadLogSetting(hKeyResults, "Log Exceptions", &g_LogOptions->LogExceptions);
-			LoadLogSetting(hKeyResults, "No Interrupts", &g_LogOptions->NoInterrupts);
-			LoadLogSetting(hKeyResults, "Log TLB", &g_LogOptions->LogTLB);
-			LoadLogSetting(hKeyResults, "Log Cache Operations", &g_LogOptions->LogCache);
-			LoadLogSetting(hKeyResults, "Log Rom Header", &g_LogOptions->LogRomHeader);
-			LoadLogSetting(hKeyResults, "Log Unknown access", &g_LogOptions->LogUnknown);
-			return;
-		}
-	}
-
-	g_LogOptions->GenerateLog = FALSE;
-	g_LogOptions->LogRDRamRegisters = FALSE;
-	g_LogOptions->LogSPRegisters = FALSE;
-	g_LogOptions->LogDPCRegisters = FALSE;
-	g_LogOptions->LogDPSRegisters = FALSE;
-	g_LogOptions->LogMIPSInterface = FALSE;
-	g_LogOptions->LogVideoInterface = FALSE;
-	g_LogOptions->LogAudioInterface = FALSE;
-	g_LogOptions->LogPerInterface = FALSE;
-	g_LogOptions->LogRDRAMInterface = FALSE;
-	g_LogOptions->LogSerialInterface = FALSE;
-
-	g_LogOptions->LogPRDMAOperations = FALSE;
-	g_LogOptions->LogPRDirectMemLoads = FALSE;
-	g_LogOptions->LogPRDMAMemLoads = FALSE;
-	g_LogOptions->LogPRDirectMemStores = FALSE;
-	g_LogOptions->LogPRDMAMemStores = FALSE;
-	g_LogOptions->LogControllerPak = FALSE;
-
-	g_LogOptions->LogCP0changes = FALSE;
-	g_LogOptions->LogCP0reads = FALSE;
-	g_LogOptions->LogCache = FALSE;
-	g_LogOptions->LogExceptions = FALSE;
-	g_LogOptions->NoInterrupts = FALSE;
-	g_LogOptions->LogTLB = FALSE;
-	g_LogOptions->LogRomHeader = FALSE;
-	g_LogOptions->LogUnknown = FALSE;
-}
-
-void LoadLogSetting(HKEY hKey, char * String, bool * Value)
-{
-	DWORD Type, dwResult, Bytes = 4;
-	int32_t lResult;
-
-	lResult = RegQueryValueEx(hKey, String, 0, &Type, (LPBYTE)(&dwResult), &Bytes);
-	if (Type == REG_DWORD && lResult == ERROR_SUCCESS)
-	{
-		*Value = dwResult != 0;
-	}
-	else
-	{
-		*Value = FALSE;
-	}
-}
-
-void Log_LW(uint32_t PC, uint32_t VAddr)
-{
-	if (!g_LogOptions.GenerateLog)
+	if (!GenerateLog())
 	{
 		return;
 	}
@@ -121,7 +30,7 @@ void Log_LW(uint32_t PC, uint32_t VAddr)
 		uint32_t PAddr;
 		if (!g_TransVaddr->TranslateVaddr(VAddr, PAddr))
 		{
-			if (g_LogOptions.LogUnknown)
+			if (LogUnknown())
 			{
 				LogMessage("%08X: read from unknown ??? (%08X)", PC, VAddr);
 			}
@@ -137,7 +46,7 @@ void Log_LW(uint32_t PC, uint32_t VAddr)
 	}
 	if (VAddr >= 0xA3F00000 && VAddr <= 0xA3F00024)
 	{
-		if (!g_LogOptions.LogRDRamRegisters)
+		if (!LogRDRamRegisters())
 		{
 			return;
 		}
@@ -164,7 +73,7 @@ void Log_LW(uint32_t PC, uint32_t VAddr)
 	}
 	if (VAddr >= 0xA4040000 && VAddr <= 0xA404001C)
 	{
-		if (!g_LogOptions.LogSPRegisters)
+		if (!LogSPRegisters())
 		{
 			return;
 		}
@@ -185,7 +94,7 @@ void Log_LW(uint32_t PC, uint32_t VAddr)
 	}
 	if (VAddr == 0xA4080000)
 	{
-		if (!g_LogOptions.LogSPRegisters)
+		if (!LogSPRegisters())
 		{
 			return;
 		}
@@ -195,7 +104,7 @@ void Log_LW(uint32_t PC, uint32_t VAddr)
 	}
 	if (VAddr >= 0xA4100000 && VAddr <= 0xA410001C)
 	{
-		if (!g_LogOptions.LogDPCRegisters)
+		if (!LogDPCRegisters())
 		{
 			return;
 		}
@@ -215,7 +124,7 @@ void Log_LW(uint32_t PC, uint32_t VAddr)
 	}
 	if (VAddr >= 0xA4300000 && VAddr <= 0xA430000C)
 	{
-		if (!g_LogOptions.LogMIPSInterface)
+		if (!LogMIPSInterface())
 		{
 			return;
 		}
@@ -231,7 +140,7 @@ void Log_LW(uint32_t PC, uint32_t VAddr)
 	}
 	if (VAddr >= 0xA4400000 && VAddr <= 0xA4400034)
 	{
-		if (!g_LogOptions.LogVideoInterface)
+		if (!LogVideoInterface())
 		{
 			return;
 		}
@@ -257,7 +166,7 @@ void Log_LW(uint32_t PC, uint32_t VAddr)
 	}
 	if (VAddr >= 0xA4500000 && VAddr <= 0xA4500014)
 	{
-		if (!g_LogOptions.LogAudioInterface)
+		if (!LogAudioInterface())
 		{
 			return;
 		}
@@ -275,7 +184,7 @@ void Log_LW(uint32_t PC, uint32_t VAddr)
 	}
 	if (VAddr >= 0xA4600000 && VAddr <= 0xA4600030)
 	{
-		if (!g_LogOptions.LogPerInterface)
+		if (!LogPerInterface())
 		{
 			return;
 		}
@@ -300,7 +209,7 @@ void Log_LW(uint32_t PC, uint32_t VAddr)
 	}
 	if (VAddr >= 0xA4700000 && VAddr <= 0xA470001C)
 	{
-		if (!g_LogOptions.LogRDRAMInterface)
+		if (!LogRDRAMInterface())
 		{
 			return;
 		}
@@ -320,7 +229,7 @@ void Log_LW(uint32_t PC, uint32_t VAddr)
 	}
 	if (VAddr == 0xA4800000)
 	{
-		if (!g_LogOptions.LogSerialInterface)
+		if (!LogSerialInterface())
 		{
 			return;
 		}
@@ -330,7 +239,7 @@ void Log_LW(uint32_t PC, uint32_t VAddr)
 	}
 	if (VAddr == 0xA4800004)
 	{
-		if (!g_LogOptions.LogSerialInterface)
+		if (!LogSerialInterface())
 		{
 			return;
 		}
@@ -340,7 +249,7 @@ void Log_LW(uint32_t PC, uint32_t VAddr)
 	}
 	if (VAddr == 0xA4800010)
 	{
-		if (!g_LogOptions.LogSerialInterface)
+		if (!LogSerialInterface())
 		{
 			return;
 		}
@@ -350,7 +259,7 @@ void Log_LW(uint32_t PC, uint32_t VAddr)
 	}
 	if (VAddr == 0xA4800018)
 	{
-		if (!g_LogOptions.LogSerialInterface)
+		if (!LogSerialInterface())
 		{
 			return;
 		}
@@ -364,7 +273,7 @@ void Log_LW(uint32_t PC, uint32_t VAddr)
 	}
 	if (VAddr >= 0xBFC007C0 && VAddr <= 0xBFC007FC)
 	{
-		if (!g_LogOptions.LogPRDirectMemLoads)
+		if (!LogPRDirectMemLoads())
 		{
 			return;
 		}
@@ -378,7 +287,7 @@ void Log_LW(uint32_t PC, uint32_t VAddr)
 	}
 	if (VAddr >= 0xB0000000 && VAddr < 0xB0000040)
 	{
-		if (!g_LogOptions.LogRomHeader)
+		if (!LogRomHeader())
 		{
 			return;
 		}
@@ -395,16 +304,16 @@ void Log_LW(uint32_t PC, uint32_t VAddr)
 		}
 		return;
 	}
-	if (!g_LogOptions.LogUnknown)
+	if (!LogUnknown())
 	{
 		return;
 	}
 	LogMessage("%08X: read from unknown ??? (%08X)", PC, VAddr);
 }
 
-void Log_SW(uint32_t PC, uint32_t VAddr, uint32_t Value)
+void CLogging::Log_SW(uint32_t PC, uint32_t VAddr, uint32_t Value)
 {
-	if (!g_LogOptions.GenerateLog)
+	if (!GenerateLog())
 	{
 		return;
 	}
@@ -414,7 +323,7 @@ void Log_SW(uint32_t PC, uint32_t VAddr, uint32_t Value)
 		uint32_t PAddr;
 		if (!g_TransVaddr->TranslateVaddr(VAddr, PAddr))
 		{
-			if (g_LogOptions.LogUnknown)
+			if (LogUnknown())
 			{
 				LogMessage("%08X: Writing 0x%08X to %08X", PC, Value, VAddr);
 			}
@@ -429,7 +338,7 @@ void Log_SW(uint32_t PC, uint32_t VAddr, uint32_t Value)
 	}
 	if (VAddr >= 0xA3F00000 && VAddr <= 0xA3F00024)
 	{
-		if (!g_LogOptions.LogRDRamRegisters)
+		if (!LogRDRamRegisters())
 		{
 			return;
 		}
@@ -454,7 +363,7 @@ void Log_SW(uint32_t PC, uint32_t VAddr, uint32_t Value)
 
 	if (VAddr >= 0xA4040000 && VAddr <= 0xA404001C)
 	{
-		if (!g_LogOptions.LogSPRegisters)
+		if (!LogSPRegisters())
 		{
 			return;
 		}
@@ -472,7 +381,7 @@ void Log_SW(uint32_t PC, uint32_t VAddr, uint32_t Value)
 	}
 	if (VAddr == 0xA4080000)
 	{
-		if (!g_LogOptions.LogSPRegisters)
+		if (!LogSPRegisters())
 		{
 			return;
 		}
@@ -481,7 +390,7 @@ void Log_SW(uint32_t PC, uint32_t VAddr, uint32_t Value)
 
 	if (VAddr >= 0xA4100000 && VAddr <= 0xA410001C)
 	{
-		if (!g_LogOptions.LogDPCRegisters)
+		if (!LogDPCRegisters())
 		{
 			return;
 		}
@@ -500,7 +409,7 @@ void Log_SW(uint32_t PC, uint32_t VAddr, uint32_t Value)
 
 	if (VAddr >= 0xA4200000 && VAddr <= 0xA420000C)
 	{
-		if (!g_LogOptions.LogDPSRegisters)
+		if (!LogDPSRegisters())
 		{
 			return;
 		}
@@ -515,7 +424,7 @@ void Log_SW(uint32_t PC, uint32_t VAddr, uint32_t Value)
 
 	if (VAddr >= 0xA4300000 && VAddr <= 0xA430000C)
 	{
-		if (!g_LogOptions.LogMIPSInterface)
+		if (!LogMIPSInterface())
 		{
 			return;
 		}
@@ -529,7 +438,7 @@ void Log_SW(uint32_t PC, uint32_t VAddr, uint32_t Value)
 	}
 	if (VAddr >= 0xA4400000 && VAddr <= 0xA4400034)
 	{
-		if (!g_LogOptions.LogVideoInterface)
+		if (!LogVideoInterface())
 		{
 			return;
 		}
@@ -554,7 +463,7 @@ void Log_SW(uint32_t PC, uint32_t VAddr, uint32_t Value)
 
 	if (VAddr >= 0xA4500000 && VAddr <= 0xA4500014)
 	{
-		if (!g_LogOptions.LogAudioInterface)
+		if (!LogAudioInterface())
 		{
 			return;
 		}
@@ -571,7 +480,7 @@ void Log_SW(uint32_t PC, uint32_t VAddr, uint32_t Value)
 
 	if (VAddr >= 0xA4600000 && VAddr <= 0xA4600030)
 	{
-		if (!g_LogOptions.LogPerInterface)
+		if (!LogPerInterface())
 		{
 			return;
 		}
@@ -594,7 +503,7 @@ void Log_SW(uint32_t PC, uint32_t VAddr, uint32_t Value)
 	}
 	if (VAddr >= 0xA4700000 && VAddr <= 0xA470001C)
 	{
-		if (!g_LogOptions.LogRDRAMInterface)
+		if (!LogRDRAMInterface())
 		{
 			return;
 		}
@@ -612,7 +521,7 @@ void Log_SW(uint32_t PC, uint32_t VAddr, uint32_t Value)
 	}
 	if (VAddr == 0xA4800000)
 	{
-		if (!g_LogOptions.LogSerialInterface)
+		if (!LogSerialInterface())
 		{
 			return;
 		}
@@ -620,11 +529,11 @@ void Log_SW(uint32_t PC, uint32_t VAddr, uint32_t Value)
 	}
 	if (VAddr == 0xA4800004)
 	{
-		if (g_LogOptions.LogPRDMAOperations)
+		if (LogPRDMAOperations())
 		{
 			LogMessage("%08X: A DMA transfer from the PIF ram has occured", PC);
 		}
-		if (!g_LogOptions.LogSerialInterface)
+		if (!LogSerialInterface())
 		{
 			return;
 		}
@@ -632,11 +541,11 @@ void Log_SW(uint32_t PC, uint32_t VAddr, uint32_t Value)
 	}
 	if (VAddr == 0xA4800010)
 	{
-		if (g_LogOptions.LogPRDMAOperations)
+		if (LogPRDMAOperations())
 		{
 			LogMessage("%08X: A DMA transfer to the PIF ram has occured", PC);
 		}
-		if (!g_LogOptions.LogSerialInterface)
+		if (!LogSerialInterface())
 		{
 			return;
 		}
@@ -644,7 +553,7 @@ void Log_SW(uint32_t PC, uint32_t VAddr, uint32_t Value)
 	}
 	if (VAddr == 0xA4800018)
 	{
-		if (!g_LogOptions.LogSerialInterface)
+		if (!LogSerialInterface())
 		{
 			return;
 		}
@@ -653,23 +562,22 @@ void Log_SW(uint32_t PC, uint32_t VAddr, uint32_t Value)
 
 	if (VAddr >= 0xBFC007C0 && VAddr <= 0xBFC007FC)
 	{
-		if (!g_LogOptions.LogPRDirectMemStores)
+		if (!LogPRDirectMemStores())
 		{
 			return;
 		}
 		LogMessage("%08X: Writing 0x%08X to Pif Ram at 0x%X", PC, Value, VAddr - 0xBFC007C0);
 		return;
 	}
-	if (!g_LogOptions.LogUnknown)
+	if (!LogUnknown())
 	{
 		return;
 	}
 	LogMessage("%08X: Writing 0x%08X to %08X ????", PC, Value, VAddr);
 }
 
-void LogMessage(const char * Message, ...)
+void CLogging::LogMessage(const char * Message, ...)
 {
-	DWORD dwWritten;
 	char Msg[400];
 	va_list ap;
 
@@ -677,7 +585,7 @@ void LogMessage(const char * Message, ...)
 	{
 		return;
 	}
-	if (g_hLogFile == NULL)
+	if (m_hLogFile == NULL)
 	{
 		return;
 	}
@@ -688,17 +596,17 @@ void LogMessage(const char * Message, ...)
 
 	strcat(Msg, "\r\n");
 
-	WriteFile(g_hLogFile, Msg, strlen(Msg), &dwWritten, NULL);
+    m_hLogFile->Write(Msg,strlen(Msg));
 }
 
-void StartLog(void)
+void CLogging::StartLog(void)
 {
-	if (!g_LogOptions.GenerateLog)
+	if (!GenerateLog())
 	{
 		StopLog();
 		return;
 	}
-	if (g_hLogFile)
+	if (m_hLogFile != NULL)
 	{
 		return;
 	}
@@ -707,15 +615,14 @@ void StartLog(void)
 	LogFile.AppendDirectory("Logs");
 	LogFile.SetNameExtension("cpudebug.log");
 
-	g_hLogFile = CreateFile(LogFile, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
-	SetFilePointer(g_hLogFile, 0, NULL, FILE_BEGIN);
+    m_hLogFile = new CFile(LogFile, CFileBase::modeCreate | CFileBase::modeWrite);
 }
 
-void StopLog(void)
+void CLogging::StopLog(void)
 {
-	if (g_hLogFile)
+	if (m_hLogFile)
 	{
-		CloseHandle(g_hLogFile);
+        delete m_hLogFile;
+        m_hLogFile = NULL;
 	}
-	g_hLogFile = NULL;
 }

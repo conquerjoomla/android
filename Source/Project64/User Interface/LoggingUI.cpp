@@ -17,8 +17,6 @@ LRESULT CALLBACK LogGeneralProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK LogPifProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK LogRegProc(HWND, UINT, WPARAM, LPARAM);
 
-static LOG_OPTIONS g_TempOptions;
-
 void EnterLogOptions(HWND hwndOwner)
 {
 	PROPSHEETPAGE psp[3];
@@ -74,14 +72,14 @@ LRESULT CALLBACK LogGeneralProc(HWND hDlg, UINT uMsg, WPARAM /*wParam*/, LPARAM 
 	{
 		PROPSHEETPAGE * page = (PROPSHEETPAGE  *)lParam;
 		CLogSettings * options = (CLogSettings *)page->lParam;
-		if (options->LogCP0changes()) { CheckDlgButton(hDlg, IDC_CP0_WRITE, BST_CHECKED); }
-		if (options->LogCP0reads())   { CheckDlgButton(hDlg, IDC_CP0_READ, BST_CHECKED); }
-		if (options->LogCache())      { CheckDlgButton(hDlg, IDC_CACHE, BST_CHECKED); }
-		if (options->LogExceptions()) { CheckDlgButton(hDlg, IDC_EXCEPTIONS, BST_CHECKED); }
-		if (options->NoInterrupts())  { CheckDlgButton(hDlg, IDC_INTERRUPTS, BST_CHECKED); }
-		if (options->LogTLB())        { CheckDlgButton(hDlg, IDC_TLB, BST_CHECKED); }
-		if (options->LogRomHeader())  { CheckDlgButton(hDlg, IDC_ROM_HEADER, BST_CHECKED); }
-		if (options->LogUnknown())    { CheckDlgButton(hDlg, IDC_UNKOWN, BST_CHECKED); }
+		if (options->LogCP0changes())   { CheckDlgButton(hDlg, IDC_CP0_WRITE, BST_CHECKED); }
+		if (options->LogCP0reads())     { CheckDlgButton(hDlg, IDC_CP0_READ, BST_CHECKED); }
+		if (options->LogCache())        { CheckDlgButton(hDlg, IDC_CACHE, BST_CHECKED); }
+		if (options->LogExceptions())   { CheckDlgButton(hDlg, IDC_EXCEPTIONS, BST_CHECKED); }
+		if (options->LogNoInterrupts()) { CheckDlgButton(hDlg, IDC_INTERRUPTS, BST_CHECKED); }
+		if (options->LogTLB())          { CheckDlgButton(hDlg, IDC_TLB, BST_CHECKED); }
+		if (options->LogRomHeader())    { CheckDlgButton(hDlg, IDC_ROM_HEADER, BST_CHECKED); }
+		if (options->LogUnknown())      { CheckDlgButton(hDlg, IDC_UNKOWN, BST_CHECKED); }
 	}
 	break;
 	case WM_NOTIFY:

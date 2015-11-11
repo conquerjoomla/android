@@ -275,15 +275,13 @@ bool CN64System::EmulationStarting(void * hThread, uint32_t ThreadId)
 	return bRes;
 }
 
-void  CN64System::StartEmulation2(bool NewThread)
+void CN64System::StartEmulation2(bool NewThread)
 {
 	if (NewThread)
 	{
 		WriteTrace(TraceDebug, __FUNCTION__ ": Starting");
 		if (bHaveDebugger())
 		{
-			g_LogOptions.GenerateLog = g_Settings->LoadBool(Debugger_GenerateDebugLog);
-			LoadLogOptions(&g_LogOptions, false);
 			StartLog();
 		}
 

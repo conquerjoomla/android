@@ -11,8 +11,9 @@
 #pragma once
 
 #include <Project64-core\N64 System\N64 Types.h>
-#include <Project64-core/Settings/Debug Settings.h>
-#include <Project64-core/Settings/Game Settings.h>
+#include <Project64-core\Settings\Debug Settings.h>
+#include <Project64-core\Settings\Game Settings.h>
+#include <Project64-core\Logging.h>
 
 //CPO registers by name
 class CP0registers
@@ -519,6 +520,7 @@ class CN64System;
 class CSystemEvents;
 
 class CRegisters :
+    public CLogging,
     private CDebugSettings,
     private CGameSettings,
     protected CSystemRegisters,

@@ -15,6 +15,7 @@
 #include <Project64-core\N64 System\Mips\OpCode.h>
 
 class R4300iOp :
+    public CLogging,
     protected CDebugSettings,
     protected CSystemRegisters
 {

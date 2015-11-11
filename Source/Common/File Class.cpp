@@ -82,13 +82,12 @@ bool CFile::Open(const char * lpszFileName, uint32_t nOpenFlags)
     ULONG dwCreateFlag = 0;
     if (nOpenFlags & modeCreate)
     {
-        if (nOpenFlags & modeNoTruncate)
-            dwCreateFlag = OPEN_ALWAYS;
-        else
-            dwCreateFlag = CREATE_ALWAYS;
+        dwCreateFlag = nOpenFlags & modeNoTruncate == 0 ? OPEN_ALWAYS : CREATE_ALWAYS;
     }
     else
+    {
         dwCreateFlag = OPEN_EXISTING;
+    }
 
     // attempt file creation
     HANDLE hFile = ::CreateFile(lpszFileName, dwAccess, dwShareMode, &sa, dwCreateFlag, FILE_ATTRIBUTE_NORMAL, NULL);
