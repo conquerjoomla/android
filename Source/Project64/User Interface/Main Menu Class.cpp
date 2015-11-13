@@ -147,13 +147,13 @@ bool CMainMenu::ProcessMessage(HWND hWnd, DWORD /*FromAccelerator*/, DWORD MenuI
         WriteTrace(TraceDebug, __FUNCTION__ ": ID_SYSTEM_PAUSE 1");
         break;
     case ID_SYSTEM_BITMAP:
-        {
-            stdstr Dir(g_Settings->LoadStringVal(Directory_SnapShot));
-            WriteTraceF(TraceGfxPlugin, __FUNCTION__ ": CaptureScreen(%s): Starting", Dir.c_str());
-            g_Plugins->Gfx()->CaptureScreen(Dir.c_str());
-            WriteTrace(TraceGfxPlugin, __FUNCTION__ ": CaptureScreen: Done");
-        }
-        break;
+    {
+        stdstr Dir(g_Settings->LoadStringVal(Directory_SnapShot));
+        WriteTraceF(TraceGfxPlugin, __FUNCTION__ ": CaptureScreen(%s): Starting", Dir.c_str());
+        g_Plugins->Gfx()->CaptureScreen(Dir.c_str());
+        WriteTrace(TraceGfxPlugin, __FUNCTION__ ": CaptureScreen: Done");
+    }
+    break;
     case ID_SYSTEM_LIMITFPS:
         WriteTrace(TraceDebug, __FUNCTION__ ": ID_SYSTEM_LIMITFPS");
         g_Settings->SaveBool(GameRunning_LimitFPS, !g_Settings->LoadBool(GameRunning_LimitFPS));
@@ -164,85 +164,86 @@ bool CMainMenu::ProcessMessage(HWND hWnd, DWORD /*FromAccelerator*/, DWORD MenuI
         g_BaseSystem->ExternalEvent(SysEvent_SaveMachineState);
         break;
     case ID_SYSTEM_SAVEAS:
+    {
+        char drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
+        char Directory[255], SaveFile[255];
+        OPENFILENAME openfilename;
+
+        memset(&SaveFile, 0, sizeof(SaveFile));
+        memset(&openfilename, 0, sizeof(openfilename));
+
+        g_Settings->LoadStringVal(Directory_LastSave, Directory, sizeof(Directory));
+
+        openfilename.lStructSize = sizeof(openfilename);
+        openfilename.hwndOwner = (HWND)hWnd;
+        openfilename.lpstrFilter = "PJ64 Saves (*.zip, *.pj)\0*.pj?;*.pj;*.zip;";
+        openfilename.lpstrFile = SaveFile;
+        openfilename.lpstrInitialDir = Directory;
+        openfilename.nMaxFile = MAX_PATH;
+        openfilename.Flags = OFN_HIDEREADONLY;
+
+        g_BaseSystem->ExternalEvent(SysEvent_PauseCPU_SaveGame);
+        if (GetSaveFileName(&openfilename))
         {
-            char drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
-            char Directory[255], SaveFile[255];
-            OPENFILENAME openfilename;
-
-            memset(&SaveFile, 0, sizeof(SaveFile));
-            memset(&openfilename, 0, sizeof(openfilename));
-
-            g_Settings->LoadStringVal(Directory_LastSave, Directory, sizeof(Directory));
-
-            openfilename.lStructSize = sizeof(openfilename);
-            openfilename.hwndOwner = (HWND)hWnd;
-            openfilename.lpstrFilter = "PJ64 Saves (*.zip, *.pj)\0*.pj?;*.pj;*.zip;";
-            openfilename.lpstrFile = SaveFile;
-            openfilename.lpstrInitialDir = Directory;
-            openfilename.nMaxFile = MAX_PATH;
-            openfilename.Flags = OFN_HIDEREADONLY;
-
-            g_BaseSystem->ExternalEvent(SysEvent_PauseCPU_SaveGame);
-            if (GetSaveFileName(&openfilename))
+            _splitpath(SaveFile, drive, dir, fname, ext);
+            if (_stricmp(ext, ".pj") == 0 || _stricmp(ext, ".zip") == 0)
             {
+                _makepath(SaveFile, drive, dir, fname, NULL);
                 _splitpath(SaveFile, drive, dir, fname, ext);
-                if (_stricmp(ext, ".pj") == 0 || _stricmp(ext, ".zip") == 0)
+                if (_stricmp(ext, ".pj") == 0)
                 {
                     _makepath(SaveFile, drive, dir, fname, NULL);
-                    _splitpath(SaveFile, drive, dir, fname, ext);
-                    if (_stricmp(ext, ".pj") == 0)
-                    {
-                        _makepath(SaveFile, drive, dir, fname, NULL);
-                    }
                 }
-                g_Settings->SaveString(GameRunning_InstantSaveFile, SaveFile);
-
-                char SaveDir[MAX_PATH];
-                _makepath(SaveDir, drive, dir, NULL, NULL);
-                g_Settings->SaveString(Directory_LastSave, SaveDir);
-                g_BaseSystem->ExternalEvent(SysEvent_SaveMachineState);
             }
-            g_BaseSystem->ExternalEvent(SysEvent_ResumeCPU_SaveGame);
+            g_Settings->SaveString(GameRunning_InstantSaveFile, SaveFile);
+
+            char SaveDir[MAX_PATH];
+            _makepath(SaveDir, drive, dir, NULL, NULL);
+            g_Settings->SaveString(Directory_LastSave, SaveDir);
+            g_BaseSystem->ExternalEvent(SysEvent_SaveMachineState);
         }
-        break;
+        g_BaseSystem->ExternalEvent(SysEvent_ResumeCPU_SaveGame);
+    }
+    break;
     case ID_SYSTEM_RESTORE:   WriteTrace(TraceDebug, __FUNCTION__ ": ID_SYSTEM_RESTORE");   g_BaseSystem->ExternalEvent(SysEvent_LoadMachineState); break;
     case ID_SYSTEM_LOAD:
+    {
+        char Directory[255], SaveFile[255];
+        OPENFILENAME openfilename;
+
+        memset(&SaveFile, 0, sizeof(SaveFile));
+        memset(&openfilename, 0, sizeof(openfilename));
+
+        g_Settings->LoadStringVal(Directory_LastSave, Directory, sizeof(Directory));
+
+        openfilename.lStructSize = sizeof(openfilename);
+        openfilename.hwndOwner = (HWND)hWnd;
+        openfilename.lpstrFilter = "PJ64 Saves (*.zip, *.pj)\0*.pj?;*.pj;*.zip;";
+        openfilename.lpstrFile = SaveFile;
+        openfilename.lpstrInitialDir = Directory;
+        openfilename.nMaxFile = MAX_PATH;
+        openfilename.Flags = OFN_HIDEREADONLY;
+
+        g_BaseSystem->ExternalEvent(SysEvent_PauseCPU_LoadGame);
+        if (GetOpenFileName(&openfilename))
         {
-            char Directory[255], SaveFile[255];
-            OPENFILENAME openfilename;
-
-            memset(&SaveFile, 0, sizeof(SaveFile));
-            memset(&openfilename, 0, sizeof(openfilename));
-
-            g_Settings->LoadStringVal(Directory_LastSave, Directory, sizeof(Directory));
-
-            openfilename.lStructSize = sizeof(openfilename);
-            openfilename.hwndOwner = (HWND)hWnd;
-            openfilename.lpstrFilter = "PJ64 Saves (*.zip, *.pj)\0*.pj?;*.pj;*.zip;";
-            openfilename.lpstrFile = SaveFile;
-            openfilename.lpstrInitialDir = Directory;
-            openfilename.nMaxFile = MAX_PATH;
-            openfilename.Flags = OFN_HIDEREADONLY;
-
-            g_BaseSystem->ExternalEvent(SysEvent_PauseCPU_LoadGame);
-            if (GetOpenFileName(&openfilename)) {
-                g_Settings->SaveString(GameRunning_InstantSaveFile, SaveFile);
-                char SaveDir[MAX_PATH], drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
-                _splitpath(SaveFile, drive, dir, fname, ext);
-                _makepath(SaveDir, drive, dir, NULL, NULL);
-                g_Settings->SaveString(Directory_LastSave, SaveDir);
-                g_System->LoadState();
-            }
-            g_BaseSystem->ExternalEvent(SysEvent_ResumeCPU_LoadGame);
+            g_Settings->SaveString(GameRunning_InstantSaveFile, SaveFile);
+            char SaveDir[MAX_PATH], drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
+            _splitpath(SaveFile, drive, dir, fname, ext);
+            _makepath(SaveDir, drive, dir, NULL, NULL);
+            g_Settings->SaveString(Directory_LastSave, SaveDir);
+            g_System->LoadState();
         }
-        break;
+        g_BaseSystem->ExternalEvent(SysEvent_ResumeCPU_LoadGame);
+    }
+    break;
     case ID_SYSTEM_CHEAT:
-        {
-            CCheatsUI * cheatUI = new CCheatsUI;
-            g_cheatUI = cheatUI;
-            cheatUI->SelectCheats(hWnd, false);
-        }
-        break;
+    {
+        CCheatsUI * cheatUI = new CCheatsUI;
+        g_cheatUI = cheatUI;
+        cheatUI->SelectCheats(hWnd, false);
+    }
+    break;
     case ID_SYSTEM_GSBUTTON:
         g_BaseSystem->ExternalEvent(SysEvent_GSButtonPressed);
         break;
@@ -338,16 +339,17 @@ bool CMainMenu::ProcessMessage(HWND hWnd, DWORD /*FromAccelerator*/, DWORD MenuI
             g_Settings->SaveBool(UserInterface_ShowCPUPer, false);
             g_Notify->DisplayMessage(0, L"");
         }
-        else {
+        else
+        {
             g_Settings->SaveBool(UserInterface_ShowCPUPer, true);
         }
         break;
     case ID_OPTIONS_SETTINGS:
-        {
-            CSettingConfig SettingConfig;
-            SettingConfig.Display(hWnd);
-        }
-        break;
+    {
+        CSettingConfig SettingConfig;
+        SettingConfig.Display(hWnd);
+    }
+    break;
     case ID_PROFILE_PROFILE:
         g_Settings->SaveBool(Debugger_ProfileCode, !g_Settings->LoadBool(Debugger_ProfileCode));
         g_BaseSystem->ExternalEvent(SysEvent_Profile_StartStop);
@@ -381,109 +383,117 @@ bool CMainMenu::ProcessMessage(HWND hWnd, DWORD /*FromAccelerator*/, DWORD MenuI
         g_Settings->SaveBool(Debugger_DisableGameFixes, !g_Settings->LoadBool(Debugger_DisableGameFixes));
         break;
     case ID_DEBUGGER_APPLOG_ERRORS:
+    {
+        DWORD LogLevel = g_Settings->LoadDword(Debugger_AppLogLevel);
+        if ((LogLevel & TraceError) != 0)
         {
-            DWORD LogLevel = g_Settings->LoadDword(Debugger_AppLogLevel);
-            if ((LogLevel & TraceError) != 0)
-            {
-                LogLevel &= ~TraceError;
-            }
-            else {
-                LogLevel |= TraceError;
-            }
-            g_Settings->SaveDword(Debugger_AppLogLevel, LogLevel);
+            LogLevel &= ~TraceError;
         }
-        break;
+        else
+        {
+            LogLevel |= TraceError;
+        }
+        g_Settings->SaveDword(Debugger_AppLogLevel, LogLevel);
+    }
+    break;
     case ID_DEBUGGER_APPLOG_SETTINGS:
+    {
+        DWORD LogLevel = g_Settings->LoadDword(Debugger_AppLogLevel);
+        if ((LogLevel & TraceSettings) != 0)
         {
-            DWORD LogLevel = g_Settings->LoadDword(Debugger_AppLogLevel);
-            if ((LogLevel & TraceSettings) != 0)
-            {
-                LogLevel &= ~TraceSettings;
-            }
-            else {
-                LogLevel |= TraceSettings;
-            }
-            g_Settings->SaveDword(Debugger_AppLogLevel, LogLevel);
+            LogLevel &= ~TraceSettings;
         }
-        break;
+        else
+        {
+            LogLevel |= TraceSettings;
+        }
+        g_Settings->SaveDword(Debugger_AppLogLevel, LogLevel);
+    }
+    break;
     case ID_DEBUGGER_APPLOG_RECOMPILER:
+    {
+        DWORD LogLevel = g_Settings->LoadDword(Debugger_AppLogLevel);
+        if ((LogLevel & TraceRecompiler) != 0)
         {
-            DWORD LogLevel = g_Settings->LoadDword(Debugger_AppLogLevel);
-            if ((LogLevel & TraceRecompiler) != 0)
-            {
-                LogLevel &= ~TraceRecompiler;
-            }
-            else {
-                LogLevel |= TraceRecompiler;
-            }
-            g_Settings->SaveDword(Debugger_AppLogLevel, LogLevel);
+            LogLevel &= ~TraceRecompiler;
         }
-        break;
+        else
+        {
+            LogLevel |= TraceRecompiler;
+        }
+        g_Settings->SaveDword(Debugger_AppLogLevel, LogLevel);
+    }
+    break;
     case ID_DEBUGGER_APPLOG_RSP:
+    {
+        DWORD LogLevel = g_Settings->LoadDword(Debugger_AppLogLevel);
+        if ((LogLevel & TraceRSP) != 0)
         {
-            DWORD LogLevel = g_Settings->LoadDword(Debugger_AppLogLevel);
-            if ((LogLevel & TraceRSP) != 0)
-            {
-                LogLevel &= ~TraceRSP;
-            }
-            else {
-                LogLevel |= TraceRSP;
-            }
-            g_Settings->SaveDword(Debugger_AppLogLevel, LogLevel);
+            LogLevel &= ~TraceRSP;
         }
-        break;
+        else
+        {
+            LogLevel |= TraceRSP;
+        }
+        g_Settings->SaveDword(Debugger_AppLogLevel, LogLevel);
+    }
+    break;
     case ID_DEBUGGER_APPLOG_TLB:
+    {
+        DWORD LogLevel = g_Settings->LoadDword(Debugger_AppLogLevel);
+        if ((LogLevel & TraceTLB) != 0)
         {
-            DWORD LogLevel = g_Settings->LoadDword(Debugger_AppLogLevel);
-            if ((LogLevel & TraceTLB) != 0)
-            {
-                LogLevel &= ~TraceTLB;
-            }
-            else {
-                LogLevel |= TraceTLB;
-            }
-            g_Settings->SaveDword(Debugger_AppLogLevel, LogLevel);
+            LogLevel &= ~TraceTLB;
         }
-        break;
+        else
+        {
+            LogLevel |= TraceTLB;
+        }
+        g_Settings->SaveDword(Debugger_AppLogLevel, LogLevel);
+    }
+    break;
     case ID_DEBUGGER_APPLOG_GFX_PLUGIN:
+    {
+        DWORD LogLevel = g_Settings->LoadDword(Debugger_AppLogLevel);
+        if ((LogLevel & TraceGfxPlugin) != 0)
         {
-            DWORD LogLevel = g_Settings->LoadDword(Debugger_AppLogLevel);
-            if ((LogLevel & TraceGfxPlugin) != 0)
-            {
-                LogLevel &= ~TraceGfxPlugin;
-            }
-            else {
-                LogLevel |= TraceGfxPlugin;
-            }
-            g_Settings->SaveDword(Debugger_AppLogLevel, LogLevel);
+            LogLevel &= ~TraceGfxPlugin;
         }
-        break;
+        else
+        {
+            LogLevel |= TraceGfxPlugin;
+        }
+        g_Settings->SaveDword(Debugger_AppLogLevel, LogLevel);
+    }
+    break;
     case ID_DEBUGGER_APPLOG_DEBUG:
+    {
+        DWORD LogLevel = g_Settings->LoadDword(Debugger_AppLogLevel);
+        if ((LogLevel & TraceDebug) != 0)
         {
-            DWORD LogLevel = g_Settings->LoadDword(Debugger_AppLogLevel);
-            if ((LogLevel & TraceDebug) != 0)
-            {
-                LogLevel &= ~TraceDebug;
-            }
-            else {
-                LogLevel |= TraceDebug;
-            }
-            g_Settings->SaveDword(Debugger_AppLogLevel, LogLevel);
+            LogLevel &= ~TraceDebug;
         }
-        break;
+        else
+        {
+            LogLevel |= TraceDebug;
+        }
+        g_Settings->SaveDword(Debugger_AppLogLevel, LogLevel);
+    }
+    break;
     case ID_DEBUGGER_APPLOG_AUDIO_EMU:
+    {
+        DWORD LogLevel = g_Settings->LoadDword(Debugger_AppLogLevel);
+        if ((LogLevel & TraceAudio) != 0)
         {
-            DWORD LogLevel = g_Settings->LoadDword(Debugger_AppLogLevel);
-            if ((LogLevel & TraceAudio) != 0)
-            {
-                LogLevel &= ~TraceAudio;
-            }
-            else {
-                LogLevel |= TraceAudio;
-            }
-            g_Settings->SaveDword(Debugger_AppLogLevel, LogLevel);
+            LogLevel &= ~TraceAudio;
         }
-        break;
+        else
+        {
+            LogLevel |= TraceAudio;
+        }
+        g_Settings->SaveDword(Debugger_AppLogLevel, LogLevel);
+    }
+    break;
     case ID_DEBUGGER_APPLOG_FLUSH:
         g_Settings->SaveBool(Debugger_AppLogFlush, !g_Settings->LoadBool(Debugger_AppLogFlush));
         break;
@@ -568,24 +578,6 @@ bool CMainMenu::ProcessMessage(HWND hWnd, DWORD /*FromAccelerator*/, DWORD MenuI
     return true;
 }
 
-/*stdstr CMainMenu::ShortCutString(MSC_MAP & ShortCuts, int  MenuID, CMenuShortCutKey::ACCESS_MODE AccessLevel) {
-g_Notify->BreakPoint(__FILEW__,__LINE__);
-MSC_MAP::iterator MenuItem = ShortCuts.find(MenuID);
-if (MenuItem == ShortCuts.end()) { return ""; }
-
-const SHORTCUT_KEY_LIST & ShortCutList = MenuItem->second.GetAccelItems();
-for (SHORTCUT_KEY_LIST::const_iterator item = ShortCutList.begin(); item != ShortCutList.end(); item++)
-{
-CMenuShortCutKey::ACCESS_MODE ItemMode = item->AccessMode();
-if ((ItemMode & AccessLevel) != AccessLevel )
-{
-continue;
-}
-return item->Name();
-}
-return "";
-}*/
-
 stdstr CMainMenu::GetFileLastMod(stdstr FileName)
 {
     HANDLE hFile = CreateFile(FileName.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL,
@@ -604,8 +596,7 @@ stdstr CMainMenu::GetFileLastMod(stdstr FileName)
         FileTimeToSystemTime(&LastWriteTime, &stUTC);
         SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
 
-        LastMod.Format(" [%d/%02d/%02d %02d:%02d]",
-            stLocal.wYear, stLocal.wMonth, stLocal.wDay, stLocal.wHour, stLocal.wMinute);
+        LastMod.Format(" [%d/%02d/%02d %02d:%02d]", stLocal.wYear, stLocal.wMonth, stLocal.wDay, stLocal.wHour, stLocal.wMinute);
     }
     CloseHandle(hFile);
 
@@ -701,9 +692,7 @@ void CMainMenu::FillOutMenu(HMENU hMenu)
     CMenuShortCutKey::ACCESS_MODE AccessLevel = CMenuShortCutKey::GAME_NOT_RUNNING;
     if (g_Settings->LoadBool(GameRunning_CPU_Running))
     {
-        AccessLevel = g_Settings->LoadBool(UserInterface_InFullScreen) ?
-            CMenuShortCutKey::GAME_RUNNING_FULLSCREEN :
-        CMenuShortCutKey::GAME_RUNNING_WINDOW;
+        AccessLevel = g_Settings->LoadBool(UserInterface_InFullScreen) ? CMenuShortCutKey::GAME_RUNNING_FULLSCREEN : CMenuShortCutKey::GAME_RUNNING_WINDOW;
     }
 
     //Get the system information to make the menu
@@ -737,7 +726,7 @@ void CMainMenu::FillOutMenu(HMENU hMenu)
         WCHAR *w_LastRom = new WCHAR[MenuString.length() + 1];
         ::mbstowcs(w_LastRom, MenuString.c_str(), MenuString.length() + 1);
         RecentRomMenu.push_back(MENU_ITEM(ID_RECENT_ROM_START + count, EMPTY_STRING, EMPTY_STDSTR, NULL, w_LastRom));
-        delete w_LastRom;
+        delete[] w_LastRom;
     }
 
     /* Recent Dir
@@ -758,7 +747,7 @@ void CMainMenu::FillOutMenu(HMENU hMenu)
         WCHAR *w_LastDir = new WCHAR[MenuString.length() + 1];
         ::mbstowcs(w_LastDir, MenuString.c_str(), MenuString.length() + 1);
         RecentDirMenu.push_back(MENU_ITEM(ID_RECENT_DIR_START + count, EMPTY_STRING, EMPTY_STDSTR, NULL, w_LastDir));
-        delete w_LastDir;
+        delete[] w_LastDir;
     }
 
     /* File Menu

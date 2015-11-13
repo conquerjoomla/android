@@ -14,7 +14,7 @@
 #include <Project64-core\N64 System\Mips\OpCode.h>
 #include <Project64-core\N64 System\Recompiler\Reg Info.h>
 #include <Project64-core\Settings\Debug Settings.h>
-#include "../../Settings/N64System Settings.h"
+#include <Project64-core\Settings\N64System Settings.h>
 #include <Project64-core\Settings\Recompiler Settings.h>
 #include  "X86ops.h"
 

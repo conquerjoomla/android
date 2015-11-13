@@ -13,7 +13,7 @@
 #include "Settings Page.h"
 
 COptionsShortCutsPage::COptionsShortCutsPage(HWND hParent, const RECT & rcDispay) :
-    m_EnableReset(false)
+m_EnableReset(false)
 {
     if (!Create(hParent, rcDispay))
     {

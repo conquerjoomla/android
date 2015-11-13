@@ -1,6 +1,6 @@
 /****************************************************************************
 *                                                                           *
-* Project 64 - A Nintendo 64 emulator.                                      *
+* Project64 - A Nintendo 64 emulator.                                      *
 * http://www.pj64-emu.com/                                                  *
 * Copyright (C) 2012 Project64. All rights reserved.                        *
 *                                                                           *
@@ -178,7 +178,7 @@ void CControl_Plugin::SetControl(CControl_Plugin const * const Plugin)
     }
 }
 
-CCONTROL::CCONTROL(uint32_t &Present, uint32_t &RawData, int32_t &PlugType) :
+CCONTROL::CCONTROL(int32_t &Present, int32_t &RawData, int32_t &PlugType) :
     m_Present(Present), m_RawData(RawData), m_PlugType(PlugType)
 {
     m_Buttons.Value = 0;

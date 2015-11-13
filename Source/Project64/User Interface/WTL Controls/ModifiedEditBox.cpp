@@ -11,13 +11,13 @@
 #include "stdafx.h"
 
 CModifiedEditBox::CModifiedEditBox(bool bString /* = true */, HWND hWnd /* = NULL */) :
-    CEdit(hWnd),
-    m_Changed(false),
-    m_Reset(false),
-    m_BoldFont(NULL),
-    m_OriginalFont(NULL),
-    m_TextField(NULL),
-    m_bString(bString)
+CEdit(hWnd),
+m_Changed(false),
+m_Reset(false),
+m_BoldFont(NULL),
+m_OriginalFont(NULL),
+m_TextField(NULL),
+m_bString(bString)
 {
 }
 
