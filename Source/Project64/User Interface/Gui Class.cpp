@@ -420,6 +420,7 @@ bool CMainGui::ResetPluginsInUiThread(CPlugins * plugins, CN64System * System)
         WriteTrace(TraceError, __FUNCTION__ ": Failed to create event");
         bRes = false;
     }
+    Notify().RefreshMenu();
     return bRes;
 }
 

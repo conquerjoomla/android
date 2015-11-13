@@ -15,8 +15,10 @@ public:
     //User Feedback
     virtual void DisplayMessage(int DisplayTime, const wchar_t * Message) const = 0;
     virtual void DisplayMessage(int DisplayTime, LanguageStringID StringID) const = 0;
-
     virtual void DisplayMessage2(const wchar_t * Message) const = 0;
+
+    // Ask a Yes/No Question to the user, yes = true, no = false
+    virtual bool AskYesNoQuestion(const wchar_t * Question) const = 0;
 
     virtual void BreakPoint(const wchar_t * FileName, const int LineNumber) = 0;
 
