@@ -10,6 +10,8 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "N64 class.h"
+#include <Project64-core\3rd Party\zip.h>
+#include <Project64-core\N64 System\Recompiler\x86CodeLog.h>
 #include <Project64-core\N64 System\System Globals.h>
 #include <Project64-core\N64 System\Mips\Mempak.H>
 #include <Project64-core\N64 System\Interpreter\Interpreter CPU.h>
@@ -403,10 +405,6 @@ void CN64System::PluginReset()
 			}
 		}
 	}
-	g_Notify->BreakPoint(__FILEW__, __LINE__);
-#ifdef tofix
-	Notify().RefreshMenu();
-#endif
 	if (m_Recomp)
 	{
 		m_Recomp->Reset();
@@ -1439,9 +1437,8 @@ bool CN64System::LoadState()
 	return LoadState(FileName);
 }
 
-bool CN64System::LoadState(const char * /*FileName*/)
+bool CN64System::LoadState(const char * FileName)
 {
-#ifdef tofix
 	uint32_t dwRead, Value, SaveRDRAMSize, NextVITimer = 0, old_status, old_width, old_dacrate;
 	bool LoadedZipFile = false, AudioResetOnLoad;
 	old_status = g_Reg->VI_STATUS_REG;
@@ -1572,11 +1569,12 @@ bool CN64System::LoadState(const char * /*FileName*/)
 		if (memcmp(LoadHeader,g_Rom->GetRomAddress(),0x40) != 0)
 		{
 			//if (inFullScreen) { return false; }
-			int result = MessageBoxW(NULL,GS(MSG_SAVE_STATE_HEADER),GS(MSG_MSGBOX_TITLE),
-				MB_YESNO|MB_ICONQUESTION|MB_DEFBUTTON2);
+			int result = MessageBoxW(NULL,GS(MSG_SAVE_STATE_HEADER),GS(MSG_MSGBOX_TITLE), MB_YESNO|MB_ICONQUESTION|MB_DEFBUTTON2);
 
 			if (result == IDNO)
+            {
 				return false;
+            }
 		}
 		Reset(false,true);
 		m_MMU_VM.UnProtectMemory(0x80000000,0x80000000 + g_Settings->LoadDword(Game_RDRamSize) - 4);
@@ -1686,7 +1684,6 @@ bool CN64System::LoadState(const char * /*FileName*/)
 	std::wstring LoadMsg = g_Lang->GetString(MSG_LOADED_STATE);
 	g_Notify->DisplayMessage(5, stdstr_f("%s %s", LoadMsg.c_str(), CPath(FileNameStr).GetNameExtension()).ToUTF16().c_str());
 	WriteTrace(TraceDebug, __FUNCTION__ ": Done");
-#endif
 	return true;
 }
 

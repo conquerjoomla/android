@@ -57,9 +57,7 @@ void CNotificationImp::DisplayError(const wchar_t * Message) const
 {
     if (this == NULL) { return; }
 
-    stdstr TraceMessage;
-    TraceMessage.FromUTF16(Message);
-    WriteTrace(TraceError, TraceMessage.c_str());
+    WriteTrace(TraceError, stdstr().FromUTF16(Message).c_str());
     WindowMode();
 
     HWND Parent = NULL;
