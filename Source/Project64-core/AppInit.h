@@ -2,5 +2,5 @@
 
 #include "Notification.h"
 
-void AppInit ( CNotification * Notify );
-void AppCleanup ( void );
+void AppInit(CNotification * Notify);
+void AppCleanup(void);

@@ -18,17 +18,17 @@ public:
     CRecompilerSettings();
     virtual ~CRecompilerSettings();
 
-    static bool  bShowRecompMemSize ( void ) { return m_bShowRecompMemSize; }
+    static bool  bShowRecompMemSize(void) { return m_bShowRecompMemSize; }
 
-    static bool  bProfiling         ( void ) { return m_bProfiling;         }
+    static bool  bProfiling(void) { return m_bProfiling; }
 
 private:
-    static void StaticRefreshSettings (CRecompilerSettings * _this)
+    static void StaticRefreshSettings(CRecompilerSettings * _this)
     {
         _this->RefreshSettings();
     }
 
-    void RefreshSettings ( void );
+    void RefreshSettings(void);
 
     //Settings that can be changed on the fly
     static bool m_bShowRecompMemSize;

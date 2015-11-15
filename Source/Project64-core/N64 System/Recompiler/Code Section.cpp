@@ -1,6 +1,6 @@
 /****************************************************************************
 *                                                                           *
-* Project 64 - A Nintendo 64 emulator.                                      *
+* Project64 - A Nintendo 64 emulator.                                      *
 * http://www.pj64-emu.com/                                                  *
 * Copyright (C) 2012 Project64. All rights reserved.                        *
 *                                                                           *
@@ -71,29 +71,29 @@ static bool DelaySlotEffectsJump(uint32_t JumpPC)
             case R4300i_COP1_BC_BCT:
             case R4300i_COP1_BC_BCFL:
             case R4300i_COP1_BC_BCTL:
+            {
+                bool EffectDelaySlot = false;
+                OPCODE NewCommand;
+
+                if (!g_MMU->LW_VAddr(JumpPC + 4, NewCommand.Hex))
                 {
-                    bool EffectDelaySlot = false;
-                    OPCODE NewCommand;
-
-                    if (!g_MMU->LW_VAddr(JumpPC + 4, NewCommand.Hex))
-                    {
-                        return true;
-                    }
-
-                    if (NewCommand.op == R4300i_CP1)
-                    {
-                        if (NewCommand.fmt == R4300i_COP1_S && (NewCommand.funct & 0x30) == 0x30)
-                        {
-                            EffectDelaySlot = true;
-                        }
-                        if (NewCommand.fmt == R4300i_COP1_D && (NewCommand.funct & 0x30) == 0x30)
-                        {
-                            EffectDelaySlot = true;
-                        }
-                    }
-                    return EffectDelaySlot;
+                    return true;
                 }
-                break;
+
+                if (NewCommand.op == R4300i_CP1)
+                {
+                    if (NewCommand.fmt == R4300i_COP1_S && (NewCommand.funct & 0x30) == 0x30)
+                    {
+                        EffectDelaySlot = true;
+                    }
+                    if (NewCommand.fmt == R4300i_COP1_D && (NewCommand.funct & 0x30) == 0x30)
+                    {
+                        EffectDelaySlot = true;
+                    }
+                }
+                return EffectDelaySlot;
+            }
+            break;
             }
             break;
         }
@@ -108,19 +108,19 @@ static bool DelaySlotEffectsJump(uint32_t JumpPC)
 }
 
 CCodeSection::CCodeSection(CCodeBlock * CodeBlock, uint32_t EnterPC, uint32_t ID, bool LinkAllowed) :
-    m_BlockInfo(CodeBlock),
-    m_SectionID(ID),
-    m_EnterPC(EnterPC),
-    m_EndPC((uint32_t)-1),
-    m_ContinueSection(NULL),
-    m_JumpSection(NULL),
-    m_EndSection(false),
-    m_LinkAllowed(LinkAllowed),
-    m_Test(0),
-    m_Test2(0),
-    m_CompiledLocation(NULL),
-    m_InLoop(false),
-    m_DelaySlot(false)
+m_BlockInfo(CodeBlock),
+m_SectionID(ID),
+m_EnterPC(EnterPC),
+m_EndPC((uint32_t)-1),
+m_ContinueSection(NULL),
+m_JumpSection(NULL),
+m_EndSection(false),
+m_LinkAllowed(LinkAllowed),
+m_Test(0),
+m_Test2(0),
+m_CompiledLocation(NULL),
+m_InLoop(false),
+m_DelaySlot(false)
 {
     CPU_Message(__FUNCTION__ ": ID %d EnterPC 0x%08X", ID, EnterPC);
 }
@@ -297,34 +297,34 @@ void CCodeSection::CompileExit(uint32_t JumpPC, uint32_t TargetPC, CRegInfo &Exi
         ExitCodeBlock();
         break;
     case CExitInfo::DoSysCall:
+    {
+        bool bDelay = m_NextInstruction == JUMP || m_NextInstruction == DELAY_SLOT;
+        PushImm32(bDelay ? "true" : "false", bDelay);
+        MoveConstToX86reg((uint32_t)g_Reg, x86_ECX);
+        Call_Direct(AddressOf(&CRegisters::DoSysCallException), "CRegisters::DoSysCallException");
+        if (g_SyncSystem)
         {
-            bool bDelay = m_NextInstruction == JUMP || m_NextInstruction == DELAY_SLOT;
-            PushImm32(bDelay ? "true" : "false", bDelay);
-            MoveConstToX86reg((uint32_t)g_Reg, x86_ECX);
-            Call_Direct(AddressOf(&CRegisters::DoSysCallException), "CRegisters::DoSysCallException");
-            if (g_SyncSystem)
-            {
-                MoveConstToX86reg((uint32_t)g_BaseSystem, x86_ECX);
-                Call_Direct(AddressOf(&CN64System::SyncSystem), "CN64System::SyncSystem");
-            }
-            ExitCodeBlock();
+            MoveConstToX86reg((uint32_t)g_BaseSystem, x86_ECX);
+            Call_Direct(AddressOf(&CN64System::SyncSystem), "CN64System::SyncSystem");
         }
-        break;
+        ExitCodeBlock();
+    }
+    break;
     case CExitInfo::COP1_Unuseable:
+    {
+        bool bDelay = m_NextInstruction == JUMP || m_NextInstruction == DELAY_SLOT;
+        PushImm32("1", 1);
+        PushImm32(bDelay ? "true" : "false", bDelay);
+        MoveConstToX86reg((uint32_t)g_Reg, x86_ECX);
+        Call_Direct(AddressOf(&CRegisters::DoCopUnusableException), "CRegisters::DoCopUnusableException");
+        if (g_SyncSystem)
         {
-            bool bDelay = m_NextInstruction == JUMP || m_NextInstruction == DELAY_SLOT;
-            PushImm32("1", 1);
-            PushImm32(bDelay ? "true" : "false", bDelay);
-            MoveConstToX86reg((uint32_t)g_Reg, x86_ECX);
-            Call_Direct(AddressOf(&CRegisters::DoCopUnusableException), "CRegisters::DoCopUnusableException");
-            if (g_SyncSystem)
-            {
-                MoveConstToX86reg((uint32_t)g_BaseSystem, x86_ECX);
-                Call_Direct(AddressOf(&CN64System::SyncSystem), "CN64System::SyncSystem");
-            }
-            ExitCodeBlock();
+            MoveConstToX86reg((uint32_t)g_BaseSystem, x86_ECX);
+            Call_Direct(AddressOf(&CN64System::SyncSystem), "CN64System::SyncSystem");
         }
-        break;
+        ExitCodeBlock();
+    }
+    break;
     case CExitInfo::ExitResetRecompCode:
         g_Notify->BreakPoint(__FILEW__, __LINE__);
 #ifdef tofix
@@ -403,7 +403,8 @@ void CCodeSection::GenerateSectionLinkage()
 #ifdef tofix
         //Handle Fall througth
         uint8_t * Jump = NULL;
-        for (i = 0; i < 2; i ++) {
+        for (i = 0; i < 2; i ++)
+        {
             if (!JumpInfo[i]->FallThrough) { continue; }
             JumpInfo[i]->FallThrough = false;
             if (JumpInfo[i]->LinkLocation != NULL)
@@ -421,7 +422,8 @@ void CCodeSection::GenerateSectionLinkage()
             JmpLabel8("FinishBlock",0);
             Jump = m_RecompPos - 1;
         }
-        for (i = 0; i < 2; i ++) {
+        for (i = 0; i < 2; i ++)
+        {
             if (JumpInfo[i]->LinkLocation == NULL) { continue; }
             JumpInfo[i]->FallThrough = false;
             if (JumpInfo[i]->LinkLocation != NULL)
@@ -439,7 +441,8 @@ void CCodeSection::GenerateSectionLinkage()
             JmpLabel8("FinishBlock",0);
             Jump = m_RecompPos - 1;
         }
-        if (Jump != NULL) {
+        if (Jump != NULL)
+        {
             CPU_Message("      $FinishBlock:");
             SetJump8(Jump,m_RecompPos);
         }
@@ -450,65 +453,103 @@ void CCodeSection::GenerateSectionLinkage()
         //		if (g_SyncSystem) {
         MoveConstToX86reg((uint32_t)g_BaseSystem,x86_ECX);
         Call_Direct(AddressOf(&CN64System::SyncSystem), "CN64System::SyncSystem");
-    }
-    //	MoveConstToVariable(DELAY_SLOT,&m_NextInstruction,"m_NextInstruction");
-    PushImm32(stdstr_f("0x%08X",CompilePC() + 4).c_str(),CompilePC() + 4);
+        //}
+        //	MoveConstToVariable(DELAY_SLOT,&m_NextInstruction,"m_NextInstruction");
+        PushImm32(stdstr_f("0x%08X",CompilePC() + 4).c_str(),CompilePC() + 4);
 
-    // check if there is an existing section
+        // check if there is an existing section
 
-    MoveConstToX86reg((uint32_t)g_Recompiler,x86_ECX);
-    Call_Direct(AddressOf(&CRecompiler::CompileDelaySlot), "CRecompiler::CompileDelaySlot");
-    JmpDirectReg(x86_EAX);
-    ExitCodeBlock();
-    return;
+        MoveConstToX86reg((uint32_t)g_Recompiler,x86_ECX);
+        Call_Direct(AddressOf(&CRecompiler::CompileDelaySlot), "CRecompiler::CompileDelaySlot");
+        JmpDirectReg(x86_EAX);
+        ExitCodeBlock();
+        return;
 #endif
-}
-
-// Handle Perm Loop
-if (CRecompilerOps::m_CompilePC == m_Jump.TargetPC && (m_Cont.FallThrough == false))
-{
-    if (!DelaySlotEffectsJump(CompilePC()))
-    {
-        MoveConstToVariable(CompilePC(), _PROGRAM_COUNTER, "PROGRAM_COUNTER");
-        m_Jump.RegSet.WriteBackRegisters();
-        UpdateCounters(m_Jump.RegSet, false, true);
-        Call_Direct(AddressOf(CInterpreterCPU::InPermLoop), "CInterpreterCPU::InPermLoop");
-        MoveConstToX86reg((uint32_t)g_SystemTimer, x86_ECX);
-        Call_Direct(AddressOf(&CSystemTimer::TimerDone), "CSystemTimer::TimerDone");
-        CPU_Message("CompileSystemCheck 3");
-        CompileSystemCheck((uint32_t)-1, m_Jump.RegSet);
     }
-}
-if (TargetSection[0] != TargetSection[1] || TargetSection[0] == NULL)
-{
+
+    // Handle Perm Loop
+    if (CRecompilerOps::m_CompilePC == m_Jump.TargetPC && (m_Cont.FallThrough == false))
+    {
+        if (!DelaySlotEffectsJump(CompilePC()))
+        {
+            MoveConstToVariable(CompilePC(), _PROGRAM_COUNTER, "PROGRAM_COUNTER");
+            m_Jump.RegSet.WriteBackRegisters();
+            UpdateCounters(m_Jump.RegSet, false, true);
+            Call_Direct(AddressOf(CInterpreterCPU::InPermLoop), "CInterpreterCPU::InPermLoop");
+            MoveConstToX86reg((uint32_t)g_SystemTimer, x86_ECX);
+            Call_Direct(AddressOf(&CSystemTimer::TimerDone), "CSystemTimer::TimerDone");
+            CPU_Message("CompileSystemCheck 3");
+            CompileSystemCheck((uint32_t)-1, m_Jump.RegSet);
+        }
+    }
+    if (TargetSection[0] != TargetSection[1] || TargetSection[0] == NULL)
+    {
+        for (i = 0; i < 2; i++)
+        {
+            if (JumpInfo[i]->LinkLocation == NULL && JumpInfo[i]->FallThrough == false)
+            {
+                if (TargetSection[i])
+                {
+                    TargetSection[i]->UnlinkParent(this, i == 0);
+                    TargetSection[i] = NULL;
+                }
+            }
+            else if (TargetSection[i] == NULL && JumpInfo[i]->FallThrough)
+            {
+                if (JumpInfo[i]->LinkLocation != NULL)
+                {
+                    SetJump32(JumpInfo[i]->LinkLocation, (uint32_t *)m_RecompPos);
+                    JumpInfo[i]->LinkLocation = NULL;
+                    if (JumpInfo[i]->LinkLocation2 != NULL)
+                    {
+                        SetJump32(JumpInfo[i]->LinkLocation2, (uint32_t *)m_RecompPos);
+                        JumpInfo[i]->LinkLocation2 = NULL;
+                    }
+                }
+                CompileExit(JumpInfo[i]->JumpPC, JumpInfo[i]->TargetPC, JumpInfo[i]->RegSet, JumpInfo[i]->ExitReason, true, NULL);
+                JumpInfo[i]->FallThrough = false;
+            }
+            else if (TargetSection[i] != NULL && JumpInfo[i] != NULL)
+            {
+                if (!JumpInfo[i]->FallThrough) { continue; }
+                if (JumpInfo[i]->TargetPC == TargetSection[i]->m_EnterPC) { continue; }
+                if (JumpInfo[i]->LinkLocation != NULL)
+                {
+                    SetJump32(JumpInfo[i]->LinkLocation, (uint32_t *)m_RecompPos);
+                    JumpInfo[i]->LinkLocation = NULL;
+                    if (JumpInfo[i]->LinkLocation2 != NULL)
+                    {
+                        SetJump32(JumpInfo[i]->LinkLocation2, (uint32_t *)m_RecompPos);
+                        JumpInfo[i]->LinkLocation2 = NULL;
+                    }
+                }
+                CompileExit(JumpInfo[i]->JumpPC, JumpInfo[i]->TargetPC, JumpInfo[i]->RegSet, JumpInfo[i]->ExitReason, true, NULL);
+                //FreeSection(TargetSection[i],Section);
+            }
+        }
+    }
+    else
+    {
+        if (m_Cont.LinkLocation == NULL && m_Cont.FallThrough == false) { m_ContinueSection = NULL; }
+        if (m_Jump.LinkLocation == NULL && m_Jump.FallThrough == false) { m_JumpSection = NULL; }
+        if (m_JumpSection == NULL &&  m_ContinueSection == NULL)
+        {
+            //FreeSection(TargetSection[0],Section);
+        }
+    }
+
+    TargetSection[0] = m_ContinueSection;
+    TargetSection[1] = m_JumpSection;
+
     for (i = 0; i < 2; i++) {
-        if (JumpInfo[i]->LinkLocation == NULL && JumpInfo[i]->FallThrough == false)
+        if (TargetSection[i] == NULL) { continue; }
+        if (!JumpInfo[i]->FallThrough) { continue; }
+
+        if (TargetSection[i]->m_CompiledLocation != NULL)
         {
-            if (TargetSection[i])
-            {
-                TargetSection[i]->UnlinkParent(this, i == 0);
-                TargetSection[i] = NULL;
-            }
-        }
-        else if (TargetSection[i] == NULL && JumpInfo[i]->FallThrough)
-        {
-            if (JumpInfo[i]->LinkLocation != NULL)
-            {
-                SetJump32(JumpInfo[i]->LinkLocation, (uint32_t *)m_RecompPos);
-                JumpInfo[i]->LinkLocation = NULL;
-                if (JumpInfo[i]->LinkLocation2 != NULL)
-                {
-                    SetJump32(JumpInfo[i]->LinkLocation2, (uint32_t *)m_RecompPos);
-                    JumpInfo[i]->LinkLocation2 = NULL;
-                }
-            }
-            CompileExit(JumpInfo[i]->JumpPC, JumpInfo[i]->TargetPC, JumpInfo[i]->RegSet, JumpInfo[i]->ExitReason, true, NULL);
+            char Label[100];
+            sprintf(Label, "Section_%d", TargetSection[i]->m_SectionID);
             JumpInfo[i]->FallThrough = false;
-        }
-        else if (TargetSection[i] != NULL && JumpInfo[i] != NULL)
-        {
-            if (!JumpInfo[i]->FallThrough) { continue; }
-            if (JumpInfo[i]->TargetPC == TargetSection[i]->m_EnterPC) { continue; }
             if (JumpInfo[i]->LinkLocation != NULL)
             {
                 SetJump32(JumpInfo[i]->LinkLocation, (uint32_t *)m_RecompPos);
@@ -519,34 +560,107 @@ if (TargetSection[0] != TargetSection[1] || TargetSection[0] == NULL)
                     JumpInfo[i]->LinkLocation2 = NULL;
                 }
             }
-            CompileExit(JumpInfo[i]->JumpPC, JumpInfo[i]->TargetPC, JumpInfo[i]->RegSet, JumpInfo[i]->ExitReason, true, NULL);
-            //FreeSection(TargetSection[i],Section);
+            if (JumpInfo[i]->TargetPC <= CompilePC())
+            {
+                if (JumpInfo[i]->PermLoop)
+                {
+                    CPU_Message("PermLoop *** 1");
+                    MoveConstToVariable(JumpInfo[i]->TargetPC, _PROGRAM_COUNTER, "PROGRAM_COUNTER");
+                    UpdateCounters(JumpInfo[i]->RegSet, false, true);
+                    if (g_SyncSystem)
+                    {
+                        MoveConstToX86reg((uint32_t)g_BaseSystem, x86_ECX);
+                        Call_Direct(AddressOf(&CN64System::SyncSystem), "CN64System::SyncSystem");
+                    }
+
+                    //JumpInfo[i]->RegSet.BlockCycleCount() -= g_System->CountPerOp();
+                    Call_Direct(AddressOf(CInterpreterCPU::InPermLoop), "CInterpreterCPU::InPermLoop");
+                    //JumpInfo[i]->RegSet.BlockCycleCount() += g_System->CountPerOp();
+                    UpdateCounters(JumpInfo[i]->RegSet, true, true);
+                    CPU_Message("CompileSystemCheck 4");
+                    CompileSystemCheck((uint32_t)-1, JumpInfo[i]->RegSet);
+                }
+                else
+                {
+                    UpdateCounters(JumpInfo[i]->RegSet, true, true);
+                    CPU_Message("CompileSystemCheck 5");
+                    CompileSystemCheck(JumpInfo[i]->TargetPC, JumpInfo[i]->RegSet);
+                }
+            }
+            else
+            {
+                UpdateCounters(JumpInfo[i]->RegSet, false, true);
+            }
+
+            JumpInfo[i]->RegSet.SetBlockCycleCount(0);
+            m_RegWorkingSet = JumpInfo[i]->RegSet;
+            SyncRegState(TargetSection[i]->m_RegEnter);
+            JmpLabel32(Label, 0);
+            SetJump32((uint32_t *)m_RecompPos - 1, (uint32_t *)(TargetSection[i]->m_CompiledLocation));
         }
     }
-}
-else {
-    if (m_Cont.LinkLocation == NULL && m_Cont.FallThrough == false) { m_ContinueSection = NULL; }
-    if (m_Jump.LinkLocation == NULL && m_Jump.FallThrough == false) { m_JumpSection = NULL; }
-    if (m_JumpSection == NULL &&  m_ContinueSection == NULL)
+
+    for (i = 0; i < 2; i++)
     {
-        //FreeSection(TargetSection[0],Section);
-    }
-}
-
-TargetSection[0] = m_ContinueSection;
-TargetSection[1] = m_JumpSection;
-
-for (i = 0; i < 2; i++) {
-    if (TargetSection[i] == NULL) { continue; }
-    if (!JumpInfo[i]->FallThrough) { continue; }
-
-    if (TargetSection[i]->m_CompiledLocation != NULL)
-    {
-        char Label[100];
-        sprintf(Label, "Section_%d", TargetSection[i]->m_SectionID);
-        JumpInfo[i]->FallThrough = false;
-        if (JumpInfo[i]->LinkLocation != NULL)
+        if (TargetSection[i] == NULL) { continue; }
+        if (TargetSection[i]->m_ParentSection.empty()) { continue; }
+        for (SECTION_LIST::iterator iter = TargetSection[i]->m_ParentSection.begin(); iter != TargetSection[i]->m_ParentSection.end(); iter++)
         {
+            CCodeSection * Parent = *iter;
+
+            if (Parent->m_CompiledLocation != NULL) { continue; }
+            if (Parent->m_InLoop) { continue; }
+            if (JumpInfo[i]->PermLoop)
+            {
+                CPU_Message("PermLoop *** 2");
+                MoveConstToVariable(JumpInfo[i]->TargetPC, _PROGRAM_COUNTER, "PROGRAM_COUNTER");
+                UpdateCounters(JumpInfo[i]->RegSet, false, true);
+                Call_Direct(AddressOf(CInterpreterCPU::InPermLoop), "CInterpreterCPU::InPermLoop");
+                UpdateCounters(JumpInfo[i]->RegSet, true, true);
+                CPU_Message("CompileSystemCheck 6");
+                CompileSystemCheck((uint32_t)-1, JumpInfo[i]->RegSet);
+            }
+            if (JumpInfo[i]->FallThrough)
+            {
+                JumpInfo[i]->FallThrough = false;
+                JmpLabel32(JumpInfo[i]->BranchLabel.c_str(), 0);
+                JumpInfo[i]->LinkLocation = (uint32_t*)(m_RecompPos - 4);
+            }
+        }
+    }
+
+    for (i = 0; i < 2; i++)
+    {
+        if (JumpInfo[i]->FallThrough)
+        {
+            if (JumpInfo[i]->TargetPC < CompilePC())
+            {
+                UpdateCounters(JumpInfo[i]->RegSet, true, true);
+                CPU_Message("CompileSystemCheck 7");
+                CompileSystemCheck(JumpInfo[i]->TargetPC, JumpInfo[i]->RegSet);
+            }
+        }
+    }
+
+    CPU_Message("====== End of Section %d ======", m_SectionID);
+
+    for (i = 0; i < 2; i++)
+    {
+        if (JumpInfo[i]->FallThrough && !TargetSection[i]->GenerateX86Code(m_BlockInfo->NextTest()))
+        {
+            JumpInfo[i]->FallThrough = false;
+            JmpLabel32(JumpInfo[i]->BranchLabel.c_str(), 0);
+            JumpInfo[i]->LinkLocation = (uint32_t *)(m_RecompPos - 4);
+        }
+    }
+
+    //CPU_Message("Section %d",m_SectionID);
+    for (i = 0; i < 2; i++)
+    {
+        if (JumpInfo[i]->LinkLocation == NULL) { continue; }
+        if (TargetSection[i] == NULL)
+        {
+            CPU_Message("ExitBlock (from %d):", m_SectionID);
             SetJump32(JumpInfo[i]->LinkLocation, (uint32_t *)m_RecompPos);
             JumpInfo[i]->LinkLocation = NULL;
             if (JumpInfo[i]->LinkLocation2 != NULL)
@@ -554,166 +668,57 @@ for (i = 0; i < 2; i++) {
                 SetJump32(JumpInfo[i]->LinkLocation2, (uint32_t *)m_RecompPos);
                 JumpInfo[i]->LinkLocation2 = NULL;
             }
+            CompileExit(JumpInfo[i]->JumpPC, JumpInfo[i]->TargetPC, JumpInfo[i]->RegSet, JumpInfo[i]->ExitReason, true, NULL);
+            continue;
         }
-        if (JumpInfo[i]->TargetPC <= CompilePC())
+        if (JumpInfo[i]->TargetPC != TargetSection[i]->m_EnterPC)
         {
-            if (JumpInfo[i]->PermLoop)
+            g_Notify->BreakPoint(__FILEW__, __LINE__);
+        }
+        if (TargetSection[i]->m_CompiledLocation == NULL)
+        {
+            TargetSection[i]->GenerateX86Code(m_BlockInfo->NextTest());
+        }
+        else
+        {
+            stdstr_f Label("Section_%d (from %d):", TargetSection[i]->m_SectionID, m_SectionID);
+
+            CPU_Message(Label.c_str());
+            SetJump32(JumpInfo[i]->LinkLocation, (uint32_t *)m_RecompPos);
+            JumpInfo[i]->LinkLocation = NULL;
+            if (JumpInfo[i]->LinkLocation2 != NULL)
             {
-                CPU_Message("PermLoop *** 1");
-                MoveConstToVariable(JumpInfo[i]->TargetPC, _PROGRAM_COUNTER, "PROGRAM_COUNTER");
-                UpdateCounters(JumpInfo[i]->RegSet, false, true);
-                if (g_SyncSystem)
+                SetJump32(JumpInfo[i]->LinkLocation2, (uint32_t *)m_RecompPos);
+                JumpInfo[i]->LinkLocation2 = NULL;
+            }
+            m_RegWorkingSet = JumpInfo[i]->RegSet;
+            if (JumpInfo[i]->TargetPC <= JumpInfo[i]->JumpPC)
+            {
+                UpdateCounters(JumpInfo[i]->RegSet, true, true);
+                if (JumpInfo[i]->PermLoop)
                 {
-                    MoveConstToX86reg((uint32_t)g_BaseSystem, x86_ECX);
-                    Call_Direct(AddressOf(&CN64System::SyncSystem), "CN64System::SyncSystem");
+                    CPU_Message("PermLoop *** 3");
+                    MoveConstToVariable(JumpInfo[i]->TargetPC, _PROGRAM_COUNTER, "PROGRAM_COUNTER");
+                    Call_Direct(AddressOf(CInterpreterCPU::InPermLoop), "CInterpreterCPU::InPermLoop");
+                    CPU_Message("CompileSystemCheck 8");
+                    CompileSystemCheck((uint32_t)-1, JumpInfo[i]->RegSet);
                 }
-
-                //JumpInfo[i]->RegSet.BlockCycleCount() -= g_System->CountPerOp();
-                Call_Direct(AddressOf(CInterpreterCPU::InPermLoop), "CInterpreterCPU::InPermLoop");
-                //JumpInfo[i]->RegSet.BlockCycleCount() += g_System->CountPerOp();
-                UpdateCounters(JumpInfo[i]->RegSet, true, true);
-                CPU_Message("CompileSystemCheck 4");
-                CompileSystemCheck((uint32_t)-1, JumpInfo[i]->RegSet);
+                else
+                {
+                    CPU_Message("CompileSystemCheck 9");
+                    CompileSystemCheck(JumpInfo[i]->TargetPC, JumpInfo[i]->RegSet);
+                }
             }
             else
             {
-                UpdateCounters(JumpInfo[i]->RegSet, true, true);
-                CPU_Message("CompileSystemCheck 5");
-                CompileSystemCheck(JumpInfo[i]->TargetPC, JumpInfo[i]->RegSet);
+                UpdateCounters(m_RegWorkingSet, false, true);
             }
-        }
-        else
-        {
-            UpdateCounters(JumpInfo[i]->RegSet, false, true);
-        }
-
-        JumpInfo[i]->RegSet.SetBlockCycleCount(0);
-        m_RegWorkingSet = JumpInfo[i]->RegSet;
-        SyncRegState(TargetSection[i]->m_RegEnter);
-        JmpLabel32(Label, 0);
-        SetJump32((uint32_t *)m_RecompPos - 1, (uint32_t *)(TargetSection[i]->m_CompiledLocation));
-    }
-}
-
-for (i = 0; i < 2; i++)
-{
-    if (TargetSection[i] == NULL) { continue; }
-    if (TargetSection[i]->m_ParentSection.empty()) { continue; }
-    for (SECTION_LIST::iterator iter = TargetSection[i]->m_ParentSection.begin(); iter != TargetSection[i]->m_ParentSection.end(); iter++)
-    {
-        CCodeSection * Parent = *iter;
-
-        if (Parent->m_CompiledLocation != NULL) { continue; }
-        if (Parent->m_InLoop) { continue; }
-        if (JumpInfo[i]->PermLoop)
-        {
-            CPU_Message("PermLoop *** 2");
-            MoveConstToVariable(JumpInfo[i]->TargetPC, _PROGRAM_COUNTER, "PROGRAM_COUNTER");
-            UpdateCounters(JumpInfo[i]->RegSet, false, true);
-            Call_Direct(AddressOf(CInterpreterCPU::InPermLoop), "CInterpreterCPU::InPermLoop");
-            UpdateCounters(JumpInfo[i]->RegSet, true, true);
-            CPU_Message("CompileSystemCheck 6");
-            CompileSystemCheck((uint32_t)-1, JumpInfo[i]->RegSet);
-        }
-        if (JumpInfo[i]->FallThrough)
-        {
-            JumpInfo[i]->FallThrough = false;
-            JmpLabel32(JumpInfo[i]->BranchLabel.c_str(), 0);
-            JumpInfo[i]->LinkLocation = (uint32_t*)(m_RecompPos - 4);
+            m_RegWorkingSet = JumpInfo[i]->RegSet;
+            SyncRegState(TargetSection[i]->m_RegEnter);
+            JmpLabel32(Label.c_str(), 0);
+            SetJump32((uint32_t *)m_RecompPos - 1, (uint32_t *)(TargetSection[i]->m_CompiledLocation));
         }
     }
-}
-
-for (i = 0; i < 2; i++)
-{
-    if (JumpInfo[i]->FallThrough)
-    {
-        if (JumpInfo[i]->TargetPC < CompilePC())
-        {
-            UpdateCounters(JumpInfo[i]->RegSet, true, true);
-            CPU_Message("CompileSystemCheck 7");
-            CompileSystemCheck(JumpInfo[i]->TargetPC, JumpInfo[i]->RegSet);
-        }
-    }
-}
-
-CPU_Message("====== End of Section %d ======", m_SectionID);
-
-for (i = 0; i < 2; i++)
-{
-    if (JumpInfo[i]->FallThrough && !TargetSection[i]->GenerateX86Code(m_BlockInfo->NextTest()))
-    {
-        JumpInfo[i]->FallThrough = false;
-        JmpLabel32(JumpInfo[i]->BranchLabel.c_str(), 0);
-        JumpInfo[i]->LinkLocation = (uint32_t *)(m_RecompPos - 4);
-    }
-}
-
-//CPU_Message("Section %d",m_SectionID);
-for (i = 0; i < 2; i++)
-{
-    if (JumpInfo[i]->LinkLocation == NULL) { continue; }
-    if (TargetSection[i] == NULL)
-    {
-        CPU_Message("ExitBlock (from %d):", m_SectionID);
-        SetJump32(JumpInfo[i]->LinkLocation, (uint32_t *)m_RecompPos);
-        JumpInfo[i]->LinkLocation = NULL;
-        if (JumpInfo[i]->LinkLocation2 != NULL)
-        {
-            SetJump32(JumpInfo[i]->LinkLocation2, (uint32_t *)m_RecompPos);
-            JumpInfo[i]->LinkLocation2 = NULL;
-        }
-        CompileExit(JumpInfo[i]->JumpPC, JumpInfo[i]->TargetPC, JumpInfo[i]->RegSet, JumpInfo[i]->ExitReason, true, NULL);
-        continue;
-    }
-    if (JumpInfo[i]->TargetPC != TargetSection[i]->m_EnterPC)
-    {
-        g_Notify->BreakPoint(__FILEW__, __LINE__);
-    }
-    if (TargetSection[i]->m_CompiledLocation == NULL)
-    {
-        TargetSection[i]->GenerateX86Code(m_BlockInfo->NextTest());
-    }
-    else
-    {
-        stdstr_f Label("Section_%d (from %d):", TargetSection[i]->m_SectionID, m_SectionID);
-
-        CPU_Message(Label.c_str());
-        SetJump32(JumpInfo[i]->LinkLocation, (uint32_t *)m_RecompPos);
-        JumpInfo[i]->LinkLocation = NULL;
-        if (JumpInfo[i]->LinkLocation2 != NULL)
-        {
-            SetJump32(JumpInfo[i]->LinkLocation2, (uint32_t *)m_RecompPos);
-            JumpInfo[i]->LinkLocation2 = NULL;
-        }
-        m_RegWorkingSet = JumpInfo[i]->RegSet;
-        if (JumpInfo[i]->TargetPC <= JumpInfo[i]->JumpPC)
-        {
-            UpdateCounters(JumpInfo[i]->RegSet, true, true);
-            if (JumpInfo[i]->PermLoop)
-            {
-                CPU_Message("PermLoop *** 3");
-                MoveConstToVariable(JumpInfo[i]->TargetPC, _PROGRAM_COUNTER, "PROGRAM_COUNTER");
-                Call_Direct(AddressOf(CInterpreterCPU::InPermLoop), "CInterpreterCPU::InPermLoop");
-                CPU_Message("CompileSystemCheck 8");
-                CompileSystemCheck((uint32_t)-1, JumpInfo[i]->RegSet);
-            }
-            else
-            {
-                CPU_Message("CompileSystemCheck 9");
-                CompileSystemCheck(JumpInfo[i]->TargetPC, JumpInfo[i]->RegSet);
-            }
-        }
-        else
-        {
-            UpdateCounters(m_RegWorkingSet, false, true);
-        }
-        m_RegWorkingSet = JumpInfo[i]->RegSet;
-        SyncRegState(TargetSection[i]->m_RegEnter);
-        JmpLabel32(Label.c_str(), 0);
-        SetJump32((uint32_t *)m_RecompPos - 1, (uint32_t *)(TargetSection[i]->m_CompiledLocation));
-    }
-}
 }
 
 void CCodeSection::SyncRegState(const CRegInfo & SyncTo)
@@ -796,137 +801,137 @@ void CCodeSection::SyncRegState(const CRegInfo & SyncTo)
         {
         case CRegInfo::STATE_UNKNOWN: UnMap_GPR(i, true);  break;
         case CRegInfo::STATE_MAPPED_64:
+        {
+            x86Reg Reg = SyncTo.GetMipsRegMapLo(i);
+            x86Reg x86RegHi = SyncTo.GetMipsRegMapHi(i);
+            UnMap_X86reg(Reg);
+            UnMap_X86reg(x86RegHi);
+            switch (GetMipsRegState(i))
             {
-                x86Reg Reg = SyncTo.GetMipsRegMapLo(i);
-                x86Reg x86RegHi = SyncTo.GetMipsRegMapHi(i);
-                UnMap_X86reg(Reg);
-                UnMap_X86reg(x86RegHi);
-                switch (GetMipsRegState(i))
-                {
-                case CRegInfo::STATE_UNKNOWN:
-                    MoveVariableToX86reg(&_GPR[i].UW[0], CRegName::GPR_Lo[i], Reg);
-                    MoveVariableToX86reg(&_GPR[i].UW[1], CRegName::GPR_Hi[i], x86RegHi);
-                    break;
-                case CRegInfo::STATE_MAPPED_64:
-                    MoveX86RegToX86Reg(GetMipsRegMapLo(i), Reg);
-                    m_RegWorkingSet.SetX86Mapped(GetMipsRegMapLo(i), CRegInfo::NotMapped);
-                    MoveX86RegToX86Reg(GetMipsRegMapHi(i), x86RegHi);
-                    m_RegWorkingSet.SetX86Mapped(GetMipsRegMapHi(i), CRegInfo::NotMapped);
-                    break;
-                case CRegInfo::STATE_MAPPED_32_SIGN:
-                    MoveX86RegToX86Reg(GetMipsRegMapLo(i), x86RegHi);
-                    ShiftRightSignImmed(x86RegHi, 31);
-                    MoveX86RegToX86Reg(GetMipsRegMapLo(i), Reg);
-                    m_RegWorkingSet.SetX86Mapped(GetMipsRegMapLo(i), CRegInfo::NotMapped);
-                    break;
-                case CRegInfo::STATE_MAPPED_32_ZERO:
-                    XorX86RegToX86Reg(x86RegHi, x86RegHi);
-                    MoveX86RegToX86Reg(GetMipsRegMapLo(i), Reg);
-                    m_RegWorkingSet.SetX86Mapped(GetMipsRegMapLo(i), CRegInfo::NotMapped);
-                    break;
-                case CRegInfo::STATE_CONST_64:
-                    MoveConstToX86reg(GetMipsRegHi(i), x86RegHi);
-                    MoveConstToX86reg(GetMipsRegLo(i), Reg);
-                    break;
-                case CRegInfo::STATE_CONST_32_SIGN:
-                    MoveConstToX86reg(GetMipsRegLo_S(i) >> 31, x86RegHi);
-                    MoveConstToX86reg(GetMipsRegLo(i), Reg);
-                    break;
-                default:
-                    CPU_Message("Do something with states in SyncRegState\nSTATE_MAPPED_64\n%d", GetMipsRegState(i));
-                    g_Notify->BreakPoint(__FILEW__, __LINE__);
-                    continue;
-                }
-                m_RegWorkingSet.SetMipsRegMapLo(i, Reg);
-                m_RegWorkingSet.SetMipsRegMapHi(i, x86RegHi);
-                m_RegWorkingSet.SetMipsRegState(i, CRegInfo::STATE_MAPPED_64);
-                m_RegWorkingSet.SetX86Mapped(Reg, CRegInfo::GPR_Mapped);
-                m_RegWorkingSet.SetX86Mapped(x86RegHi, CRegInfo::GPR_Mapped);
-                m_RegWorkingSet.SetX86MapOrder(Reg, 1);
-                m_RegWorkingSet.SetX86MapOrder(x86RegHi, 1);
+            case CRegInfo::STATE_UNKNOWN:
+                MoveVariableToX86reg(&_GPR[i].UW[0], CRegName::GPR_Lo[i], Reg);
+                MoveVariableToX86reg(&_GPR[i].UW[1], CRegName::GPR_Hi[i], x86RegHi);
+                break;
+            case CRegInfo::STATE_MAPPED_64:
+                MoveX86RegToX86Reg(GetMipsRegMapLo(i), Reg);
+                m_RegWorkingSet.SetX86Mapped(GetMipsRegMapLo(i), CRegInfo::NotMapped);
+                MoveX86RegToX86Reg(GetMipsRegMapHi(i), x86RegHi);
+                m_RegWorkingSet.SetX86Mapped(GetMipsRegMapHi(i), CRegInfo::NotMapped);
+                break;
+            case CRegInfo::STATE_MAPPED_32_SIGN:
+                MoveX86RegToX86Reg(GetMipsRegMapLo(i), x86RegHi);
+                ShiftRightSignImmed(x86RegHi, 31);
+                MoveX86RegToX86Reg(GetMipsRegMapLo(i), Reg);
+                m_RegWorkingSet.SetX86Mapped(GetMipsRegMapLo(i), CRegInfo::NotMapped);
+                break;
+            case CRegInfo::STATE_MAPPED_32_ZERO:
+                XorX86RegToX86Reg(x86RegHi, x86RegHi);
+                MoveX86RegToX86Reg(GetMipsRegMapLo(i), Reg);
+                m_RegWorkingSet.SetX86Mapped(GetMipsRegMapLo(i), CRegInfo::NotMapped);
+                break;
+            case CRegInfo::STATE_CONST_64:
+                MoveConstToX86reg(GetMipsRegHi(i), x86RegHi);
+                MoveConstToX86reg(GetMipsRegLo(i), Reg);
+                break;
+            case CRegInfo::STATE_CONST_32_SIGN:
+                MoveConstToX86reg(GetMipsRegLo_S(i) >> 31, x86RegHi);
+                MoveConstToX86reg(GetMipsRegLo(i), Reg);
+                break;
+            default:
+                CPU_Message("Do something with states in SyncRegState\nSTATE_MAPPED_64\n%d", GetMipsRegState(i));
+                g_Notify->BreakPoint(__FILEW__, __LINE__);
+                continue;
             }
-            break;
+            m_RegWorkingSet.SetMipsRegMapLo(i, Reg);
+            m_RegWorkingSet.SetMipsRegMapHi(i, x86RegHi);
+            m_RegWorkingSet.SetMipsRegState(i, CRegInfo::STATE_MAPPED_64);
+            m_RegWorkingSet.SetX86Mapped(Reg, CRegInfo::GPR_Mapped);
+            m_RegWorkingSet.SetX86Mapped(x86RegHi, CRegInfo::GPR_Mapped);
+            m_RegWorkingSet.SetX86MapOrder(Reg, 1);
+            m_RegWorkingSet.SetX86MapOrder(x86RegHi, 1);
+        }
+        break;
         case CRegInfo::STATE_MAPPED_32_SIGN:
+        {
+            x86Reg Reg = SyncTo.GetMipsRegMapLo(i);
+            UnMap_X86reg(Reg);
+            switch (GetMipsRegState(i))
             {
-                x86Reg Reg = SyncTo.GetMipsRegMapLo(i);
-                UnMap_X86reg(Reg);
-                switch (GetMipsRegState(i))
+            case CRegInfo::STATE_UNKNOWN: MoveVariableToX86reg(&_GPR[i].UW[0], CRegName::GPR_Lo[i], Reg); break;
+            case CRegInfo::STATE_CONST_32_SIGN: MoveConstToX86reg(GetMipsRegLo(i), Reg); break;
+            case CRegInfo::STATE_MAPPED_32_SIGN:
+                MoveX86RegToX86Reg(GetMipsRegMapLo(i), Reg);
+                m_RegWorkingSet.SetX86Mapped(GetMipsRegMapLo(i), CRegInfo::NotMapped);
+                break;
+            case CRegInfo::STATE_MAPPED_32_ZERO:
+                if (GetMipsRegMapLo(i) != Reg)
                 {
-                case CRegInfo::STATE_UNKNOWN: MoveVariableToX86reg(&_GPR[i].UW[0], CRegName::GPR_Lo[i], Reg); break;
-                case CRegInfo::STATE_CONST_32_SIGN: MoveConstToX86reg(GetMipsRegLo(i), Reg); break;
-                case CRegInfo::STATE_MAPPED_32_SIGN:
                     MoveX86RegToX86Reg(GetMipsRegMapLo(i), Reg);
                     m_RegWorkingSet.SetX86Mapped(GetMipsRegMapLo(i), CRegInfo::NotMapped);
-                    break;
-                case CRegInfo::STATE_MAPPED_32_ZERO:
-                    if (GetMipsRegMapLo(i) != Reg)
-                    {
-                        MoveX86RegToX86Reg(GetMipsRegMapLo(i), Reg);
-                        m_RegWorkingSet.SetX86Mapped(GetMipsRegMapLo(i), CRegInfo::NotMapped);
-                    }
-                    break;
-                case CRegInfo::STATE_MAPPED_64:
-                    MoveX86RegToX86Reg(GetMipsRegMapLo(i), Reg);
-                    m_RegWorkingSet.SetX86Mapped(GetMipsRegMapLo(i), CRegInfo::NotMapped);
-                    m_RegWorkingSet.SetX86Mapped(GetMipsRegMapHi(i), CRegInfo::NotMapped);
-                    break;
-                case CRegInfo::STATE_CONST_64:
-                    CPU_Message("hi %X\nLo %X", GetMipsRegHi(i), GetMipsRegLo(i));
-                default:
-                    CPU_Message("Do something with states in SyncRegState\nSTATE_MAPPED_32_SIGN\n%d", GetMipsRegState(i));
-                    g_Notify->BreakPoint(__FILEW__, __LINE__);
                 }
-                m_RegWorkingSet.SetMipsRegMapLo(i, Reg);
-                m_RegWorkingSet.SetMipsRegState(i, CRegInfo::STATE_MAPPED_32_SIGN);
-                m_RegWorkingSet.SetX86Mapped(Reg, CRegInfo::GPR_Mapped);
-                m_RegWorkingSet.SetX86MapOrder(Reg, 1);
+                break;
+            case CRegInfo::STATE_MAPPED_64:
+                MoveX86RegToX86Reg(GetMipsRegMapLo(i), Reg);
+                m_RegWorkingSet.SetX86Mapped(GetMipsRegMapLo(i), CRegInfo::NotMapped);
+                m_RegWorkingSet.SetX86Mapped(GetMipsRegMapHi(i), CRegInfo::NotMapped);
+                break;
+            case CRegInfo::STATE_CONST_64:
+                CPU_Message("hi %X\nLo %X", GetMipsRegHi(i), GetMipsRegLo(i));
+            default:
+                CPU_Message("Do something with states in SyncRegState\nSTATE_MAPPED_32_SIGN\n%d", GetMipsRegState(i));
+                g_Notify->BreakPoint(__FILEW__, __LINE__);
             }
-            break;
+            m_RegWorkingSet.SetMipsRegMapLo(i, Reg);
+            m_RegWorkingSet.SetMipsRegState(i, CRegInfo::STATE_MAPPED_32_SIGN);
+            m_RegWorkingSet.SetX86Mapped(Reg, CRegInfo::GPR_Mapped);
+            m_RegWorkingSet.SetX86MapOrder(Reg, 1);
+        }
+        break;
         case CRegInfo::STATE_MAPPED_32_ZERO:
+        {
+            x86Reg Reg = SyncTo.GetMipsRegMapLo(i);
+            UnMap_X86reg(Reg);
+            switch (GetMipsRegState(i))
             {
-                x86Reg Reg = SyncTo.GetMipsRegMapLo(i);
-                UnMap_X86reg(Reg);
-                switch (GetMipsRegState(i))
+            case CRegInfo::STATE_MAPPED_64:
+            case CRegInfo::STATE_UNKNOWN:
+                MoveVariableToX86reg(&_GPR[i].UW[0], CRegName::GPR_Lo[i], Reg);
+                break;
+            case CRegInfo::STATE_MAPPED_32_ZERO:
+                MoveX86RegToX86Reg(GetMipsRegMapLo(i), Reg);
+                m_RegWorkingSet.SetX86Mapped(GetMipsRegMapLo(i), CRegInfo::NotMapped);
+                break;
+            case CRegInfo::STATE_MAPPED_32_SIGN:
+                if (g_System->b32BitCore())
                 {
-                case CRegInfo::STATE_MAPPED_64:
-                case CRegInfo::STATE_UNKNOWN:
-                    MoveVariableToX86reg(&_GPR[i].UW[0], CRegName::GPR_Lo[i], Reg);
-                    break;
-                case CRegInfo::STATE_MAPPED_32_ZERO:
                     MoveX86RegToX86Reg(GetMipsRegMapLo(i), Reg);
                     m_RegWorkingSet.SetX86Mapped(GetMipsRegMapLo(i), CRegInfo::NotMapped);
-                    break;
-                case CRegInfo::STATE_MAPPED_32_SIGN:
-                    if (g_System->b32BitCore())
-                    {
-                        MoveX86RegToX86Reg(GetMipsRegMapLo(i), Reg);
-                        m_RegWorkingSet.SetX86Mapped(GetMipsRegMapLo(i), CRegInfo::NotMapped);
-                    }
-                    else
-                    {
-                        CPU_Message("Do something with states in SyncRegState\nSTATE_MAPPED_32_ZERO\n%d", GetMipsRegState(i));
-                        g_Notify->BreakPoint(__FILEW__, __LINE__);
-                    }
-                    break;
-                case CRegInfo::STATE_CONST_32_SIGN:
-                    if (!g_System->b32BitCore() && GetMipsRegLo_S(i) < 0)
-                    {
-                        CPU_Message("Sign Problems in SyncRegState\nSTATE_MAPPED_32_ZERO");
-                        CPU_Message("%s: %X", CRegName::GPR[i], GetMipsRegLo_S(i));
-                        g_Notify->BreakPoint(__FILEW__, __LINE__);
-                    }
-                    MoveConstToX86reg(GetMipsRegLo(i), Reg);
-                    break;
-                default:
+                }
+                else
+                {
                     CPU_Message("Do something with states in SyncRegState\nSTATE_MAPPED_32_ZERO\n%d", GetMipsRegState(i));
                     g_Notify->BreakPoint(__FILEW__, __LINE__);
                 }
-                m_RegWorkingSet.SetMipsRegMapLo(i, Reg);
-                m_RegWorkingSet.SetMipsRegState(i, SyncTo.GetMipsRegState(i));
-                m_RegWorkingSet.SetX86Mapped(Reg, CRegInfo::GPR_Mapped);
-                m_RegWorkingSet.SetX86MapOrder(Reg, 1);
+                break;
+            case CRegInfo::STATE_CONST_32_SIGN:
+                if (!g_System->b32BitCore() && GetMipsRegLo_S(i) < 0)
+                {
+                    CPU_Message("Sign Problems in SyncRegState\nSTATE_MAPPED_32_ZERO");
+                    CPU_Message("%s: %X", CRegName::GPR[i], GetMipsRegLo_S(i));
+                    g_Notify->BreakPoint(__FILEW__, __LINE__);
+                }
+                MoveConstToX86reg(GetMipsRegLo(i), Reg);
+                break;
+            default:
+                CPU_Message("Do something with states in SyncRegState\nSTATE_MAPPED_32_ZERO\n%d", GetMipsRegState(i));
+                g_Notify->BreakPoint(__FILEW__, __LINE__);
             }
-            break;
+            m_RegWorkingSet.SetMipsRegMapLo(i, Reg);
+            m_RegWorkingSet.SetMipsRegState(i, SyncTo.GetMipsRegState(i));
+            m_RegWorkingSet.SetX86Mapped(Reg, CRegInfo::GPR_Mapped);
+            m_RegWorkingSet.SetX86MapOrder(Reg, 1);
+        }
+        break;
         default:
             CPU_Message("%d - %d reg: %s (%d)", SyncTo.GetMipsRegState(i), GetMipsRegState(i), CRegName::GPR[i], i);
             g_Notify->BreakPoint(__FILEW__, __LINE__);

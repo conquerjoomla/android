@@ -48,6 +48,7 @@ enum SettingID
     Setting_ApplicationName,
     Setting_UseFromRegistry,
     Setting_RdbEditor,
+    Setting_CN64TimeCritical,
     Setting_PluginPageFirst,
     Setting_DisableScrSaver,
     Setting_AutoSleep,
@@ -229,7 +230,6 @@ enum SettingID
     Debugger_DisableGameFixes,
     Debugger_AppLogLevel,
     Debugger_AppLogFlush,
-    Debugger_GenerateDebugLog,
     Debugger_ShowDListAListCount,
     Debugger_ShowRecompMemSize,
 

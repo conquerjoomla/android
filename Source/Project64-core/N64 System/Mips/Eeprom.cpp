@@ -1,6 +1,6 @@
 /****************************************************************************
 *                                                                           *
-* Project 64 - A Nintendo 64 emulator.                                      *
+* Project64 - A Nintendo 64 emulator.                                      *
 * http://www.pj64-emu.com/                                                  *
 * Copyright (C) 2012 Project64. All rights reserved.                        *
 *                                                                           *
@@ -16,8 +16,8 @@
 #include <Windows.h>
 
 CEeprom::CEeprom(bool ReadOnly) :
-    m_ReadOnly(ReadOnly),
-    m_hFile(NULL)
+m_ReadOnly(ReadOnly),
+m_hFile(NULL)
 {
     memset(m_EEPROM, 0xFF, sizeof(m_EEPROM));
 }

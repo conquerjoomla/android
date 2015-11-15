@@ -18,18 +18,18 @@ public:
     CDebugSettings();
     virtual ~CDebugSettings();
 
-    static inline bool  bHaveDebugger ( void ) { return m_bHaveDebugger; }
-    static inline bool  bLogX86Code ( void ) { return m_bLogX86Code; }
-    static inline bool  bShowTLBMisses ( void ) { return m_bShowTLBMisses; }
-    static inline bool  bShowDivByZero ( void ) { return m_bShowDivByZero; }
+    static inline bool  bHaveDebugger(void) { return m_bHaveDebugger; }
+    static inline bool  bLogX86Code(void) { return m_bLogX86Code; }
+    static inline bool  bShowTLBMisses(void) { return m_bShowTLBMisses; }
+    static inline bool  bShowDivByZero(void) { return m_bShowDivByZero; }
 
 private:
-    static void StaticRefreshSettings (CDebugSettings * _this)
+    static void StaticRefreshSettings(CDebugSettings * _this)
     {
         _this->RefreshSettings();
     }
 
-    void RefreshSettings ( void );
+    void RefreshSettings(void);
 
     //Settings that can be changed on the fly
     static bool m_bHaveDebugger;

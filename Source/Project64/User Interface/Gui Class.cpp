@@ -212,7 +212,6 @@ void CMainGui::GameCpuRunning(CMainGui * Gui)
 {
     if (g_Settings->LoadBool(GameRunning_CPU_Running))
     {
-        Gui->HideRomList();
         Gui->MakeWindowOnTop(g_Settings->LoadBool(UserInterface_AlwaysOnTop));
         if (g_Settings->LoadBool(Setting_AutoFullscreen))
         {

@@ -1,6 +1,6 @@
 /****************************************************************************
 *                                                                           *
-* Project 64 - A Nintendo 64 emulator.                                      *
+* Project64 - A Nintendo 64 emulator.                                      *
 * http://www.pj64-emu.com/                                                  *
 * Copyright (C) 2012 Project64. All rights reserved.                        *
 *                                                                           *
@@ -310,24 +310,24 @@ void CInterpreterCPU::ExecuteCPU()
                     PROGRAM_COUNTER += 4;
                     break;
                 case JUMP:
+                {
+                    bool CheckTimer = (JumpToLocation < PROGRAM_COUNTER || TestTimer);
+                    PROGRAM_COUNTER = JumpToLocation;
+                    R4300iOp::m_NextInstruction = NORMAL;
+                    if (CheckTimer)
                     {
-                        bool CheckTimer = (JumpToLocation < PROGRAM_COUNTER || TestTimer);
-                        PROGRAM_COUNTER = JumpToLocation;
-                        R4300iOp::m_NextInstruction = NORMAL;
-                        if (CheckTimer)
+                        TestTimer = false;
+                        if (NextTimer < 0)
                         {
-                            TestTimer = false;
-                            if (NextTimer < 0)
-                            {
-                                g_SystemTimer->TimerDone();
-                            }
-                            if (bDoSomething)
-                            {
-                                g_SystemEvents->ExecuteEvents();
-                            }
+                            g_SystemTimer->TimerDone();
+                        }
+                        if (bDoSomething)
+                        {
+                            g_SystemEvents->ExecuteEvents();
                         }
                     }
-                    break;
+                }
+                break;
                 case PERMLOOP_DELAY_DONE:
                     PROGRAM_COUNTER = JumpToLocation;
                     R4300iOp::m_NextInstruction = NORMAL;
@@ -419,24 +419,24 @@ void CInterpreterCPU::ExecuteOps(int32_t Cycles)
                     PROGRAM_COUNTER += 4;
                     break;
                 case JUMP:
+                {
+                    bool CheckTimer = (JumpToLocation < PROGRAM_COUNTER || TestTimer);
+                    PROGRAM_COUNTER = JumpToLocation;
+                    R4300iOp::m_NextInstruction = NORMAL;
+                    if (CheckTimer)
                     {
-                        bool CheckTimer = (JumpToLocation < PROGRAM_COUNTER || TestTimer);
-                        PROGRAM_COUNTER = JumpToLocation;
-                        R4300iOp::m_NextInstruction = NORMAL;
-                        if (CheckTimer)
+                        TestTimer = false;
+                        if (*g_NextTimer < 0)
                         {
-                            TestTimer = false;
-                            if (*g_NextTimer < 0)
-                            {
-                                g_SystemTimer->TimerDone();
-                            }
-                            if (DoSomething)
-                            {
-                                g_SystemEvents->ExecuteEvents();
-                            }
+                            g_SystemTimer->TimerDone();
+                        }
+                        if (DoSomething)
+                        {
+                            g_SystemEvents->ExecuteEvents();
                         }
                     }
-                    break;
+                }
+                break;
                 case PERMLOOP_DELAY_DONE:
                     PROGRAM_COUNTER = JumpToLocation;
                     R4300iOp::m_NextInstruction = NORMAL;

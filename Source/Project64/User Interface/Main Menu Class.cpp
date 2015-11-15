@@ -5,9 +5,9 @@
 #include <commdlg.h>
 
 CMainMenu::CMainMenu(CMainGui * hMainWindow) :
-    CBaseMenu(),
-    m_ResetAccelerators(true),
-    m_Gui(hMainWindow)
+CBaseMenu(),
+m_ResetAccelerators(true),
+m_Gui(hMainWindow)
 {
     ResetMenu();
 
@@ -18,6 +18,7 @@ CMainMenu::CMainMenu(CMainGui * hMainWindow) :
     m_ChangeSettingList.push_back(UserInterface_InFullScreen);
     m_ChangeSettingList.push_back(UserInterface_AlwaysOnTop);
     m_ChangeSettingList.push_back(UserInterface_ShowCPUPer);
+    m_ChangeSettingList.push_back(Logging_GenerateLog);
     m_ChangeSettingList.push_back(Debugger_ProfileCode);
     m_ChangeSettingList.push_back(Debugger_ShowTLBMisses);
     m_ChangeSettingList.push_back(Debugger_ShowUnhandledMemory);
@@ -29,7 +30,6 @@ CMainMenu::CMainMenu(CMainGui * hMainWindow) :
     m_ChangeSettingList.push_back(Debugger_DisableGameFixes);
     m_ChangeSettingList.push_back(Debugger_AppLogLevel);
     m_ChangeSettingList.push_back(Debugger_AppLogFlush);
-    m_ChangeSettingList.push_back(Debugger_GenerateDebugLog);
     m_ChangeSettingList.push_back(Game_CurrentSaveState);
     m_ChangeSettingList.push_back(Setting_CurrentLanguage);
 
@@ -92,23 +92,23 @@ bool CMainMenu::ProcessMessage(HWND hWnd, DWORD /*FromAccelerator*/, DWORD MenuI
 {
     switch (MenuID) {
     case ID_FILE_OPEN_ROM:
+    {
+        stdstr File = ChooseFileToOpen(hWnd);
+        if (File.length() > 0)
         {
-            stdstr File = ChooseFileToOpen(hWnd);
-            if (File.length() > 0)
-            {
-                g_BaseSystem->RunFileImage(File.c_str());
-            }
+            g_BaseSystem->RunFileImage(File.c_str());
         }
-        break;
+    }
+    break;
     case ID_FILE_ROM_INFO:
+    {
+        if (g_Rom)
         {
-            if (g_Rom)
-            {
-                RomInformation Info(g_Rom);
-                Info.DisplayInformation(hWnd);
-            }
+            RomInformation Info(g_Rom);
+            Info.DisplayInformation(hWnd);
         }
-        break;
+    }
+    break;
     case ID_FILE_STARTEMULATION:
         m_Gui->SaveWindowLoc();
         //Before we go and create the new system, ensure the previous one has been closed
@@ -328,10 +328,22 @@ bool CMainMenu::ProcessMessage(HWND hWnd, DWORD /*FromAccelerator*/, DWORD MenuI
             m_Gui->MakeWindowOnTop(g_Settings->LoadBool(GameRunning_CPU_Running));
         }
         break;
-    case ID_OPTIONS_CONFIG_RSP:  WriteTrace(TraceDebug, __FUNCTION__ ": ID_OPTIONS_CONFIG_RSP"); g_Plugins->ConfigPlugin(hWnd, PLUGIN_TYPE_RSP); break;
-    case ID_OPTIONS_CONFIG_GFX:  WriteTrace(TraceDebug, __FUNCTION__ ": ID_OPTIONS_CONFIG_GFX"); g_Plugins->ConfigPlugin(hWnd, PLUGIN_TYPE_GFX); break;
-    case ID_OPTIONS_CONFIG_AUDIO:WriteTrace(TraceDebug, __FUNCTION__ ": ID_OPTIONS_CONFIG_AUDIO"); g_Plugins->ConfigPlugin(hWnd, PLUGIN_TYPE_AUDIO); break;
-    case ID_OPTIONS_CONFIG_CONT: WriteTrace(TraceDebug, __FUNCTION__ ": ID_OPTIONS_CONFIG_CONT"); g_Plugins->ConfigPlugin(hWnd, PLUGIN_TYPE_CONTROLLER); break;
+    case ID_OPTIONS_CONFIG_RSP:
+        WriteTrace(TraceDebug, __FUNCTION__ ": ID_OPTIONS_CONFIG_RSP");
+        g_Plugins->ConfigPlugin(hWnd, PLUGIN_TYPE_RSP);
+        break;
+    case ID_OPTIONS_CONFIG_GFX:
+        WriteTrace(TraceDebug, __FUNCTION__ ": ID_OPTIONS_CONFIG_GFX");
+        g_Plugins->ConfigPlugin(hWnd, PLUGIN_TYPE_GFX);
+        break;
+    case ID_OPTIONS_CONFIG_AUDIO:
+        WriteTrace(TraceDebug, __FUNCTION__ ": ID_OPTIONS_CONFIG_AUDIO");
+        g_Plugins->ConfigPlugin(hWnd, PLUGIN_TYPE_AUDIO);
+        break;
+    case ID_OPTIONS_CONFIG_CONT:
+        WriteTrace(TraceDebug, __FUNCTION__ ": ID_OPTIONS_CONFIG_CONT");
+        g_Plugins->ConfigPlugin(hWnd, PLUGIN_TYPE_CONTROLLER);
+        break;
     case ID_OPTIONS_CPU_USAGE:
         WriteTrace(TraceDebug, __FUNCTION__ ": ID_OPTIONS_CPU_USAGE");
         if (g_Settings->LoadBool(UserInterface_ShowCPUPer))
@@ -499,7 +511,7 @@ bool CMainMenu::ProcessMessage(HWND hWnd, DWORD /*FromAccelerator*/, DWORD MenuI
         break;
     case ID_DEBUGGER_LOGOPTIONS: EnterLogOptions((HWND)m_Gui->GetWindowHandle()); break;
     case ID_DEBUGGER_GENERATELOG:
-        g_Settings->SaveBool(Debugger_GenerateDebugLog, !g_Settings->LoadBool(Debugger_GenerateDebugLog));
+        g_Settings->SaveBool(Logging_GenerateLog, !g_Settings->LoadBool(Logging_GenerateLog));
         break;
     case ID_DEBUGGER_DUMPMEMORY: m_Gui->Debug_ShowMemoryDump(); break;
     case ID_DEBUGGER_SEARCHMEMORY: m_Gui->Debug_ShowMemorySearch(); break;
@@ -1080,7 +1092,7 @@ void CMainMenu::FillOutMenu(HMENU hMenu)
         DebugLoggingMenu.push_back(Item);
 
         Item.Reset(ID_DEBUGGER_GENERATELOG, EMPTY_STRING, EMPTY_STDSTR, NULL, L"Generate Log");
-        if (g_Settings->LoadBool(Debugger_GenerateDebugLog)) { Item.SetItemTicked(true); }
+        if (g_Settings->LoadBool(Logging_GenerateLog)) { Item.SetItemTicked(true); }
         DebugLoggingMenu.push_back(Item);
 
         /* Debugger Main Menu

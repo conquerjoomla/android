@@ -32,7 +32,7 @@ private:
 
     const const char * m_KeyName;
     const const char * m_DefaultStr;
-    const int32_t          m_DefaultValue;
+    const int32_t      m_DefaultValue;
     const SettingID    m_DefaultSetting;
 
     static CIniFile *  m_SettingsIniFile;

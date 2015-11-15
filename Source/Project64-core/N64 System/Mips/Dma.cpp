@@ -1,6 +1,6 @@
 /****************************************************************************
 *                                                                           *
-* Project 64 - A Nintendo 64 emulator.                                      *
+* Project64 - A Nintendo 64 emulator.                                      *
 * http://www.pj64-emu.com/                                                  *
 * Copyright (C) 2012 Project64. All rights reserved.                        *
 *                                                                           *
@@ -18,8 +18,8 @@
 #include <Windows.h>
 
 CDMA::CDMA(CFlashram & FlashRam, CSram & Sram) :
-    m_FlashRam(FlashRam),
-    m_Sram(Sram)
+m_FlashRam(FlashRam),
+m_Sram(Sram)
 {
 }
 
@@ -148,7 +148,7 @@ void CDMA::PI_DMA_READ()
     }
     if (bHaveDebugger())
     {
-        g_Notify->DisplayError(stdstr_f("PI_DMA_READ where are you dmaing to ? : ％08X", g_Reg->PI_CART_ADDR_REG).ToUTF16().c_str());
+        g_Notify->DisplayError(stdstr_f("PI_DMA_READ where are you dmaing to ? : %08X", g_Reg->PI_CART_ADDR_REG).ToUTF16().c_str());
     }
     g_Reg->PI_STATUS_REG &= ~PI_STATUS_DMA_BUSY;
     g_Reg->MI_INTR_REG |= MI_INTR_PI;
@@ -175,7 +175,7 @@ void CDMA::PI_DMA_WRITE()
         return;
     }
 
-    if (g_Reg->PI_CART_ADDR_REG >= 0x08000000 && g_Reg->PI_CART_ADDR_REG <= 0x08010000)
+    if (g_Reg->PI_CART_ADDR_REG >= 0x08000000 && g_Reg->PI_CART_ADDR_REG <= 0x08088000)
     {
         if (g_System->m_SaveUsing == SaveChip_Auto)
         {

@@ -15,8 +15,6 @@
 #include <float.h>
 #include <math.h>
 
-#include <Project64-core\AppInit.h>
-
 #include "User Interface.h"
 #include <Project64-core\N64 System\N64 Types.h>
 
