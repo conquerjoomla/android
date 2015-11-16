@@ -11,14 +11,23 @@
 package emu.project64;
 
 import java.io.File;
+import java.util.List;
 
 import emu.project64.persistent.AppData;
+import emu.project64.task.ExtractAssetsTask;
+import emu.project64.task.ExtractAssetsTask.ExtractAssetsListener;
+import emu.project64.task.ExtractAssetsTask.Failure;
+import emu.project64.util.FileUtil;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager.LayoutParams;
 
-public class SplashActivity extends AppCompatActivity
+/**
+ * The main activity that presents the splash screen, extracts the assets if necessary, and launches
+ * the main menu activity.
+ */
+public class SplashActivity extends AppCompatActivity implements ExtractAssetsListener
 {
     /**
      * Asset version number, used to determine stale assets. Increment this number every time the
@@ -28,6 +37,15 @@ public class SplashActivity extends AppCompatActivity
     
     /** The minimum duration that the splash screen is shown, in milliseconds. */
     private static final int SPLASH_DELAY = 1000;
+    
+    /**
+     * The subdirectory within the assets directory to extract. A subdirectory is necessary to avoid
+     * extracting all the default system assets in addition to ours.
+     */
+    private static final String SOURCE_DIR = "project64_data";
+    
+    /** The running count of assets extracted. */
+    private int mAssetsExtracted;
     
     // App data and user preferences
     private AppData mAppData = null;
@@ -59,10 +77,24 @@ public class SplashActivity extends AppCompatActivity
         {        	
             if( !(new File( mAppData.coreSharedDataDir ) ).exists() || mAppData.getAssetVersion() != ASSET_VERSION )
             {
+                // Extract and merge the assets if they are out of date
+                FileUtil.deleteFolder( new File( mAppData.coreSharedDataDir ) );
+                mAssetsExtracted = 0;
+                new ExtractAssetsTask( getAssets(), SOURCE_DIR, mAppData.coreSharedDataDir, SplashActivity.this ).execute();
             }
             else
             {
             }
         }
     };
+    
+    @Override
+    public void onExtractAssetsProgress( String nextFileToExtract )
+    {
+    }
+    
+    @Override
+    public void onExtractAssetsFinished( List<Failure> failures )
+    {
+    }
 }
