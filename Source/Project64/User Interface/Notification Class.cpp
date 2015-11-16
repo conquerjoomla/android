@@ -8,9 +8,9 @@ CNotificationImp & Notify(void)
 }
 
 CNotificationImp::CNotificationImp() :
-    m_hWnd(NULL),
-    m_gfxPlugin(NULL),
-    m_NextMsg(0)
+m_hWnd(NULL),
+m_gfxPlugin(NULL),
+m_NextMsg(0)
 {
     _tzset();
 }
@@ -116,6 +116,22 @@ void CNotificationImp::DisplayMessage2(const wchar_t * Message) const
     if (!m_hWnd) { return; }
 
     m_hWnd->SetStatusText(1, Message);
+}
+
+bool CNotificationImp::AskYesNoQuestion(const wchar_t * Question) const
+{
+    if (this == NULL) { return false; }
+
+    WriteTrace(TraceError, stdstr().FromUTF16(Question).c_str());
+    WindowMode();
+
+    HWND Parent = NULL;
+    if (m_hWnd)
+    {
+        Parent = reinterpret_cast<HWND>(m_hWnd->GetWindowHandle());
+    }
+    int result = MessageBoxW(Parent, Question, GS(MSG_MSGBOX_TITLE), MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2 | MB_SETFOREGROUND);
+    return result == IDYES;
 }
 
 void CNotificationImp::SetGfxPlugin(CGfxPlugin * Plugin)

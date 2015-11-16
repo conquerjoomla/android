@@ -1,15 +1,6 @@
 #include "stdafx.h"
+#include <Project64-core\AppInit.h>
 #include "Multilanguage\LanguageSelector.h"
-
-const char * AppName(void)
-{
-    static stdstr Name;
-    if (Name.empty())
-    {
-        Name = stdstr_f("Project64 %s", VER_FILE_VERSION_STR);
-    }
-    return Name.c_str();
-}
 
 int WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR /*lpszArgs*/, int /*nWinMode*/)
 {

@@ -39,6 +39,10 @@ public:
     virtual void DisplayMessage(int DisplayTime, LanguageStringID StringID) const;
 
     virtual void DisplayMessage2(const wchar_t * Message) const;
+
+    // Ask a Yes/No Question to the user, yes = true, no = false
+    virtual bool AskYesNoQuestion(const wchar_t * Question) const;
+
     virtual void BreakPoint(const wchar_t * FileName, const int LineNumber);
 
     //Remember roms loaded and Rom Dir selected

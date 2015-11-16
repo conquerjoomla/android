@@ -1495,6 +1495,7 @@ bool CN64System::LoadState(const char * FileName)
             }
             if (!LoadedZipFile && Value == 0x23D8A6C8 && port == UNZ_OK)
             {
+#ifdef tofix
                 unzReadCurrentFile(file, &SaveRDRAMSize, sizeof(SaveRDRAMSize));
                 //Check header
 
@@ -1539,6 +1540,7 @@ bool CN64System::LoadState(const char * FileName)
                 unzCloseCurrentFile(file);
                 port = unzGoToFirstFile(file);
                 LoadedZipFile = true;
+#endif
                 continue;
             }
             if (LoadedZipFile && Value == 0x56D2CD23 && port == UNZ_OK)
@@ -1552,6 +1554,7 @@ bool CN64System::LoadState(const char * FileName)
     }
     if (!LoadedZipFile)
     {
+#ifdef tofix
         HANDLE hSaveFile = CreateFile(FileNameStr.c_str(), GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, NULL,
             OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS, NULL);
         if (hSaveFile == INVALID_HANDLE_VALUE)
@@ -1608,6 +1611,7 @@ bool CN64System::LoadState(const char * FileName)
         ReadFile(hSaveFile, m_MMU_VM.Dmem(), 0x1000, &dwRead, NULL);
         ReadFile(hSaveFile, m_MMU_VM.Imem(), 0x1000, &dwRead, NULL);
         CloseHandle(hSaveFile);
+#endif
     }
 
     //Fix losing audio in certain games with certain plugins
