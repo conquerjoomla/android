@@ -3,3 +3,4 @@ bin/
 gen/
 # Eclipse project files
 .settings/
+.classpath
