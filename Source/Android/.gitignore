@@ -1,0 +1,5 @@
+# Generated and temporary files
+bin/
+gen/
+# Eclipse project files
+.settings/
