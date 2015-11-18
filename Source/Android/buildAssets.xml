@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Create Assets" default="Create Assets" basedir="."> 
 	<target name="Create Assets">
-		<copy file="../../Config/Glide64.rdb" todir="./assets/"/>
-		<copy file="../../Config/Project64.cht" todir="./assets/"/>
-		<copy file="../../Config/Project64.rdb" todir="./assets/"/>
-		<copy file="../../Config/Project64.rdx" todir="./assets/"/>
-		<copy file="../../Config/RDB Info.txt" todir="./assets/"/>
+		<copy file="../../Config/Glide64.rdb" todir="./assets/project64_data/"/>
+		<copy file="../../Config/Project64.cht" todir="./assets/project64_data/"/>
+		<copy file="../../Config/Project64.rdb" todir="./assets/project64_data/"/>
+		<copy file="../../Config/Project64.rdx" todir="./assets/project64_data/"/>
+		<copy file="../../Config/RDB Info.txt" todir="./assets/project64_data/"/>
 	</target>
 </project>

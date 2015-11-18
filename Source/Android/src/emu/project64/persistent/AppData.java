@@ -75,9 +75,24 @@ public class AppData
         return getInt( KEY_ASSET_VERSION, DEFAULT_ASSET_VERSION );
     }
     
+    /**
+     * Persists the asset version.
+     * 
+     * @param value The asset version.
+     */
+    public void putAssetVersion( int value )
+    {
+        putInt( KEY_ASSET_VERSION, value );
+    }
+    
     private int getInt( String key, int defaultValue )
     {
         return mPreferences.getInt( key, defaultValue );
+    }
+    
+    private void putInt( String key, int value )
+    {
+        mPreferences.edit().putInt( key, value ).commit();
     }
     
 }

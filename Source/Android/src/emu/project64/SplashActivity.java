@@ -21,7 +21,9 @@ import emu.project64.util.FileUtil;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.view.WindowManager.LayoutParams;
+import android.widget.TextView;
 
 /**
  * The main activity that presents the splash screen, extracts the assets if necessary, and launches
@@ -35,6 +37,9 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
      */
     private static final int ASSET_VERSION = 1;
     
+    /** The total number of assets to be extracted (for computing progress %). */
+    private static final int TOTAL_ASSETS = 120;
+    
     /** The minimum duration that the splash screen is shown, in milliseconds. */
     private static final int SPLASH_DELAY = 1000;
     
@@ -43,6 +48,9 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
      * extracting all the default system assets in addition to ours.
      */
     private static final String SOURCE_DIR = "project64_data";
+    
+    /** The text view that displays extraction progress info. */
+    private TextView mTextView;
     
     /** The running count of assets extracted. */
     private int mAssetsExtracted;
@@ -62,6 +70,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         
         // Lay out the content
         setContentView( R.layout.splash_activity );
+        mTextView = (TextView) findViewById( R.id.mainText );
         
         // Extract the assets in a separate thread and launch the menu activity
         // Handler.postDelayed ensures this runs only after activity has resumed
@@ -84,6 +93,11 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
             }
             else
             {
+                // Assets already extracted, just launch gallery activity, passing ROM path if it was provided externally
+                ActivityHelper.startGalleryActivity( SplashActivity.this, getIntent().getData() );
+                
+                // We never want to come back to this activity, so finish it
+                finish();
             }
         }
     };
@@ -91,10 +105,38 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     @Override
     public void onExtractAssetsProgress( String nextFileToExtract )
     {
+        final float percent = ( 100f * mAssetsExtracted ) / (float) TOTAL_ASSETS;
+        final String text = getString( R.string.assetExtractor_progress, percent, nextFileToExtract );
+        mTextView.setText( text );
+        mAssetsExtracted++;
     }
     
     @Override
     public void onExtractAssetsFinished( List<Failure> failures )
     {
+        if( failures.size() == 0 )
+        {
+            // Extraction succeeded, record new asset version and merge cheats
+            mTextView.setText( R.string.assetExtractor_finished );
+            mAppData.putAssetVersion( ASSET_VERSION );
+            // Launch gallery activity, passing ROM path if it was provided externally
+            ActivityHelper.startGalleryActivity( this, getIntent().getData() );
+            
+            // We never want to come back to this activity, so finish it
+            finish();
+        }
+        else
+        {
+            // Extraction failed, update the on-screen text and don't start next activity
+            String weblink = getResources().getString( R.string.assetExtractor_uriHelp );
+            String message = getString( R.string.assetExtractor_failed, weblink );
+            String textHtml = message.replace( "\n", "<br/>" ) + "<p><small>";
+            for( Failure failure : failures )
+            {
+                textHtml += failure.toString() + "<br/>";
+            }
+            textHtml += "</small>";
+            mTextView.setText( Html.fromHtml( textHtml ) );
+        }
     }
 }
