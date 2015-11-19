@@ -11,7 +11,14 @@
 package emu.project64;
 
 
+import android.content.Context;
+
 public class GalleryItem
 {
     public final boolean isHeading;
+    
+    public GalleryItem( Context context, String headingName )
+    {
+        this.isHeading = true;
+    }
 }

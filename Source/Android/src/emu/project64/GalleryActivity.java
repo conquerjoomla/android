@@ -20,12 +20,17 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 
 public class GalleryActivity extends AppCompatActivity
 {
     // Widgets
     private RecyclerView mGridView;
+    public int galleryWidth;
+    public int galleryMaxWidth;
+    public int galleryHalfSpacing;
     public int galleryColumns = 2;
+    public float galleryAspectRatio;
     @Override
     protected void onNewIntent( Intent intent )
     {
@@ -69,9 +74,7 @@ public class GalleryActivity extends AppCompatActivity
         galleryWidth = width / galleryColumns - galleryHalfSpacing * 2;
         
         GridLayoutManager layoutManager = (GridLayoutManager) mGridView.getLayoutManager();
-        layoutManager.setSpanCount( galleryColumns );
-        mGridView.getAdapter().notifyDataSetChanged();
-        
+        layoutManager.setSpanCount( galleryColumns );        
     }
     
     void refreshGrid( ){
