@@ -10,14 +10,22 @@
 ****************************************************************************/
 package emu.project64;
 
+import java.util.ArrayList;
+import java.util.List;
 
 import emu.project64.R;
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 public class GalleryActivity extends AppCompatActivity
 {
+    // Widgets
+    private RecyclerView mGridView;
+    public int galleryColumns = 2;
     @Override
     protected void onNewIntent( Intent intent )
     {
@@ -43,5 +51,53 @@ public class GalleryActivity extends AppCompatActivity
         
         // Lay out the content
         setContentView( R.layout.gallery_activity );
+        mGridView = (RecyclerView) findViewById( R.id.gridview );
+        refreshGrid();
+        
+        // Update the grid layout
+        galleryMaxWidth = (int) getResources().getDimension( R.dimen.galleryImageWidth );
+        galleryHalfSpacing = (int) getResources().getDimension( R.dimen.galleryHalfSpacing );
+        galleryAspectRatio = galleryMaxWidth * 1.0f
+                / getResources().getDimension( R.dimen.galleryImageHeight );
+        
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics( metrics );
+        
+        int width = metrics.widthPixels - galleryHalfSpacing * 2;
+        galleryColumns = (int) Math
+                .ceil( width * 1.0 / ( galleryMaxWidth + galleryHalfSpacing * 2 ) );
+        galleryWidth = width / galleryColumns - galleryHalfSpacing * 2;
+        
+        GridLayoutManager layoutManager = (GridLayoutManager) mGridView.getLayoutManager();
+        layoutManager.setSpanCount( galleryColumns );
+        mGridView.getAdapter().notifyDataSetChanged();
+        
+    }
+    
+    void refreshGrid( ){
+        
+        List<GalleryItem> items = new ArrayList<GalleryItem>();
+        final List<GalleryItem> finalItems = items;
+        GridLayoutManager layoutManager = new GridLayoutManager( this, galleryColumns );
+        layoutManager.setSpanSizeLookup( new GridLayoutManager.SpanSizeLookup()
+        {
+            @Override
+            public int getSpanSize( int position )
+            {
+                // Headings will take up every span (column) in the grid
+                if( finalItems.get( position ).isHeading )
+                    return galleryColumns;
+                
+                // Games will fit in a single column
+                return 1;
+            }
+        } );
+        
+        mGridView.setLayoutManager( layoutManager );
+    }
+    
+    @TargetApi( 11 )
+    private void refreshViews()
+    {
     }
 }
