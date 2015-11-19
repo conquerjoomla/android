@@ -22,10 +22,11 @@
         android:hardwareAccelerated="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/appTheme" >
         <activity
             android:name="emu.project64.SplashActivity"
-            android:label="@string/SplashActivity_title" >
+            android:label="@string/SplashActivity_title"
+            android:theme="@style/Theme.AppCompat.Black" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
@@ -37,7 +38,8 @@
             android:name="emu.project64.GalleryActivity"
             android:exported="false"
             android:label="@string/GalleryActivity_title"
-            android:launchMode="singleTask" >
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.AppCompat.NoActionBar" >
         </activity>
     </application>
 

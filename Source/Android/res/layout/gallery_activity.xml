@@ -34,4 +34,25 @@
     </LinearLayout>
 
     <!-- navigation drawer -->
+
+    <RelativeLayout
+        android:layout_width="280dip"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true" >
+
+        <emu.project64.MenuListView
+            android:id="@+id/drawerNavigation"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="20dip" />
+
+        <emu.project64.GameSidebar
+            android:id="@+id/gameSidebar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+    </RelativeLayout>
+
 </android.support.v4.widget.DrawerLayout>

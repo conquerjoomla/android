@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 
 public class GalleryActivity extends AppCompatActivity
@@ -74,7 +75,11 @@ public class GalleryActivity extends AppCompatActivity
         galleryWidth = width / galleryColumns - galleryHalfSpacing * 2;
         
         GridLayoutManager layoutManager = (GridLayoutManager) mGridView.getLayoutManager();
-        layoutManager.setSpanCount( galleryColumns );        
+        layoutManager.setSpanCount( galleryColumns );
+        // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
+        Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar );
+        toolbar.setTitle( R.string.app_name );
+        setSupportActionBar( toolbar );
     }
     
     void refreshGrid( ){
