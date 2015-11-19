@@ -33,6 +33,12 @@
                 <category android:name="tv.ouya.intent.category.GAME" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="emu.project64.GalleryActivity"
+            android:exported="false"
+            android:label="@string/GalleryActivity_title"
+            android:launchMode="singleTask" >
+        </activity>
     </application>
 
 </manifest>

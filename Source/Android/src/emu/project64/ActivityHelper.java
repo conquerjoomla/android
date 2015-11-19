@@ -11,6 +11,7 @@
 package emu.project64;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 
 /**
@@ -20,5 +21,12 @@ public class ActivityHelper
 {
     public static void startGalleryActivity( Context context, Uri romPath )
     {
+        startGalleryActivity( context, romPath == null ? null : romPath.getPath() );
+    }
+    
+    public static void startGalleryActivity( Context context, String romPath )
+    {
+        Intent intent = new Intent( context, GalleryActivity.class );
+        context.startActivity( intent );
     }
 }
