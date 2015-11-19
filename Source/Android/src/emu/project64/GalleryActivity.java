@@ -27,6 +27,7 @@ public class GalleryActivity extends AppCompatActivity
 {
     // Widgets
     private RecyclerView mGridView;
+    private MenuListView mDrawerList;
     public int galleryWidth;
     public int galleryMaxWidth;
     public int galleryHalfSpacing;
@@ -54,7 +55,6 @@ public class GalleryActivity extends AppCompatActivity
     {
         super.onCreate( savedInstanceState );
         
-        
         // Lay out the content
         setContentView( R.layout.gallery_activity );
         mGridView = (RecyclerView) findViewById( R.id.gridview );
@@ -80,6 +80,9 @@ public class GalleryActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar );
         toolbar.setTitle( R.string.app_name );
         setSupportActionBar( toolbar );
+        // Configure the list in the navigation drawer
+        mDrawerList = (MenuListView) findViewById( R.id.drawerNavigation );
+        mDrawerList.setMenuResource( R.menu.gallery_drawer );
     }
     
     void refreshGrid( ){
