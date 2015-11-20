@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Menu Activity -->
+    <string name="menuItem_search">Search</string>
+    <string name="menuItem_refreshRoms">Refresh ROMs</string>
     <string name="menuItem_settings">Settings</string>
     <string name="menuItem_about">About</string>
     <string name="menuItem_appVersion">App version</string>

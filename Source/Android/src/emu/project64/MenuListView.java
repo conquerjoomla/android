@@ -120,6 +120,16 @@ public class MenuListView extends ExpandableListView
         mAdapter.notifyDataSetChanged();
     }
     
+    public void setOnClickListener( OnClickListener listener )
+    {
+        mListener = listener;
+    }
+    
+    public OnClickListener getOnClickListener()
+    {
+        return mListener;
+    }
+    
     public static class MenuListAdapter extends BaseExpandableListAdapter
     {
         private MenuListView mListView;

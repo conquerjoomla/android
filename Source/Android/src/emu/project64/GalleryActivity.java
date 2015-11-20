@@ -17,16 +17,23 @@ import emu.project64.R;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 
 public class GalleryActivity extends AppCompatActivity
 {
     // Widgets
     private RecyclerView mGridView;
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
     private MenuListView mDrawerList;
     public int galleryWidth;
     public int galleryMaxWidth;
@@ -80,9 +87,48 @@ public class GalleryActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar );
         toolbar.setTitle( R.string.app_name );
         setSupportActionBar( toolbar );
+        
+        // Configure the navigation drawer
+        mDrawerLayout = (DrawerLayout) findViewById( R.id.drawerLayout );
+        mDrawerToggle = new ActionBarDrawerToggle( this, mDrawerLayout, toolbar, 0, 0 )
+        {
+            @Override
+            public void onDrawerStateChanged( int newState )
+            {
+            }
+            
+            @Override
+            public void onDrawerClosed( View drawerView )
+            {
+            }
+            
+            @Override
+            public void onDrawerOpened( View drawerView )
+            {
+            }
+        };
+        mDrawerLayout.setDrawerListener( mDrawerToggle );
+        
         // Configure the list in the navigation drawer
         mDrawerList = (MenuListView) findViewById( R.id.drawerNavigation );
         mDrawerList.setMenuResource( R.menu.gallery_drawer );
+        // Handle menu item selections
+        mDrawerList.setOnClickListener( new MenuListView.OnClickListener()
+        {
+            @Override
+            public void onClick( MenuItem menuItem )
+            {
+            }
+        } );
+        
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu( Menu menu )
+    {
+        getMenuInflater().inflate( R.menu.gallery_activity, menu );
+        
+        return super.onCreateOptionsMenu( menu );
     }
     
     void refreshGrid( ){
