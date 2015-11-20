@@ -118,6 +118,7 @@ public class GalleryActivity extends AppCompatActivity
             @Override
             public void onClick( MenuItem menuItem )
             {
+                GalleryActivity.this.onOptionsItemSelected( menuItem );
             }
         } );
         
@@ -129,6 +130,19 @@ public class GalleryActivity extends AppCompatActivity
         getMenuInflater().inflate( R.menu.gallery_activity, menu );
         
         return super.onCreateOptionsMenu( menu );
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected( MenuItem item )
+    {
+        switch( item.getItemId() )
+        {
+            case R.id.menuItem_refreshRoms:
+                ActivityHelper.StartRomScanService(this);
+                return true;
+            default:
+                return super.onOptionsItemSelected( item );
+        }
     }
     
     void refreshGrid( ){

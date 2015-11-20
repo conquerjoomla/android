@@ -41,6 +41,12 @@
             android:launchMode="singleTask"
             android:theme="@style/Theme.AppCompat.NoActionBar" >
         </activity>
+        <activity
+            android:name="emu.project64.ScanRomsActivity"
+            android:exported="false"
+            android:label="@string/ScanRomsActivity_title"
+            android:theme="@style/Theme.AppCompat" >
+        </activity>
     </application>
 
 </manifest>

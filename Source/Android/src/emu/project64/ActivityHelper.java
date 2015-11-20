@@ -10,6 +10,7 @@
 ****************************************************************************/
 package emu.project64;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -19,6 +20,8 @@ import android.net.Uri;
  */
 public class ActivityHelper
 {
+    public static final int SCAN_ROM_REQUEST_CODE = 1;
+    
     public static void startGalleryActivity( Context context, Uri romPath )
     {
         startGalleryActivity( context, romPath == null ? null : romPath.getPath() );
@@ -28,5 +31,11 @@ public class ActivityHelper
     {
         Intent intent = new Intent( context, GalleryActivity.class );
         context.startActivity( intent );
+    }
+    
+    public static void StartRomScanService(Activity activity)
+    {
+        Intent intent = new Intent(activity, ScanRomsActivity.class);
+        activity.startActivityForResult( intent, SCAN_ROM_REQUEST_CODE );
     }
 }
