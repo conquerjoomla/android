@@ -8,4 +8,9 @@
         <item name="android:colorBackground">@android:color/black</item>
     </style>
     
+    <style name="Theme.AppCompat.Splash">
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:colorBackground">@android:color/white</item>
+    </style>
+
 </resources>
