@@ -10,13 +10,17 @@
 ****************************************************************************/
 package emu.project64;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import emu.project64.R;
+import emu.project64.persistent.AppData;
+import emu.project64.persistent.GlobalPrefs;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +34,10 @@ import android.view.View;
 
 public class GalleryActivity extends AppCompatActivity
 {
+    // App data and user preferences
+    private AppData mAppData = null;
+    private GlobalPrefs mGlobalPrefs = null;
+    
     // Widgets
     private RecyclerView mGridView;
     private DrawerLayout mDrawerLayout;
@@ -40,6 +48,8 @@ public class GalleryActivity extends AppCompatActivity
     public int galleryHalfSpacing;
     public int galleryColumns = 2;
     public float galleryAspectRatio;
+    private CacheRomInfoFragment mCacheRomInfoFragment = null;
+    
     @Override
     protected void onNewIntent( Intent intent )
     {
@@ -61,6 +71,12 @@ public class GalleryActivity extends AppCompatActivity
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
+        
+        // Get app data and user preferences
+        mAppData = new AppData( this );
+        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs.enforceLocale( this );
+        
         
         // Lay out the content
         setContentView( R.layout.gallery_activity );
@@ -122,6 +138,15 @@ public class GalleryActivity extends AppCompatActivity
             }
         } );
         
+        // find the retained fragment on activity restarts
+        FragmentManager fm = getSupportFragmentManager();
+        mCacheRomInfoFragment = (CacheRomInfoFragment) fm.findFragmentByTag(STATE_CACHE_ROM_INFO_FRAGMENT);
+        
+        if(mCacheRomInfoFragment == null)
+        {
+            mCacheRomInfoFragment = new CacheRomInfoFragment();
+            fm.beginTransaction().add(mCacheRomInfoFragment, STATE_CACHE_ROM_INFO_FRAGMENT).commit();
+        }
     }
     
     @Override
@@ -145,6 +170,33 @@ public class GalleryActivity extends AppCompatActivity
         }
     }
     
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        // Check which request we're responding to
+        if (requestCode == ActivityHelper.SCAN_ROM_REQUEST_CODE)
+        {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK && data != null)
+            {
+                Bundle extras = data.getExtras();
+                String searchPath = extras.getString( ActivityHelper.Keys.SEARCH_PATH );
+                boolean clearGallery = extras.getBoolean( ActivityHelper.Keys.CLEAR_GALLERY );
+                
+                if (searchPath != null)
+                {
+                    refreshRoms(new File(searchPath), clearGallery);
+                }
+            }
+        }
+    }
+    
+    private void refreshRoms( final File startDir, boolean clearGallery )
+    {
+        mCacheRomInfoFragment.refreshRoms(startDir,  clearGallery, mAppData, mGlobalPrefs);
+    }
+
     void refreshGrid( ){
         
         List<GalleryItem> items = new ArrayList<GalleryItem>();

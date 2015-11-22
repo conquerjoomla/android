@@ -10,6 +10,6 @@
 ****************************************************************************/
 package emu.project64.persistent;
 
-public class AppData
+public class GlobalPrefs
 {
 }

@@ -23,6 +23,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+/**
+ * A utility class that generates dialogs to prompt the user for information.
+ */
 public final class Prompt
 {
     /**

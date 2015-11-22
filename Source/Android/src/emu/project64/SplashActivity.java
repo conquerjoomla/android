@@ -65,6 +65,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         
         // Get app data and user preferences
         mAppData = new AppData( this );
+        
         // Don't let the activity sleep in the middle of extraction
         getWindow().setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
         
