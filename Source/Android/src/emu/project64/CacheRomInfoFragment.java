@@ -10,7 +10,11 @@
 ****************************************************************************/
 package emu.project64;
 
+import java.io.File;
 
+import emu.project64.dialog.ProgressDialog;
+import emu.project64.persistent.AppData;
+import emu.project64.persistent.GlobalPrefs;
 import emu.project64.task.CacheRomInfoService.CacheRomInfoListener;
 import android.support.v4.app.Fragment;
 
@@ -34,4 +38,9 @@ public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListen
     {
         return mProgress;
     }
+    
+    public void refreshRoms( File startDir, boolean clearGallery, AppData appData, GlobalPrefs globalPrefs )
+    {
+    }
+    
 }

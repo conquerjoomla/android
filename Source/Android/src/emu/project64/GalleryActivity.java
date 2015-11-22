@@ -34,6 +34,9 @@ import android.view.View;
 
 public class GalleryActivity extends AppCompatActivity
 {
+    // Saved instance states
+    public static final String STATE_CACHE_ROM_INFO_FRAGMENT= "cache_rom_info_fragment";
+    
     // App data and user preferences
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
