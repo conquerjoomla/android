@@ -202,7 +202,131 @@ public class GalleryActivity extends AppCompatActivity
 
     void refreshGrid( ){
         
+        ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
+        
+        String query = mSearchQuery.toLowerCase( Locale.US );
+        String[] searches = null;
+        if( query.length() > 0 )
+            searches = query.split( " " );
+        
         List<GalleryItem> items = new ArrayList<GalleryItem>();
+        List<GalleryItem> recentItems = null;
+        int currentTime = 0;
+        if( mGlobalPrefs.isRecentShown )
+        {
+            recentItems = new ArrayList<GalleryItem>();
+            currentTime = (int) ( new Date().getTime() / 1000 );
+        }
+        
+        for( String md5 : config.keySet() )
+        {
+            if( !ConfigFile.SECTIONLESS_NAME.equals( md5 ) )
+            {
+                ConfigSection section = config.get( md5 );
+                String goodName;
+                if( mGlobalPrefs.isFullNameShown || !section.keySet().contains( "baseName" ) )
+                    goodName = section.get( "goodName" );
+                else
+                    goodName = section.get( "baseName" );
+                
+                boolean matchesSearch = true;
+                if( searches != null && searches.length > 0 )
+                {
+                    // Make sure the ROM name contains every token in the query
+                    String lowerName = goodName.toLowerCase( Locale.US );
+                    for( String search : searches )
+                    {
+                        if( search.length() > 0 && !lowerName.contains( search ) )
+                        {
+                            matchesSearch = false;
+                            break;
+                        }
+                    }
+                }
+                
+                if( matchesSearch )
+                {
+                    String romPath = config.get( md5, "romPath" );
+                    String crc = config.get( md5, "crc" );
+                    String headerName = config.get( md5, "headerName" );
+                    String countryCodeString = config.get( md5, "countryCode" );
+                    byte countryCode = 0;
+                    
+                    if(countryCodeString != null)
+                    {
+                        countryCode = Byte.parseByte(countryCodeString);
+                    }
+                    String lastPlayedStr = config.get( md5, "lastPlayed" );
+                    String extracted = config.get( md5, "extracted" );
+                    
+                    if(zipPath == null || crc == null || headerName == null || countryCodeString == null || extracted == null)
+                    {
+                        File file = new File(romPath);
+                        RomHeader header = new RomHeader(file);
+                        
+                        zipPath = "";
+                        crc = header.crc;
+                        headerName = header.name;
+                        countryCode = header.countryCode;
+                        extracted = "false";
+                        
+                        config.put( md5, "zipPath", zipPath );
+                        config.put( md5, "crc", crc );
+                        config.put( md5, "headerName", headerName );
+                        config.put( md5, "countryCode", Byte.toString(countryCode) );
+                        config.put( md5, "extracted", extracted );
+                    }
+                    
+                    int lastPlayed = 0;
+                    if( lastPlayedStr != null )
+                        lastPlayed = Integer.parseInt( lastPlayedStr );
+                    
+                    GalleryItem item = new GalleryItem( this, md5, crc, headerName, countryCode,
+                            goodName, romPath, zipPath, extracted.equals("true"), artPath, lastPlayed );
+                    items.add( item );
+                    if( mGlobalPrefs.isRecentShown
+                            && currentTime - item.lastPlayed <= 60 * 60 * 24 * 7 ) // 7 days
+                    {
+                        recentItems.add( item );
+                    }
+                    //Delete any old files that already exist inside a zip file
+                    else if(!zipPath.equals("") && extracted.equals("true"))
+                    {
+                        File deleteFile = new File(romPath);
+                        deleteFile.delete();
+                        
+                        config.put( md5, "extracted", "false" );
+                    }
+
+                }
+            }
+        }
+        
+        config.save();
+
+        Collections.sort( items, new GalleryItem.NameComparator() );
+        if( recentItems != null )
+            Collections.sort( recentItems, new GalleryItem.RecentlyPlayedComparator() );
+        
+        List<GalleryItem> combinedItems = items;
+        if( mGlobalPrefs.isRecentShown && recentItems.size() > 0 )
+        {
+            combinedItems = new ArrayList<GalleryItem>();
+            
+            combinedItems
+                    .add( new GalleryItem( this, getString( R.string.galleryRecentlyPlayed ) ) );
+            combinedItems.addAll( recentItems );
+            
+            combinedItems.add( new GalleryItem( this, getString( R.string.galleryLibrary ) ) );
+            combinedItems.addAll( items );
+            
+            items = combinedItems;
+        }
+        
+        mGalleryItems = items;
+        mGridView.setAdapter( new GalleryItem.Adapter( this, items ) );
+        
+        // Allow the headings to take up the entire width of the layout
         final List<GalleryItem> finalItems = items;
         GridLayoutManager layoutManager = new GridLayoutManager( this, galleryColumns );
         layoutManager.setSpanSizeLookup( new GridLayoutManager.SpanSizeLookup()
@@ -222,8 +346,18 @@ public class GalleryActivity extends AppCompatActivity
         mGridView.setLayoutManager( layoutManager );
     }
     
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        refreshViews();
+    }
+    
     @TargetApi( 11 )
     private void refreshViews()
     {
+        
+        // Refresh the gallery
+        refreshGrid();
     }
 }
