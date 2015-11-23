@@ -20,11 +20,11 @@ import emu.project64.task.CacheRomInfoService.CacheRomInfoListener;
 import emu.project64.task.CacheRomInfoService.LocalBinder;
 import android.app.Activity;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 
 public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListener
 {    

@@ -46,6 +46,7 @@ public class CacheRomInfoService extends Service
     private int mStartId;
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
+    
     private final IBinder mBinder = new LocalBinder();
     private CacheRomInfoListener mListener = null;
 

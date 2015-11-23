@@ -47,6 +47,7 @@
             android:label="@string/ScanRomsActivity_title"
             android:theme="@style/Theme.AppCompat" >
         </activity>
+        <service android:name="emu.project64.task.CacheRomInfoService" />
     </application>
 
 </manifest>
