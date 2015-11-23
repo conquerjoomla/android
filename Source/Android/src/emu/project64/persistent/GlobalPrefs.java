@@ -22,6 +22,15 @@ import android.text.TextUtils;
 
 public class GlobalPrefs
 {
+    /** The parent directory containing all user-writable data files. */
+    public final String userDataDir;
+    
+    /** The subdirectory containing gallery data cache. */
+    public final String galleryCacheDir;
+    
+    /** The path of the rom info cache for the gallery. */
+    public final String romInfoCache_cfg;
+    
     private static final String KEY_LOCALE_OVERRIDE = "localeOverride";
     public static final String DEFAULT_LOCALE_OVERRIDE = "";
     private final SharedPreferences mPreferences;
@@ -42,6 +51,11 @@ public class GlobalPrefs
         // Locale
         mLocaleCode = mPreferences.getString( KEY_LOCALE_OVERRIDE, DEFAULT_LOCALE_OVERRIDE );
         mLocale = TextUtils.isEmpty( mLocaleCode ) ? Locale.getDefault() : createLocale( mLocaleCode );
+        
+        // Files
+        userDataDir = mPreferences.getString( "pathGameSaves", "" );
+        galleryCacheDir = userDataDir + "/GalleryCache";
+        romInfoCache_cfg = galleryCacheDir + "/romInfoCache.cfg";
     }
     
     public void enforceLocale( Activity activity )

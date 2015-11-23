@@ -10,11 +10,14 @@
 ****************************************************************************/
 package emu.project64;
 
+import emu.project64.task.CacheRomInfoService;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 /**
  * Utility class that encapsulates and standardizes interactions between activities.
@@ -33,6 +36,7 @@ public class ActivityHelper
         //@formatter:off
         public static final String ROM_PATH             = NAMESPACE + "ROM_PATH";
         public static final String SEARCH_PATH          = NAMESPACE + "GALLERY_SEARCH_PATH";
+        public static final String CONFIG_PATH          = NAMESPACE + "GALLERY_CONFIG_PATH";
         public static final String CLEAR_GALLERY        = NAMESPACE + "GALLERY_CLEAR_GALLERY";
         //@formatter:on
     }
@@ -52,6 +56,29 @@ public class ActivityHelper
             intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
         }
         context.startActivity( intent );
+    }
+    
+    public static void startCacheRomInfoService(Context context, ServiceConnection serviceConnection,
+        String searchPath, String configPath, boolean clearGallery)
+    {
+        Log.i( "startCacheRomInfoService", "starting" );
+        Intent intent = new Intent(context, CacheRomInfoService.class);
+        intent.putExtra(ActivityHelper.Keys.SEARCH_PATH, searchPath);
+        intent.putExtra(ActivityHelper.Keys.CONFIG_PATH, configPath);
+        intent.putExtra(ActivityHelper.Keys.CLEAR_GALLERY, clearGallery);
+
+        Log.i( "startCacheRomInfoService", "calling context.startService(intent)" );
+        context.startService(intent);
+        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        Log.i( "startCacheRomInfoService", "done" );
+    }
+    
+    public static void stopCacheRomInfoService(Context context, ServiceConnection serviceConnection)
+    {
+        Intent intent = new Intent(context, CacheRomInfoService.class);
+        
+        context.unbindService(serviceConnection);
+        context.stopService(intent);
     }
     
     public static void StartRomScanService(Activity activity)
