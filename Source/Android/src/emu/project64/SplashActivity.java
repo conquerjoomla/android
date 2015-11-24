@@ -13,13 +13,17 @@ package emu.project64;
 import java.io.File;
 import java.util.List;
 
+import emu.project64.R;
+
 import emu.project64.persistent.AppData;
+import emu.project64.persistent.GlobalPrefs;
 import emu.project64.task.ExtractAssetsTask;
 import emu.project64.task.ExtractAssetsTask.ExtractAssetsListener;
 import emu.project64.task.ExtractAssetsTask.Failure;
 import emu.project64.util.FileUtil;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.WindowManager.LayoutParams;
@@ -57,6 +61,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     
     // App data and user preferences
     private AppData mAppData = null;
+    private GlobalPrefs mGlobalPrefs = null;
     
     @Override
     public void onCreate( Bundle savedInstanceState )
@@ -65,7 +70,15 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         
         // Get app data and user preferences
         mAppData = new AppData( this );
+        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs.enforceLocale( this );
         
+        // Ensure that any missing preferences are populated with defaults (e.g. preference added to
+        // new release)
+        PreferenceManager.setDefaultValues( this, R.xml.preferences_global, false );
+        
+        // Refresh the preference data wrapper
+        mGlobalPrefs = new GlobalPrefs( this );
         // Don't let the activity sleep in the middle of extraction
         getWindow().setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
         
