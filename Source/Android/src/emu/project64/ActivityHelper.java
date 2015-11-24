@@ -10,6 +10,8 @@
 ****************************************************************************/
 package emu.project64;
 
+import emu.project64.game.GameActivity;
+import emu.project64.game.GameActivityXperiaPlay;
 import emu.project64.task.CacheRomInfoService;
 import android.app.Activity;
 import android.content.Context;
@@ -35,6 +37,11 @@ public class ActivityHelper
         private static final String NAMESPACE = Keys.class.getCanonicalName() + ".";
         //@formatter:off
         public static final String ROM_PATH             = NAMESPACE + "ROM_PATH";
+        public static final String ROM_MD5              = NAMESPACE + "ROM_MD5";
+        public static final String ROM_CRC              = NAMESPACE + "ROM_CRC";
+        public static final String ROM_HEADER_NAME      = NAMESPACE + "ROM_HEADER_NAME";
+        public static final String ROM_COUNTRY_CODE     = NAMESPACE + "ROM_COUNTRY_CODE";
+        public static final String DO_RESTART           = NAMESPACE + "DO_RESTART";
         public static final String SEARCH_PATH          = NAMESPACE + "GALLERY_SEARCH_PATH";
         public static final String CONFIG_PATH          = NAMESPACE + "GALLERY_CONFIG_PATH";
         public static final String CLEAR_GALLERY        = NAMESPACE + "GALLERY_CLEAR_GALLERY";
@@ -61,6 +68,16 @@ public class ActivityHelper
     public static void startGameActivity( Context context, String romPath, String romMd5, String romCrc,
             String romHeaderName, byte romCountryCode, boolean doRestart, boolean isXperiaPlay )
     {
+        Intent intent = isXperiaPlay
+                ? new Intent( context, GameActivityXperiaPlay.class )
+                : new Intent( context, GameActivity.class );
+        intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
+        intent.putExtra( ActivityHelper.Keys.ROM_MD5, romMd5 );
+        intent.putExtra( ActivityHelper.Keys.ROM_CRC, romCrc );
+        intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, romHeaderName );
+        intent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, romCountryCode );
+        intent.putExtra( ActivityHelper.Keys.DO_RESTART, doRestart );
+        context.startActivity( intent );
     }
     
     public static void startCacheRomInfoService(Context context, ServiceConnection serviceConnection,
