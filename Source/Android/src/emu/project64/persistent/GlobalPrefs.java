@@ -19,6 +19,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 public class GlobalPrefs
 {
@@ -31,6 +32,11 @@ public class GlobalPrefs
     /** The path of the rom info cache for the gallery. */
     public final String romInfoCache_cfg;
     
+    /** True if the recently played section of the gallery should be shown. */
+    public final boolean isRecentShown;
+    
+    /** True if the full ROM rip info should be shown. */
+    public final boolean isFullNameShown;
     private static final String KEY_LOCALE_OVERRIDE = "localeOverride";
     public static final String DEFAULT_LOCALE_OVERRIDE = "";
     private final SharedPreferences mPreferences;
@@ -54,8 +60,13 @@ public class GlobalPrefs
         
         // Files
         userDataDir = mPreferences.getString( "pathGameSaves", "" );
+        Log.i( "GlobalPrefs", "userDataDir = " + userDataDir );
         galleryCacheDir = userDataDir + "/GalleryCache";
         romInfoCache_cfg = galleryCacheDir + "/romInfoCache.cfg";
+        
+        // Library prefs
+        isRecentShown = mPreferences.getBoolean( "showRecentlyPlayed", true );
+        isFullNameShown = mPreferences.getBoolean( "showFullNames", true );
     }
     
     public void enforceLocale( Activity activity )

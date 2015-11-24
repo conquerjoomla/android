@@ -17,7 +17,14 @@
     <string name="toast_canceling">Canceling…</string>
     <string name="toast_pleaseWait">Please wait…</string>
     <string name="categoryLibrary_title">Library</string>
+    <string name="categoryData_title">Data</string>
 
+    <!-- Gallery sections -->
+    <string name="galleryRecentlyPlayed">Recently played</string>
+    <string name="galleryLibrary">Library</string>
+
+    <string name="pathGameSaves_title">Game save folder</string>
+    <string name="pathGameSaves_default">!project64</string>
     <!-- Asset Extractor -->
     <string name="assetExtractor_initializing">Initializing</string>
     <string name="assetExtractor_progress">%1$.0f%% done: %2$s</string>

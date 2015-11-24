@@ -12,12 +12,19 @@ package emu.project64;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import emu.project64.R;
 import emu.project64.persistent.AppData;
+import emu.project64.persistent.ConfigFile;
+import emu.project64.persistent.ConfigFile.ConfigSection;
 import emu.project64.persistent.GlobalPrefs;
+import emu.project64.util.RomHeader;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -46,11 +53,19 @@ public class GalleryActivity extends AppCompatActivity
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private MenuListView mDrawerList;
+
+    // Searching
+    private String mSearchQuery = "";
+    
+    // Resizable gallery thumbnails
     public int galleryWidth;
     public int galleryMaxWidth;
     public int galleryHalfSpacing;
     public int galleryColumns = 2;
     public float galleryAspectRatio;
+    
+    // Misc.
+    private List<GalleryItem> mGalleryItems = null;
     private CacheRomInfoFragment mCacheRomInfoFragment = null;
     
     @Override
@@ -173,6 +188,14 @@ public class GalleryActivity extends AppCompatActivity
         }
     }
     
+    public void onGalleryItemClick( GalleryItem item )
+    {
+    }
+    
+    public boolean onGalleryItemLongClick( GalleryItem item )
+    {
+        return true;
+    }
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -259,18 +282,16 @@ public class GalleryActivity extends AppCompatActivity
                     String lastPlayedStr = config.get( md5, "lastPlayed" );
                     String extracted = config.get( md5, "extracted" );
                     
-                    if(zipPath == null || crc == null || headerName == null || countryCodeString == null || extracted == null)
+                    if(crc == null || headerName == null || countryCodeString == null || extracted == null)
                     {
                         File file = new File(romPath);
                         RomHeader header = new RomHeader(file);
                         
-                        zipPath = "";
                         crc = header.crc;
                         headerName = header.name;
                         countryCode = header.countryCode;
                         extracted = "false";
                         
-                        config.put( md5, "zipPath", zipPath );
                         config.put( md5, "crc", crc );
                         config.put( md5, "headerName", headerName );
                         config.put( md5, "countryCode", Byte.toString(countryCode) );
@@ -279,25 +300,18 @@ public class GalleryActivity extends AppCompatActivity
                     
                     int lastPlayed = 0;
                     if( lastPlayedStr != null )
+                    {
                         lastPlayed = Integer.parseInt( lastPlayedStr );
+                    }
                     
-                    GalleryItem item = new GalleryItem( this, md5, crc, headerName, countryCode,
-                            goodName, romPath, zipPath, extracted.equals("true"), artPath, lastPlayed );
+                    GalleryItem item = new GalleryItem( this, md5, crc, headerName, countryCode, goodName, romPath, lastPlayed );
                     items.add( item );
+
                     if( mGlobalPrefs.isRecentShown
                             && currentTime - item.lastPlayed <= 60 * 60 * 24 * 7 ) // 7 days
                     {
                         recentItems.add( item );
                     }
-                    //Delete any old files that already exist inside a zip file
-                    else if(!zipPath.equals("") && extracted.equals("true"))
-                    {
-                        File deleteFile = new File(romPath);
-                        deleteFile.delete();
-                        
-                        config.put( md5, "extracted", "false" );
-                    }
-
                 }
             }
         }
@@ -313,8 +327,7 @@ public class GalleryActivity extends AppCompatActivity
         {
             combinedItems = new ArrayList<GalleryItem>();
             
-            combinedItems
-                    .add( new GalleryItem( this, getString( R.string.galleryRecentlyPlayed ) ) );
+            combinedItems.add( new GalleryItem( this, getString( R.string.galleryRecentlyPlayed ) ) );
             combinedItems.addAll( recentItems );
             
             combinedItems.add( new GalleryItem( this, getString( R.string.galleryLibrary ) ) );

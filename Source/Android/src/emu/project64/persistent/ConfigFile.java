@@ -62,6 +62,32 @@ public class ConfigFile
     }
     
     /**
+     * Looks up the specified parameter under the specified section title.
+     * 
+     * @param sectionTitle Title of the section containing the parameter.
+     * @param parameter Name of the parameter.
+     * 
+     * @return The value of the specified parameter, or null if not found.
+     */
+    public String get( String sectionTitle, String parameter )
+    {
+        ConfigSection section = mConfigMap.get( sectionTitle );
+        
+        // The specified section doesn't exist or is empty.. quit
+        if( section == null || section.parameters == null )
+            return null;
+        
+        ConfigParameter confParam = section.parameters.get( parameter );
+        
+        // The specified parameter doesn't exist.. quit
+        if( confParam == null )
+            return null;
+        
+        // Got it
+        return confParam.value;
+    }
+    
+    /**
      * Assigns the specified value to the specified parameter under the specified section.
      * 
      * @param sectionTitle The title of the section to contain the parameter.
@@ -202,6 +228,16 @@ public class ConfigFile
         
         // Success
         return true;
+    }
+    
+    /**
+     * Returns a handle to the configMap keyset.
+     * 
+     * @return keyset containing all the config section titles.
+     */
+    public Set<String> keySet()
+    {
+        return mConfigMap.keySet();
     }
     
     /**
