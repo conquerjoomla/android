@@ -22,6 +22,7 @@ import emu.project64.persistent.AppData;
 import emu.project64.persistent.ConfigFile;
 import emu.project64.persistent.ConfigFile.ConfigSection;
 import emu.project64.persistent.GlobalPrefs;
+import emu.project64.util.Notifier;
 import emu.project64.util.RomHeader;
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -35,6 +36,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -194,6 +196,7 @@ public class GalleryActivity extends AppCompatActivity
     
     public boolean onGalleryItemLongClick( GalleryItem item )
     {
+        launchGameActivity( item.romFile.getAbsolutePath(), item.md5, item.crc, item.headerName, item.countryCode, false );
         return true;
     }
     
@@ -373,4 +376,34 @@ public class GalleryActivity extends AppCompatActivity
         // Refresh the gallery
         refreshGrid();
     }
+    
+    public void launchGameActivity( String romPath, String romMd5, String romCrc, String romGoodName, byte romCountryCode, boolean isRestarting )
+    {
+        // Make sure that the storage is accessible
+        if( !mAppData.isSdCardAccessible() )
+        {
+            Log.e( "GalleryActivity", "SD Card not accessible" );
+            Notifier.showToast( this, R.string.toast_sdInaccessible );
+            return;
+        }
+        
+        // Notify user that the game activity is starting
+        Notifier.showToast( this, R.string.toast_launchingEmulator );
+        
+        // Update the ConfigSection with the new value for lastPlayed
+        String lastPlayed = Integer.toString( (int) ( new Date().getTime() / 1000 ) );
+        ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
+        if( config != null )
+        {
+            config.put( romMd5, "lastPlayed", lastPlayed );
+            
+            
+            config.save();
+        }
+
+        // Launch the game activity
+        ActivityHelper.startGameActivity( this, romPath, romMd5, romCrc, romGoodName, romCountryCode,
+                    isRestarting, mGlobalPrefs.isTouchpadEnabled );
+    }
+    
 }

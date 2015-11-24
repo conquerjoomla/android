@@ -58,6 +58,11 @@ public class ActivityHelper
         context.startActivity( intent );
     }
     
+    public static void startGameActivity( Context context, String romPath, String romMd5, String romCrc,
+            String romHeaderName, byte romCountryCode, boolean doRestart, boolean isXperiaPlay )
+    {
+    }
+    
     public static void startCacheRomInfoService(Context context, ServiceConnection serviceConnection,
         String searchPath, String configPath, boolean clearGallery)
     {

@@ -14,8 +14,12 @@
     <!-- ************************************************************************** -->
 
     <!-- Something happening (typically use '-ing' and '…') -->
+    <string name="toast_launchingEmulator">Launching emulator…</string>
     <string name="toast_canceling">Canceling…</string>
     <string name="toast_pleaseWait">Please wait…</string>
+
+    <!-- Something happened (use '.') -->
+    <string name="toast_sdInaccessible">SD card not accessible (disconnect USB cable and try again).</string>
     <string name="categoryLibrary_title">Library</string>
     <string name="categoryData_title">Data</string>
 

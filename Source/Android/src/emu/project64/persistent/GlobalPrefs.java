@@ -32,6 +32,9 @@ public class GlobalPrefs
     /** The path of the rom info cache for the gallery. */
     public final String romInfoCache_cfg;
     
+    /** True if Xperia Play touchpad is enabled. */
+    public final boolean isTouchpadEnabled;
+    
     /** True if the recently played section of the gallery should be shown. */
     public final boolean isRecentShown;
     
@@ -52,6 +55,7 @@ public class GlobalPrefs
     @TargetApi( 17 )
     public GlobalPrefs( Context context )
     {
+        AppData appData = new AppData( context );
         mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
         
         // Locale
@@ -67,6 +71,8 @@ public class GlobalPrefs
         // Library prefs
         isRecentShown = mPreferences.getBoolean( "showRecentlyPlayed", true );
         isFullNameShown = mPreferences.getBoolean( "showFullNames", true );
+        // Xperia PLAY touchpad prefs
+        isTouchpadEnabled = appData.hardwareInfo.isXperiaPlay && mPreferences.getBoolean( "touchpadEnabled", true );
     }
     
     public void enforceLocale( Activity activity )
