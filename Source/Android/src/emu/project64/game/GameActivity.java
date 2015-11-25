@@ -10,11 +10,13 @@
 ****************************************************************************/
 package emu.project64.game;
 
+import emu.project64.jni.CoreInterface;
 import android.app.Activity;
 import android.os.Bundle;
 
 public class GameActivity extends Activity
 {
+    private GameLifecycleHandler mLifecycleHandler;
     private GameMenuHandler mMenuHandler;
     
     @Override

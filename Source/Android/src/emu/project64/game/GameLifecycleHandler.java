@@ -10,20 +10,36 @@
 ****************************************************************************/
 package emu.project64.game;
 
-
-import emu.project64.jni.CoreInterface.OnStateCallbackListener;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.os.Bundle;
+import android.util.Log;
 
-public class GameMenuHandler implements OnStateCallbackListener
+public class GameLifecycleHandler
 {
-    public GameMenuHandler( Activity activity )
+    public GameLifecycleHandler( Activity activity )
     {
     }
     
     @TargetApi( 11 )
-    @Override
-    public void onStateCallback( int paramChanged, int newValue )
+    public void onCreateBegin( Bundle savedInstanceState )
     {
+        Log.i( "GameLifecycleHandler", "onCreate" );
+        
+    }
+    
+    @TargetApi( 11 )
+    public void onCreateEnd( Bundle savedInstanceState )
+    {
+    }
+    
+    public void onStart()
+    {
+        Log.i( "GameLifecycleHandler", "onStart" );
+    }
+    
+    public void onResume()
+    {
+        Log.i( "GameLifecycleHandler", "onResume" );
     }
 }

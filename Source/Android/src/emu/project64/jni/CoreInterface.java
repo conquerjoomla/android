@@ -8,22 +8,23 @@
 * GNU/GPLv2 http://www.gnu.org/licenses/gpl-2.0.html                        *
 *                                                                           *
 ****************************************************************************/
-package emu.project64.game;
+package emu.project64.jni;
 
+import emu.project64.R;
 
-import emu.project64.jni.CoreInterface.OnStateCallbackListener;
-import android.annotation.TargetApi;
-import android.app.Activity;
-
-public class GameMenuHandler implements OnStateCallbackListener
+public class CoreInterface
 {
-    public GameMenuHandler( Activity activity )
+    public interface OnStateCallbackListener
     {
+        /**
+         * Called when an emulator state/parameter has changed
+         * 
+         * @param paramChanged The parameter ID.
+         * @param newValue The new value of the parameter.
+         */
+        public void onStateCallback( int paramChanged, int newValue );
     }
-    
-    @TargetApi( 11 )
-    @Override
-    public void onStateCallback( int paramChanged, int newValue )
+    public static void addOnStateCallbackListener( OnStateCallbackListener listener )
     {
     }
 }
