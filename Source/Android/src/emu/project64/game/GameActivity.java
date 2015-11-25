@@ -30,4 +30,39 @@ public class GameActivity extends Activity
         super.onCreate( savedInstanceState );
         mLifecycleHandler.onCreateEnd( savedInstanceState );
     }
+    
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        mLifecycleHandler.onStart();
+    }
+    
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        mLifecycleHandler.onResume();
+    }
+    
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        mLifecycleHandler.onPause();
+    }
+    
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        mLifecycleHandler.onStop();
+    }
+    
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        mLifecycleHandler.onDestroy();
+    }
 }

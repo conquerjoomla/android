@@ -10,12 +10,23 @@
 ****************************************************************************/
 package emu.project64.game;
 
+
+import emu.project64.R;
+
+import emu.project64.ActivityHelper;
+import emu.project64.jni.CoreInterface;
+import emu.project64.jni.NativeXperiaTouchpad;
 import emu.project64.persistent.GlobalPrefs;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.SurfaceHolder;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 
@@ -23,11 +34,42 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback
 {
     // Activity and views
     private Activity mActivity;
+    private GameSurface mSurface;
+    private GameOverlay mOverlay;
+    // Internal flags
+    private final boolean mIsXperiaPlay;
+    
+    // Intent data
+    private final String mRomPath;
+    private final String mRomMd5;
+    private final String mRomCrc;
+    private final String mRomHeaderName;
+    private final byte mRomCountryCode;
+    private final boolean mDoRestart;
+    
+    // Lifecycle state tracking
+    private boolean mIsResumed = false;     // true if the activity is resumed
     // App data and user preferences
     private GlobalPrefs mGlobalPrefs;
     public GameLifecycleHandler( Activity activity )
     {
         mActivity = activity;
+        mIsXperiaPlay = !( activity instanceof GameActivity );
+        
+        // Get the intent data
+        Bundle extras = mActivity.getIntent().getExtras();
+        if( extras == null )
+            throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
+        mRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
+        mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
+        mRomCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
+        mRomHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
+        mRomCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
+        mDoRestart = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
+        if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( mRomMd5 ) )
+        {
+            throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );   
+        }
     }
     
     @TargetApi( 11 )
@@ -67,6 +109,34 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback
     @TargetApi( 11 )
     public void onCreateEnd( Bundle savedInstanceState )
     {
+        // Take control of the GameSurface if necessary
+        if( mIsXperiaPlay )
+            mActivity.getWindow().takeSurface( null );
+        
+        // Lay out content and get the views
+        mActivity.setContentView( R.layout.game_activity );
+        mSurface = (GameSurface) mActivity.findViewById( R.id.gameSurface );
+        mOverlay = (GameOverlay) mActivity.findViewById( R.id.gameOverlay );
+        
+        // Initialize the objects and data files interfacing to the emulator core
+        CoreInterface.initialize( mActivity, mSurface, mRomPath, mRomMd5, mDoRestart );
+
+        // Listen to game surface events (created, changed, destroyed)
+        mSurface.getHolder().addCallback( this );
+        
+        // Configure the action bar introduced in higher Android versions
+        if( mGlobalPrefs.isActionBarAvailable )
+        {
+            mActivity.getActionBar().hide();
+            ColorDrawable color = new ColorDrawable( Color.parseColor( "#303030" ) );
+            color.setAlpha( mGlobalPrefs.displayActionBarTransparency );
+            mActivity.getActionBar().setBackgroundDrawable( color );
+        }
+        
+        
+        // Initialize user interface devices
+        View inputSource = mIsXperiaPlay ? new NativeXperiaTouchpad( mActivity ) : mOverlay;
+        initControllers( inputSource );
     }
     
     public void onStart()
@@ -77,6 +147,8 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback
     public void onResume()
     {
         Log.i( "GameLifecycleHandler", "onResume" );
+        mIsResumed = true;
+        tryRunning();
     }
     
     @Override
@@ -100,6 +172,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback
     public void onPause()
     {
         Log.i( "GameLifecycleHandler", "onPause" );
+        mIsResumed = false;
     }
     
     @Override
@@ -118,4 +191,13 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback
         Log.i( "GameLifecycleHandler", "onDestroy" );
     }
     
+    
+    @SuppressLint( "InlinedApi" )
+    private void initControllers( View inputSource )
+    {
+    }
+    
+    private void tryRunning()
+    {        
+    }
 }

@@ -43,6 +43,9 @@ public class GlobalPrefs
     
     /** The screen orientation for the game activity. */
     public final int displayOrientation;
+    
+    /** The action bar transparency value. */
+    public final int displayActionBarTransparency;
     /** True if big-screen navigation mode is enabled. */
     public final boolean isBigScreenMode;
     
@@ -85,6 +88,8 @@ public class GlobalPrefs
         
         // Video prefs
         displayOrientation = getSafeInt( mPreferences, "displayOrientation", 0 );
+        int transparencyPercent = mPreferences.getInt( "displayActionBarTransparency", 50 );
+        displayActionBarTransparency = ( 255 * transparencyPercent ) / 100;
         
         // User interface modes
         String navMode = mPreferences.getString( "navigationMode", "auto" );

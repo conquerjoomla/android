@@ -8,30 +8,16 @@
 * GNU/GPLv2 http://www.gnu.org/licenses/gpl-2.0.html                        *
 *                                                                           *
 ****************************************************************************/
-package emu.project64.jni;
+package emu.project64.game;
 
-import emu.project64.R;
+import android.content.Context;
+import android.util.AttributeSet;
+import android.view.View;
 
-import emu.project64.game.GameSurface;
-import android.app.Activity;
-public class CoreInterface
+public class GameOverlay extends View
 {
-    public interface OnStateCallbackListener
+    public GameOverlay( Context context, AttributeSet attribs )
     {
-        /**
-         * Called when an emulator state/parameter has changed
-         * 
-         * @param paramChanged The parameter ID.
-         * @param newValue The new value of the parameter.
-         */
-        public void onStateCallback( int paramChanged, int newValue );
-    }
-    
-    public static void initialize( Activity activity, GameSurface surface, String romPath, String romMd5, boolean isRestarting )
-    {
-    }
-    
-    public static void addOnStateCallbackListener( OnStateCallbackListener listener )
-    {
+        super( context, attribs );
     }
 }

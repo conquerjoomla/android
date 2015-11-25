@@ -10,28 +10,18 @@
 ****************************************************************************/
 package emu.project64.jni;
 
-import emu.project64.R;
+import android.content.Context;
+import android.view.View;
 
-import emu.project64.game.GameSurface;
-import android.app.Activity;
-public class CoreInterface
+public class NativeXperiaTouchpad extends View
 {
-    public interface OnStateCallbackListener
+    /**
+     * Instantiates a new native input source.
+     * 
+     * @param context The context associated with the input events.
+     */
+    public NativeXperiaTouchpad( Context context )
     {
-        /**
-         * Called when an emulator state/parameter has changed
-         * 
-         * @param paramChanged The parameter ID.
-         * @param newValue The new value of the parameter.
-         */
-        public void onStateCallback( int paramChanged, int newValue );
-    }
-    
-    public static void initialize( Activity activity, GameSurface surface, String romPath, String romMd5, boolean isRestarting )
-    {
-    }
-    
-    public static void addOnStateCallbackListener( OnStateCallbackListener listener )
-    {
+        super( context );
     }
 }
