@@ -40,6 +40,15 @@ public class GlobalPrefs
     
     /** True if the full ROM rip info should be shown. */
     public final boolean isFullNameShown;
+    
+    /** The screen orientation for the game activity. */
+    public final int displayOrientation;
+    /** True if big-screen navigation mode is enabled. */
+    public final boolean isBigScreenMode;
+    
+    /** True if the action bar is available. */
+    public final boolean isActionBarAvailable;
+    
     private static final String KEY_LOCALE_OVERRIDE = "localeOverride";
     public static final String DEFAULT_LOCALE_OVERRIDE = "";
     private final SharedPreferences mPreferences;
@@ -73,6 +82,26 @@ public class GlobalPrefs
         isFullNameShown = mPreferences.getBoolean( "showFullNames", true );
         // Xperia PLAY touchpad prefs
         isTouchpadEnabled = appData.hardwareInfo.isXperiaPlay && mPreferences.getBoolean( "touchpadEnabled", true );
+        
+        // Video prefs
+        displayOrientation = getSafeInt( mPreferences, "displayOrientation", 0 );
+        
+        // User interface modes
+        String navMode = mPreferences.getString( "navigationMode", "auto" );
+        if( navMode.equals( "bigscreen" ) )
+        {
+            isBigScreenMode = true;
+        }
+        else if( navMode.equals( "standard" ) )
+        {
+            isBigScreenMode = false;
+        }
+        else
+        {
+            isBigScreenMode = AppData.IS_OUYA_HARDWARE || appData.isAndroidTv; // TODO: Add other systems as they enter market
+        }
+        isActionBarAvailable = AppData.IS_HONEYCOMB && !isBigScreenMode;
+        
     }
     
     public void enforceLocale( Activity activity )
@@ -98,6 +127,27 @@ public class GlobalPrefs
                 return new Locale( codes[0], codes[1], codes[2] );
             default: // Invalid input
                 return null;
+        }
+    }
+    
+    /**
+     * Gets the selected value of a ListPreference, as an integer.
+     * 
+     * @param preferences  The object containing the ListPreference.
+     * @param key          The key of the ListPreference.
+     * @param defaultValue The value to use if parsing fails.
+     * 
+     * @return The value of the selected entry, as an integer.
+     */
+    private static int getSafeInt( SharedPreferences preferences, String key, int defaultValue )
+    {
+        try
+        {
+            return Integer.parseInt( preferences.getString( key, String.valueOf( defaultValue ) ) );
+        }
+        catch( NumberFormatException ex )
+        {
+            return defaultValue;
         }
     }
 }

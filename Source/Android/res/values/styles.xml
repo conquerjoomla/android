@@ -3,6 +3,11 @@
 
     <style name="appTheme" parent="@android:style/Theme" />
 
+    <style name="appTheme.Black">
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:colorBackground">@android:color/black</item>
+    </style>
+
     <style name="Theme.AppCompat.Black">
         <item name="android:windowBackground">@android:color/black</item>
         <item name="android:colorBackground">@android:color/black</item>

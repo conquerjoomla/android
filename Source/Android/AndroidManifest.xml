@@ -47,6 +47,26 @@
             android:label="@string/ScanRomsActivity_title"
             android:theme="@style/Theme.AppCompat" >
         </activity>
+        <!--
+        For the GameActivities, do not restart the activity when the phone's slider
+        opens or closes, or when the orientation (and thereby screen size) changes.
+        This behavior is specified in android:configChanges below.
+        -->
+        <activity
+            android:name="emu.project64.game.GameActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/GameActivity_title"
+            android:theme="@style/appTheme.Black" >
+        </activity>
+        <activity
+            android:name="emu.project64.game.GameActivityXperiaPlay"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/GameActivity_title"
+            android:theme="@style/appTheme.Black" >
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="xperia-touchpad" />
+        </activity>
         <service android:name="emu.project64.task.CacheRomInfoService" />
     </application>
 

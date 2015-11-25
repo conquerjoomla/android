@@ -14,6 +14,9 @@ import java.io.File;
 import java.util.Locale;
 
 import emu.project64.util.DeviceUtil;
+import tv.ouya.console.api.OuyaFacade;
+import android.app.UiModeManager;
+import android.content.res.Configuration;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -30,8 +33,14 @@ public class AppData
     /** True if device is running Honeycomb MR1 or later (12 - Android 3.1.x) */
     public static final boolean IS_HONEYCOMB_MR1 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1;
     
+    /** True if device is running Ice Cream Sandwich or later (14 - Android 4.0.x) */
+    public static final boolean IS_ICE_CREAM_SANDWICH = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
+    
     /** True if device is running Jellybean or later (16 - Android 4.1.x) */
     public static final boolean IS_JELLY_BEAN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+    
+    /** True if device is an OUYA. */
+    public static final boolean IS_OUYA_HARDWARE = OuyaFacade.getInstance().isRunningOnOUYAHardware();
     
     /** Debug option: download data to SD card (default true). */
     public static final boolean DOWNLOAD_TO_SDCARD = true;
@@ -49,6 +58,9 @@ public class AppData
      * plugin-specific/cheats data. Contents deleted on uninstall.
      */
     public final String coreSharedDataDir;
+    /** True if this is android TV hardware */
+    public final boolean isAndroidTv;
+    
     /** The object used to persist the settings. */
     private final SharedPreferences mPreferences;
     
@@ -79,6 +91,16 @@ public class AppData
         // Preference object for persisting app data
         String appDataFilename = packageName + "_appdata";
         mPreferences = context.getSharedPreferences( appDataFilename, Context.MODE_PRIVATE );
+        
+        if (AppData.IS_ICE_CREAM_SANDWICH)
+        {
+            UiModeManager uiModeManager = (UiModeManager) context.getSystemService(Context.UI_MODE_SERVICE);
+            isAndroidTv = uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
+        }
+        else
+        {
+            isAndroidTv = false;
+        }
     }
     
     /**

@@ -96,8 +96,7 @@ public class GalleryActivity extends AppCompatActivity
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this );
         mGlobalPrefs.enforceLocale( this );
-        
-        
+                
         // Lay out the content
         setContentView( R.layout.gallery_activity );
         mGridView = (RecyclerView) findViewById( R.id.gridview );

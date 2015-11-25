@@ -68,7 +68,8 @@ public class ActivityHelper
     public static void startGameActivity( Context context, String romPath, String romMd5, String romCrc,
             String romHeaderName, byte romCountryCode, boolean doRestart, boolean isXperiaPlay )
     {
-        Intent intent = isXperiaPlay
+		Log.i( "startGameActivity", "starting" );
+		Intent intent = isXperiaPlay
                 ? new Intent( context, GameActivityXperiaPlay.class )
                 : new Intent( context, GameActivity.class );
         intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
@@ -78,6 +79,7 @@ public class ActivityHelper
         intent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, romCountryCode );
         intent.putExtra( ActivityHelper.Keys.DO_RESTART, doRestart );
         context.startActivity( intent );
+		Log.i( "startGameActivity", "done" );
     }
     
     public static void startCacheRomInfoService(Context context, ServiceConnection serviceConnection,
