@@ -2,7 +2,12 @@
 assets/
 bin/
 gen/
+obj/
+*.d
+*.o
+*.so
 # Eclipse project files
 .settings/
 .classpath
+.cproject
 .project
