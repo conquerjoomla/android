@@ -16,5 +16,6 @@
 
 extern "C" DECLSPEC jint SDLCALL Java_emu_project64_jni_NativeExports_emuStart(JNIEnv* env, jclass cls, jstring juserDataPath, jstring juserCachePath, jobjectArray jargv)
 {
+	LOGI("in Java_emu_project64_jni_NativeExports_emuStart");
     return 0;
 }
