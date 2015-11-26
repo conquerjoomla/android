@@ -10,32 +10,14 @@
 ****************************************************************************/
 package emu.project64.jni;
 
-import emu.project64.R;
 
-import emu.project64.game.GameSurface;
-import android.app.Activity;
-public class CoreInterface
+/**
+ * Call-outs made from Java to the native ae-exports library. Any function names changed here should
+ * also be changed in the corresponding C code, and vice versa.
+ * 
+ * @see jni/ae-bridge/ae_exports.cpp
+ * @see CoreInterface
+ */
+public class NativeExports
 {
-    public interface OnStateCallbackListener
-    {
-        /**
-         * Called when an emulator state/parameter has changed
-         * 
-         * @param paramChanged The parameter ID.
-         * @param newValue The new value of the parameter.
-         */
-        public void onStateCallback( int paramChanged, int newValue );
-    }
-    
-    public static void initialize( Activity activity, GameSurface surface, String romPath, String romMd5, boolean isRestarting )
-    {
-    }
-    
-    public static void addOnStateCallbackListener( OnStateCallbackListener listener )
-    {
-    }
-    
-    public static synchronized void startupEmulator()
-    {
-    }
 }

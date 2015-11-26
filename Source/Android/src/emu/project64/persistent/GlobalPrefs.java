@@ -46,6 +46,9 @@ public class GlobalPrefs
     
     /** The action bar transparency value. */
     public final int displayActionBarTransparency;
+    /** True if immersive mode should be used (KitKat only). */
+    public final boolean isImmersiveModeEnabled;
+    
     /** True if big-screen navigation mode is enabled. */
     public final boolean isBigScreenMode;
     
@@ -90,6 +93,7 @@ public class GlobalPrefs
         displayOrientation = getSafeInt( mPreferences, "displayOrientation", 0 );
         int transparencyPercent = mPreferences.getInt( "displayActionBarTransparency", 50 );
         displayActionBarTransparency = ( 255 * transparencyPercent ) / 100;
+        isImmersiveModeEnabled = mPreferences.getBoolean( "displayImmersiveMode", false );
         
         // User interface modes
         String navMode = mPreferences.getString( "navigationMode", "auto" );

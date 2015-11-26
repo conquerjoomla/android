@@ -15,7 +15,10 @@ import emu.project64.R;
 
 import emu.project64.ActivityHelper;
 import emu.project64.jni.CoreInterface;
+import emu.project64.jni.NativeConstants;
+import emu.project64.jni.NativeExports;
 import emu.project64.jni.NativeXperiaTouchpad;
+import emu.project64.persistent.AppData;
 import emu.project64.persistent.GlobalPrefs;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -48,7 +51,10 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback
     private final boolean mDoRestart;
     
     // Lifecycle state tracking
+    private boolean mIsFocused = false;     // true if the window is focused
     private boolean mIsResumed = false;     // true if the activity is resumed
+    private boolean mIsSurface = false;     // true if the surface is available
+    
     // App data and user preferences
     private GlobalPrefs mGlobalPrefs;
     public GameLifecycleHandler( Activity activity )
@@ -161,12 +167,20 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback
     public void surfaceChanged( SurfaceHolder holder, int format, int width, int height )
     {
         Log.i( "GameLifecycleHandler", "surfaceChanged" );
+        mIsSurface = true;
+        tryRunning();
     }
     
     public void onWindowFocusChanged( boolean hasFocus )
     {
         // Only try to run; don't try to pause. User may just be touching the in-game menu.
         Log.i( "GameLifecycleHandler", "onWindowFocusChanged: " + hasFocus );
+        mIsFocused = hasFocus;
+        if( hasFocus )
+        {
+            hideSystemBars();
+        }
+        tryRunning();
     }
     
     public void onPause()
@@ -179,6 +193,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback
     public void surfaceDestroyed( SurfaceHolder holder )
     {
         Log.i( "GameLifecycleHandler", "surfaceDestroyed" );
+        mIsSurface = false;
     }
     
     public void onStop()
@@ -197,7 +212,35 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback
     {
     }
     
+    @SuppressLint( "InlinedApi" )
+    @TargetApi( 11 )
+    private void hideSystemBars()
+    {
+        // Only applies to Honeycomb devices
+        if( !AppData.IS_HONEYCOMB )
+            return;
+        
+        View view = mSurface.getRootView();
+        if( view != null )
+        {
+            if( AppData.IS_KITKAT && mGlobalPrefs.isImmersiveModeEnabled )
+                view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN );
+            else
+                view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE ); // == STATUS_BAR_HIDDEN for Honeycomb
+        }
+    }
+    
+    private boolean isSafeToRender()
+    {
+        return mIsFocused && mIsResumed && mIsSurface;
+    }
+    
     private void tryRunning()
     {        
+        CoreInterface.startupEmulator();
     }
 }

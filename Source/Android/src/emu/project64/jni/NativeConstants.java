@@ -10,32 +10,12 @@
 ****************************************************************************/
 package emu.project64.jni;
 
-import emu.project64.R;
-
-import emu.project64.game.GameSurface;
-import android.app.Activity;
-public class CoreInterface
+public class NativeConstants
 {
-    public interface OnStateCallbackListener
-    {
-        /**
-         * Called when an emulator state/parameter has changed
-         * 
-         * @param paramChanged The parameter ID.
-         * @param newValue The new value of the parameter.
-         */
-        public void onStateCallback( int paramChanged, int newValue );
-    }
-    
-    public static void initialize( Activity activity, GameSurface surface, String romPath, String romMd5, boolean isRestarting )
-    {
-    }
-    
-    public static void addOnStateCallbackListener( OnStateCallbackListener listener )
-    {
-    }
-    
-    public static synchronized void startupEmulator()
-    {
-    }
+    // @formatter:off    
+    public static final int EMULATOR_STATE_UNKNOWN      = 0;
+    public static final int EMULATOR_STATE_STOPPED      = 1;
+    public static final int EMULATOR_STATE_RUNNING      = 2;
+    public static final int EMULATOR_STATE_PAUSED       = 3;
+    // @formatter:on
 }

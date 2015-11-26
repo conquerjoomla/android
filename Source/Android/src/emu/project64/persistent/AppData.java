@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
+
 public class AppData
 {
     /** True if device is running Gingerbread or later (9 - Android 2.3.x) */
@@ -38,6 +39,9 @@ public class AppData
     
     /** True if device is running Jellybean or later (16 - Android 4.1.x) */
     public static final boolean IS_JELLY_BEAN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+    
+    /** True if device is running KitKat or later (19 - Android 4.4.x) */
+    public static final boolean IS_KITKAT = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
     
     /** True if device is an OUYA. */
     public static final boolean IS_OUYA_HARDWARE = OuyaFacade.getInstance().isRunningOnOUYAHardware();
