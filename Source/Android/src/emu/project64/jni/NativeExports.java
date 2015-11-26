@@ -10,14 +10,11 @@
 ****************************************************************************/
 package emu.project64.jni;
 
-
-/**
- * Call-outs made from Java to the native ae-exports library. Any function names changed here should
- * also be changed in the corresponding C code, and vice versa.
- * 
- * @see jni/ae-bridge/ae_exports.cpp
- * @see CoreInterface
- */
 public class NativeExports
 {
+    static
+    {
+        System.loadLibrary( "ae-exports" );
+    }
+    public static native int emuStart( String userDataPath, String userCachePath, Object[] args );
 }

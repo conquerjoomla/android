@@ -29,6 +29,11 @@ public class GlobalPrefs
     /** The subdirectory containing gallery data cache. */
     public final String galleryCacheDir;
     
+    /** The subdirectory returned from the core's ConfigGetUserDataPath() method. */
+    public final String coreUserDataDir;
+    
+    /** The subdirectory returned from the core's ConfigGetUserCachePath() method. */
+    public final String coreUserCacheDir;
     /** The path of the rom info cache for the gallery. */
     public final String romInfoCache_cfg;
     
@@ -81,6 +86,8 @@ public class GlobalPrefs
         userDataDir = mPreferences.getString( "pathGameSaves", "" );
         Log.i( "GlobalPrefs", "userDataDir = " + userDataDir );
         galleryCacheDir = userDataDir + "/GalleryCache";
+        coreUserDataDir = userDataDir + "/CoreConfig/UserData";
+        coreUserCacheDir = userDataDir + "/CoreConfig/UserCache";
         romInfoCache_cfg = galleryCacheDir + "/romInfoCache.cfg";
         
         // Library prefs
