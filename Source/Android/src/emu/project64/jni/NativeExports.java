@@ -16,5 +16,10 @@ public class NativeExports
     {
         System.loadLibrary( "ae-exports" );
     }
+    
+    public static native void loadLibraries( String libPath );
+    
+    public static native void unloadLibraries();
+    
     public static native int emuStart( String userDataPath, String userCachePath, Object[] args );
 }

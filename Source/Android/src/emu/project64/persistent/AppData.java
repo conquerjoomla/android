@@ -62,6 +62,9 @@ public class AppData
      * plugin-specific/cheats data. Contents deleted on uninstall.
      */
     public final String coreSharedDataDir;
+    
+    /** The directory containing the native Mupen64Plus libraries. Contents deleted on uninstall, not accessible without root. */
+    public final String libsDir;
     /** True if this is android TV hardware */
     public final boolean isAndroidTv;
     
@@ -92,6 +95,10 @@ public class AppData
             storageDir = context.getFilesDir().getAbsolutePath();
             coreSharedDataDir = storageDir;
         }
+        String _libsDir = context.getFilesDir().getParentFile().getAbsolutePath() + "/lib/";
+        if( !( new File( _libsDir ) ).exists() && IS_GINGERBREAD )
+            _libsDir = context.getApplicationInfo().nativeLibraryDir;
+        libsDir = _libsDir;
         // Preference object for persisting app data
         String appDataFilename = packageName + "_appdata";
         mPreferences = context.getSharedPreferences( appDataFilename, Context.MODE_PRIVATE );

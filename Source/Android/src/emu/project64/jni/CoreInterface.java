@@ -16,8 +16,11 @@ import java.util.ArrayList;
 import emu.project64.R;
 
 import emu.project64.game.GameSurface;
+import emu.project64.persistent.AppData;
 import emu.project64.persistent.GlobalPrefs;
 import android.app.Activity;
+import android.util.Log;
+
 public class CoreInterface
 {
     public interface OnStateCallbackListener
@@ -32,6 +35,7 @@ public class CoreInterface
     }
     
     // User/app data - used by NativeImports, NativeSDL
+    protected static AppData sAppData = null;
     protected static GlobalPrefs sGlobalPrefs = null;
     private static Activity sActivity = null;
     private static Thread sCoreThread;
@@ -42,6 +46,7 @@ public class CoreInterface
     {
         sRomPath = romPath;
         sActivity = activity;
+        sAppData = new AppData( sActivity );
         sGlobalPrefs = new GlobalPrefs( sActivity );
         new File( sGlobalPrefs.coreUserDataDir ).mkdirs();
         new File( sGlobalPrefs.coreUserCacheDir ).mkdirs();
@@ -55,6 +60,9 @@ public class CoreInterface
     {
         if( sCoreThread == null )
         {
+            // Load the native libraries
+            NativeExports.loadLibraries( sAppData.libsDir );
+            
             // Start the core thread if not already running
             sCoreThread = new Thread( new Runnable()
             {
@@ -71,6 +79,26 @@ public class CoreInterface
             
             // Start the core on its own thread
             sCoreThread.start();
+        }
+    }
+    
+    public static synchronized void shutdownEmulator()
+    {
+        if( sCoreThread != null )
+        {
+            // Now wait for the core thread to quit
+            try
+            {
+                sCoreThread.join();
+            }
+            catch( InterruptedException e )
+            {
+                Log.i( "CoreInterface", "Problem stopping core thread: " + e );
+            }
+            sCoreThread = null;
+            
+            // Unload the native libraries
+            NativeExports.unloadLibraries();
         }
     }
 }
