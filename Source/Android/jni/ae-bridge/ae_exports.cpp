@@ -61,7 +61,7 @@ extern "C" DECLSPEC void SDLCALL Java_emu_project64_jni_NativeExports_loadLibrar
     env->ReleaseStringUTFChars(jlibPath, libPath);
 
     // Open shared libraries
-    handleFront    = loadLibrary(path, "mupen64plus-ui-console");
+    handleFront    = loadLibrary(path, "project64-console");
 
     // Make sure we don't have any typos
     if (!handleFront )
@@ -69,7 +69,7 @@ extern "C" DECLSPEC void SDLCALL Java_emu_project64_jni_NativeExports_loadLibrar
         LOGE("Could not load libraries: be sure the paths are correct");
     }
 
-    frontMain     = (pFrontMain)     locateFunction(handleFront, "mupen64plus-ui-console", "SDL_main");
+    frontMain     = (pFrontMain)     locateFunction(handleFront, "project64-console", "SDL_main");
     // Make sure we don't have any typos
     if (!frontMain)
     {

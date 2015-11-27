@@ -17,3 +17,4 @@ COMMON_CPPFLAGS :=                  \
 
 include $(JNI_LOCAL_PATH)/SDL2/Android.mk
 include $(JNI_LOCAL_PATH)/ae-bridge/Android.mk
+include $(JNI_LOCAL_PATH)/Project64-console.mk
