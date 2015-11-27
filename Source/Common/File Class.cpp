@@ -2,6 +2,12 @@
 
 #include <TChar.H>
 
+#if defined(_MSC_VER)
+#include <crtdbg.h>
+#else
+#define _ASSERTE(expr)          ((void)0)
+#endif
+
 CFile::CFile() :
     m_hFile(INVALID_HANDLE_VALUE),
     m_bCloseOnDelete(false)
@@ -79,14 +85,10 @@ bool CFile::Open(const char * lpszFileName, uint32_t nOpenFlags)
     sa.bInheritHandle = (nOpenFlags & modeNoInherit) == 0;
 
     // map creation flags
-    ULONG dwCreateFlag = 0;
+    ULONG dwCreateFlag = OPEN_EXISTING;
     if (nOpenFlags & modeCreate)
     {
-        dwCreateFlag = nOpenFlags & modeNoTruncate == 0 ? OPEN_ALWAYS : CREATE_ALWAYS;
-    }
-    else
-    {
-        dwCreateFlag = OPEN_EXISTING;
+        dwCreateFlag = ((nOpenFlags & modeNoTruncate) != 0) ? OPEN_ALWAYS : CREATE_ALWAYS;
     }
 
     // attempt file creation
