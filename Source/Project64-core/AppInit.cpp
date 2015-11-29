@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#ifdef tofix
 #include <common\path.h>
 #include <common\trace.h>
 #include <Common\Util.h>
@@ -11,8 +12,9 @@ void FixDirectories(void);
 void FixLocale(void);
 
 static void IncreaseThreadPriority(void);
-
+#endif
 CNotification * g_Notify = NULL;
+#ifdef tofix
 static CTraceFileLog * g_LogFile = NULL;
 
 void LogLevelChanged(CTraceFileLog * LogFile)
@@ -46,21 +48,23 @@ void InitializeLog(void)
     g_Settings->RegisterChangeCB(Debugger_AppLogLevel, g_LogFile, (CSettings::SettingChangedFunc)LogLevelChanged);
     g_Settings->RegisterChangeCB(Debugger_AppLogFlush, g_LogFile, (CSettings::SettingChangedFunc)LogFlushChanged);
 }
+#endif
 
 void AppInit(CNotification * Notify)
 {
     try
     {
+#ifdef tofix
         g_Notify = Notify;
-
-        FixDirectories();
-        FixLocale();
-
+#endif
         stdstr_f AppName("Project64 %s", VER_FILE_VERSION_STR);
-        IncreaseThreadPriority();
-
         g_Settings = new CSettings;
         g_Settings->Initialize(AppName.c_str());
+
+#ifdef tofix
+        FixDirectories();
+        FixLocale();
+        IncreaseThreadPriority();
 
         if (g_Settings->LoadBool(Setting_CheckEmuRunning) &&
             pjutil::TerminatedExistingExe())
@@ -82,13 +86,17 @@ void AppInit(CNotification * Notify)
         g_Lang = new CLanguage();
         g_Lang->LoadCurrentStrings();
         g_Notify->AppInitDone();
+#endif
     }
     catch (...)
     {
+#ifdef tofix
         g_Notify->DisplayError(stdstr_f("Exception caught\nFile: %s\nLine: %d", __FILE__, __LINE__).ToUTF16().c_str());
+#endif
     }
 }
 
+#ifdef tofix
 void AppCleanup(void)
 {
     g_Settings->UnregisterChangeCB(Debugger_AppLogLevel, g_LogFile, (CSettings::SettingChangedFunc)LogLevelChanged);
@@ -144,3 +152,4 @@ void IncreaseThreadPriority(void)
 {
     SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
 }
+#endif

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "SDL_main.h"
-//#include <Project64-core\AppInit.h>
+#include <Project64-core\AppInit.h>
 
 #if defined(ANDROID)
 #include <android/log.h>
@@ -23,9 +23,9 @@ int main(int /*argc*/, char * /*argv*/[])
     printf("/_/   /_/   \\____/_/ /\\___/\\___/\\__/\\____/  /_/   \n");
     printf("                /___/                             \n");
     printf("http://www.pj64-emu.com/\n");
-    //printf("%s Version %s\n\n", VER_FILE_DESCRIPTION_STR, VER_FILE_VERSION_STR);
+    printf("%s Version %s\n\n", VER_FILE_DESCRIPTION_STR, VER_FILE_VERSION_STR);
 
-    //AppInit(NULL);
+    AppInit(NULL);
 
     //parse commands line
     return 0;
