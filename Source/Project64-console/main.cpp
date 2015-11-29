@@ -2,7 +2,19 @@
 #include "SDL_main.h"
 //#include <Project64-core\AppInit.h>
 
-int main(int /*argc*/, char * /*argv*/ [])
+#if defined(ANDROID)
+#include <android/log.h>
+
+#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "UI-Console", __VA_ARGS__)
+#endif
+
+#ifndef WIN32
+/* Allow external modules to call the main function as a library method.  This is useful for user
+* interfaces that simply layer on top of (rather than re-implement) UI-Console (e.g. for android).
+*/
+__attribute__((visibility("default")))
+#endif
+int main(int /*argc*/, char * /*argv*/[])
 {
     printf("    ____               _           __  _____ __ __\n");
     printf("   / __ \\_________    (_)__  _____/ /_/ ___// // /\n");
@@ -16,5 +28,5 @@ int main(int /*argc*/, char * /*argv*/ [])
     //AppInit(NULL);
 
     //parse commands line
-	return 0;
+    return 0;
 }
