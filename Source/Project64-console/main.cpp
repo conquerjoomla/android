@@ -27,6 +27,8 @@ int main(int /*argc*/, char * /*argv*/[])
 
     AppInit(NULL);
 
+	printf("After app init\n");
+
     //parse commands line
     return 0;
 }

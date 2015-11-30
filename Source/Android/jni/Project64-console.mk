@@ -1,18 +1,21 @@
 #########################
-# mupen64plus-ui-console
+# project64-console
 #########################
 include $(CLEAR_VARS)
 LOCAL_PATH := $(JNI_LOCAL_PATH)
-SRCDIR := ../../Project64-console
+SRCDIR := ../..
+PRJDIR := $(SRCDIR)/Project64-console
 
 LOCAL_MODULE := project64-console
-LOCAL_SHARED_LIBRARIES := ae-imports
+LOCAL_STATIC_LIBRARIES := project64-core
 #LOCAL_ARM_MODE := arm
 
-LOCAL_C_INCLUDES := $(SDL_INCLUDES)
+LOCAL_C_INCLUDES :=         \
+    E:/Android/project64-console/Source               \
+    $(SDL_INCLUDES)         \
 
 LOCAL_SRC_FILES :=                      \
-    $(SRCDIR)/main.cpp                  \
+    $(PRJDIR)/main.cpp                  \
 
 LOCAL_CFLAGS :=                                 \
     $(COMMON_CFLAGS)                            \
@@ -23,4 +26,4 @@ LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
 
 LOCAL_LDLIBS := -llog
 
-include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_STATIC_LIBRARY)

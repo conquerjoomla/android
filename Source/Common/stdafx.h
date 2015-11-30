@@ -1,7 +1,6 @@
 #pragma warning(disable:4786)
 
 #include <map>
-#include <windows.h>
 #include <stdio.h>
 #include <stdarg.h>
 

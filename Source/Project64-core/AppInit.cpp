@@ -50,18 +50,26 @@ void InitializeLog(void)
 }
 #endif
 
+#if defined(ANDROID)
+#include <android/log.h>
+
+#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "UI-Console", __VA_ARGS__)
+#endif
+
 void AppInit(CNotification * Notify)
 {
+	printf("AppInit 123\n");
     try
     {
 #ifdef tofix
         g_Notify = Notify;
 #endif
-        stdstr_f AppName("Project64 %s", VER_FILE_VERSION_STR);
+		stdstr_f AppName("Project64 %s", VER_FILE_VERSION_STR);
+		printf("AppName = %s",AppName.c_str());
+#ifdef tofix
         g_Settings = new CSettings;
         g_Settings->Initialize(AppName.c_str());
 
-#ifdef tofix
         FixDirectories();
         FixLocale();
         IncreaseThreadPriority();
