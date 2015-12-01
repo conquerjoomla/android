@@ -3,19 +3,18 @@
 ###################
 include $(CLEAR_VARS)
 LOCAL_PATH := $(JNI_LOCAL_PATH)
-SRCDIR := ../..
-PRJDIR := $(SRCDIR)/Project64-core
+CORE_SRC := $(PJ64_SRC)/Project64-core
 
 LOCAL_MODULE := project64-core
 LOCAL_STATIC_LIBRARIES := common
 LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES :=                            \
-    E:/Android/project64-console/Source        \
     $(SDL_INCLUDES)                            \
+    E:\Android\project64-console\Source        \
 
 LOCAL_SRC_FILES :=                             \
-    $(PRJDIR)/AppInit.cpp                      \
+    $(CORE_SRC)/AppInit.cpp                    \
 
 LOCAL_CFLAGS :=                                \
     $(COMMON_CFLAGS)                           \

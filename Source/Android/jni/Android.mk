@@ -2,6 +2,7 @@ JNI_LOCAL_PATH := $(call my-dir)
 
 AE_BRIDGE_INCLUDES := $(JNI_LOCAL_PATH)/ae-bridge/
 SDL_INCLUDES := $(JNI_LOCAL_PATH)/SDL2/include/
+PJ64_SRC := $(JNI_LOCAL_PATH)../../../Source
 
 COMMON_CFLAGS :=                    \
     -O3                             \
