@@ -1,12 +1,13 @@
-#########################
-# common
-#########################
+###################
+# project64-core
+###################
 include $(CLEAR_VARS)
 LOCAL_PATH := $(JNI_LOCAL_PATH)
 SRCDIR := ../..
-PRJDIR := $(SRCDIR)/Common
+PRJDIR := $(SRCDIR)/Project64-core
 
-LOCAL_MODULE := common
+LOCAL_MODULE := project64-core
+LOCAL_STATIC_LIBRARIES := common
 LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES :=                            \
@@ -14,7 +15,7 @@ LOCAL_C_INCLUDES :=                            \
     $(SDL_INCLUDES)                            \
 
 LOCAL_SRC_FILES :=                             \
-    $(PRJDIR)/StdString.cpp                    \
+    $(PRJDIR)/AppInit.cpp                      \
 
 LOCAL_CFLAGS :=                                \
     $(COMMON_CFLAGS)                           \
@@ -27,6 +28,4 @@ LOCAL_LDFLAGS :=                               \
 
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)           \
 
-LOCAL_LDLIBS := -llog
-
-include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_STATIC_LIBRARY)

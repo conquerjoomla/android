@@ -25,8 +25,8 @@ int main(int /*argc*/, char * /*argv*/[])
     printf("http://www.pj64-emu.com/\n");
     printf("%s Version %s\n\n", VER_FILE_DESCRIPTION_STR, VER_FILE_VERSION_STR);
 
+	printf("before app init\n");
     AppInit(NULL);
-
 	printf("After app init\n");
 
     //parse commands line

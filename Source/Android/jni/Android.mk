@@ -16,8 +16,8 @@ COMMON_CPPFLAGS :=                  \
     -fvisibility-inlines-hidden     \
     -fexceptions                    \
 
+include $(JNI_LOCAL_PATH)/modules/common.mk
+include $(JNI_LOCAL_PATH)/modules/Project64-core.mk
+include $(JNI_LOCAL_PATH)/modules/Project64-console.mk
 include $(JNI_LOCAL_PATH)/SDL2/Android.mk
 include $(JNI_LOCAL_PATH)/ae-bridge/Android.mk
-include $(JNI_LOCAL_PATH)/common.mk
-include $(JNI_LOCAL_PATH)/Project64-core.mk
-include $(JNI_LOCAL_PATH)/Project64-console.mk
