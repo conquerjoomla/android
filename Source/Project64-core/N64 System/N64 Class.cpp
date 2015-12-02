@@ -178,7 +178,7 @@ void CN64System::ExternalEvent(SystemEvent action)
         break;
     default:
         WriteTraceF(TraceError, __FUNCTION__ ": Unknown event %d", action);
-        g_Notify->BreakPoint(__FILEW__, __LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 }
 
@@ -301,7 +301,7 @@ void CN64System::StartEmulation2(bool NewThread)
         {
             if (g_Plugins->SyncWindow() == NULL)
             {
-                g_Notify->BreakPoint(__FILEW__, __LINE__);
+                g_Notify->BreakPoint(__FILE__, __LINE__);
             }
             g_Notify->DisplayMessage(5, L"Copy Plugins");
             g_Plugins->CopyPlugins(g_Settings->LoadStringVal(Directory_PluginSync));
@@ -1230,7 +1230,7 @@ void CN64System::DumpSyncErrors(CN64System * SecondCPU)
     }
 
     g_Notify->DisplayError(L"Sync Error");
-    g_Notify->BreakPoint(__FILEW__, __LINE__);
+    g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
 bool CN64System::SaveState()
@@ -1918,7 +1918,7 @@ bool CN64System::WriteToProtectedMemory(uint32_t Address, int length)
     WriteTraceF(TraceDebug, __FUNCTION__ ": Address: %X Len: %d", Address, length);
     if (m_Recomp)
     {
-        g_Notify->BreakPoint(__FILEW__, __LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
 #ifdef tofix
         return m_Recomp->ClearRecompCode_Phys(Address, length, CRecompiler::Remove_ProtectedMem);
 #endif

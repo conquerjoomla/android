@@ -11,8 +11,9 @@ LOCAL_STATIC_LIBRARIES := common
 LOCAL_C_INCLUDES := ../     \
     $(SDL_INCLUDES)         \
                
-LOCAL_SRC_FILES := \
+LOCAL_SRC_FILES :=                          \
     $(SRCDIR)/AppInit.cpp                   \
+    $(SRCDIR)/Settings/SettingsClass.cpp    \
 
 LOCAL_CFLAGS := $(COMMON_CFLAGS)
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)

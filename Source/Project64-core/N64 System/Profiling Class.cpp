@@ -40,7 +40,7 @@ SPECIAL_TIMERS CProfiling::StartTimer(SPECIAL_TIMERS Address)
     m_StartTimeHi = HiValue;
     m_StartTimeLo = LoValue;
 #else
-    g_Notify->BreakPoint(__FILEW__, __LINE__);
+    g_Notify->BreakPoint(__FILE__, __LINE__);
 #endif
     return OldTimerAddr;
 }
@@ -61,7 +61,7 @@ SPECIAL_TIMERS CProfiling::StopTimer()
             popad
     }
 #else
-    g_Notify->BreakPoint(__FILEW__, __LINE__);
+    g_Notify->BreakPoint(__FILE__, __LINE__);
 #endif
 
     int64_t StopTime = ((uint64_t)HiValue << 32) + (uint64_t)LoValue;

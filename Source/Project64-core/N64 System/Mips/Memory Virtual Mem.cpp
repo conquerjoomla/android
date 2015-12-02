@@ -361,7 +361,7 @@ bool CMipsMemoryVM::LB_PAddr(uint32_t PAddr, uint8_t& Value)
         return false;
     }
 
-    g_Notify->BreakPoint(__FILEW__, __LINE__);
+    g_Notify->BreakPoint(__FILE__, __LINE__);
     return false;
 }
 
@@ -378,7 +378,7 @@ bool CMipsMemoryVM::LH_PAddr(uint32_t PAddr, uint16_t& Value)
         return false;
     }
 
-    g_Notify->BreakPoint(__FILEW__, __LINE__);
+    g_Notify->BreakPoint(__FILE__, __LINE__);
     return false;
 }
 
@@ -395,7 +395,7 @@ bool CMipsMemoryVM::LW_PAddr(uint32_t PAddr, uint32_t& Value)
         return false;
     }
 
-    g_Notify->BreakPoint(__FILEW__, __LINE__);
+    g_Notify->BreakPoint(__FILE__, __LINE__);
     return false;
 }
 
@@ -413,7 +413,7 @@ bool CMipsMemoryVM::LD_PAddr(uint32_t PAddr, uint64_t& Value)
         return false;
     }
 
-    g_Notify->BreakPoint(__FILEW__, __LINE__);
+    g_Notify->BreakPoint(__FILE__, __LINE__);
     return false;
 }
 
@@ -485,7 +485,7 @@ bool CMipsMemoryVM::SB_PAddr(uint32_t PAddr, uint8_t Value)
         return false;
     }
 
-    g_Notify->BreakPoint(__FILEW__, __LINE__);
+    g_Notify->BreakPoint(__FILE__, __LINE__);
     return false;
 }
 
@@ -502,7 +502,7 @@ bool CMipsMemoryVM::SH_PAddr(uint32_t PAddr, uint16_t Value)
         return false;
     }
 
-    g_Notify->BreakPoint(__FILEW__, __LINE__);
+    g_Notify->BreakPoint(__FILE__, __LINE__);
     return false;
 }
 
@@ -519,7 +519,7 @@ bool CMipsMemoryVM::SW_PAddr(uint32_t PAddr, uint32_t Value)
         return false;
     }
 
-    g_Notify->BreakPoint(__FILEW__, __LINE__);
+    g_Notify->BreakPoint(__FILE__, __LINE__);
     return false;
 }
 
@@ -537,7 +537,7 @@ bool CMipsMemoryVM::SD_PAddr(uint32_t PAddr, uint64_t Value)
         return false;
     }
 
-    g_Notify->BreakPoint(__FILEW__, __LINE__);
+    g_Notify->BreakPoint(__FILE__, __LINE__);
     return false;
 }
 
@@ -576,7 +576,7 @@ void CMipsMemoryVM::Compile_LB(x86Reg Reg, uint32_t VAddr, bool SignExtend)
     {
         if (!g_System->bUseTlb())
         {
-            g_Notify->BreakPoint(__FILEW__, __LINE__);
+            g_Notify->BreakPoint(__FILE__, __LINE__);
             return;
         }
 
@@ -647,7 +647,7 @@ void  CMipsMemoryVM::Compile_LH(x86Reg Reg, uint32_t VAddr, bool SignExtend)
     {
         if (!g_System->bUseTlb())
         {
-            g_Notify->BreakPoint(__FILEW__, __LINE__);
+            g_Notify->BreakPoint(__FILE__, __LINE__);
             return;
         }
 
@@ -719,7 +719,7 @@ void  CMipsMemoryVM::Compile_LW(x86Reg Reg, uint32_t VAddr)
     {
         if (!g_System->bUseTlb())
         {
-            g_Notify->BreakPoint(__FILEW__, __LINE__);
+            g_Notify->BreakPoint(__FILE__, __LINE__);
             return;
         }
 
@@ -734,7 +734,7 @@ void  CMipsMemoryVM::Compile_LW(x86Reg Reg, uint32_t VAddr)
     {
         if (!TranslateVaddr(VAddr, PAddr))
         {
-            g_Notify->BreakPoint(__FILEW__, __LINE__);
+            g_Notify->BreakPoint(__FILE__, __LINE__);
         }
 
         switch (PAddr & 0xFFF00000)
@@ -2017,7 +2017,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
     {
         if (bHaveDebugger())
         {
-            g_Notify->BreakPoint(__FILEW__, __LINE__);
+            g_Notify->BreakPoint(__FILE__, __LINE__);
         }
         return EXCEPTION_EXECUTE_HANDLER;
     }
@@ -2047,7 +2047,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
         {
             if (bHaveDebugger())
             {
-                g_Notify->BreakPoint(__FILEW__, __LINE__);
+                g_Notify->BreakPoint(__FILE__, __LINE__);
             }
             return EXCEPTION_EXECUTE_HANDLER;
         }
@@ -2081,7 +2081,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
         }
         if (bHaveDebugger())
         {
-            g_Notify->BreakPoint(__FILEW__, __LINE__);
+            g_Notify->BreakPoint(__FILE__, __LINE__);
         }
         return EXCEPTION_EXECUTE_HANDLER;
     }
@@ -2142,7 +2142,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
         case 7: ReadPos += 1; break;
         case 0x80: ReadPos += 1; break;
         default:
-            g_Notify->BreakPoint(__FILEW__, __LINE__);
+            g_Notify->BreakPoint(__FILE__, __LINE__);
         }
         break;
     case 5: ReadPos += 5; break;
@@ -2164,7 +2164,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
     default:
         if (bHaveDebugger())
         {
-            g_Notify->BreakPoint(__FILEW__, __LINE__);
+            g_Notify->BreakPoint(__FILE__, __LINE__);
         }
         return EXCEPTION_EXECUTE_HANDLER;
     }
@@ -2173,7 +2173,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
     {
         if (bHaveDebugger())
         {
-            g_Notify->BreakPoint(__FILEW__, __LINE__);
+            g_Notify->BreakPoint(__FILE__, __LINE__);
         }
         return EXCEPTION_EXECUTE_HANDLER;
     }
@@ -2234,7 +2234,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
         default:
             if (bHaveDebugger())
             {
-                g_Notify->BreakPoint(__FILEW__, __LINE__);
+                g_Notify->BreakPoint(__FILE__, __LINE__);
             }
             return EXCEPTION_EXECUTE_HANDLER;
         }
@@ -2270,7 +2270,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
             {
                 if (bHaveDebugger())
                 {
-                    g_Notify->BreakPoint(__FILEW__, __LINE__);
+                    g_Notify->BreakPoint(__FILE__, __LINE__);
                 }
                 return EXCEPTION_EXECUTE_HANDLER;
             }
@@ -2286,7 +2286,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
         default:
             if (bHaveDebugger())
             {
-                g_Notify->BreakPoint(__FILEW__, __LINE__);
+                g_Notify->BreakPoint(__FILE__, __LINE__);
             }
             return EXCEPTION_EXECUTE_HANDLER;
         }
@@ -2343,7 +2343,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
         {
             if (bHaveDebugger())
             {
-                g_Notify->BreakPoint(__FILEW__, __LINE__);
+                g_Notify->BreakPoint(__FILE__, __LINE__);
             }
             return EXCEPTION_EXECUTE_HANDLER;
         }
@@ -2362,7 +2362,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
         {
             if (bHaveDebugger())
             {
-                g_Notify->BreakPoint(__FILEW__, __LINE__);
+                g_Notify->BreakPoint(__FILE__, __LINE__);
             }
             return EXCEPTION_EXECUTE_HANDLER;
         }
@@ -2379,7 +2379,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
     }
     if (bHaveDebugger())
     {
-        g_Notify->BreakPoint(__FILEW__, __LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 #else
     g_Notify->BreakPoint(__FILEW__,__LINE__);
@@ -2397,7 +2397,7 @@ bool CMipsMemoryVM::LB_NonMemory(uint32_t PAddr, uint32_t* Value, bool /*SignExt
 
     if (PAddr >= 0x10000000 && PAddr < 0x16000000)
     {
-        g_Notify->BreakPoint(__FILEW__, __LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
 #ifdef tofix
         if (WrittenToRom)
         {
@@ -2449,7 +2449,7 @@ bool CMipsMemoryVM::LH_NonMemory(uint32_t PAddr, uint32_t* Value, bool/* SignExt
 
     if (PAddr >= 0x10000000 && PAddr < 0x16000000)
     {
-        g_Notify->BreakPoint(__FILEW__, __LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
     //	switch (PAddr & 0xFFF00000)
     //	{
@@ -2696,7 +2696,7 @@ bool CMipsMemoryVM::LW_NonMemory(uint32_t PAddr, uint32_t* Value)
         {
             /*			*Value = *(uint32_t *)(&PifRom[PAddr - 0x1FC00000]);
             *Value = swap32by8(*Value); */
-            g_Notify->BreakPoint(__FILEW__, __LINE__);
+            g_Notify->BreakPoint(__FILE__, __LINE__);
             return true;
         }
         else if (PAddr < 0x1FC00800)
@@ -3016,7 +3016,7 @@ bool CMipsMemoryVM::SW_NonMemory(uint32_t PAddr, uint32_t Value)
                 }
                 catch (...)
                 {
-                    g_Notify->BreakPoint(__FILEW__, __LINE__);
+                    g_Notify->BreakPoint(__FILE__, __LINE__);
                 }
                 //}
                 break;
@@ -3079,7 +3079,7 @@ bool CMipsMemoryVM::SW_NonMemory(uint32_t PAddr, uint32_t Value)
                         }
                         catch (...)
                         {
-                            g_Notify->BreakPoint(__FILEW__, __LINE__);
+                            g_Notify->BreakPoint(__FILE__, __LINE__);
                         }
                     }
                 }
@@ -3464,18 +3464,18 @@ void CMipsMemoryVM::ProtectMemory(uint32_t StartVaddr, uint32_t EndVaddr)
     uint32_t StartPAddr, EndPAddr;
     if (!TranslateVaddr(StartVaddr, StartPAddr))
     {
-        g_Notify->BreakPoint(__FILEW__, __LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
     if (!TranslateVaddr(EndVaddr, EndPAddr))
     {
-        g_Notify->BreakPoint(__FILEW__, __LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 
     //Get Length of memory being protected
     int32_t Length = ((EndPAddr + 3) - StartPAddr) & ~3;
     if (Length < 0)
     {
-        g_Notify->BreakPoint(__FILEW__, __LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 
     //Protect that memory address space
@@ -3495,18 +3495,18 @@ void CMipsMemoryVM::UnProtectMemory(uint32_t StartVaddr, uint32_t EndVaddr)
     uint32_t StartPAddr, EndPAddr;
     if (!TranslateVaddr(StartVaddr, StartPAddr))
     {
-        g_Notify->BreakPoint(__FILEW__, __LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
     if (!TranslateVaddr(EndVaddr, EndPAddr))
     {
-        g_Notify->BreakPoint(__FILEW__, __LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 
     //Get Length of memory being protected
     int32_t Length = ((EndPAddr + 3) - StartPAddr) & ~3;
     if (Length < 0)
     {
-        g_Notify->BreakPoint(__FILEW__, __LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 
     //Protect that memory address space
@@ -3785,7 +3785,7 @@ void CMipsMemoryVM::Compile_LW(bool ResultSigned, bool bRecordLLBit)
         MoveVariableDispToX86Reg((void *)((uint32_t)(int16_t)Opcode.offset), String, GetMipsRegMapLo(Opcode.rt), TempReg1, 1);
         if (bRecordLLBit)
         {
-            g_Notify->BreakPoint(__FILEW__, __LINE__);
+            g_Notify->BreakPoint(__FILE__, __LINE__);
         }
     }
     else
@@ -3797,7 +3797,7 @@ void CMipsMemoryVM::Compile_LW(bool ResultSigned, bool bRecordLLBit)
             Compile_LW(GetMipsRegMapLo(Opcode.rt), Address);
             if (bRecordLLBit)
             {
-                g_Notify->BreakPoint(__FILEW__, __LINE__);
+                g_Notify->BreakPoint(__FILE__, __LINE__);
             }
         }
         else
@@ -4605,7 +4605,7 @@ void CMipsMemoryVM::Compile_SW(bool bCheckLLbit)
     {
         if (bCheckLLbit)
         {
-            g_Notify->BreakPoint(__FILEW__, __LINE__);
+            g_Notify->BreakPoint(__FILE__, __LINE__);
         }
         if (IsMapped(Opcode.rt))
         {
@@ -4635,7 +4635,7 @@ void CMipsMemoryVM::Compile_SW(bool bCheckLLbit)
 
             if (bCheckLLbit)
             {
-                g_Notify->BreakPoint(__FILEW__, __LINE__);
+                g_Notify->BreakPoint(__FILE__, __LINE__);
             }
             if (IsConst(Opcode.rt))
             {
@@ -4721,7 +4721,7 @@ void CMipsMemoryVM::Compile_SW(bool bCheckLLbit)
         {
             if (bCheckLLbit)
             {
-                g_Notify->BreakPoint(__FILEW__, __LINE__);
+                g_Notify->BreakPoint(__FILE__, __LINE__);
             }
             AndConstToX86Reg(TempReg1, 0x1FFFFFFF);
             if (IsConst(Opcode.rt))
@@ -5032,7 +5032,7 @@ void CMipsMemoryVM::Compile_StoreInstructClean(x86Reg AddressReg, int32_t Length
     {
         return;
     }
-    g_Notify->BreakPoint(__FILEW__, __LINE__);
+    g_Notify->BreakPoint(__FILE__, __LINE__);
 
     /*
     stdstr_f strLen("%d",Length);
@@ -5438,7 +5438,7 @@ void CMipsMemoryVM::RdramChanged(CMipsMemoryVM * _this)
 
     if (new_size > 0xFFFFFFFFul)
     { // should be unreachable because:  size_t new_size = g_Settings->(uint32_t)
-        g_Notify->BreakPoint(__FILEW__, __LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     } // ...However, FFFFFFFF also is a limit to RCP addressing, so we care.
     _this->m_AllocatedRdramSize = (uint32_t)new_size;
 }
@@ -5565,7 +5565,7 @@ void CMipsMemoryVM::ChangeSpStatus()
     }
     catch (...)
     {
-        g_Notify->BreakPoint(__FILEW__, __LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
     //}
 }
