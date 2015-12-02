@@ -62,6 +62,7 @@ extern "C" DECLSPEC void SDLCALL Java_emu_project64_jni_NativeExports_loadLibrar
 
     // Open shared libraries
     handleFront    = loadLibrary(path, "project64-console");
+    LOGI("handleFront = %p",handleFront);
 
     // Make sure we don't have any typos
     if (!handleFront )
