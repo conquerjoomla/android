@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Copy C++ Source" default="Copy C++ Source" basedir="."> 
+	<target name="Copy C++ Source">
+		<copy todir="./jni/Common/">
+		    <fileset dir="../Common"/>
+		</copy>
+		<copy todir="./jni/Project64-console/">
+		    <fileset dir="../Project64-console"/>
+		</copy>
+		<copy todir="./jni/Project64-core/">
+		    <fileset dir="../Project64-core"/>
+		</copy>
+	</target>
+</project>
