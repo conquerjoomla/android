@@ -10,7 +10,7 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "TLB Class.h"
-#include <Project64-core\N64 System\System Globals.h>
+#include <Project64-core/N64System/System Globals.h>
 #include "Register Class.h"
 
 CTLB::CTLB(CTLB_CB * CallBack ):

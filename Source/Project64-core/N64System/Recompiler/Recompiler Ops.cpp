@@ -9,12 +9,12 @@
 *                                                                           *
 ****************************************************************************/
 #include "stdafx.h"
-#include <Project64-core\N64 System\System Globals.h>
-#include <Project64-core\N64 System\Mips\OpcodeName.h>
-#include <Project64-core\N64 System\Mips\Memory Class.h>
-#include <Project64-core\N64 System\Interpreter\Interpreter Ops.h>
-#include <Project64-core\N64 System\Interpreter\Interpreter CPU.h>
-#include <Project64-core\N64 System\N64 Class.h>
+#include <Project64-core/N64System/System Globals.h>
+#include <Project64-core/N64System/Mips/OpcodeName.h>
+#include <Project64-core/N64System/Mips/Memory Class.h>
+#include <Project64-core/N64System/Interpreter/Interpreter Ops.h>
+#include <Project64-core/N64System/Interpreter/Interpreter CPU.h>
+#include <Project64-core/N64System/N64 Class.h>
 #include "Recompiler Class.h"
 #include "Recompiler Ops.h"
 #include "Code Section.h"
@@ -5435,7 +5435,7 @@ void CRecompilerOps::COP0_MT()
             SetJump8(Jump, m_RecompPos);
 
             //TestConstToX86Reg(STATUS_FR,OldStatusReg);
-            //BreakPoint(__FILEW__,__LINE__); //m_Section->CompileExit(m_CompilePC+4,m_RegWorkingSet,ExitResetRecompCode,false,JneLabel32);
+            //BreakPoint(__FILE__,__LINE__); //m_Section->CompileExit(m_CompilePC+4,m_RegWorkingSet,ExitResetRecompCode,false,JneLabel32);
             BeforeCallDirect(m_RegWorkingSet);
             MoveConstToX86reg((uint32_t)g_Reg, x86_ECX);
             Call_Direct(AddressOf(&CRegisters::CheckInterrupts), "CRegisters::CheckInterrupts");

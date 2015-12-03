@@ -17,8 +17,8 @@
 #include <common/CriticalSection.h>
 #include <shellapi.h>
 #include <Project64-core\Multilanguage.h>
-#include "User Interface.h"
-#include "N64 System.h"
+#include "UserInterface.h"
+#include "N64System.h"
 #include <Project64-core\Plugin.h>
 #include "Support.h"
 #include <Project64-core\Version.h>
@@ -26,5 +26,5 @@
 #include <mmsystem.h>
 #include <Aclapi.h>
 
-#include <Project64-core\3rd Party\Zip.h>
-#include <Project64-core\3rd Party\7zip.h>
+#include <Project64-core/3rdParty/Zip.h>
+#include <Project64-core/3rdParty/7zip.h>

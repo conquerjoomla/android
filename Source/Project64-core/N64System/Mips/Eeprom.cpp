@@ -10,8 +10,8 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "Eeprom.h"
-#include <Project64-core\N64 System\System Globals.h>
-#include <Project64-core\N64 System\N64 Class.h>
+#include <Project64-core/N64System/System Globals.h>
+#include <Project64-core/N64System/N64 Class.h>
 #include <time.h>
 #include <Windows.h>
 

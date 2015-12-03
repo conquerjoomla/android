@@ -10,13 +10,13 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "Pif Ram.h"
-#include <Project64-core\N64 System\System Globals.h>
+#include <Project64-core/N64System/System Globals.h>
 #include <Project64-core\Plugins\Controller Plugin.h>
-#include <Project64-core\N64 System\Mips\Register Class.h>
-#include <Project64-core\N64 System\Mips\Memory Class.h>
-#include <Project64-core\N64 System\N64 Class.h>
-#include <Project64-core\N64 System\Mips\Rumblepak.h>
-#include <Project64-core\N64 System\Mips\Mempak.H>
+#include <Project64-core/N64System/Mips/Register Class.h>
+#include <Project64-core/N64System/Mips/Memory Class.h>
+#include <Project64-core/N64System/N64 Class.h>
+#include <Project64-core/N64System/Mips/Rumblepak.h>
+#include <Project64-core/N64System/Mips/Mempak.H>
 #include <Project64-core\Logging.h>
 
 int32_t   CPifRamSettings::m_RefCount = 0;

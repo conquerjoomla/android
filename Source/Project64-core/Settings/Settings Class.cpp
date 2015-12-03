@@ -30,7 +30,7 @@
 #include "SettingType/SettingsType-TempNumber.h"
 #include "SettingType/SettingsType-TempBool.h"
 #include "Settings Class.h"
-#include "N64 System/N64 Types.h"
+#include "N64System/N64 Types.h"
 #include <Common/TraceDefs.h>
 
 CSettings * g_Settings = NULL;

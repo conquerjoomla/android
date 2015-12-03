@@ -2,7 +2,7 @@
 
 #include "File Class.h"
 #include "CriticalSection.h"
-#include "std string.h"
+#include "StdString.h"
 #include <map>
 
 class CIniFileBase

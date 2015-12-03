@@ -9,7 +9,7 @@
 *                                                                           *
 ****************************************************************************/
 #include "stdafx.h"
-#include <Project64-core\N64 System\N64 Class.h>
+#include <Project64-core/N64System/N64 Class.h>
 #include <Project64-core\Notification.h>
 #include <common/Util.h>
 #include <Windows.h>

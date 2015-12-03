@@ -10,7 +10,7 @@
 ****************************************************************************/
 #pragma once
 #include "Jump Info.h"
-#include <Project64-core\N64 System\Recompiler\Recompiler Ops.h>
+#include <Project64-core/N64System/Recompiler/Recompiler Ops.h>
 
 class CCodeBlock;
 

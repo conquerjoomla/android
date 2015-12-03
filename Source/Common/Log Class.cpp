@@ -189,7 +189,7 @@ void CLog::Log( const char * Message )
 
 				if (!m_hLogFile.Write(Data,dwRead))
 				{
-					//BreakPoint(__FILEW__,__LINE__);
+					//BreakPoint(__FILE__,__LINE__);
 					break;
 				}
 

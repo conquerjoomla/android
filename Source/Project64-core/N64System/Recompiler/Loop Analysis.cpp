@@ -10,12 +10,12 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "Loop Analysis.h"
-#include <Project64-core\N64 System\N64 Types.h>
-#include <Project64-core\N64 System\Recompiler\Code Block.h>
-#include <Project64-core\N64 System\Recompiler\x86CodeLog.h>
-#include <Project64-core\N64 System\System Globals.h>
-#include <Project64-core\N64 System\Mips\Memory Class.h>
-#include <Project64-core\N64 System\Mips\OpcodeName.h>
+#include <Project64-core/N64System/N64 Types.h>
+#include <Project64-core/N64System/Recompiler/Code Block.h>
+#include <Project64-core/N64System/Recompiler/x86CodeLog.h>
+#include <Project64-core/N64System/System Globals.h>
+#include <Project64-core/N64System/Mips/Memory Class.h>
+#include <Project64-core/N64System/Mips/OpcodeName.h>
 
 #ifdef _DEBUG
 #define CHECKED_BUILD 1
@@ -295,7 +295,7 @@ bool LoopAnalysis::CheckLoopRegisterUsage(CCodeSection * Section)
 
                 /*if (Section->m_Jump.TargetPC != m_PC + ((int16_t)m_Command.offset << 2) + 4)
                 {
-                g_Notify->BreakPoint(__FILEW__,__LINE__);
+                g_Notify->BreakPoint(__FILE__,__LINE__);
                 }*/
                 if (m_PC == m_PC + ((int16_t)m_Command.offset << 2) + 4)
                 {
@@ -422,12 +422,12 @@ bool LoopAnalysis::CheckLoopRegisterUsage(CCodeSection * Section)
                 {
                     if (Section->m_Cont.TargetPC != (uint32_t)-1)
                     {
-                        //g_Notify->BreakPoint(__FILEW__,__LINE__);
+                        //g_Notify->BreakPoint(__FILE__,__LINE__);
                     }
                 }
                 if (Section->m_Jump.TargetPC != m_PC + ((int16_t)m_Command.offset << 2) + 4)
                 {
-                    //g_Notify->BreakPoint(__FILEW__,__LINE__);
+                    //g_Notify->BreakPoint(__FILE__,__LINE__);
                 }
                 if (m_PC == Section->m_Jump.TargetPC)
                 {
@@ -587,7 +587,7 @@ bool LoopAnalysis::CheckLoopRegisterUsage(CCodeSection * Section)
                         {
                             if (!Section->m_Jump.PermLoop)
                             {
-                                g_Notify->BreakPoint(__FILEW__,__LINE__);
+                                g_Notify->BreakPoint(__FILE__,__LINE__);
                             }
                         }
 #endif
@@ -648,11 +648,11 @@ bool LoopAnalysis::CheckLoopRegisterUsage(CCodeSection * Section)
             }
             if (Section->m_Jump.TargetPC != m_PC + 4)
             {
-                //g_Notify->BreakPoint(__FILEW__,__LINE__);
+                //g_Notify->BreakPoint(__FILE__,__LINE__);
             }
             /*if (Section->m_Jump.TargetPC != m_PC + ((int16_t)m_Command.offset << 2) + 4)
             {
-            g_Notify->BreakPoint(__FILEW__,__LINE__);
+            g_Notify->BreakPoint(__FILE__,__LINE__);
             }*/
             if (m_PC == m_PC + ((int16_t)m_Command.offset << 2) + 4)
             {

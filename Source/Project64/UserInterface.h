@@ -16,6 +16,7 @@
 #include <Project64-core\Multilanguage.h>
 #include <Project64-core\Settings\Settings Class.h>
 
+#ifdef tofix
 typedef unsigned char    BYTE;
 typedef unsigned short   WORD;
 typedef unsigned long    DWORD;
@@ -23,37 +24,20 @@ typedef unsigned __int64 QWORD;
 typedef void *           HANDLE;
 typedef const char *     LPCSTR;
 
-struct RECT_STRUCT
-{
-	long left;
-	long top;
-	long right;
-	long bottom;
-};
-
-struct WINDOWS_PAINTSTRUCT
-{
-	HDC         hdc;
-	int         fErase;
-	RECT_STRUCT rcPaint;
-	int         fRestore;
-	int         fIncUpdate;
-	BYTE        rgbReserved[32];
-};
-
 #define CALLBACK    __stdcall
 
 class CN64System;
+#endif
 
-#include <WTL App.h>
-#include <User Interface/MenuShortCuts.h>
+#include "WTLApp.h"
+#include "UserInterface/MenuShortCuts.h"
 
-#include ".\\User Interface\\Rom Browser.h"
-#include ".\\User Interface\\Gui Class.h"
-#include ".\\User Interface\\Menu Class.h"
-#include ".\\User Interface\\Main Menu Class.h"
-#include ".\\User Interface\\Notification Class.h"
+#include "UserInterface/Rom Browser.h"
+#include "UserInterface/Gui Class.h"
+#include "UserInterface/Menu Class.h"
+#include "UserInterface/Main Menu Class.h"
+#include "UserInterface/Notification Class.h"
 #include <Project64-core\N64 System\Frame Per Second Class.h>
-#include ".\\User Interface\\resource.h"
-#include ".\\User Interface\\Settings Config.h"
-#include ".\\User Interface\\Cheat Class UI.h"
+#include "UserInterface/resource.h"
+#include "UserInterface/Settings Config.h"
+#include "UserInterface/Cheat Class UI.h"

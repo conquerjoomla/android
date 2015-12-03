@@ -11,8 +11,8 @@
 #pragma once
 
 #include <Project64-core\Settings\Debug Settings.h>
-#include <Project64-core\N64 System\Mips\Register Class.h>
-#include <Project64-core\N64 System\Mips\OpCode.h>
+#include <Project64-core/N64System/Mips/Register Class.h>
+#include <Project64-core/N64System/Mips/OpCode.h>
 
 class R4300iOp :
     public CLogging,

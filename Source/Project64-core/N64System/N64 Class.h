@@ -11,10 +11,10 @@
 #pragma once
 
 #include <Common/SyncEvent.h>
-#include <Project64-core\Settings\N64System Settings.h>
-#include <Project64-core\N64 System\Recompiler\Recompiler Class.h>
-#include <Project64-core\N64 System\Mips\Memory Virtual Mem.h>
-#include <Project64-core\Settings\Debug Settings.h>
+#include <Project64-core/Settings/N64System Settings.h>
+#include <Project64-core/N64System/Recompiler/Recompiler Class.h>
+#include <Project64-core/N64System/Mips/Memory Virtual Mem.h>
+#include <Project64-core/Settings/Debug Settings.h>
 #include <Project64-core\Plugin.h>
 #include <Project64-core\Logging.h>
 

@@ -47,12 +47,12 @@ extern CPj64Module _Module;
 #include <wtl/atlctrls.h>
 #include <wtl/atldlgs.h>
 
-#include <Common/std string.h>
+#include <Common/StdString.h>
 
-#include "User Interface/resource.h"
-#include "User Interface/WTL Controls/numberctrl.h"
-#include "User Interface/WTL Controls/ClistCtrl/ListCtrl.h"
-#include "User Interface/WTL Controls/ModifiedComboBox.h"
-#include "User Interface/WTL Controls/PartialGroupBox.h"
-#include "User Interface/WTL Controls/ModifiedEditBox.h"
-#include "User Interface/WTL Controls/ModifiedCheckBox.h"
+#include "UserInterface/resource.h"
+#include "UserInterface/WTL Controls/numberctrl.h"
+#include "UserInterface/WTL Controls/ClistCtrl/ListCtrl.h"
+#include "UserInterface/WTL Controls/ModifiedComboBox.h"
+#include "UserInterface/WTL Controls/PartialGroupBox.h"
+#include "UserInterface/WTL Controls/ModifiedEditBox.h"
+#include "UserInterface/WTL Controls/ModifiedCheckBox.h"

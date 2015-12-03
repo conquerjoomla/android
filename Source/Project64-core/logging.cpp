@@ -11,10 +11,10 @@
 #include "stdafx.h"
 #include "logging.h"
 #include <Common/path.h>
-#include <Project64-core\N64 System\System Globals.h>
-#include <Project64-core\N64 System\Mips\TranslateVaddr.h>
-#include <Project64-core\N64 System\Mips\Memory Class.h>
-#include <Project64-core\N64 System\N64 Rom Class.h>
+#include <Project64-core/N64System/System Globals.h>
+#include <Project64-core/N64System/Mips/TranslateVaddr.h>
+#include <Project64-core/N64System/Mips/Memory Class.h>
+#include <Project64-core/N64System/N64 Rom Class.h>
 
 CFile * CLogging::m_hLogFile = NULL;
 

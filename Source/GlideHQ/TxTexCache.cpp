@@ -33,7 +33,7 @@
 #include <zlib/zlib.h>
 #include <string>
 #include <Common/path.h>
-#include <common/std string.h>
+#include <Common/StdString.h>
 
 TxTexCache::~TxTexCache()
 {

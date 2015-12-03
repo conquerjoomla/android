@@ -3,10 +3,10 @@
 #include <common\path.h>
 #include <common\trace.h>
 #include <Common\Util.h>
-#include <Project64-core\N64 System\Mips\Memory Virtual Mem.h>
-#include <Project64-core\N64 System\System Globals.h>
+#include <Project64-core/N64System/Mips/Memory Virtual Mem.h>
+#include <Project64-core/N64System/System Globals.h>
 #include <Project64-core\Plugins\Plugin Class.h>
-#include <Project64-core\N64 System\N64 Rom Class.h>
+#include <Project64-core/N64System/N64 Rom Class.h>
 
 void FixDirectories(void);
 void FixLocale(void);

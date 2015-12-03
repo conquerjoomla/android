@@ -10,7 +10,7 @@
 ****************************************************************************/
 #pragma once
 #include "N64 Rom Class.h"
-#include <Project64-core\N64 System\Mips\Memory Class.h>
+#include <Project64-core/N64System/Mips/Memory Class.h>
 #include <Project64-core\Plugins\Plugin Class.h>
 
 class CCheats

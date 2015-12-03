@@ -9,8 +9,8 @@
 *                                                                           *
 ****************************************************************************/
 #include "stdafx.h"
-#include <Project64-core\N64 System\System Globals.h>
-#include <Project64-core\N64 System\N64 Class.h>
+#include <Project64-core/N64System/System Globals.h>
+#include <Project64-core/N64System/N64 Class.h>
 #include "Reg Info.h"
 #include "Recompiler class.h"
 #include "x86CodeLog.h"

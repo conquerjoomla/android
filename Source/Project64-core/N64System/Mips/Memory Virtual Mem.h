@@ -11,12 +11,12 @@
 #pragma once
 #include "Memory Class.h"
 #include "TranslateVaddr.h"
-#include <Project64-core\N64 System\Recompiler\Recompiler Ops.h>
-#include <Project64-core\N64 System\Interpreter\Interpreter Ops.h>
-#include <Project64-core\N64 System\Mips\Pif Ram.h>
-#include <Project64-core\N64 System\Mips\FlashRam.h>
-#include <Project64-core\N64 System\Mips\Sram.h>
-#include <Project64-core\N64 System\Mips\Dma.h>
+#include <Project64-core/N64System/Recompiler/Recompiler Ops.h>
+#include <Project64-core/N64System/Interpreter/Interpreter Ops.h>
+#include <Project64-core/N64System/Mips/Pif Ram.h>
+#include <Project64-core/N64System/Mips/FlashRam.h>
+#include <Project64-core/N64System/Mips/Sram.h>
+#include <Project64-core/N64System/Mips/Dma.h>
 
 /*
 * 64-bit Windows exception recovery facilities will expect to interact with

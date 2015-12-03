@@ -10,7 +10,7 @@
 ****************************************************************************/
 #pragma once
 
-#include <Project64-core\N64 System\Interpreter\Interpreter Ops.h>
+#include <Project64-core/N64System/Interpreter/Interpreter Ops.h>
 
 class CInterpreterCPU :
     private R4300iOp

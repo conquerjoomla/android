@@ -10,10 +10,10 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "System Timing.h"
-#include <Project64-core\N64 System\System Globals.h>
-#include <Project64-core\N64 System\Mips\Register Class.h>
-#include <Project64-core\N64 System\N64 Class.h>
-#include <Project64-core\3rd Party\zip.h>
+#include <Project64-core/N64System/System Globals.h>
+#include <Project64-core/N64System/Mips/Register Class.h>
+#include <Project64-core/N64System/N64 Class.h>
+#include <Project64-core/3rdParty/zip.h>
 
 CSystemTimer::CSystemTimer( int32_t & NextTimer ) :
     m_NextTimer(NextTimer),
@@ -41,7 +41,7 @@ void CSystemTimer::SetTimer ( TimerType Type, uint32_t Cycles, bool bRelative )
 {
     if (Type >= MaxTimer || Type == UnknownTimer)
     {
-        g_Notify->BreakPoint(__FILEW__,__LINE__);
+        g_Notify->BreakPoint(__FILE__,__LINE__);
         return;
     }
     UpdateTimers();
@@ -69,7 +69,7 @@ uint32_t CSystemTimer::GetTimer ( TimerType Type )
 {
     if (Type >= MaxTimer || Type == UnknownTimer)
     {
-        g_Notify->BreakPoint(__FILEW__,__LINE__);
+        g_Notify->BreakPoint(__FILE__,__LINE__);
         return 0;
     }
     if (!m_TimerDetatils[Type].Active)
@@ -92,7 +92,7 @@ void CSystemTimer::StopTimer ( TimerType Type )
 {
     if (Type >= MaxTimer || Type == UnknownTimer)
     {
-        g_Notify->BreakPoint(__FILEW__,__LINE__);
+        g_Notify->BreakPoint(__FILE__,__LINE__);
         return;
     }
     m_TimerDetatils[Type].Active = false;
@@ -227,7 +227,7 @@ void CSystemTimer::TimerDone()
         }
         catch (...)
         {
-            g_Notify->BreakPoint(__FILEW__,__LINE__);
+            g_Notify->BreakPoint(__FILE__,__LINE__);
         }
         break;
     case CSystemTimer::RSPTimerDlist:
@@ -244,7 +244,7 @@ void CSystemTimer::TimerDone()
         g_Audio->BusyTimerDone();
         break;
     default:
-        g_Notify->BreakPoint(__FILEW__,__LINE__);
+        g_Notify->BreakPoint(__FILE__,__LINE__);
     }
     //CheckTimer();
     /*if (Profiling)
@@ -317,12 +317,12 @@ void CSystemTimer::LoadData ( void * file )
 
     if (TimerDetailsSize != sizeof(TIMER_DETAILS))
     {
-        g_Notify->BreakPoint(__FILEW__,__LINE__);
+        g_Notify->BreakPoint(__FILE__,__LINE__);
         return;
     }
     if (Entries != sizeof(m_TimerDetatils)/sizeof(m_TimerDetatils[0]))
     {
-        g_Notify->BreakPoint(__FILEW__,__LINE__);
+        g_Notify->BreakPoint(__FILE__,__LINE__);
         return;
     }
 

@@ -10,14 +10,14 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "Interpreter CPU.h"
-#include <Project64-core\N64 System\System Globals.h>
-#include <Project64-core\N64 System\N64 Class.h>
-#include <Project64-core\N64 System\Mips\Memory Class.h>
-#include <Project64-core\N64 System\Mips\OpcodeName.h>
-#include <Project64-core\N64 System\Interpreter\Interpreter Ops 32.h>
+#include <Project64-core/N64System/System Globals.h>
+#include <Project64-core/N64System/N64 Class.h>
+#include <Project64-core/N64System/Mips/Memory Class.h>
+#include <Project64-core/N64System/Mips/OpcodeName.h>
+#include <Project64-core/N64System/Interpreter/Interpreter Ops 32.h>
 #include <Project64-core\Plugins\Plugin Class.h>
 #include <Project64-core\Plugins\GFX plugin.h>
-#include <Project64-core\Exception Handler.h>
+#include <Project64-core/ExceptionHandler.h>
 
 R4300iOp::Func * CInterpreterCPU::m_R4300i_Opcode = NULL;
 

@@ -10,12 +10,12 @@
 ****************************************************************************/
 #pragma once
 
-#include <Project64-core\N64 System\Mips\Register Class.h>
-#include <Project64-core\N64 System\Mips\OpCode.h>
-#include <Project64-core\N64 System\Recompiler\Reg Info.h>
-#include <Project64-core\Settings\Debug Settings.h>
-#include <Project64-core\Settings\N64System Settings.h>
-#include <Project64-core\Settings\Recompiler Settings.h>
+#include <Project64-core/N64System/Mips/Register Class.h>
+#include <Project64-core/N64System/Mips/OpCode.h>
+#include <Project64-core/N64System/Recompiler/Reg Info.h>
+#include <Project64-core/Settings/Debug Settings.h>
+#include <Project64-core/Settings/N64System Settings.h>
+#include <Project64-core/Settings/Recompiler Settings.h>
 #include  "X86ops.h"
 
 class CCodeSection;

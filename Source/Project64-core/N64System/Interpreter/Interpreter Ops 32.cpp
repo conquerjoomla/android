@@ -10,10 +10,10 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "Interpreter Ops 32.h"
-#include <Project64-core\N64 System\System Globals.h>
-#include <Project64-core\N64 System\Mips\Memory Class.h>
-#include <Project64-core\N64 System\Mips\System Timing.h>
-#include <Project64-core\N64 System\Interpreter\Interpreter CPU.h>
+#include <Project64-core/N64System/System Globals.h>
+#include <Project64-core/N64System/Mips/Memory Class.h>
+#include <Project64-core/N64System/Mips/System Timing.h>
+#include <Project64-core/N64System/Interpreter/Interpreter CPU.h>
 #include <Project64-core\Logging.h>
 
 bool DelaySlotEffectsCompare(uint32_t PC, uint32_t Reg1, uint32_t Reg2);

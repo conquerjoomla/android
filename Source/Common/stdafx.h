@@ -5,7 +5,7 @@
 #include <stdarg.h>
 
 #include "MemTest.h"
-#include "std string.h"
+#include "StdString.h"
 #include "CriticalSection.h"
 #include "File Class.h"
 #include "Ini File Class.h"

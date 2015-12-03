@@ -10,15 +10,15 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "Code Section.h"
-#include <Project64-core\N64 System\Mips\OpCode.h>
-#include <Project64-core\N64 System\System Globals.h>
-#include <Project64-core\N64 System\Mips\Memory Class.h>
-#include <Project64-core\N64 System\Recompiler\x86CodeLog.h>
-#include <Project64-core\N64 System\Recompiler\Code Block.h>
-#include <Project64-core\N64 System\N64 Class.h>
-#include <Project64-core\N64 System\Interpreter\Interpreter CPU.h>
-#include <Project64-core\N64 System\Recompiler\Loop Analysis.h>
-#include <Project64-core\N64 System\Recompiler\Section Info.h>
+#include <Project64-core/N64System/Mips/OpCode.h>
+#include <Project64-core/N64System/System Globals.h>
+#include <Project64-core/N64System/Mips/Memory Class.h>
+#include <Project64-core/N64System/Recompiler/x86CodeLog.h>
+#include <Project64-core/N64System/Recompiler/Code Block.h>
+#include <Project64-core/N64System/N64 Class.h>
+#include <Project64-core/N64System/Interpreter/Interpreter CPU.h>
+#include <Project64-core/N64System/Recompiler/Loop Analysis.h>
+#include <Project64-core/N64System/Recompiler/Section Info.h>
 #include <Windows.h>
 
 void InPermLoop();
@@ -196,7 +196,7 @@ void CCodeSection::CompileExit(uint32_t JumpPC, uint32_t TargetPC, CRegInfo &Exi
         {
             if (LookUpMode() == FuncFind_ChangeMemory)
             {
-                g_Notify->BreakPoint(__FILEW__,__LINE__);
+                g_Notify->BreakPoint(__FILE__,__LINE__);
                 //			uint8_t * Jump, * Jump2;
                 //			if (TargetPC >= 0x80000000 && TargetPC < 0xC0000000) {
                 //				uint32_t pAddr = TargetPC & 0x1FFFFFFF;
@@ -995,7 +995,7 @@ void TestFunc()
 TestValue += 1;
 if (TestValue >= 4)
 {
-g_Notify->BreakPoint(__FILEW__,__LINE__);
+g_Notify->BreakPoint(__FILE__,__LINE__);
 }
 }*/
 
@@ -1142,7 +1142,7 @@ bool CCodeSection::GenerateX86Code(uint32_t Test)
         /*		if (m_CompilePC == 0x803245CC && m_NextInstruction == NORMAL)
         {
         //m_RegWorkingSet.UnMap_AllFPRs();
-        g_Notify->BreakPoint(__FILEW__,__LINE__);
+        g_Notify->BreakPoint(__FILE__,__LINE__);
         //X86HardBreakPoint();
         //X86BreakPoint(__FILEW__,__LINE__);
         //m_RegWorkingSet.UnMap_AllFPRs();
@@ -2172,7 +2172,7 @@ bool CCodeSection::InheritParentInfo()
         }
         //if (m_EnterPC == 0x8031CE44 && m_SectionID == 6)
         //{
-        //	g_Notify->BreakPoint(__FILEW__,__LINE__);
+        //	g_Notify->BreakPoint(__FILE__,__LINE__);
         //}
         m_RegWorkingSet = JumpInfo->RegSet;
         if (m_EnterPC < JumpInfo->JumpPC)

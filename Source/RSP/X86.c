@@ -420,7 +420,7 @@ void AndX86RegHalfToX86RegHalf(int Destination, int Source) {
 	PUTDST16(RecompPos,x86Command);
 }
 
-void BreakPointNotification (const char * const FileName, const int LineNumber) {	
+void BreakPointNotification (const char * FileName, const int LineNumber) {	
 	DisplayError("Break Point found\nFile: %s\nLine: %d",FileName,LineNumber);
 }
 

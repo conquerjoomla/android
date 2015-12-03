@@ -11,7 +11,7 @@
 #pragma once
 
 #include <Common\Log Class.h>
-#include <Project64-core\N64 System\N64 Types.h>
+#include <Project64-core/N64System/N64 Types.h>
 
 class CSystemTimer
 {

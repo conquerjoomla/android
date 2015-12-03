@@ -11,8 +11,8 @@
 #include "stdafx.h"
 #include "N64 Rom Class.h"
 #include "System Globals.h"
-#include <Project64-core/3rd Party/zip.h>
-#include <Project64-core/3rd Party/7zip.h>
+#include <Project64-core/3rdParty/zip.h>
+#include <Project64-core/3rdParty/7zip.h>
 #include <Common/md5.h>
 #include <Windows.h>
 

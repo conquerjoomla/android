@@ -29,7 +29,7 @@
 #include <commctrl.h>
 #include <stdio.h>
 
-#include <common/std string.h>
+#include <Common/StdString.h>
 #include "../Settings/Settings.h"
 
 extern "C" {

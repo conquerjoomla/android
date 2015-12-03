@@ -10,8 +10,8 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "Register Class.h"
-#include <Project64-core\N64 System\N64 Class.h>
-#include <Project64-core\N64 System\System Globals.h>
+#include <Project64-core/N64System/N64 Class.h>
+#include <Project64-core/N64System/System Globals.h>
 #include <Project64-core\Logging.h>
 
 const char * CRegName::GPR[32] = {"r0","at","v0","v1","a0","a1","a2","a3",

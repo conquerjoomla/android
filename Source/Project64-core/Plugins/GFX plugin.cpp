@@ -9,10 +9,10 @@
 *                                                                           *
 ****************************************************************************/
 #include "stdafx.h"
-#include <Project64-core\N64 System\System Globals.h>
-#include <Project64-core\N64 System\N64 Rom Class.h>
-#include <Project64-core\N64 System\Mips\Memory Class.h>
-#include <Project64-core\N64 System\Mips\Register Class.h>
+#include <Project64-core/N64System/System Globals.h>
+#include <Project64-core/N64System/N64 Rom Class.h>
+#include <Project64-core/N64System/Mips/Memory Class.h>
+#include <Project64-core/N64System/Mips/Register Class.h>
 #include "GFX plugin.h"
 #include <Windows.h>
 

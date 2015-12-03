@@ -10,11 +10,11 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "Memory Virtual Mem.h"
-#include <Project64-core\N64 System\System Globals.h>
-#include <Project64-core\N64 System\N64 Rom Class.h>
-#include <Project64-core\N64 System\N64 Class.h>
-#include <Project64-core\N64 System\Recompiler\x86CodeLog.h>
-#include <Project64-core\N64 System\Mips\OpcodeName.h>
+#include <Project64-core/N64System/System Globals.h>
+#include <Project64-core/N64System/N64 Rom Class.h>
+#include <Project64-core/N64System/N64 Class.h>
+#include <Project64-core/N64System/Recompiler/x86CodeLog.h>
+#include <Project64-core/N64System/Mips/OpcodeName.h>
 #include <Windows.h>
 
 uint32_t RegModValue;
@@ -327,7 +327,7 @@ bool CMipsMemoryVM::LW_VAddr(uint32_t VAddr, uint32_t& Value)
 
     //	if (LookUpMode == FuncFind_ChangeMemory)
     //	{
-    //		g_Notify->BreakPoint(__FILEW__,__LINE__);
+    //		g_Notify->BreakPoint(__FILE__,__LINE__);
     //		if ( (Command.Hex >> 16) == 0x7C7C)
     //		{
     //			Command.Hex = OrigMem[(Command.Hex & 0xFFFF)].OriginalValue;
@@ -2030,7 +2030,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
     {
         //		if (bHaveDebugger())
         //		{
-        //			g_Notify->BreakPoint(__FILEW__,__LINE__);
+        //			g_Notify->BreakPoint(__FILE__,__LINE__);
         //		}
         return EXCEPTION_EXECUTE_HANDLER;
     }
@@ -2382,7 +2382,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 #else
-    g_Notify->BreakPoint(__FILEW__,__LINE__);
+    g_Notify->BreakPoint(__FILE__,__LINE__);
 #endif
     return EXCEPTION_EXECUTE_HANDLER;
 }

@@ -3,7 +3,7 @@
 #include <common/memtest.h>
 //#include "Support/CppSeh.h"
 #include <common/CriticalSection.h>
-#include <common/std string.h>
+#include <common/StdString.h>
 #include <common/File Class.h>
 #include <common//Log Class.h>
 #include <common/TraceDefs.h>

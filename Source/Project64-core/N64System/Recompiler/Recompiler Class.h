@@ -9,9 +9,9 @@
 *                                                                           *
 ****************************************************************************/
 #pragma once
-#include <Project64-core\Settings\Recompiler Settings.h>
-#include <Project64-core\N64 System\Recompiler\Function Map Class.h>
-#include <Project64-core\N64 System\Profiling Class.h>
+#include <Project64-core/Settings/Recompiler Settings.h>
+#include <Project64-core/N64System/Recompiler/Function Map Class.h>
+#include <Project64-core/N64System/Profiling Class.h>
 #include "Recompiler Memory.h"
 
 class CRecompiler :

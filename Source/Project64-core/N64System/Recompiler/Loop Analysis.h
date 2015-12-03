@@ -10,8 +10,8 @@
 ****************************************************************************/
 #pragma once
 
-#include <Project64-core\N64 System\Recompiler\Reg Info.h>
-#include <Project64-core\N64 System\Mips\OpCode.h>
+#include <Project64-core/N64System/Recompiler/Reg Info.h>
+#include <Project64-core/N64System/Mips/OpCode.h>
 
 class CCodeSection;
 class CCodeBlock;

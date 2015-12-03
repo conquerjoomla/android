@@ -10,7 +10,7 @@
 ****************************************************************************/
 #pragma once
 
-#include <Project64-core\N64 System\Recompiler\Reg Info.h>
+#include <Project64-core/N64System/Recompiler/Reg Info.h>
 
 struct CExitInfo
 {

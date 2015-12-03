@@ -10,13 +10,13 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "N64 class.h"
-#include <Project64-core\3rd Party\zip.h>
-#include <Project64-core\N64 System\Recompiler\x86CodeLog.h>
-#include <Project64-core\N64 System\System Globals.h>
-#include <Project64-core\N64 System\Mips\Mempak.H>
-#include <Project64-core\N64 System\Interpreter\Interpreter CPU.h>
-#include <Project64-core\N64 System\Mips\OpcodeName.h>
-#include <Project64-core\Exception Handler.h>
+#include <Project64-core/3rdParty/zip.h>
+#include <Project64-core/N64System/Recompiler/x86CodeLog.h>
+#include <Project64-core/N64System/System Globals.h>
+#include <Project64-core/N64System/Mips/Mempak.H>
+#include <Project64-core/N64System/Interpreter/Interpreter CPU.h>
+#include <Project64-core/N64System/Mips/OpcodeName.h>
+#include <Project64-core/ExceptionHandler.h>
 #include <Project64-core\Logging.h>
 #include <Project64-core\Debugger.h>
 #include <Common\Util.h>
@@ -983,7 +983,7 @@ void CN64System::SyncCPU(CN64System * const SecondCPU)
     }
     m_LastSuccessSyncPC[0] = m_Reg.m_PROGRAM_COUNTER;
     //	if (PROGRAM_COUNTER == 0x8009BBD8) {
-    //		g_Notify->BreakPoint(__FILEW__,__LINE__);
+    //		g_Notify->BreakPoint(__FILE__,__LINE__);
     //	}
 }
 

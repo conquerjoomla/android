@@ -10,10 +10,10 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "Recompiler Class.h"
-#include <Project64-core\N64 System\System Globals.h>
-#include <Project64-core\N64 System\Recompiler\x86CodeLog.h>
-#include <Project64-core\N64 System\N64 Class.h>
-#include <Project64-core\N64 System\Interpreter\Interpreter CPU.h>
+#include <Project64-core/N64System/System Globals.h>
+#include <Project64-core/N64System/Recompiler/x86CodeLog.h>
+#include <Project64-core/N64System/N64 Class.h>
+#include <Project64-core/N64System/Interpreter/Interpreter CPU.h>
 #include <Objbase.h>
 
 CRecompiler::CRecompiler(CRegisters & Registers, CProfiling & Profile, bool & EndEmulation) :
@@ -169,7 +169,7 @@ void CRecompiler::RecompilerMain_VirtualTable_validate()
     //Find Block on hash table
     if (Info == NULL)
     {
-    g_Notify->BreakPoint(__FILEW__,__LINE__);
+    g_Notify->BreakPoint(__FILE__,__LINE__);
     #ifdef tofix
     if (!g_TLB->ValidVaddr(PROGRAM_COUNTER))
     {
@@ -229,7 +229,7 @@ void CRecompiler::RecompilerMain_VirtualTable_validate()
     continue;
     }
     }
-    g_Notify->BreakPoint(__FILEW__,__LINE__);
+    g_Notify->BreakPoint(__FILE__,__LINE__);
     #ifdef tofix
     if (!g_TLB->ValidVaddr(PROGRAM_COUNTER))
     {
@@ -377,7 +377,7 @@ void CRecompiler::RecompilerMain_Lookup()
     {
     /*if (bUseTlb())
     {
-    g_Notify->BreakPoint(__FILEW__,__LINE__);
+    g_Notify->BreakPoint(__FILE__,__LINE__);
     #ifdef tofix
     if (!g_TLB->TranslateVaddr(PROGRAM_COUNTER, Addr))
     {
@@ -490,7 +490,7 @@ void CRecompiler::RecompilerMain_Lookup()
     continue;
     }
     }
-    g_Notify->BreakPoint(__FILEW__,__LINE__);
+    g_Notify->BreakPoint(__FILE__,__LINE__);
     #ifdef tofix
     if (Profiling && IndvidualBlock) {
     static uint32_t ProfAddress = 0;

@@ -10,8 +10,8 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "System Events.h"
-#include <Project64-core\N64 System\System Globals.h>
-#include <Project64-core\N64 System\N64 Class.h>
+#include <Project64-core/N64System/System Globals.h>
+#include <Project64-core/N64System/N64 Class.h>
 
 CSystemEvents::CSystemEvents(CN64System * System, CPlugins * Plugins) :
 m_System(System),

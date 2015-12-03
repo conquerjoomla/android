@@ -297,7 +297,7 @@ protected:
     static void SetJump8(uint8_t * Loc, uint8_t * JumpLoc);
 
 private:
-    static void BreakPointNotification (const wchar_t * const FileName, const int32_t LineNumber);
+    static void BreakPointNotification (const char * const FileName, const int32_t LineNumber);
     static char m_fpupop[2][2];
 };
 

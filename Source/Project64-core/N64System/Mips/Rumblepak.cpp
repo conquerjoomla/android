@@ -10,7 +10,7 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "Rumblepak.h"
-#include <Project64-core\N64 System\System Globals.h>
+#include <Project64-core/N64System/System Globals.h>
 #include <Project64-core\Plugins\Plugin Class.h>
 #include <Project64-core\Plugins\Controller Plugin.h>
 

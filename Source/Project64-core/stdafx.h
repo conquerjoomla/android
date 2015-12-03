@@ -1,5 +1,5 @@
 #include <Common\stdtypes.h>
-#include <Common\std string.h>
+#include <Common/StdString.h>
 #include <Common\TraceDefs.h>
 
 #include "Multilanguage.h"
