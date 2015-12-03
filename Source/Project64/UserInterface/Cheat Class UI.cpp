@@ -10,7 +10,7 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include <Project64-core\Settings\SettingType\SettingsType-Cheats.h>
-#include <Project64-core\N64 System\Cheat Class.h>
+#include <Project64-core/N64System/Cheat Class.h>
 
 extern CCheatsUI * g_cheatUI = NULL;
 

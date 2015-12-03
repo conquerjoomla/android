@@ -37,7 +37,7 @@ class CN64System;
 #include "UserInterface/Menu Class.h"
 #include "UserInterface/Main Menu Class.h"
 #include "UserInterface/Notification Class.h"
-#include <Project64-core\N64 System\Frame Per Second Class.h>
+#include <Project64-core/N64System/Frame Per Second Class.h>
 #include "UserInterface/resource.h"
 #include "UserInterface/Settings Config.h"
 #include "UserInterface/Cheat Class UI.h"

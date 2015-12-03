@@ -216,11 +216,11 @@ bool CNotificationImp::ProcessGuiMessages(void) const
     return m_hWnd->ProcessGuiMessages();
 }
 
-void CNotificationImp::BreakPoint(const wchar_t * FileName, const int LineNumber)
+void CNotificationImp::BreakPoint(const char * FileName, const int LineNumber)
 {
     if (g_Settings->LoadBool(Debugger_Enabled))
     {
-        DisplayError(stdstr_f("Break point found at\n%ws\n%d", FileName, LineNumber).ToUTF16().c_str());
+        DisplayError(stdstr_f("Break point found at\n%s\n%d", FileName, LineNumber).ToUTF16().c_str());
         if (IsDebuggerPresent() != 0)
         {
             DebugBreak();

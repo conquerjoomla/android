@@ -104,9 +104,9 @@ void AppInit(CNotification * Notify)
     }
 }
 
-#ifdef tofix
 void AppCleanup(void)
 {
+#ifdef tofix
     g_Settings->UnregisterChangeCB(Debugger_AppLogLevel, g_LogFile, (CSettings::SettingChangedFunc)LogLevelChanged);
     g_Settings->UnregisterChangeCB(Debugger_AppLogFlush, g_LogFile, (CSettings::SettingChangedFunc)LogFlushChanged);
     WriteTrace(TraceDebug, __FUNCTION__ ": cleaning up global objects");
@@ -120,8 +120,10 @@ void AppCleanup(void)
 
     WriteTrace(TraceDebug, __FUNCTION__ ": Done");
     CloseTrace();
+#endif
 }
 
+#ifdef tofix
 void FixDirectories(void)
 {
     CPath Directory(CPath::MODULE_DIRECTORY);
