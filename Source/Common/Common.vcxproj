@@ -55,6 +55,7 @@
     <ClInclude Include="md5.h" />
     <ClInclude Include="MemTest.h" />
     <ClInclude Include="path.h" />
+    <ClInclude Include="Platform.h" />
     <ClInclude Include="Smart Pointer.h" />
     <ClInclude Include="std string.h" />
     <ClInclude Include="stdafx.h" />

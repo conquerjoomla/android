@@ -10,6 +10,7 @@
 ****************************************************************************/
 #include "stdafx.h"
 
+#include <Common/Platform.h>
 #include "SettingType/SettingsType-Application.h"
 #include "SettingType/SettingsType-ApplicationPath.h"
 #include "SettingType/SettingsType-ApplicationIndex.h"
@@ -66,7 +67,7 @@ CSettings::~CSettings()
 
 void CSettings::AddHandler(SettingID TypeID, CSettingType * Handler)
 {
-    SETTING_MAP::_Pairib res = m_SettingInfo.insert(SETTING_MAP::value_type(TypeID, Handler));
+	std::pair<SETTING_MAP::iterator, bool> res = m_SettingInfo.insert(SETTING_MAP::value_type(TypeID, Handler));
     if (!res.second)
     {
         delete res.first->second;
