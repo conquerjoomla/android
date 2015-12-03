@@ -86,7 +86,7 @@
     <ClCompile Include="Settings\Logging Settings.cpp" />
     <ClCompile Include="Settings\N64System Settings.cpp" />
     <ClCompile Include="Settings\Recompiler Settings.cpp" />
-    <ClCompile Include="Settings\Settings Class.cpp" />
+    <ClCompile Include="Settings\SettingsClass.cpp" />
     <ClCompile Include="Settings\SettingType\SettingsType-Application.cpp" />
     <ClCompile Include="Settings\SettingType\SettingsType-ApplicationIndex.cpp" />
     <ClCompile Include="Settings\SettingType\SettingsType-ApplicationPath.cpp" />
@@ -176,8 +176,8 @@
     <ClInclude Include="Settings\Logging Settings.h" />
     <ClInclude Include="Settings\N64System Settings.h" />
     <ClInclude Include="Settings\Recompiler Settings.h" />
-    <ClInclude Include="Settings\Settings Class.h" />
     <ClInclude Include="Settings\Settings.h" />
+    <ClInclude Include="Settings\SettingsClass.h" />
     <ClInclude Include="Settings\SettingType\SettingsType-Application.h" />
     <ClInclude Include="Settings\SettingType\SettingsType-ApplicationIndex.h" />
     <ClInclude Include="Settings\SettingType\SettingsType-ApplicationPath.h" />

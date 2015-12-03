@@ -30,8 +30,8 @@
 #include "SettingType/SettingsType-TempString.h"
 #include "SettingType/SettingsType-TempNumber.h"
 #include "SettingType/SettingsType-TempBool.h"
-#include "Settings Class.h"
-#include "N64System/N64 Types.h"
+#include "SettingsClass.h"
+#include <Project64-core/N64System/N64 Types.h>
 #include <Common/TraceDefs.h>
 
 CSettings * g_Settings = NULL;
@@ -889,7 +889,7 @@ void CSettings::LoadDefaultString(SettingID /*Type*/, char * /*Buffer*/, int /*B
 stdstr CSettings::LoadDefaultStringIndex(SettingID /*Type*/, int /*index*/)
 {
     g_Notify->BreakPoint(__FILE__, __LINE__);
-    return false;
+    return "";
 }
 
 void CSettings::LoadDefaultStringIndex(SettingID /*Type*/, int /*index*/, stdstr & /*Value*/)

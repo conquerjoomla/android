@@ -14,20 +14,7 @@
 #include "Support.h"
 
 #include <Project64-core\Multilanguage.h>
-#include <Project64-core\Settings\Settings Class.h>
-
-#ifdef tofix
-typedef unsigned char    BYTE;
-typedef unsigned short   WORD;
-typedef unsigned long    DWORD;
-typedef unsigned __int64 QWORD;
-typedef void *           HANDLE;
-typedef const char *     LPCSTR;
-
-#define CALLBACK    __stdcall
-
-class CN64System;
-#endif
+#include <Project64-core\Settings\SettingsClass.h>
 
 #include "WTLApp.h"
 #include "UserInterface/MenuShortCuts.h"
