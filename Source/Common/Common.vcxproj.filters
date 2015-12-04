@@ -11,15 +11,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="File Class.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Ini File Class.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Log Class.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="md5.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -47,18 +38,18 @@
     <ClCompile Include="StdString.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FileClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IniFileClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LogClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CriticalSection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="File Class.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ini File Class.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Log Class.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="md5.h">
@@ -68,12 +59,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="path.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Smart Pointer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="std string.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
@@ -95,6 +80,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Platform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IniFileClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LogClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SmartPointer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StdString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -10,7 +10,7 @@
 ****************************************************************************/
 #pragma once
 
-#include <Common\Log Class.h>
+#include <Common/LogClass.h>
 #include <Project64-core/N64System/N64 Types.h>
 
 class CSystemTimer
@@ -39,20 +39,20 @@ public:
     };
 
 public:
-    CSystemTimer ( int32_t & NextTimer );
-    void      SetTimer             ( TimerType Type, uint32_t Cycles, bool bRelative );
-    uint32_t  GetTimer             ( TimerType Type );
-    void      StopTimer            ( TimerType Type );
-    void      UpdateTimers         ();
-    void      TimerDone            ();
-    void      Reset                ();
-    void      UpdateCompareTimer   ();
-    bool      SaveAllowed          ();
+    CSystemTimer(int32_t & NextTimer);
+    void      SetTimer(TimerType Type, uint32_t Cycles, bool bRelative);
+    uint32_t  GetTimer(TimerType Type);
+    void      StopTimer(TimerType Type);
+    void      UpdateTimers();
+    void      TimerDone();
+    void      Reset();
+    void      UpdateCompareTimer();
+    bool      SaveAllowed();
 
-    void      SaveData             ( void * file ) const;
-    void      LoadData             ( void * file );
+    void      SaveData(void * file) const;
+    void      LoadData(void * file);
 
-    void RecordDifference( CLog &LogFile, const CSystemTimer& rSystemTimer);
+    void RecordDifference(CLog &LogFile, const CSystemTimer& rSystemTimer);
 
     TimerType CurrentType() const { return m_Current; }
 

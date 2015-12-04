@@ -10,7 +10,7 @@
 ****************************************************************************/
 #pragma once
 
-#include <Common/Log Class.h>
+#include <Common/LogClass.h>
 #include "Register Class.h"
 
 class CDebugTlb;

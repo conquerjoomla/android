@@ -10,7 +10,7 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "Profiling Class.h"
-#include <Common/Log Class.h>
+#include <Common/LogClass.h>
 
 enum { MAX_FRAMES = 13 };
 

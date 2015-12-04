@@ -10,7 +10,7 @@
 ****************************************************************************/
 #pragma once
 #include <Project64-core/Settings/Logging Settings.h>
-#include <Common\File Class.h>
+#include <Common/FileClass.h>
 
 class CLogging :
     public CLogSettings

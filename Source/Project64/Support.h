@@ -4,11 +4,11 @@
 //#include "Support/CppSeh.h"
 #include <common/CriticalSection.h>
 #include <common/StdString.h>
-#include <common/File Class.h>
-#include <common//Log Class.h>
+#include <Common/FileClass.h>
+#include <common/LogClass.h>
 #include <common/TraceDefs.h>
 #include <common/Trace.h>
 #include <common/path.h>
-#include <common/Smart Pointer.h>
-#include <common/Ini File Class.h>
+#include <common/SmartPointer.h>
+#include <Common/IniFileClass.h>
 #include <common/md5.h>
