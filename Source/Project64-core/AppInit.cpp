@@ -58,18 +58,17 @@ void InitializeLog(void)
 
 void AppInit(CNotification * Notify)
 {
-	printf("AppInit 123\n");
     try
     {
 #ifdef tofix
         g_Notify = Notify;
 #endif
 		stdstr_f AppName("Project64 %s", VER_FILE_VERSION_STR);
-		printf("AppName = %s",AppName.c_str());
-#ifdef tofix
         g_Settings = new CSettings;
         g_Settings->Initialize(AppName.c_str());
 
+		printf("SupportFile_Settings = %s\n",g_Settings->LoadStringVal(SupportFile_Settings).c_str());
+#ifdef tofix
         FixDirectories();
         FixLocale();
         IncreaseThreadPriority();

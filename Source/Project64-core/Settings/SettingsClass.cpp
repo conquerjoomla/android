@@ -43,10 +43,12 @@ m_NextAutoSettingId(0x200000)
 
 CSettings::~CSettings()
 {
-    CSettingTypeApplication::CleanUp();
+#ifdef tofix
+	CSettingTypeApplication::CleanUp();
     CSettingTypeRomDatabase::CleanUp();
     CSettingTypeGame::CleanUp();
     CSettingTypeCheats::CleanUp();
+#endif
 
     for (SETTING_MAP::iterator iter = m_SettingInfo.begin(); iter != m_SettingInfo.end(); iter++)
     {
@@ -82,13 +84,16 @@ void CSettings::AddHandler(SettingID TypeID, CSettingType * Handler)
 
 void CSettings::AddHowToHandleSetting()
 {
-    //information - temp keys
+#ifdef tofix
+	//information - temp keys
     AddHandler(Info_ShortCutsChanged, new CSettingTypeTempBool(false));
 
     //Support Files
-    AddHandler(SupportFile_Settings, new CSettingTypeApplicationPath("", "ConfigFile", SupportFile_SettingsDefault));
+#endif
+	AddHandler(SupportFile_Settings, new CSettingTypeApplicationPath("", "ConfigFile", SupportFile_SettingsDefault));
     AddHandler(SupportFile_SettingsDefault, new CSettingTypeRelativePath("Config", "Project64.cfg"));
-    AddHandler(SupportFile_RomDatabase, new CSettingTypeApplicationPath("", "RomDatabase", SupportFile_RomDatabaseDefault));
+#ifdef tofix
+	AddHandler(SupportFile_RomDatabase, new CSettingTypeApplicationPath("", "RomDatabase", SupportFile_RomDatabaseDefault));
     AddHandler(SupportFile_RomDatabaseDefault, new CSettingTypeRelativePath("Config", "Project64.rdb"));
     AddHandler(SupportFile_Glide64RDB, new CSettingTypeApplicationPath("", "Glide64RDB", SupportFile_Glide64RDBDefault));
     AddHandler(SupportFile_Glide64RDBDefault, new CSettingTypeRelativePath("Config", "Glide64.rdb"));
@@ -362,6 +367,7 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(Cheat_Options, new CSettingTypeCheats("_O"));
     AddHandler(Cheat_Range, new CSettingTypeCheats("_R"));
     AddHandler(Cheat_RangeNotes, new CSettingTypeCheats("_RN"));
+#endif
 }
 
 uint32_t CSettings::FindSetting(CSettings * _this, const char * Name)
@@ -402,8 +408,10 @@ uint32_t CSettings::FindSetting(CSettings * _this, const char * Name)
 
 void CSettings::FlushSettings(CSettings * /*_this*/)
 {
-    CSettingTypeCheats::FlushChanges();
+#ifdef tofix
+	CSettingTypeCheats::FlushChanges();
     CSettingTypeApplication::Flush();
+#endif
 }
 
 uint32_t CSettings::GetSetting(CSettings * _this, SettingID Type)
@@ -435,7 +443,8 @@ void CSettings::RegisterSetting(CSettings * _this, SettingID ID, SettingID Defau
     SettingType Type, const char * Category, const char * DefaultStr,
     uint32_t Value)
 {
-    switch (Type)
+#ifdef tofix
+	switch (Type)
     {
     case SettingType_ConstValue:
         if (DataType != Data_DWORD)
@@ -564,17 +573,19 @@ void CSettings::RegisterSetting(CSettings * _this, SettingID ID, SettingID Defau
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
+#endif
 }
 
 bool CSettings::Initialize(const char * AppName)
 {
     AddHowToHandleSetting();
-    CSettingTypeApplication::Initialize(AppName);
+#ifdef tofix
+	CSettingTypeApplication::Initialize(AppName);
     CSettingTypeRomDatabase::Initialize();
     CSettingTypeGame::Initialize();
     CSettingTypeCheats::Initialize();
-
     g_Settings->SaveString(Setting_ApplicationName, AppName);
+#endif
     return true;
 }
 

@@ -26,9 +26,11 @@ public:
 private:	
 	
 	std::string	m_strPath;
+#ifdef WIN32
 	uint32_t   m_dwFindFileAttributes;
 	void *	m_hFindFile;
 	static void * m_hInst;
+#endif
 
 public:
 //Methods

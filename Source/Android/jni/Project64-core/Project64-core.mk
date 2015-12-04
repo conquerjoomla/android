@@ -14,6 +14,7 @@ LOCAL_C_INCLUDES := ../     \
 LOCAL_SRC_FILES :=                          \
     $(SRCDIR)/AppInit.cpp                   \
     $(SRCDIR)/Settings/SettingsClass.cpp    \
+    $(SRCDIR)/Settings/SettingType/SettingsType-ApplicationPath.cpp    \
 
 LOCAL_CFLAGS := $(COMMON_CFLAGS)
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
