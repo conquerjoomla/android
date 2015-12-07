@@ -13,18 +13,18 @@
 #pragma warning(disable:4786)
 #include "Support.h"
 
-#include <Project64-core\Multilanguage.h>
-#include <Project64-core\Settings\SettingsClass.h>
+#include <Project64-core/Multilanguage.h>
+#include <Project64-core/Settings/SettingsClass.h>
 
 #include "WTLApp.h"
 #include "UserInterface/MenuShortCuts.h"
 
-#include "UserInterface/Rom Browser.h"
-#include "UserInterface/Gui Class.h"
-#include "UserInterface/Menu Class.h"
-#include "UserInterface/Main Menu Class.h"
-#include "UserInterface/Notification Class.h"
-#include <Project64-core/N64System/Frame Per Second Class.h>
+#include "UserInterface/RomBrowser.h"
+#include "UserInterface/GuiClass.h"
+#include "UserInterface/MenuClass.h"
+#include "UserInterface/MainMenuClass.h"
+#include "UserInterface/NotificationClass.h"
+#include <Project64-core/N64System/FramePerSecondClass.h>
 #include "UserInterface/resource.h"
-#include "UserInterface/Settings Config.h"
-#include "UserInterface/Cheat Class UI.h"
+#include "UserInterface/SettingsConfig.h"
+#include "UserInterface/CheatClassUI.h"

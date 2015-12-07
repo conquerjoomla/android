@@ -67,6 +67,8 @@ void AppInit(CNotification * Notify)
         g_Settings = new CSettings;
         g_Settings->Initialize(AppName.c_str());
 
+        //Parse Command line
+
 		printf("SupportFile_Settings = %s\n",g_Settings->LoadStringVal(SupportFile_Settings).c_str());
 #ifdef tofix
         FixDirectories();

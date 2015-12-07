@@ -50,9 +50,9 @@ extern CPj64Module _Module;
 #include <Common/StdString.h>
 
 #include "UserInterface/resource.h"
-#include "UserInterface/WTL Controls/numberctrl.h"
-#include "UserInterface/WTL Controls/ClistCtrl/ListCtrl.h"
-#include "UserInterface/WTL Controls/ModifiedComboBox.h"
-#include "UserInterface/WTL Controls/PartialGroupBox.h"
-#include "UserInterface/WTL Controls/ModifiedEditBox.h"
-#include "UserInterface/WTL Controls/ModifiedCheckBox.h"
+#include "UserInterface/WTLControls/numberctrl.h"
+#include "UserInterface/WTLControls/ClistCtrl/ListCtrl.h"
+#include "UserInterface/WTLControls/ModifiedComboBox.h"
+#include "UserInterface/WTLControls/PartialGroupBox.h"
+#include "UserInterface/WTLControls/ModifiedEditBox.h"
+#include "UserInterface/WTLControls/ModifiedCheckBox.h"
