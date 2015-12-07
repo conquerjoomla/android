@@ -24,12 +24,14 @@ const char DRIVE_DELIMITER = ':';
 const char DIRECTORY_DELIMITER = '\\';
 const char EXTENSION_DELIMITER = '.';
 const char DIRECTORY_DELIMITER2 = '/';
+#ifdef WIN32
 void * CPath::m_hInst = NULL;
+#endif
 
 //////////////////////////////////////////////////////////////////////
 // Helpers
 //////////////////////////////////////////////////////////////////////
-
+#ifdef WIN32
 void CPath::SethInst(void * hInst)
 {
     m_hInst = hInst;
@@ -39,7 +41,7 @@ void * CPath::GethInst()
 {
     return m_hInst;
 }
-
+#endif
 //////////////////////////////////////////////////////////////////////
 // Initialisation
 //////////////////////////////////////////////////////////////////////
@@ -226,6 +228,7 @@ CPath::CPath(DIR_CURRENT_DIRECTORY /*sdt*/, const char * NameExten)
     if (NameExten) { SetNameExtension(NameExten); }
 }
 
+#ifdef WIN32
 CPath::CPath(DIR_MODULE_DIRECTORY /*sdt*/, const char * NameExten)
 {
     // The directory where the executable of this app is
@@ -240,6 +243,7 @@ CPath::CPath(DIR_MODULE_FILE /*sdt*/)
     Init();
     Module();
 }
+#endif
 
 //-------------------------------------------------------------
 // Post    : Returns the drive component without a colon, e.g. "c"
@@ -675,16 +679,15 @@ void CPath::CurrentDirectory()
 //-------------------------------------------------------------
 // Task    : Set path 2 the name of specified module
 //-------------------------------------------------------------
+#ifdef WIN32
 void CPath::Module(void * hInstance)
 {
-#ifdef WIN32
     char buff_path[MAX_PATH];
 
     memset(buff_path, 0, sizeof(buff_path));
 
     GetModuleFileName((HINSTANCE)hInstance, buff_path, MAX_PATH);
     m_strPath = buff_path;
-#endif
 }
 
 //-------------------------------------------------------------
@@ -712,6 +715,7 @@ void CPath::ModuleDirectory()
     Module();
     SetNameExtension("");
 }
+#endif
 
 //---------------------------------------------------------------------------
 // Post    : Return TRUE if a directory

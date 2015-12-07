@@ -136,11 +136,11 @@
     <ClInclude Include="WTLApp.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\3rd Party\7zip\7zip.vcxproj">
+    <ProjectReference Include="..\3rdParty\7zip\7zip.vcxproj">
       <Project>{3326e128-33af-422c-bb7c-67cc6b915610}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\3rd Party\zlib\zlib.vcxproj">
+    <ProjectReference Include="..\3rdParty\zlib\zlib.vcxproj">
       <Project>{731bd205-2826-4631-b7af-117658e88dbc}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
@@ -158,6 +158,6 @@
     <None Include="res\ListItems.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="UserInterface\UI Resources.rc" />
+    <ResourceCompile Include="UserInterface\UIResources.rc" />
   </ItemGroup>
 </Project>

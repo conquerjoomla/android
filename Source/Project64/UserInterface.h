@@ -24,7 +24,7 @@
 #include "UserInterface/MenuClass.h"
 #include "UserInterface/MainMenuClass.h"
 #include "UserInterface/NotificationClass.h"
-#include <Project64-core/N64System/FramePerSecondClass.h>
+#include <Project64-core/N64System/Frame Per Second Class.h>
 #include "UserInterface/resource.h"
 #include "UserInterface/SettingsConfig.h"
 #include "UserInterface/CheatClassUI.h"

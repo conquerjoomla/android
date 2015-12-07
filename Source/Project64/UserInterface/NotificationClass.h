@@ -10,7 +10,7 @@
 ****************************************************************************/
 #pragma once
 
-#include "../Settings/Notification Settings.h"
+#include "../Settings/NotificationSettings.h"
 #include <Project64-core/Notification.h>
 
 class CSettings;

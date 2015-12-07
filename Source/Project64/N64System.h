@@ -22,7 +22,7 @@
 
 //General Mips Information
 #include <Project64-core/N64System/N64 Rom Class.h>
-#include "N64System/Rom Information Class.h"
+#include "N64System/RomInformationClass.h"
 #include <Project64-core/N64System/Speed Limitor Class.h>
 #include <Project64-core/N64System/Mips/OpCode.h>
 #include <Project64-core/N64System/Recompiler/X86ops.h>
