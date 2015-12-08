@@ -9,7 +9,7 @@
 *                                                                           *
 ****************************************************************************/
 #include "stdafx.h"
-#include "Debugger UI.h"
+#include "DebuggerUI.h"
 
 CPj64Module _Module;
 

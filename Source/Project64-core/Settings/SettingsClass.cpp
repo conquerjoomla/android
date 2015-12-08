@@ -31,7 +31,7 @@
 #include "SettingType/SettingsType-TempNumber.h"
 #include "SettingType/SettingsType-TempBool.h"
 #include "SettingsClass.h"
-#include <Project64-core/N64System/N64 Types.h>
+#include <Project64-core/N64System/N64Types.h>
 #include <Common/TraceDefs.h>
 
 CSettings * g_Settings = NULL;
@@ -90,8 +90,14 @@ void CSettings::AddHowToHandleSetting()
 
     //Support Files
 #endif
+#ifdef _WIN32
+    AddHandler(Directory_BaseDirectory, new CSettingTypeTempString(CPath(CPath::MODULE_DIRECTORY)));
+#else
+    AddHandler(Directory_BaseDirectory, new CSettingTypeTempString(""));
+#endif
 	AddHandler(SupportFile_Settings, new CSettingTypeApplicationPath("", "ConfigFile", SupportFile_SettingsDefault));
     AddHandler(SupportFile_SettingsDefault, new CSettingTypeRelativePath("Config", "Project64.cfg"));
+    
 #ifdef tofix
 	AddHandler(SupportFile_RomDatabase, new CSettingTypeApplicationPath("", "RomDatabase", SupportFile_RomDatabaseDefault));
     AddHandler(SupportFile_RomDatabaseDefault, new CSettingTypeRelativePath("Config", "Project64.rdb"));

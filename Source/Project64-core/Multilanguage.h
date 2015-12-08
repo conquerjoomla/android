@@ -117,6 +117,7 @@ enum LanguageStringID{
     MENU_SLOT_8 = 198,
     MENU_SLOT_9 = 199,
     MENU_SLOT_10 = 200,
+    MENU_SLOT_SAVE = 201,
 
     //Pop up Menu
     POPUP_PLAY = 210,
@@ -527,4 +528,4 @@ enum LanguageStringID{
     MSG_SET_HLE_AUD_MSG = 2057,		//Added in pj64 1.7
 };
 
-#include ".\\Multilanguage\Language Class.h"
+#include "Multilanguage/LanguageClass.h"

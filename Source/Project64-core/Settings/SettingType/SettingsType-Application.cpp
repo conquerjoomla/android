@@ -169,7 +169,9 @@ bool CSettingTypeApplication::Load ( int Index, stdstr & Value ) const
     if (!m_UseRegistry)
     {
         bRes = m_SettingsIniFile ? m_SettingsIniFile->GetString(SectionName(),m_KeyNameIdex.c_str(),m_DefaultStr,Value) : false;
-    } else {
+    }
+    else 
+    {
         g_Notify->BreakPoint(__FILE__,__LINE__);
     }
     if (!bRes)

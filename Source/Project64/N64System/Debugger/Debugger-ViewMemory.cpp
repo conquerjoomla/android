@@ -10,7 +10,7 @@
 ****************************************************************************/
 #include "stdafx.h"
 
-#include "Debugger UI.h"
+#include "DebuggerUI.h"
 
 CDebugMemoryView::CDebugMemoryView(CDebuggerUI * debugger) :
     CDebugDialog<CDebugMemoryView>(debugger),

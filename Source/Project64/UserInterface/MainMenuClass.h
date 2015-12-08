@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Project64-core\Settings\Debug Settings.h>
+#include <Project64-core/Settings/DebugSettings.h>
 
 enum MainMenuID
 {

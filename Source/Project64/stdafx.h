@@ -19,7 +19,7 @@
 #include <Project64-core\Multilanguage.h>
 #include "UserInterface.h"
 #include "N64System.h"
-#include <Project64-core\Plugin.h>
+#include <Project64-core/Plugin.h>
 #include "Support.h"
 #include <Project64-core\Version.h>
 #include <windows.h>

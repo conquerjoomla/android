@@ -3,10 +3,10 @@
 #include <common\path.h>
 #include <common\trace.h>
 #include <Common\Util.h>
-#include <Project64-core/N64System/Mips/Memory Virtual Mem.h>
-#include <Project64-core/N64System/System Globals.h>
-#include <Project64-core\Plugins\Plugin Class.h>
-#include <Project64-core/N64System/N64 Rom Class.h>
+#include <Project64-core/N64System/Mips/MemoryVirtualMem.h>
+#include <Project64-core/N64System/SystemGlobals.h>
+#include <Project64-core/Plugins/PluginClass.h>
+#include <Project64-core/N64System/N64RomClass.h>
 
 void FixDirectories(void);
 void FixLocale(void);
@@ -67,6 +67,7 @@ void AppInit(CNotification * Notify)
         g_Settings = new CSettings;
         g_Settings->Initialize(AppName.c_str());
 
+		printf("SupportFile_Settings = %s\n",g_Settings->LoadStringVal(SupportFile_Settings).c_str());
         //Parse Command line
 
 		printf("SupportFile_Settings = %s\n",g_Settings->LoadStringVal(SupportFile_Settings).c_str());
@@ -114,11 +115,12 @@ void AppCleanup(void)
 
     if (g_Rom)      { delete g_Rom; g_Rom = NULL; }
     if (g_Plugins)  { delete g_Plugins; g_Plugins = NULL; }
-    if (g_Settings) { delete g_Settings; g_Settings = NULL; }
     if (g_Lang)     { delete g_Lang; g_Lang = NULL; }
+#endif
+    if (g_Settings) { delete g_Settings; g_Settings = NULL; }
 
+#ifdef tofix
     CMipsMemoryVM::FreeReservedMemory();
-
     WriteTrace(TraceDebug, __FUNCTION__ ": Done");
     CloseTrace();
 #endif

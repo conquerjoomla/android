@@ -10,7 +10,7 @@
 ****************************************************************************/
 #include "stdafx.h"
 
-#include "Debugger UI.h"
+#include "DebuggerUI.h"
 
 CDumpMemory::CDumpMemory(CDebuggerUI * debugger) :
     CDebugDialog<CDumpMemory>(debugger)

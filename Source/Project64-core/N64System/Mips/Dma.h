@@ -9,7 +9,7 @@
 *                                                                           *
 ****************************************************************************/
 #pragma once
-#include <Project64-core\Settings\Debug Settings.h>
+#include <Project64-core/Settings/DebugSettings.h>
 #include <Project64-core/N64System/Mips/FlashRam.h>
 #include <Project64-core/N64System/Mips/Sram.h>
 

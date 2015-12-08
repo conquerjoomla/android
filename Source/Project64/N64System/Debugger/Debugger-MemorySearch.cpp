@@ -10,7 +10,7 @@
 ****************************************************************************/
 #include "stdafx.h"
 
-#include "Debugger UI.h"
+#include "DebuggerUI.h"
 
 CDebugMemorySearch::CDebugMemorySearch(CDebuggerUI * debugger) :
     CDebugDialog<CDebugMemorySearch>(debugger),

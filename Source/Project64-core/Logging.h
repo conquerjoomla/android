@@ -9,7 +9,7 @@
 *                                                                           *
 ****************************************************************************/
 #pragma once
-#include <Project64-core/Settings/Logging Settings.h>
+#include <Project64-core/Settings/LoggingSettings.h>
 #include <Common/FileClass.h>
 
 class CLogging :

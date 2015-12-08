@@ -10,9 +10,9 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "Rumblepak.h"
-#include <Project64-core/N64System/System Globals.h>
-#include <Project64-core\Plugins\Plugin Class.h>
-#include <Project64-core\Plugins\Controller Plugin.h>
+#include <Project64-core/N64System/SystemGlobals.h>
+#include <Project64-core/Plugins/PluginClass.h>
+#include <Project64-core/Plugins/ControllerPlugin.h>
 
 void Rumblepak::ReadFrom(uint8_t * command)
 {

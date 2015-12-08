@@ -10,8 +10,8 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "Audio.h"
-#include <Project64-core/N64System/System Globals.h>
-#include <Project64-core/N64System/N64 Class.h>
+#include <Project64-core/N64System/SystemGlobals.h>
+#include <Project64-core/N64System/N64Class.h>
 
 CAudio::CAudio()
 {

@@ -10,8 +10,8 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "FlashRam.h"
-#include <Project64-core/N64System/System Globals.h>
-#include <Project64-core/N64System/Mips/Memory Class.h>
+#include <Project64-core/N64System/SystemGlobals.h>
+#include <Project64-core/N64System/Mips/MemoryClass.h>
 #include <common\path.h>
 #include <Windows.h>
 

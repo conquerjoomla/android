@@ -10,8 +10,8 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include <io.h>
-#include "Plugin List.h"
-#include <Project64-core\Plugins\Plugin Base.h>
+#include "PluginList.h"
+#include <Project64-core/Plugins/PluginBase.h>
 
 CPluginList::CPluginList(bool bAutoFill /* = true */) :
 m_PluginDir(g_Settings->LoadStringVal(Directory_Plugin), "")

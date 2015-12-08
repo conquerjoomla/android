@@ -186,6 +186,7 @@ enum SettingID
     RomBrowser_Maximized,
 
     //Directory Info
+    Directory_BaseDirectory,
     Directory_LastSave,
     Directory_RecentGameDirCount,
     Directory_RecentGameDirIndex,

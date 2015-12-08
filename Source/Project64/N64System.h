@@ -16,15 +16,15 @@
 #include <math.h>
 
 #include "UserInterface.h"
-#include <Project64-core/N64System/N64 Types.h>
+#include <Project64-core/N64System/N64Types.h>
 
-#include <Project64-core/N64System/Profiling Class.h>
+#include <Project64-core/N64System/ProfilingClass.h>
 
 //General Mips Information
-#include <Project64-core/N64System/N64 Rom Class.h>
+#include <Project64-core/N64System/N64RomClass.h>
 #include "N64System/RomInformationClass.h"
-#include <Project64-core/N64System/Speed Limitor Class.h>
+#include <Project64-core/N64System/SpeedLimitorClass.h>
 #include <Project64-core/N64System/Mips/OpCode.h>
 #include <Project64-core/N64System/Recompiler/X86ops.h>
-#include <Project64-core/N64System/N64 Class.h>
-#include <Project64-core/N64System/System Globals.h>
+#include <Project64-core/N64System/N64Class.h>
+#include <Project64-core/N64System/SystemGlobals.h>

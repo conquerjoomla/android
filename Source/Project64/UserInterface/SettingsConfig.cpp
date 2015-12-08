@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
-#include "Settings Config.h"
-#include "Settings/Settings Page.h"
+#include "SettingsConfig.h"
+#include "Settings/SettingsPage.h"
 #include <Project64-core/Settings/SettingType/SettingsType-Application.h>
 
 CSettingConfig::CSettingConfig(bool bJustGameSetting /* = false */) :

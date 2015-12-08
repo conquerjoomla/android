@@ -10,7 +10,7 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "OpCode.h"
-#include "Register Class.h"
+#include "RegisterClass.h"
 
 #define FPR_Type(Reg)	(Reg) == R4300i_COP1_S ? "S" : (Reg) == R4300i_COP1_D ? "D" :\
     (Reg) == R4300i_COP1_W ? "W" : "L"
