@@ -56,21 +56,50 @@ void InitializeLog(void)
 #define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "UI-Console", __VA_ARGS__)
 #endif
 
-void AppInit(CNotification * Notify)
+static bool ParseCommand(int32_t argc, char **argv)
+{
+    if (argc == 1)
+    {
+        return true;
+    }
+    for (int32_t i = 1; i < argc; i++)
+    {
+        int32_t ArgsLeft = argc - i - 1;
+        if (strcmp(argv[i], "--basedir") == 0 && ArgsLeft >= 1)
+        {
+            const char *res = argv[i + 1];
+        }
+        else if (ArgsLeft == 0)
+        {
+            //l_ROMFilepath = argv[i];
+            return true;
+        }
+        else
+        {
+            //DebugMessage(M64MSG_WARNING, "unrecognized command-line parameter '%s'", argv[i]);
+        }
+    }
+    return false;
+}
+
+bool AppInit(CNotification * Notify, int argc, char **argv)
 {
     try
     {
 #ifdef tofix
         g_Notify = Notify;
 #endif
-		stdstr_f AppName("Project64 %s", VER_FILE_VERSION_STR);
+        stdstr_f AppName("Project64 %s", VER_FILE_VERSION_STR);
         g_Settings = new CSettings;
         g_Settings->Initialize(AppName.c_str());
 
-		printf("SupportFile_Settings = %s\n",g_Settings->LoadStringVal(SupportFile_Settings).c_str());
-        //Parse Command line
+        printf("SupportFile_Settings = %s\n", g_Settings->LoadStringVal(SupportFile_Settings).c_str());
+        if (!ParseCommand(argc, argv))
+        {
+            return false;
+        }
 
-		printf("SupportFile_Settings = %s\n",g_Settings->LoadStringVal(SupportFile_Settings).c_str());
+        printf("SupportFile_Settings = %s\n", g_Settings->LoadStringVal(SupportFile_Settings).c_str());
 #ifdef tofix
         FixDirectories();
         FixLocale();
@@ -97,13 +126,14 @@ void AppInit(CNotification * Notify)
         g_Lang->LoadCurrentStrings();
         g_Notify->AppInitDone();
 #endif
-    }
+}
     catch (...)
     {
 #ifdef tofix
         g_Notify->DisplayError(stdstr_f("Exception caught\nFile: %s\nLine: %d", __FILE__, __LINE__).ToUTF16().c_str());
 #endif
     }
+    return true;
 }
 
 void AppCleanup(void)

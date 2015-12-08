@@ -18,6 +18,8 @@
 #include <Project64-core/N64System/Mips/OpcodeName.h>
 #include <Project64-core/N64System/Interpreter/InterpreterCPU.h>
 #include <Project64-core/Logging.h>
+#include <float.h>
+#include <math.h>
 
 void InPermLoop();
 void TestInterpreterJump(uint32_t PC, uint32_t TargetPC, int32_t Reg1, int32_t Reg2);

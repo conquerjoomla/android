@@ -37,6 +37,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="$(Root)Source/3rdParty/sdl/include;"
 				WarningLevel="4"
 			/>
 			<Tool
@@ -100,6 +101,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="$(Root)Source/3rdParty/sdl/include;"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

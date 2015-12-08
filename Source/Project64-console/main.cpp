@@ -14,7 +14,7 @@
 */
 __attribute__((visibility("default")))
 #endif
-int main(int /*argc*/, char * /*argv*/[])
+int main(int argc, char * argv[])
 {
     printf("    ____               _           __  _____ __ __\n");
     printf("   / __ \\_________    (_)__  _____/ /_/ ___// // /\n");
@@ -25,9 +25,10 @@ int main(int /*argc*/, char * /*argv*/[])
     printf("http://www.pj64-emu.com/\n");
     printf("%s Version %s\n\n", VER_FILE_DESCRIPTION_STR, VER_FILE_VERSION_STR);
 
-	printf("before app init\n");
-    AppInit(NULL);
-	printf("After app init\n");
+    printf("argc = %d\n", argc);
+    printf("before app init\n");
+    AppInit(NULL, argc, &argv[0]);
+    printf("After app init\n");
 
     AppCleanup();
     return 0;

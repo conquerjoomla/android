@@ -37,6 +37,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="$(Root)Source/3rdParty/sdl/include;"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -88,6 +89,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="$(Root)Source/3rdParty/sdl/include;"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -131,6 +133,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Logging.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -154,7 +160,7 @@
 				Name="Multilanguage"
 				>
 				<File
-					RelativePath=".\Multilanguage\Language Class.cpp"
+					RelativePath=".\Multilanguage\LanguageClass.cpp"
 					>
 				</File>
 			</Filter>
@@ -162,11 +168,27 @@
 				Name="Settings"
 				>
 				<File
-					RelativePath=".\Settings\Debug Settings.cpp"
+					RelativePath=".\Settings\DebugSettings.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\Settings\Settings Class.cpp"
+					RelativePath=".\Settings\GameSettings.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Settings\LoggingSettings.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Settings\N64SystemSettings.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Settings\RecompilerSettings.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Settings\SettingsClass.cpp"
 					>
 				</File>
 				<Filter
@@ -257,25 +279,217 @@
 			<Filter
 				Name="Plugins"
 				>
+				<File
+					RelativePath=".\Plugins\AudioPlugin.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Plugins\ControllerPlugin.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Plugins\GFXplugin.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Plugins\PluginBase.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Plugins\PluginClass.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Plugins\RSPPlugin.cpp"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="N64 System"
 				>
 				<File
-					RelativePath=".\N64 System\Cheat Class.cpp"
+					RelativePath=".\N64System\CheatClass.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\N64 System\N64 Class.cpp"
+					RelativePath=".\N64System\EmulationThread.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\N64 System\N64 Rom Class.cpp"
+					RelativePath=".\N64System\FramePerSecondClass.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\N64 System\Profiling Class.cpp"
+					RelativePath=".\N64System\N64Class.cpp"
 					>
+				</File>
+				<File
+					RelativePath=".\N64System\N64RomClass.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\N64System\ProfilingClass.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\N64System\SpeedLimitorClass.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\N64System\SystemGlobals.cpp"
+					>
+				</File>
+				<Filter
+					Name="Interpreter"
+					>
+					<File
+						RelativePath=".\N64System\Interpreter\InterpreterCPU.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Interpreter\InterpreterOps.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Interpreter\InterpreterOps32.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Mips"
+					>
+					<File
+						RelativePath=".\N64System\Mips\Audio.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Mips\Dma.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Mips\Eeprom.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Mips\FlashRam.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Mips\MemoryVirtualMem.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Mips\Mempak.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Mips\OpcodeName.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Mips\PifRam.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Mips\RegisterClass.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Mips\Rumblepak.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Mips\Sram.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Mips\SystemEvents.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Mips\SystemTiming.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Mips\TLBclass.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Recompiler"
+					>
+					<File
+						RelativePath=".\N64System\Recompiler\CodeBlock.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Recompiler\CodeSection.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Recompiler\FunctionInfo.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Recompiler\FunctionMapClass.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Recompiler\LoopAnalysis.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Recompiler\RecompilerClass.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Recompiler\RecompilerMemory.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Recompiler\RecompilerOps.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Recompiler\RegInfo.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Recompiler\SectionInfo.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Recompiler\x86CodeLog.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Recompiler\X86ops.cpp"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="3rdParty"
+				>
+				<File
+					RelativePath=".\3rdParty\7zip.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 			</Filter>
 		</Filter>
@@ -308,7 +522,7 @@
 				Name="Multilanguage"
 				>
 				<File
-					RelativePath=".\Multilanguage\Language Class.h"
+					RelativePath=".\Multilanguage\LanguageClass.h"
 					>
 				</File>
 			</Filter>
@@ -316,23 +530,39 @@
 				Name="N64 System"
 				>
 				<File
-					RelativePath=".\N64 System\Cheat Class.h"
+					RelativePath=".\N64System\CheatClass.h"
 					>
 				</File>
 				<File
-					RelativePath=".\N64 System\N64 Class.h"
+					RelativePath=".\N64System\FramePerSecondClass.h"
 					>
 				</File>
 				<File
-					RelativePath=".\N64 System\N64 Rom Class.h"
+					RelativePath=".\N64System\N64Class.h"
 					>
 				</File>
 				<File
-					RelativePath=".\N64 System\N64 Types.h"
+					RelativePath=".\N64System\N64RomClass.h"
 					>
 				</File>
 				<File
-					RelativePath=".\N64 System\Profiling Class.h"
+					RelativePath=".\N64System\N64Types.h"
+					>
+				</File>
+				<File
+					RelativePath=".\N64System\ProfilingClass.h"
+					>
+				</File>
+				<File
+					RelativePath=".\N64System\SpeedLimitorClass.h"
+					>
+				</File>
+				<File
+					RelativePath=".\N64System\stdafx.h"
+					>
+				</File>
+				<File
+					RelativePath=".\N64System\SystemGlobals.h"
 					>
 				</File>
 			</Filter>
@@ -340,15 +570,31 @@
 				Name="Setttings"
 				>
 				<File
-					RelativePath=".\Settings\Debug Settings.h"
+					RelativePath=".\Settings\DebugSettings.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Settings\Settings Class.h"
+					RelativePath=".\Settings\GameSettings.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Settings\LoggingSettings.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Settings\N64SystemSettings.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Settings\RecompilerSettings.h"
 					>
 				</File>
 				<File
 					RelativePath=".\Settings\Settings.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Settings\SettingsClass.h"
 					>
 				</File>
 				<Filter
@@ -445,6 +691,18 @@
 				>
 				<File
 					RelativePath=".\Plugins\Plugin Class.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="3rdParty"
+				>
+				<File
+					RelativePath=".\3rdParty\7zip.h"
+					>
+				</File>
+				<File
+					RelativePath=".\3rdParty\zip.h"
 					>
 				</File>
 			</Filter>
