@@ -11,8 +11,11 @@ LOCAL_C_INCLUDES := ../     \
     $(SDL_INCLUDES)         \
                
 LOCAL_SRC_FILES := \
-    $(SRCDIR)/StdString.cpp              \
+    $(SRCDIR)/CriticalSection.cpp        \
+    $(SRCDIR)/FileClass.cpp              \
+    $(SRCDIR)/IniFileClass.cpp           \
     $(SRCDIR)/path.cpp                   \
+    $(SRCDIR)/StdString.cpp              \
 
 LOCAL_CFLAGS := $(COMMON_CFLAGS)
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)

@@ -14,6 +14,7 @@ LOCAL_C_INCLUDES := ../     \
 LOCAL_SRC_FILES :=                          \
     $(SRCDIR)/AppInit.cpp                   \
     $(SRCDIR)/Settings/SettingsClass.cpp    \
+    $(SRCDIR)/Settings/SettingType/SettingsType-Application.cpp        \
     $(SRCDIR)/Settings/SettingType/SettingsType-ApplicationPath.cpp    \
     $(SRCDIR)/Settings/SettingType/SettingsType-RelativePath.cpp       \
     $(SRCDIR)/Settings/SettingType/SettingsType-TempBool.cpp           \

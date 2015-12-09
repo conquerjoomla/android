@@ -50,7 +50,7 @@ public:
     static void CleanUp(void);
     static void Flush(void);
 
-    const char * GetKeyName(void) const { return m_KeyName.c_str(); }
+    const char * GetKeyName(void) const { return "abc"/*m_KeyName.c_str()*/; }
 
 protected:
     const char * m_DefaultStr;
