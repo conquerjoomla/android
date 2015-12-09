@@ -67,16 +67,22 @@ static bool ParseCommand(int32_t argc, char **argv)
         int32_t ArgsLeft = argc - i - 1;
         if (strcmp(argv[i], "--basedir") == 0 && ArgsLeft >= 1)
         {
-            const char *res = argv[i + 1];
+            g_Settings->SaveString(Cmd_BaseDirectory, argv[i + 1]);
+            i++;
         }
-        else if (ArgsLeft == 0)
+        else if (strcmp(argv[i], "--help") == 0)
         {
-            //l_ROMFilepath = argv[i];
+            g_Settings->SaveBool(Cmd_ShowHelp, true);
+            return false;
+        }
+        else if (ArgsLeft == 0 && argv[i][0] != '-')
+        {
+            g_Settings->SaveString(Cmd_RomFile, argv[i + 1]);
             return true;
         }
         else
         {
-            //DebugMessage(M64MSG_WARNING, "unrecognized command-line parameter '%s'", argv[i]);
+            WriteTraceF(TraceError, __FUNCTION__ ": unrecognized command-line parameter '%s'", argv[i]);
         }
     }
     return false;
@@ -101,10 +107,6 @@ bool AppInit(CNotification * Notify, int argc, char **argv)
 
         printf("SupportFile_Settings = %s\n", g_Settings->LoadStringVal(SupportFile_Settings).c_str());
 #ifdef tofix
-        FixDirectories();
-        FixLocale();
-        IncreaseThreadPriority();
-
         if (g_Settings->LoadBool(Setting_CheckEmuRunning) &&
             pjutil::TerminatedExistingExe())
         {
@@ -112,6 +114,11 @@ bool AppInit(CNotification * Notify, int argc, char **argv)
             g_Settings = new CSettings;
             g_Settings->Initialize(AppName.c_str());
         }
+
+        FixDirectories();
+        FixLocale();
+        IncreaseThreadPriority();
+
 
         InitializeLog();
 
@@ -126,7 +133,7 @@ bool AppInit(CNotification * Notify, int argc, char **argv)
         g_Lang->LoadCurrentStrings();
         g_Notify->AppInitDone();
 #endif
-}
+    }
     catch (...)
     {
 #ifdef tofix

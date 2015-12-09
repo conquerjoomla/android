@@ -88,13 +88,17 @@ void CSettings::AddHowToHandleSetting()
 	//information - temp keys
     AddHandler(Info_ShortCutsChanged, new CSettingTypeTempBool(false));
 
-    //Support Files
 #endif
+    //Command Settings
 #ifdef _WIN32
-    AddHandler(Directory_BaseDirectory, new CSettingTypeTempString(CPath(CPath::MODULE_DIRECTORY)));
+    AddHandler(Cmd_BaseDirectory, new CSettingTypeTempString(CPath(CPath::MODULE_DIRECTORY)));
 #else
-    AddHandler(Directory_BaseDirectory, new CSettingTypeTempString(""));
+    AddHandler(Cmd_BaseDirectory, new CSettingTypeTempString(""));
 #endif
+    AddHandler(Cmd_ShowHelp, new CSettingTypeTempBool(false));
+    AddHandler(Cmd_RomFile, new CSettingTypeTempString(""));
+
+    //Support Files
 	AddHandler(SupportFile_Settings, new CSettingTypeApplicationPath("", "ConfigFile", SupportFile_SettingsDefault));
     AddHandler(SupportFile_SettingsDefault, new CSettingTypeRelativePath("Config", "Project64.cfg"));
     

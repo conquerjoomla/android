@@ -16,12 +16,12 @@ CSettingTypeRelativePath::CSettingTypeRelativePath(const char * Directory, const
     m_FileName(FileName)
 {
     BuildPath();
-    g_Settings->RegisterChangeCB(Directory_BaseDirectory,this,RefreshSettings);
+    g_Settings->RegisterChangeCB(Cmd_BaseDirectory,this,RefreshSettings);
 }
 
 CSettingTypeRelativePath::~CSettingTypeRelativePath ( void )
 {
-	g_Settings->RegisterChangeCB(Directory_BaseDirectory,this,RefreshSettings);
+	g_Settings->RegisterChangeCB(Cmd_BaseDirectory,this,RefreshSettings);
 }
 
 bool CSettingTypeRelativePath::Load ( int /*Index*/, stdstr & value ) const
@@ -78,7 +78,7 @@ void CSettingTypeRelativePath::Delete ( int /*Index*/ )
 void CSettingTypeRelativePath::BuildPath ( void )
 {
     CPath FullPath;
-    FullPath.SetDriveDirectory(g_Settings->LoadStringVal(Directory_BaseDirectory).c_str());
+    FullPath.SetDriveDirectory(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str());
     FullPath.AppendDirectory(m_Directory.c_str());
     FullPath.SetNameExtension(m_FileName.c_str());
     m_FullPath = (const char *)FullPath;
