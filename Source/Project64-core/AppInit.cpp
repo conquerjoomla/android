@@ -67,6 +67,7 @@ static bool ParseCommand(int32_t argc, char **argv)
         int32_t ArgsLeft = argc - i - 1;
         if (strcmp(argv[i], "--basedir") == 0 && ArgsLeft >= 1)
         {
+            printf("setting Cmd_BaseDirectory to %s", argv[i + 1]);
             g_Settings->SaveString(Cmd_BaseDirectory, argv[i + 1]);
             i++;
         }
@@ -119,7 +120,6 @@ bool AppInit(CNotification * Notify, int argc, char **argv)
         FixLocale();
         IncreaseThreadPriority();
 
-
         InitializeLog();
 
         WriteTrace(TraceDebug, __FUNCTION__ ": Application Starting");
@@ -133,7 +133,7 @@ bool AppInit(CNotification * Notify, int argc, char **argv)
         g_Lang->LoadCurrentStrings();
         g_Notify->AppInitDone();
 #endif
-    }
+}
     catch (...)
     {
 #ifdef tofix

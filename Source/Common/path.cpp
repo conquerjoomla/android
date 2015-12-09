@@ -109,7 +109,11 @@ CPath::CPath(const char * lpszPath)
 CPath::CPath(const char * lpszPath, const char * NameExten)
 {
     Init();
+#ifdef _WIN32
     SetDriveDirectory(lpszPath);
+#else
+    SetDirectory(lpszPath);
+#endif
     SetNameExtension(NameExten);
 }
 
@@ -129,7 +133,11 @@ CPath::CPath(const std::string& strPath)
 CPath::CPath(const std::string& strPath, const char * NameExten)
 {
     Init();
+#ifdef _WIN32
     SetDriveDirectory(strPath.c_str());
+#else
+    SetDirectory(strPath.c_str());
+#endif
     SetNameExtension(NameExten);
 }
 
@@ -139,7 +147,11 @@ CPath::CPath(const std::string& strPath, const char * NameExten)
 CPath::CPath(const std::string& strPath, const std::string& NameExten)
 {
     Init();
+#ifdef _WIN32
     SetDriveDirectory(strPath.c_str());
+#else
+    SetDirectory(strPath.c_str());
+#endif
     SetNameExtension(NameExten.c_str());
 }
 
@@ -259,12 +271,11 @@ CPath::CPath(DIR_MODULE_FILE /*sdt*/)
 //           Do not rely on pNames being <= 8 characters, extensions
 //           being <= 3 characters, or drives being 1 character
 //-------------------------------------------------------------
-void CPath::GetComponents(std::string* pDrive,
-    std::string* pDirectory,
+#ifdef WIN32
+void CPath::GetComponents(std::string* pDrive, std::string* pDirectory,
     std::string* pName,
     std::string* pExtension) const
 {
-#ifdef WIN32
     char buff_drive[_MAX_DRIVE + 1];
     char buff_dir[_MAX_DIR + 1];
     char buff_name[_MAX_FNAME + 1];
@@ -311,12 +322,17 @@ void CPath::GetComponents(std::string* pDrive,
     {
         StripLeadingChar(*pExtension, EXTENSION_DELIMITER);
     }
-#endif
 }
+#else
+void CPath::GetComponents(std::string* pDirectory, std::string* pName, std::string* pExtension) const
+{
+}
+#endif
 
 //-------------------------------------------------------------
 // Task    : Get drive and directory from path
 //-------------------------------------------------------------
+#ifdef _WIN32
 void CPath::GetDriveDirectory(std::string& rDriveDirectory) const
 {
     std::string Drive;
@@ -337,18 +353,24 @@ std::string CPath::GetDriveDirectory(void) const
     GetDriveDirectory(rDriveDirectory);
     return rDriveDirectory;
 }
+#endif
+
 //-------------------------------------------------------------
 // Task    : Get directory from path
 //-------------------------------------------------------------
 void CPath::GetDirectory(std::string& rDirectory) const
 {
+#ifdef _WIN32
     GetComponents(NULL, &rDirectory);
+#else
+    GetComponents(&rDirectory);
+#endif
 }
 
 std::string CPath::GetDirectory(void) const
 {
     std::string rDirectory;
-    GetComponents(NULL, &rDirectory);
+    GetDirectory(rDirectory);
     return rDirectory;
 }
 
@@ -360,7 +382,11 @@ void CPath::GetNameExtension(std::string& rNameExtension) const
     std::string Name;
     std::string Extension;
 
+#ifdef _WIN32
     GetComponents(NULL, NULL, &Name, &Extension);
+#else
+    GetComponents(NULL, &Name, &Extension);
+#endif
     rNameExtension = Name;
     if (!Extension.empty())
     {
@@ -381,13 +407,17 @@ std::string CPath::GetNameExtension(void) const
 //-------------------------------------------------------------
 void CPath::GetName(std::string& rName) const
 {
+#ifdef _WIN32
     GetComponents(NULL, NULL, &rName);
+#else
+    GetComponents(NULL, &rName);
+#endif
 }
 
 std::string CPath::GetName(void) const
 {
     std::string rName;
-    GetComponents(NULL, NULL, &rName);
+    GetName(rName);
     return rName;
 }
 
@@ -396,13 +426,17 @@ std::string CPath::GetName(void) const
 //-------------------------------------------------------------
 void CPath::GetExtension(std::string& rExtension) const
 {
+#ifdef _WIN32
     GetComponents(NULL, NULL, NULL, &rExtension);
+#else
+    GetComponents(NULL, NULL, &rExtension);
+#endif
 }
 
 std::string CPath::GetExtension(void) const
 {
     std::string rExtension;
-    GetComponents(NULL, NULL, NULL, &rExtension);
+    GetExtension(rExtension);
     return rExtension;
 }
 
@@ -470,9 +504,9 @@ bool CPath::IsRelative() const
 //-------------------------------------------------------------
 // Task    : Set path components
 //-------------------------------------------------------------
+#ifdef WIN32
 void CPath::SetComponents(const char * lpszDrive, const char * lpszDirectory, const char * lpszName, const char * lpszExtension)
 {
-#ifdef WIN32
     char buff_fullname[MAX_PATH];
 
     memset(buff_fullname, 0, sizeof(buff_fullname));
@@ -481,12 +515,17 @@ void CPath::SetComponents(const char * lpszDrive, const char * lpszDirectory, co
 
     m_strPath.erase();
     m_strPath = buff_fullname;
-#endif
 }
+#else
+void CPath::SetComponents(const char * lpszDirectory, const char * lpszName, const char * lpszExtension)
+{
+}
+#endif
 
 //-------------------------------------------------------------
 // Task    : Set path's drive
 //-------------------------------------------------------------
+#ifdef _WIN32
 void CPath::SetDrive(char chDrive)
 {
     stdstr_f Drive("%c", chDrive);
@@ -497,25 +536,34 @@ void CPath::SetDrive(char chDrive)
     GetComponents(NULL, &Directory, &Name, &Extension);
     SetComponents(Drive.c_str(), Directory.c_str(), Name.c_str(), Extension.c_str());
 }
+#endif
 
 //-------------------------------------------------------------
 // Task    : Set path's directory
 //-------------------------------------------------------------
 void CPath::SetDirectory(const char * lpszDirectory, bool bEnsureAbsolute /*= false*/)
 {
-    std::string	Drive;
     std::string	Directory = lpszDirectory;
     std::string	Name;
     std::string	Extension;
 
     if (bEnsureAbsolute)
+    {
         EnsureLeadingBackslash(Directory);
+    }
     EnsureTrailingBackslash(Directory);
 
+#ifdef _WIN32
+    std::string	Drive;
     GetComponents(&Drive, NULL, &Name, &Extension);
     SetComponents(Drive.c_str(), Directory.c_str(), Name.c_str(), Extension.c_str());
+#else
+    GetComponents(NULL, &Name, &Extension);
+    SetComponents(Directory.c_str(), Name.c_str(), Extension.c_str());
+#endif
 }
 
+#ifdef _WIN32
 //-------------------------------------------------------------
 // Task    : Set path's drive and directory
 //-------------------------------------------------------------
@@ -531,18 +579,24 @@ void CPath::SetDriveDirectory(const char * lpszDriveDirectory)
     GetComponents(NULL, NULL, &Name, &Extension);
     SetComponents(NULL, DriveDirectory.c_str(), Name.c_str(), Extension.c_str());
 }
+#endif
 
 //-------------------------------------------------------------
 // Task    : Set path's filename
 //-------------------------------------------------------------
 void CPath::SetName(const char * lpszName)
 {
-    std::string	Drive;
     std::string	Directory;
     std::string	Extension;
 
+#ifdef _WIN32
+    std::string	Drive;
     GetComponents(&Drive, &Directory, NULL, &Extension);
     SetComponents(Drive.c_str(), Directory.c_str(), lpszName, Extension.c_str());
+#else
+    GetComponents(&Directory, NULL, &Extension);
+    SetComponents(Directory.c_str(), lpszName, Extension.c_str());
+#endif
 }
 
 //-------------------------------------------------------------
@@ -550,7 +604,6 @@ void CPath::SetName(const char * lpszName)
 //-------------------------------------------------------------
 void CPath::SetName(int iName)
 {
-    std::string	Drive;
     std::string	Directory;
     std::string	Extension;
     char 	sName[33];
@@ -559,8 +612,14 @@ void CPath::SetName(int iName)
 
     _snprintf(sName, sizeof(sName), "%d", iName);
 
+#ifdef _WIN32
+    std::string	Drive;
     GetComponents(&Drive, &Directory, NULL, &Extension);
     SetComponents(Drive.c_str(), Directory.c_str(), sName, Extension.c_str());
+#else
+    GetComponents(&Directory, NULL, &Extension);
+    SetComponents(Directory.c_str(), sName, Extension.c_str());
+#endif
 }
 
 //-------------------------------------------------------------
@@ -568,12 +627,17 @@ void CPath::SetName(int iName)
 //-------------------------------------------------------------
 void CPath::SetExtension(const char * lpszExtension)
 {
-    std::string	Drive;
     std::string	Directory;
     std::string	Name;
 
+#ifdef _WIN32
+    std::string	Drive;
     GetComponents(&Drive, &Directory, &Name);
     SetComponents(Drive.c_str(), Directory.c_str(), Name.c_str(), lpszExtension);
+#else
+    GetComponents(&Directory, &Name);
+    SetComponents(Directory.c_str(), Name.c_str(), lpszExtension);
+#endif
 }
 
 //-------------------------------------------------------------
@@ -581,7 +645,6 @@ void CPath::SetExtension(const char * lpszExtension)
 //-------------------------------------------------------------
 void CPath::SetExtension(int iExtension)
 {
-    std::string	Drive;
     std::string	Directory;
     std::string	Name;
     char	sExtension[20];
@@ -590,8 +653,14 @@ void CPath::SetExtension(int iExtension)
 
     _snprintf(sExtension, sizeof(sExtension), "%d", iExtension);
 
+#ifdef _WIN32
+    std::string	Drive;
     GetComponents(&Drive, &Directory, &Name);
     SetComponents(Drive.c_str(), Directory.c_str(), Name.c_str(), sExtension);
+#else
+    GetComponents(&Directory, &Name);
+    SetComponents(Directory.c_str(), Name.c_str(), sExtension);
+#endif
 }
 
 //-------------------------------------------------------------
@@ -599,11 +668,16 @@ void CPath::SetExtension(int iExtension)
 //-------------------------------------------------------------
 void CPath::SetNameExtension(const char * lpszNameExtension)
 {
-    std::string	Drive;
     std::string	Directory;
 
+#ifdef _WIN32
+    std::string	Drive;
     GetComponents(&Drive, &Directory);
     SetComponents(Drive.c_str(), Directory.c_str(), lpszNameExtension, NULL);
+#else
+    GetComponents(&Directory);
+    SetComponents(Directory.c_str(), lpszNameExtension, NULL);
+#endif
 }
 
 //-------------------------------------------------------------
@@ -611,24 +685,34 @@ void CPath::SetNameExtension(const char * lpszNameExtension)
 //-------------------------------------------------------------
 void CPath::AppendDirectory(const char * lpszSubDirectory)
 {
-    std::string	Drive;
     std::string	Directory;
     std::string	SubDirectory = lpszSubDirectory;
     std::string	Name;
     std::string	Extension;
 
     if (SubDirectory.empty())
+    {
         return;
+    }
 
     // Strip out any preceeding backslash
     StripLeadingBackslash(SubDirectory);
     EnsureTrailingBackslash(SubDirectory);
 
+#ifdef _WIN32
+    std::string	Drive;
     GetComponents(&Drive, &Directory, &Name, &Extension);
+#else
+    GetComponents(&Directory, &Name, &Extension);
+#endif
     EnsureTrailingBackslash(Directory);
     Directory += SubDirectory;
 
+#ifdef _WIN32
     SetComponents(Drive.c_str(), Directory.c_str(), Name.c_str(), Extension.c_str());
+#else
+    SetComponents(Directory.c_str(), Name.c_str(), Extension.c_str());
+#endif
 }
 
 //-------------------------------------------------------------
@@ -654,7 +738,9 @@ void CPath::UpDirectory(std::string *pLastDirectory /*= NULL*/)
     }
 
     if (nDelimiter != std::string::npos)
+    {
         Directory = Directory.substr(0, nDelimiter);
+    }
 
     SetDirectory(Directory.c_str());
 }
@@ -1047,9 +1133,9 @@ bool CPath::DirectoryCreate(bool bCreateIntermediates /*= TRUE*/)
     std::string	PathText;
     bool	bSuccess;
 
+#ifdef WIN32
     GetDriveDirectory(PathText);
     StripTrailingBackslash(PathText);
-#ifdef WIN32
     bSuccess = ::CreateDirectory(PathText.c_str(), NULL) != 0;
 #else
     bSuccess = false;

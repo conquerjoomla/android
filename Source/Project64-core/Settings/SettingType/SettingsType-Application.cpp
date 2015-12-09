@@ -12,46 +12,46 @@
 #include "SettingsType-Application.h"
 #include <Common/path.h>
 
-bool       CSettingTypeApplication::m_UseRegistry     = false;
+bool       CSettingTypeApplication::m_UseRegistry = false;
 CIniFile * CSettingTypeApplication::m_SettingsIniFile = NULL;
 
-CSettingTypeApplication::CSettingTypeApplication(const char * Section, const char * Name, uint32_t DefaultValue ) :
-    m_DefaultStr(""),
-    m_DefaultValue(DefaultValue),
-    m_DefaultSetting(Default_Constant),
-    m_Section(FixSectionName(Section)),
-    m_KeyName(Name),
-    m_KeyNameIdex(m_KeyName)
+CSettingTypeApplication::CSettingTypeApplication(const char * Section, const char * Name, uint32_t DefaultValue) :
+m_DefaultStr(""),
+m_DefaultValue(DefaultValue),
+m_DefaultSetting(Default_Constant),
+m_Section(FixSectionName(Section)),
+m_KeyName(Name),
+m_KeyNameIdex(m_KeyName)
 {
 }
 
-CSettingTypeApplication::CSettingTypeApplication(const char * Section, const char * Name, bool DefaultValue ) :
-    m_DefaultStr(""),
-    m_DefaultValue(DefaultValue),
-    m_DefaultSetting(Default_Constant),
-    m_Section(FixSectionName(Section)),
-    m_KeyName(Name),
-    m_KeyNameIdex(m_KeyName)
+CSettingTypeApplication::CSettingTypeApplication(const char * Section, const char * Name, bool DefaultValue) :
+m_DefaultStr(""),
+m_DefaultValue(DefaultValue),
+m_DefaultSetting(Default_Constant),
+m_Section(FixSectionName(Section)),
+m_KeyName(Name),
+m_KeyNameIdex(m_KeyName)
 {
 }
 
-CSettingTypeApplication::CSettingTypeApplication(const char * Section, const char * Name, const char * DefaultValue ) :
-    m_DefaultStr(DefaultValue),
-    m_DefaultValue(0),
-    m_DefaultSetting(Default_Constant),
-    m_Section(FixSectionName(Section)),
-    m_KeyName(Name),
-    m_KeyNameIdex(m_KeyName)
+CSettingTypeApplication::CSettingTypeApplication(const char * Section, const char * Name, const char * DefaultValue) :
+m_DefaultStr(DefaultValue),
+m_DefaultValue(0),
+m_DefaultSetting(Default_Constant),
+m_Section(FixSectionName(Section)),
+m_KeyName(Name),
+m_KeyNameIdex(m_KeyName)
 {
 }
 
-CSettingTypeApplication::CSettingTypeApplication(const char * Section, const char * Name, SettingID DefaultSetting ) :
-    m_DefaultStr(""),
-    m_DefaultValue(0),
-    m_DefaultSetting(DefaultSetting),
-    m_Section(FixSectionName(Section)),
-    m_KeyName(Name),
-    m_KeyNameIdex(m_KeyName)
+CSettingTypeApplication::CSettingTypeApplication(const char * Section, const char * Name, SettingID DefaultSetting) :
+m_DefaultStr(""),
+m_DefaultValue(0),
+m_DefaultSetting(DefaultSetting),
+m_Section(FixSectionName(Section)),
+m_KeyName(Name),
+m_KeyNameIdex(m_KeyName)
 {
 }
 
@@ -59,14 +59,14 @@ CSettingTypeApplication::~CSettingTypeApplication()
 {
 }
 
-void CSettingTypeApplication::Initialize( const char * /*AppName*/ )
+void CSettingTypeApplication::Initialize(const char * /*AppName*/)
 {
     stdstr SettingsFile, OrigSettingsFile;
 
     for (int i = 0; i < 100; i++)
     {
         OrigSettingsFile = SettingsFile;
-        if (!g_Settings->LoadStringVal(SupportFile_Settings,SettingsFile) && i > 0)
+        if (!g_Settings->LoadStringVal(SupportFile_Settings, SettingsFile) && i > 0)
         {
             break;
         }
@@ -78,10 +78,14 @@ void CSettingTypeApplication::Initialize( const char * /*AppName*/ )
         {
             delete m_SettingsIniFile;
         }
-        CPath SettingsDir(CPath(SettingsFile).GetDriveDirectory(),"");
+#ifdef _WIN32
+        CPath SettingsDir(CPath(SettingsFile).GetDriveDirectory(), "");
+#else
+        CPath SettingsDir(CPath(SettingsFile).GetDirectory(), "");
+#endif
         if (!SettingsDir.DirectoryExists())
         {
-			SettingsDir.DirectoryCreate();
+            SettingsDir.DirectoryCreate();
         }
 
         m_SettingsIniFile = new CIniFile(SettingsFile.c_str());
@@ -109,20 +113,21 @@ void CSettingTypeApplication::CleanUp()
     }
 }
 
-bool CSettingTypeApplication::Load ( int /*Index*/, bool & Value ) const
+bool CSettingTypeApplication::Load(int /*Index*/, bool & Value) const
 {
     bool bRes = false;
 
     if (!m_UseRegistry)
     {
         uint32_t dwValue;
-        bRes = m_SettingsIniFile->GetNumber(SectionName(),m_KeyNameIdex.c_str(),Value,dwValue);
+        bRes = m_SettingsIniFile->GetNumber(SectionName(), m_KeyNameIdex.c_str(), Value, dwValue);
         if (bRes)
         {
             Value = dwValue != 0;
         }
-    } else {
-        g_Notify->BreakPoint(__FILE__,__LINE__);
+    }
+    else {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 
     if (!bRes && m_DefaultSetting != Default_None)
@@ -130,135 +135,145 @@ bool CSettingTypeApplication::Load ( int /*Index*/, bool & Value ) const
         if (m_DefaultSetting == Default_Constant)
         {
             Value = m_DefaultValue != 0;
-        } else {
-            g_Settings->LoadBool(m_DefaultSetting,Value);
+        }
+        else {
+            g_Settings->LoadBool(m_DefaultSetting, Value);
         }
     }
     return bRes;
 }
 
-bool CSettingTypeApplication::Load ( int /*Index*/, uint32_t & Value ) const
+bool CSettingTypeApplication::Load(int /*Index*/, uint32_t & Value) const
 {
     bool bRes = false;
     if (!m_UseRegistry)
     {
-        bRes = m_SettingsIniFile->GetNumber(SectionName(),m_KeyNameIdex.c_str(),Value,Value);
-    } else {
-        g_Notify->BreakPoint(__FILE__,__LINE__);
+        bRes = m_SettingsIniFile->GetNumber(SectionName(), m_KeyNameIdex.c_str(), Value, Value);
+    }
+    else {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
     if (!bRes && m_DefaultSetting != Default_None)
     {
         if (m_DefaultSetting == Default_Constant)
         {
             Value = m_DefaultValue;
-        } else {
-            g_Settings->LoadDword(m_DefaultSetting,Value);
+        }
+        else {
+            g_Settings->LoadDword(m_DefaultSetting, Value);
         }
     }
     return bRes;
 }
 
-const char * CSettingTypeApplication::SectionName ( void ) const
+const char * CSettingTypeApplication::SectionName(void) const
 {
     return m_Section.c_str();
 }
 
-bool CSettingTypeApplication::Load ( int Index, stdstr & Value ) const
+bool CSettingTypeApplication::Load(int Index, stdstr & Value) const
 {
     bool bRes = false;
     if (!m_UseRegistry)
     {
-        bRes = m_SettingsIniFile ? m_SettingsIniFile->GetString(SectionName(),m_KeyNameIdex.c_str(),m_DefaultStr,Value) : false;
+        bRes = m_SettingsIniFile ? m_SettingsIniFile->GetString(SectionName(), m_KeyNameIdex.c_str(), m_DefaultStr, Value) : false;
     }
-    else 
+    else
     {
-        g_Notify->BreakPoint(__FILE__,__LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
     if (!bRes)
     {
-        CSettingTypeApplication::LoadDefault(Index,Value);
+        CSettingTypeApplication::LoadDefault(Index, Value);
     }
     return bRes;
 }
 
 //return the default values
-void CSettingTypeApplication::LoadDefault ( int /*Index*/, bool & Value   ) const
+void CSettingTypeApplication::LoadDefault(int /*Index*/, bool & Value) const
 {
     if (m_DefaultSetting != Default_None)
     {
         if (m_DefaultSetting == Default_Constant)
         {
             Value = m_DefaultValue != 0;
-        } else {
-            g_Settings->LoadBool(m_DefaultSetting,Value);
+        }
+        else {
+            g_Settings->LoadBool(m_DefaultSetting, Value);
         }
     }
 }
 
-void CSettingTypeApplication::LoadDefault ( int /*Index*/, uint32_t & Value  ) const
+void CSettingTypeApplication::LoadDefault(int /*Index*/, uint32_t & Value) const
 {
     if (m_DefaultSetting != Default_None)
     {
         if (m_DefaultSetting == Default_Constant)
         {
             Value = m_DefaultValue;
-        } else {
-            g_Settings->LoadDword(m_DefaultSetting,Value);
+        }
+        else {
+            g_Settings->LoadDword(m_DefaultSetting, Value);
         }
     }
 }
 
-void CSettingTypeApplication::LoadDefault ( int /*Index*/, stdstr & Value ) const
+void CSettingTypeApplication::LoadDefault(int /*Index*/, stdstr & Value) const
 {
     if (m_DefaultSetting != Default_None)
     {
         if (m_DefaultSetting == Default_Constant)
         {
             Value = m_DefaultStr;
-        } else {
-            g_Settings->LoadStringVal(m_DefaultSetting,Value);
+        }
+        else {
+            g_Settings->LoadStringVal(m_DefaultSetting, Value);
         }
     }
 }
 
 //Update the settings
-void CSettingTypeApplication::Save ( int /*Index*/, bool Value )
+void CSettingTypeApplication::Save(int /*Index*/, bool Value)
 {
     if (!m_UseRegistry)
     {
-        m_SettingsIniFile->SaveNumber(SectionName(),m_KeyNameIdex.c_str(),Value);
-    } else {
-        g_Notify->BreakPoint(__FILE__,__LINE__);
+        m_SettingsIniFile->SaveNumber(SectionName(), m_KeyNameIdex.c_str(), Value);
+    }
+    else {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 }
 
-void CSettingTypeApplication::Save ( int /*Index*/, uint32_t Value )
+void CSettingTypeApplication::Save(int /*Index*/, uint32_t Value)
 {
     if (!m_UseRegistry)
     {
-        m_SettingsIniFile->SaveNumber(SectionName(),m_KeyNameIdex.c_str(),Value);
-    } else {
-        g_Notify->BreakPoint(__FILE__,__LINE__);
+        m_SettingsIniFile->SaveNumber(SectionName(), m_KeyNameIdex.c_str(), Value);
+    }
+    else {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 }
 
-void CSettingTypeApplication::Save ( int /*Index*/, const stdstr & Value )
+void CSettingTypeApplication::Save(int /*Index*/, const stdstr & Value)
 {
     if (!m_UseRegistry)
     {
-        m_SettingsIniFile->SaveString(SectionName(),m_KeyNameIdex.c_str(),Value.c_str());
-    } else {
-        g_Notify->BreakPoint(__FILE__,__LINE__);
+        m_SettingsIniFile->SaveString(SectionName(), m_KeyNameIdex.c_str(), Value.c_str());
+    }
+    else {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 }
 
-void CSettingTypeApplication::Save ( int /*Index*/, const char * Value )
+void CSettingTypeApplication::Save(int /*Index*/, const char * Value)
 {
     if (!m_UseRegistry)
     {
-        m_SettingsIniFile->SaveString(SectionName(),m_KeyNameIdex.c_str(),Value);
-    } else {
-        g_Notify->BreakPoint(__FILE__,__LINE__);
+        m_SettingsIniFile->SaveString(SectionName(), m_KeyNameIdex.c_str(), Value);
+    }
+    else {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 }
 
@@ -272,17 +287,18 @@ stdstr CSettingTypeApplication::FixSectionName(const char * Section)
         {
             SectionName = "default";
         }
-        SectionName.Replace("\\","-");
+        SectionName.Replace("\\", "-");
     }
     return SectionName;
 }
 
-void CSettingTypeApplication::Delete( int /*Index*/ )
+void CSettingTypeApplication::Delete(int /*Index*/)
 {
     if (!m_UseRegistry)
     {
-        m_SettingsIniFile->SaveString(SectionName(),m_KeyNameIdex.c_str(),NULL);
-    } else {
-        g_Notify->BreakPoint(__FILE__,__LINE__);
+        m_SettingsIniFile->SaveString(SectionName(), m_KeyNameIdex.c_str(), NULL);
+    }
+    else {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 }

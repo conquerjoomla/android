@@ -153,6 +153,7 @@ public class ExtractAssetsTask extends AsyncTask<Void, String, List<ExtractAsset
                         fileParts.put( name, 1 );
                 }
                 String suffix = "/" + srcSubPath;
+                Log.e( "extract","src = " + srcPath + suffix + " dest: " + dstPath + suffix);
                 failures.addAll( extractAssets( srcPath + suffix, dstPath + suffix ) );
             }
             

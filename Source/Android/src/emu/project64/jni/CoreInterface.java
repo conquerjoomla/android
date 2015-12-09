@@ -71,8 +71,10 @@ public class CoreInterface
                 {
                     // Initialize input-android plugin (even if we aren't going to use it)
                     ArrayList<String> arglist = new ArrayList<String>();
-                    arglist.add( "projet64" );
-                    arglist.add( sRomPath );
+                    arglist.add("projet64");
+                    arglist.add("--basedir");
+                    arglist.add(sAppData.coreSharedDataDir);
+                    arglist.add(sRomPath);
                     int result = NativeExports.emuStart( sGlobalPrefs.coreUserDataDir, sGlobalPrefs.coreUserCacheDir, arglist.toArray() );
                 }
             }, "CoreThread" );

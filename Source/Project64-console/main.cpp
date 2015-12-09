@@ -26,6 +26,10 @@ int main(int argc, char * argv[])
     printf("%s Version %s\n\n", VER_FILE_DESCRIPTION_STR, VER_FILE_VERSION_STR);
 
     printf("argc = %d\n", argc);
+    for (int i = 0; i < argc; i++)
+    {
+        printf("argv[%d] = %s\n", i, argv[i]);
+    }
     printf("before app init\n");
     AppInit(NULL, argc, &argv[0]);
     printf("After app init\n");

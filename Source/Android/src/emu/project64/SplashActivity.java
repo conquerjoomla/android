@@ -14,7 +14,6 @@ import java.io.File;
 import java.util.List;
 
 import emu.project64.R;
-
 import emu.project64.persistent.AppData;
 import emu.project64.persistent.GlobalPrefs;
 import emu.project64.task.ExtractAssetsTask;
@@ -26,6 +25,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.util.Log;
 import android.view.WindowManager.LayoutParams;
 import android.widget.TextView;
 
@@ -97,7 +97,8 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     {
         @Override
         public void run()
-        {        	
+        {
+        	Log.e( "Splash", "mAppData.coreSharedDataDir = " + mAppData.coreSharedDataDir);
             if( !(new File( mAppData.coreSharedDataDir ) ).exists() || mAppData.getAssetVersion() != ASSET_VERSION )
             {
                 // Extract and merge the assets if they are out of date

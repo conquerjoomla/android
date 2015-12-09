@@ -124,6 +124,7 @@ void CLanguage::LoadDefaultStrings(void)
     DEF_STR(MENU_SLOT_8, L"Slot 8");
     DEF_STR(MENU_SLOT_9, L"Slot 9");
     DEF_STR(MENU_SLOT_10, L"Slot 10");
+    DEF_STR(MENU_SLOT_SAVE, L"Save slot (%ws) selected");
 
     //Pop up Menu
     DEF_STR(POPUP_PLAY, L"Play Game");
@@ -174,7 +175,7 @@ void CLanguage::LoadDefaultStrings(void)
     DEF_STR(SELECT_ROM_DIR, L"Select current ROM directory");
 
     //Messages
-    DEF_STR(RB_NOT_GOOD_FILE, L"Bad ROM? Use GoodN64 & check for updated RDB.");
+    DEF_STR(RB_NOT_GOOD_FILE, L"Bad ROM? Use GoodN64 & check that the RDB is up-to-date.");
 
     /*********************************************************************************
     * Options                                                                        *

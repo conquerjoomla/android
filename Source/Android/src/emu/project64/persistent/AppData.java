@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
+import android.util.Log;
 
 public class AppData
 {
@@ -85,6 +86,9 @@ public class AppData
     {
         hardwareInfo = new HardwareInfo();
         packageName = context.getPackageName();
+            	
+        Log.e( "AppData", "Environment.getExternalStorageDirectory().getAbsolutePath() = " + Environment.getExternalStorageDirectory().getAbsolutePath() );
+        Log.e( "AppData", "context.getFilesDir().getAbsolutePath() = " + context.getFilesDir().getAbsolutePath() );
         if( DOWNLOAD_TO_SDCARD )
         {
             storageDir = Environment.getExternalStorageDirectory().getAbsolutePath();

@@ -68,8 +68,10 @@ public:
     operator std::string &() { return m_strPath; }
 
     //Get path components
+#ifdef WIN32
     void   GetDriveDirectory(std::string & rDriveDirectory) const;
     std::string GetDriveDirectory(void) const;
+#endif
     void   GetDirectory(std::string& rDirectory) const;
     std::string GetDirectory(void) const;
     void   GetName(std::string& rName) const;
@@ -78,18 +80,23 @@ public:
     std::string GetNameExtension(void) const;
     void   GetExtension(std::string& rExtension) const;
     std::string GetExtension(void) const;
-    void   GetCurrentDirectory(std::string& rDrive) const;
+    void   GetCurrentDirectory(std::string& rDirectory) const;
     std::string GetCurrentDirectory(void) const;
     void GetFullyQualified(std::string& rFullyQualified) const;
+#ifdef WIN32
     void GetComponents(std::string* pDrive = NULL, std::string* pDirectory = NULL, std::string* pName = NULL, std::string* pExtension = NULL) const;
-
+#else
+    void GetComponents(std::string* pDirectory = NULL, std::string* pName = NULL, std::string* pExtension = NULL) const;
+#endif
     //Get other state
     bool IsEmpty() const { return m_strPath.empty(); }
     bool IsRelative() const;
 
     //Set path components
+#ifdef WIN32
     void SetDrive(char chDrive);
     void SetDriveDirectory(const char * lpszDriveDirectory);
+#endif
     void SetDirectory(const char * lpszDirectory, bool bEnsureAbsolute = false);
     void SetName(const char * lpszName);
     void SetName(int iName);
@@ -98,8 +105,11 @@ public:
     void SetExtension(int iExtension);
     void AppendDirectory(const char * lpszSubDirectory);
     void UpDirectory(std::string* pLastDirectory = NULL);
+#ifdef WIN32
     void SetComponents(const char * lpszDrive, const char * lpszDirectory, const char * lpszName, const char * lpszExtension);
-
+#else
+    void SetComponents(const char * lpszDirectory, const char * lpszName, const char * lpszExtension);
+#endif
     //Set whole path
     void Empty()		{ m_strPath.erase(); }
     void CurrentDirectory();
