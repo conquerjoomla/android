@@ -82,7 +82,7 @@ static bool ParseCommand(int32_t argc, char **argv)
         }
         else
         {
-            WriteTraceF(TraceError, __FUNCTION__ ": unrecognized command-line parameter '%s'", argv[i]);
+            //WriteTraceF(TraceError, __FUNCTION__ ": unrecognized command-line parameter '%s'", argv[i]);
         }
     }
     return false;
