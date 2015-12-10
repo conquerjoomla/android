@@ -1,5 +1,6 @@
 #include "stdafx.h"
-#include <TChar.H>
+
+#ifdef tofix
 
 BOOL TraceClosed = FALSE;
 
@@ -242,3 +243,4 @@ void CDebugTraceLog::Write(const char * Message, bool EndOfLine)
 		OutputDebugString("\n");
 	}
 }
+#endif

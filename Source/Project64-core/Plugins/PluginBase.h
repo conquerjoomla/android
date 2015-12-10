@@ -40,7 +40,7 @@ public:
 protected:
     void UnloadPlugin();
     const char * PluginType() const;
-    TraceType PluginTraceType() const;
+    PJ64TraceModules PluginTraceType() const;
     virtual void UnloadPluginDetails() = 0;
     virtual PLUGIN_TYPE type() = 0;
     virtual bool LoadFunctions(void) = 0;

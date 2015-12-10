@@ -6,3 +6,4 @@
 #include "Notification.h"
 #include "version.h"
 #include "Settings/SettingsClass.h"
+#include "Project64TraceModules.h"

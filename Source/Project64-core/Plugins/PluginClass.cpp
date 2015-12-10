@@ -87,7 +87,7 @@ void CPlugins::PluginChanged(CPlugins * _this)
 }
 
 template <typename plugin_type>
-static void LoadPlugin(SettingID PluginSettingID, SettingID PluginVerSettingID, plugin_type * & plugin, const char * PluginDir, stdstr & FileName, TraceType TraceLevel, const char * type)
+static void LoadPlugin(SettingID PluginSettingID, SettingID PluginVerSettingID, plugin_type * & plugin, const char * PluginDir, stdstr & FileName, PJ64TraceModules TraceLevel, const char * type)
 {
 	if (plugin != NULL)
 	{
@@ -121,16 +121,16 @@ static void LoadPlugin(SettingID PluginSettingID, SettingID PluginVerSettingID, 
 void CPlugins::CreatePlugins(void)
 {
 	LoadPlugin(Game_Plugin_Gfx, Plugin_GFX_CurVer, m_Gfx, m_PluginDir.c_str(), m_GfxFile, TraceGfxPlugin, "GFX");
-	LoadPlugin(Game_Plugin_Audio, Plugin_AUDIO_CurVer, m_Audio, m_PluginDir.c_str(), m_AudioFile, TraceDebug, "Audio");
-	LoadPlugin(Game_Plugin_RSP, Plugin_RSP_CurVer, m_RSP, m_PluginDir.c_str(), m_RSPFile, TraceRSP, "RSP");
-	LoadPlugin(Game_Plugin_Controller, Plugin_CONT_CurVer, m_Control, m_PluginDir.c_str(), m_ControlFile, TraceDebug, "Control");
+	LoadPlugin(Game_Plugin_Audio, Plugin_AUDIO_CurVer, m_Audio, m_PluginDir.c_str(), m_AudioFile, TraceAudioPlugin, "Audio");
+	LoadPlugin(Game_Plugin_RSP, Plugin_RSP_CurVer, m_RSP, m_PluginDir.c_str(), m_RSPFile, TraceRSPPlugin, "RSP");
+	LoadPlugin(Game_Plugin_Controller, Plugin_CONT_CurVer, m_Control, m_PluginDir.c_str(), m_ControlFile, TraceControllerPlugin, "Control");
 
 	//Enable debugger
 	if (m_RSP != NULL && m_RSP->EnableDebugging)
 	{
-		WriteTrace(TraceRSP, __FUNCTION__ ": EnableDebugging starting");
+		WriteTrace(TraceRSPPlugin, TraceInfo, "EnableDebugging starting");
 		m_RSP->EnableDebugging(bHaveDebugger());
-		WriteTrace(TraceRSP, __FUNCTION__ ": EnableDebugging done");
+		WriteTrace(TraceRSPPlugin, TraceInfo, "EnableDebugging done");
 	}
 
 	if (bHaveDebugger())
@@ -167,9 +167,9 @@ void CPlugins::DestroyGfxPlugin(void)
 	{
 		return;
 	}
-	WriteTrace(TraceGfxPlugin, __FUNCTION__ ": before delete m_Gfx");
+	WriteTrace(TraceGfxPlugin, TraceInfo, "before delete m_Gfx");
 	delete m_Gfx;
-	WriteTrace(TraceGfxPlugin, __FUNCTION__ ": after delete m_Gfx");
+	WriteTrace(TraceGfxPlugin, TraceInfo, "after delete m_Gfx");
 	m_Gfx = NULL;
 	//		g_Settings->UnknownSetting_GFX = NULL;
 	DestroyRspPlugin();
@@ -181,13 +181,13 @@ void CPlugins::DestroyAudioPlugin(void)
 	{
 		return;
 	}
-	WriteTrace(TraceDebug, __FUNCTION__ ": 5");
+	WriteTrace(TraceAudioPlugin, TraceInfo, "before close");
 	m_Audio->Close();
-	WriteTrace(TraceDebug, __FUNCTION__ ": 6");
+	WriteTrace(TraceAudioPlugin, TraceInfo, "before delete");
 	delete m_Audio;
-	WriteTrace(TraceDebug, __FUNCTION__ ": 7");
+	WriteTrace(TraceAudioPlugin, TraceInfo, "after delete");
 	m_Audio = NULL;
-	WriteTrace(TraceDebug, __FUNCTION__ ": 8");
+	WriteTrace(TraceAudioPlugin, TraceInfo, "before DestroyRspPlugin");
 	//		g_Settings->UnknownSetting_AUDIO = NULL;
 	DestroyRspPlugin();
 }
@@ -198,13 +198,13 @@ void CPlugins::DestroyRspPlugin(void)
 	{
 		return;
 	}
-	WriteTrace(TraceDebug, __FUNCTION__ ": 9");
+	WriteTrace(TraceRSPPlugin, TraceInfo, "before close");
 	m_RSP->Close();
-	WriteTrace(TraceDebug, __FUNCTION__ ": 10");
+	WriteTrace(TraceRSPPlugin, TraceInfo, "before delete");
 	delete m_RSP;
-	WriteTrace(TraceDebug, __FUNCTION__ ": 11");
+	WriteTrace(TraceRSPPlugin, TraceInfo, "after delete");
 	m_RSP = NULL;
-	WriteTrace(TraceDebug, __FUNCTION__ ": 12");
+	WriteTrace(TraceRSPPlugin, TraceInfo, "done");
 	//		g_Settings->UnknownSetting_RSP = NULL;
 }
 
@@ -214,13 +214,13 @@ void CPlugins::DestroyControlPlugin(void)
 	{
 		return;
 	}
-	WriteTrace(TraceDebug, __FUNCTION__ ": 13");
+	WriteTrace(TraceControllerPlugin, TraceInfo, "before close");
 	m_Control->Close();
-	WriteTrace(TraceDebug, __FUNCTION__ ": 14");
+	WriteTrace(TraceControllerPlugin, TraceInfo, "before delete");
 	delete m_Control;
-	WriteTrace(TraceDebug, __FUNCTION__ ": 15");
+	WriteTrace(TraceControllerPlugin, TraceInfo, "after delete");
 	m_Control = NULL;
-	WriteTrace(TraceDebug, __FUNCTION__ ": 16");
+	WriteTrace(TraceControllerPlugin, TraceInfo, "done");
 	//		g_Settings->UnknownSetting_CTRL = NULL;
 }
 
@@ -248,19 +248,19 @@ void CPlugins::RomClosed(void)
 
 bool CPlugins::Initiate(CN64System * System)
 {
-	WriteTrace(TraceDebug, __FUNCTION__ ": Start");
+	WriteTrace(TracePlugins, TraceInfo, "Start");
 	//Check to make sure we have the plugin available to be used
 	if (m_Gfx == NULL) { return false; }
 	if (m_Audio == NULL) { return false; }
 	if (m_RSP == NULL) { return false; }
 	if (m_Control == NULL) { return false; }
 
-	WriteTrace(TraceGfxPlugin, __FUNCTION__ ": Gfx Initiate Starting");
+	WriteTrace(TraceGfxPlugin, TraceInfo, "Gfx Initiate Starting");
 	if (!m_Gfx->Initiate(System, m_MainWindow))   { return false; }
-	WriteTrace(TraceGfxPlugin, __FUNCTION__ ": Gfx Initiate Done");
-	WriteTrace(TraceDebug, __FUNCTION__ ": Audio Initiate Starting");
+	WriteTrace(TraceGfxPlugin, TraceInfo, "Gfx Initiate Done");
+	WriteTrace(TraceAudioPlugin, TraceInfo, "Audio Initiate Starting");
 	if (!m_Audio->Initiate(System, m_MainWindow)) { return false; }
-	WriteTrace(TraceDebug, __FUNCTION__ ": Audio Initiate Done");
+	WriteTrace(TraceAudioPlugin, TraceInfo, "Audio Initiate Done");
 	WriteTrace(TraceDebug, __FUNCTION__ ": Control Initiate Starting");
 	if (!m_Control->Initiate(System, m_MainWindow)) { return false; }
 	WriteTrace(TraceDebug, __FUNCTION__ ": Control Initiate Done");

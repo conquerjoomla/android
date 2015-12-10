@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef tofix
+
 #include "CriticalSection.h"
 #include "LogClass.h"
 
@@ -41,3 +43,4 @@ public:
 
 CTraceModule * AddTraceModule(CTraceModule * TraceModule); // Must be created with new
 CTraceModule * RemoveTraceModule(CTraceModule * TraceModule); // Is not automaticly deleted
+#endif
