@@ -12,18 +12,17 @@
 // Constants
 //////////////////////////////////////////////////////////////////////
 
-const char * const DLL_EXTENSION = "dll";
-const char * const INI_EXTENSION = "ini";
-const char * const EXE_EXTENSION = "exe";
-const char * const WILD_NAME_EXTENSION = "*.*";
-const char WILD_ONE = '?';
-const char WILD_ANY = '*';
-const char * const WILD_SET = "?*";
-const char * const DIR_DOUBLEDELIM = "\\\\";
+#ifdef _WIN32
 const char DRIVE_DELIMITER = ':';
+const char * const DIR_DOUBLEDELIM = "\\\\";
 const char DIRECTORY_DELIMITER = '\\';
-const char EXTENSION_DELIMITER = '.';
 const char DIRECTORY_DELIMITER2 = '/';
+#else
+const char * const DIR_DOUBLEDELIM = "//";
+const char DIRECTORY_DELIMITER = '/';
+const char DIRECTORY_DELIMITER2 = '\\';
+#endif
+const char EXTENSION_DELIMITER = '.';
 #ifdef WIN32
 void * CPath::m_hInst = NULL;
 #endif
@@ -272,9 +271,7 @@ CPath::CPath(DIR_MODULE_FILE /*sdt*/)
 //           being <= 3 characters, or drives being 1 character
 //-------------------------------------------------------------
 #ifdef WIN32
-void CPath::GetComponents(std::string* pDrive, std::string* pDirectory,
-    std::string* pName,
-    std::string* pExtension) const
+void CPath::GetComponents(std::string* pDrive, std::string* pDirectory, std::string* pName, std::string* pExtension) const
 {
     char buff_drive[_MAX_DRIVE + 1];
     char buff_dir[_MAX_DIR + 1];
@@ -326,6 +323,45 @@ void CPath::GetComponents(std::string* pDrive, std::string* pDirectory,
 #else
 void CPath::GetComponents(std::string* pDirectory, std::string* pName, std::string* pExtension) const
 {
+    char buff_dir[260];
+    char buff_name[260];
+    char buff_ext[260];
+
+    memset(buff_dir, 0, sizeof(buff_dir));
+    memset(buff_name, 0, sizeof(buff_name));
+    memset(buff_ext, 0, sizeof(buff_ext));
+
+	const char * BasePath = m_strPath.c_str();
+	const char * last = strrchr(BasePath,DIRECTORY_DELIMITER);
+	if (last != NULL)
+	{
+		int len = sizeof(buff_dir) < BasePath - last ? sizeof(buff_dir) : BasePath - last;
+		strncpy(buff_dir,BasePath,len);
+		strncpy(buff_name,last + 1,sizeof(buff_name));
+	}
+	else
+	{
+		strncpy(buff_dir,BasePath,sizeof(buff_dir));
+	}
+	char * ext = strrchr(buff_name,'.');
+	if (ext != NULL)
+	{
+		strncpy(buff_ext,ext + 1,sizeof(buff_ext));
+		*ext = 0;
+	}
+
+	if (pDirectory)
+    {
+        *pDirectory = buff_dir;
+    }
+    if (pName)
+    {
+        *pName = buff_name;
+    }
+    if (pExtension)
+    {
+        *pExtension = buff_ext;
+    }
 }
 #endif
 
@@ -490,11 +526,13 @@ void CPath::GetFullyQualified(std::string& rFullyQualified) const
 //-------------------------------------------------------------
 bool CPath::IsRelative() const
 {
-    if (m_strPath.length() > 1 && m_strPath[1] == DRIVE_DELIMITER)
+#ifdef _WIN32
+	if (m_strPath.length() > 1 && m_strPath[1] == DRIVE_DELIMITER)
     {
         return false;
     }
-    if (m_strPath.length() > 1 && m_strPath[0] == DIRECTORY_DELIMITER && m_strPath[1] == DIRECTORY_DELIMITER)
+#endif
+	if (m_strPath.length() > 1 && m_strPath[0] == DIRECTORY_DELIMITER && m_strPath[1] == DIRECTORY_DELIMITER)
     {
         return false;
     }
@@ -512,13 +550,36 @@ void CPath::SetComponents(const char * lpszDrive, const char * lpszDirectory, co
     memset(buff_fullname, 0, sizeof(buff_fullname));
 
     _makepath(buff_fullname, lpszDrive, lpszDirectory, lpszName, lpszExtension);
-
     m_strPath.erase();
     m_strPath = buff_fullname;
 }
 #else
 void CPath::SetComponents(const char * lpszDirectory, const char * lpszName, const char * lpszExtension)
 {
+    char buff_fullname[260];
+
+    memset(buff_fullname, 0, sizeof(buff_fullname));
+	if (lpszDirectory != NULL)
+	{
+		if (lpszDirectory[0] != DIRECTORY_DELIMITER)  { buff_fullname[0] = DIRECTORY_DELIMITER; }
+		strncat(buff_fullname,lpszDirectory,sizeof(buff_fullname));
+		std::string::size_type nLength = strlen(buff_fullname);
+		if (buff_fullname[nLength - 1] != DIRECTORY_DELIMITER &&  nLength < sizeof(buff_fullname))
+		{
+			buff_fullname[nLength] = DIRECTORY_DELIMITER;
+		}
+	}
+	if (lpszName != NULL)
+	{
+		strncat(buff_fullname,lpszName,sizeof(buff_fullname));
+	}
+	if (lpszExtension != NULL)
+	{
+		strncat(buff_fullname,lpszExtension,sizeof(buff_fullname));
+	}
+	buff_fullname[sizeof(buff_fullname) - 1] = 0; //Make sure it is null terminated
+    m_strPath.erase();
+    m_strPath = buff_fullname;
 }
 #endif
 
