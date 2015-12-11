@@ -2,11 +2,19 @@
 //
 //////////////////////////////////////////////////////////////////////
 #include "stdafx.h"
-#ifdef WIN32
+#ifdef _WIN32
 #include <Shlobj.h>
 #include <dos.h>
+#else
+#include <dirent.h>
 #endif
 #include "Platform.h"
+
+#if defined(ANDROID)
+#include <android/log.h>
+
+#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "UI-Console", __VA_ARGS__)
+#endif
 
 //////////////////////////////////////////////////////////////////////
 // Constants
@@ -23,14 +31,14 @@ const char DIRECTORY_DELIMITER = '/';
 const char DIRECTORY_DELIMITER2 = '\\';
 #endif
 const char EXTENSION_DELIMITER = '.';
-#ifdef WIN32
+#ifdef _WIN32
 void * CPath::m_hInst = NULL;
 #endif
 
 //////////////////////////////////////////////////////////////////////
 // Helpers
 //////////////////////////////////////////////////////////////////////
-#ifdef WIN32
+#ifdef _WIN32
 void CPath::SethInst(void * hInst)
 {
     m_hInst = hInst;
@@ -52,7 +60,7 @@ void * CPath::GethInst()
 //-------------------------------------------------------------
 inline void CPath::Init()
 {
-#ifdef WIN32
+#ifdef _WIN32
     m_dwFindFileAttributes = 0;
     m_hFindFile = NULL;
 #endif
@@ -64,7 +72,7 @@ inline void CPath::Init()
 //-------------------------------------------------------------
 inline void CPath::Exit()
 {
-#ifdef WIN32
+#ifdef _WIN32
     if (m_hFindFile != NULL)
     {
         FindClose(m_hFindFile);
@@ -239,7 +247,7 @@ CPath::CPath(DIR_CURRENT_DIRECTORY /*sdt*/, const char * NameExten)
     if (NameExten) { SetNameExtension(NameExten); }
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 CPath::CPath(DIR_MODULE_DIRECTORY /*sdt*/, const char * NameExten)
 {
     // The directory where the executable of this app is
@@ -270,7 +278,7 @@ CPath::CPath(DIR_MODULE_FILE /*sdt*/)
 //           Do not rely on pNames being <= 8 characters, extensions
 //           being <= 3 characters, or drives being 1 character
 //-------------------------------------------------------------
-#ifdef WIN32
+#ifdef _WIN32
 void CPath::GetComponents(std::string* pDrive, std::string* pDirectory, std::string* pName, std::string* pExtension) const
 {
     char buff_drive[_MAX_DRIVE + 1];
@@ -347,7 +355,7 @@ void CPath::GetComponents(std::string* pDirectory, std::string* pName, std::stri
 	if (ext != NULL)
 	{
 		strncpy(buff_ext,ext + 1,sizeof(buff_ext));
-		*ext = 0;
+		*ext = '\0';
 	}
 
 	if (pDirectory)
@@ -499,7 +507,7 @@ void CPath::GetCurrentDirectory(std::string& rDirectory) const
 std::string CPath::GetCurrentDirectory(void) const
 {
     std::string rDirecotry;
-#ifdef WIN32
+#ifdef _WIN32
     GetCurrentDirectory(rDirecotry);
 #endif
     return rDirecotry;
@@ -510,7 +518,7 @@ std::string CPath::GetCurrentDirectory(void) const
 //-------------------------------------------------------------
 void CPath::GetFullyQualified(std::string& rFullyQualified) const
 {
-#ifdef WIN32
+#ifdef _WIN32
     char buff_fullname[MAX_PATH];
 
     memset(buff_fullname, 0, sizeof(buff_fullname));
@@ -542,7 +550,7 @@ bool CPath::IsRelative() const
 //-------------------------------------------------------------
 // Task    : Set path components
 //-------------------------------------------------------------
-#ifdef WIN32
+#ifdef _WIN32
 void CPath::SetComponents(const char * lpszDrive, const char * lpszDirectory, const char * lpszName, const char * lpszExtension)
 {
     char buff_fullname[MAX_PATH];
@@ -559,7 +567,7 @@ void CPath::SetComponents(const char * lpszDirectory, const char * lpszName, con
     char buff_fullname[260];
 
     memset(buff_fullname, 0, sizeof(buff_fullname));
-	if (lpszDirectory != NULL)
+	if (lpszDirectory != NULL && lpszDirectory[0] != '\0')
 	{
 		if (lpszDirectory[0] != DIRECTORY_DELIMITER)  { buff_fullname[0] = DIRECTORY_DELIMITER; }
 		strncat(buff_fullname,lpszDirectory,sizeof(buff_fullname));
@@ -604,15 +612,21 @@ void CPath::SetDrive(char chDrive)
 //-------------------------------------------------------------
 void CPath::SetDirectory(const char * lpszDirectory, bool bEnsureAbsolute /*= false*/)
 {
+	printf("lpszDirectory = %s\n",lpszDirectory ? lpszDirectory : "null");
     std::string	Directory = lpszDirectory;
     std::string	Name;
     std::string	Extension;
 
-    if (bEnsureAbsolute)
-    {
-        EnsureLeadingBackslash(Directory);
-    }
-    EnsureTrailingBackslash(Directory);
+	if (bEnsureAbsolute)
+	{
+		printf("Ensure Absolute\n");
+		EnsureLeadingBackslash(Directory);
+	}
+	if (Directory.length() > 0)
+	{
+		printf("Ensure Backslash\n");
+		EnsureTrailingBackslash(Directory);
+	}
 
 #ifdef _WIN32
     std::string	Drive;
@@ -634,8 +648,11 @@ void CPath::SetDriveDirectory(const char * lpszDriveDirectory)
     std::string	Name;
     std::string	Extension;
 
-    EnsureTrailingBackslash(DriveDirectory);
-    cleanPathString(DriveDirectory);
+	if (DriveDirectory.length() > 0)
+	{
+		EnsureTrailingBackslash(DriveDirectory);
+		cleanPathString(DriveDirectory);
+	}
 
     GetComponents(NULL, NULL, &Name, &Extension);
     SetComponents(NULL, DriveDirectory.c_str(), Name.c_str(), Extension.c_str());
@@ -811,7 +828,7 @@ void CPath::UpDirectory(std::string *pLastDirectory /*= NULL*/)
 //-------------------------------------------------------------
 void CPath::CurrentDirectory()
 {
-#ifdef WIN32
+#ifdef _WIN32
     char buff_path[MAX_PATH];
 
     memset(buff_path, 0, sizeof(buff_path));
@@ -826,7 +843,7 @@ void CPath::CurrentDirectory()
 //-------------------------------------------------------------
 // Task    : Set path 2 the name of specified module
 //-------------------------------------------------------------
-#ifdef WIN32
+#ifdef _WIN32
 void CPath::Module(void * hInstance)
 {
     char buff_path[MAX_PATH];
@@ -887,7 +904,7 @@ bool CPath::IsDirectory() const
 //-------------------------------------------------------------
 bool CPath::DirectoryExists() const
 {
-#ifdef WIN32
+#ifdef _WIN32
     // Create test path
     CPath TestPath(m_strPath.c_str());
 
@@ -906,7 +923,13 @@ bool CPath::DirectoryExists() const
 
     return bGotFile;
 #else
-    return false;
+	DIR * dir = opendir(m_strPath.c_str());
+	if (dir)
+	{
+		closedir(dir);
+		return true;
+	}
+	return false;
 #endif
 }
 
@@ -916,7 +939,7 @@ bool CPath::DirectoryExists() const
 //-------------------------------------------------------------
 bool CPath::Exists() const
 {
-#ifdef WIN32
+#ifdef _WIN32
     WIN32_FIND_DATA FindData;
     HANDLE          hFindFile = FindFirstFile(m_strPath.c_str(), &FindData);
     bool            bSuccess = (hFindFile != INVALID_HANDLE_VALUE);
@@ -938,7 +961,7 @@ bool CPath::Exists() const
 //-------------------------------------------------------------
 bool CPath::Delete(bool bEvenIfReadOnly) const
 {
-#ifdef WIN32
+#ifdef _WIN32
     uint32_t dwAttr = ::GetFileAttributes(m_strPath.c_str());
     if (dwAttr == (uint32_t)-1)
     {
@@ -968,7 +991,7 @@ bool CPath::Delete(bool bEvenIfReadOnly) const
 //-------------------------------------------------------------
 bool CPath::CopyTo(const char * lpcszTargetFile, bool bOverwrite)
 {
-#ifdef WIN32
+#ifdef _WIN32
     // Check if the target file exists
     CPath TargetFile(lpcszTargetFile);
     if (TargetFile.Exists())
@@ -1002,7 +1025,7 @@ bool CPath::CopyTo(const char * lpcszTargetFile, bool bOverwrite)
 //-------------------------------------------------------------
 bool CPath::MoveTo(const char * lpcszTargetFile, bool bOverwrite)
 {
-#ifdef WIN32
+#ifdef _WIN32
     // Check if the target file exists
     CPath TargetFile(lpcszTargetFile);
     if (TargetFile.Exists())
@@ -1033,7 +1056,7 @@ bool CPath::MoveTo(const char * lpcszTargetFile, bool bOverwrite)
 //-------------------------------------------------------------
 bool CPath::AttributesMatch(uint32_t dwTargetAttributes, uint32_t dwFileAttributes)
 {
-#ifdef WIN32
+#ifdef _WIN32
     if (dwTargetAttributes == _A_ALLFILES)
     {
         return true;
@@ -1078,7 +1101,7 @@ bool CPath::AttributesMatch(uint32_t dwTargetAttributes, uint32_t dwFileAttribut
 //-------------------------------------------------------------
 bool CPath::FindFirst(uint32_t dwAttributes /*= _A_NORMAL*/)
 {
-#ifdef WIN32
+#ifdef _WIN32
     m_dwFindFileAttributes = dwAttributes;
     BOOL bGotFile;
     BOOL bWantSubdirectory = (BOOL)(_A_SUBDIR & dwAttributes);
@@ -1124,7 +1147,7 @@ bool CPath::FindFirst(uint32_t dwAttributes /*= _A_NORMAL*/)
 //-------------------------------------------------------------
 bool CPath::FindNext()
 {
-#ifdef WIN32
+#ifdef _WIN32
     if (m_hFindFile == NULL)
     {
         return false;
@@ -1173,7 +1196,7 @@ bool CPath::FindNext()
 //-------------------------------------------------------------
 bool CPath::ChangeDirectory()
 {
-#ifdef WIN32
+#ifdef _WIN32
     std::string DriveDirectory;
     GetDriveDirectory(DriveDirectory);
 
@@ -1194,7 +1217,7 @@ bool CPath::DirectoryCreate(bool bCreateIntermediates /*= TRUE*/)
     std::string	PathText;
     bool	bSuccess;
 
-#ifdef WIN32
+#ifdef _WIN32
     GetDriveDirectory(PathText);
     StripTrailingBackslash(PathText);
     bSuccess = ::CreateDirectory(PathText.c_str(), NULL) != 0;

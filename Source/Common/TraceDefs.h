@@ -1,24 +1,31 @@
 #pragma once
 
-enum TraceSeverity
+enum TraceType
 {
-    TraceAlert		= 0x00000001,
-    TraceCritical	= 0x00000002,
-    TraceError		= 0x00000003,
-    TraceWarning	= 0x00000004,
-    TraceNotice		= 0x00000005,
-    TraceInfo		= 0x00000006,
-    TraceDebug		= 0x00000007,
-    TraceVerbose	= 0x00000008,
+    TraceNone			= 0x00000000,
+    TraceError			= 0x00000001,
+    TraceSettings		= 0x00000002,
+    TraceGfxPlugin		= 0x00000004,
+    TraceDebug			= 0x00000010,
+    TraceRecompiler		= 0x00000020,
+    TraceRSP			= 0x00000040,
+    TraceTLB			= 0x00000080,
+    TraceValidate		= 0x00000100,
+    TraceAudio			= 0x00000200,
+    TraceProtectedMem	= 0x00000400,
+    TraceNoHeader       = 0x80000000,
 };
 
+enum TraceLevel
+{
+    //Handle Existing Code
+    TrLvError     = TraceError,
+    TrLv1         = TraceSettings |  TrLvError,
+    TrLv2         = TrLv1         |  TraceDebug,
+    TrlvGfxPlugin = TraceGfxPlugin,
+    TrLvAll       = ~TraceNoHeader,
+};
+
+void WriteTrace     ( TraceType Type, const char * Message );
+void WriteTraceF    ( TraceType Type, const char * strFormat, ... );
 void CloseTrace     ( void ); //Free's all memory associated with trace
-void WriteTraceDetails(uint32_t module, uint8_t severity, const char *file, int line, const char *function, const char *format, ...);
-
-#define WriteTrace(m, s, format, ...) \
-	if(g_ModuleLogLevel[(m)] >= (s)) \
-	{ \
-		WriteTraceDetails((m), (s), __FILE__, __LINE__, __FUNCTION__, (format), ## __VA_ARGS__); \
-	}
-
-extern uint8_t g_ModuleLogLevel[];

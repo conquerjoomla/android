@@ -52,7 +52,7 @@ bool CSettingTypeRDBYesNo::Load ( int Index, bool & Value ) const
     }
     else
     {
-        WriteTrace(TraceSettings, TraceError,"Invalid Yes/No setting value (Section: %s Key: %s Value: %s)",m_SectionIdent->c_str(),String,m_KeyName.c_str(),strValue.c_str());
+        WriteTraceF(TraceError,__FUNCTION__ ": Invalid Yes/No setting value (Section: %s Key: %s Value: %s)",m_SectionIdent->c_str(),String,m_KeyName.c_str(),strValue.c_str());
         LoadDefault(Index,Value);
         return false;
     }

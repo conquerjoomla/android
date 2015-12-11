@@ -27,7 +27,7 @@ m_FileName(FileName)
 
 CSettingTypeRelativePath::~CSettingTypeRelativePath(void)
 {
-    g_Settings->RegisterChangeCB(Cmd_BaseDirectory, this, RefreshSettings);
+    g_Settings->UnregisterChangeCB(Cmd_BaseDirectory, this, RefreshSettings);
 }
 
 bool CSettingTypeRelativePath::Load(int /*Index*/, stdstr & value) const
@@ -90,11 +90,11 @@ void CSettingTypeRelativePath::BuildPath(void)
 #else
     FullPath.SetDirectory(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str());
 #endif
+	printf("CSettingTypeRelativePath::BuildPath: BaseDirectory = %s\n",g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str());
     FullPath.AppendDirectory(m_Directory.c_str());
     FullPath.SetNameExtension(m_FileName.c_str());
     m_FullPath = (const char *)FullPath;
-    printf("g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str() = %s\n", g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str());
-    printf("m_FullPath = %s\n", (const char *)FullPath);
+	printf("CSettingTypeRelativePath::BuildPath: FullPath = %s\n",(const char *)FullPath);
 }
 
 void CSettingTypeRelativePath::RefreshSettings(void * _this)

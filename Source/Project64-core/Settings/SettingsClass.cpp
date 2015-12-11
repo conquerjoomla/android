@@ -124,7 +124,9 @@ void CSettings::AddHowToHandleSetting()
 
     //Settings location
     AddHandler(Setting_ApplicationName, new CSettingTypeTempString(""));
-    AddHandler(Setting_UseFromRegistry, new CSettingTypeApplication("Settings", "Use Registry", (uint32_t)false));
+#endif
+	AddHandler(Setting_UseFromRegistry, new CSettingTypeApplication("Settings", "Use Registry", (uint32_t)false));
+#ifdef tofix
     AddHandler(Setting_RdbEditor, new CSettingTypeApplication("", "Rdb Editor", false));
     AddHandler(Setting_CN64TimeCritical,new CSettingTypeApplication("","CN64TimeCritical",false));
     AddHandler(Setting_PluginPageFirst, new CSettingTypeApplication("", "Plugin Page First", false));
@@ -589,8 +591,8 @@ void CSettings::RegisterSetting(CSettings * _this, SettingID ID, SettingID Defau
 bool CSettings::Initialize(const char * AppName)
 {
     AddHowToHandleSetting();
-#ifdef tofix
 	CSettingTypeApplication::Initialize(AppName);
+#ifdef tofix
     CSettingTypeRomDatabase::Initialize();
     CSettingTypeGame::Initialize();
     CSettingTypeCheats::Initialize();

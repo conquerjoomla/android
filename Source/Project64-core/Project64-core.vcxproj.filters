@@ -81,6 +81,9 @@
     <ClCompile Include="AppInit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Multilanguage\Language Class.cpp">
+      <Filter>Source Files\Multilanguage</Filter>
+    </ClCompile>
     <ClCompile Include="Settings\SettingType\SettingsType-Application.cpp">
       <Filter>Source Files\Settings\SettingType</Filter>
     </ClCompile>
@@ -138,17 +141,110 @@
     <ClCompile Include="Settings\SettingType\SettingsType-TempString.cpp">
       <Filter>Source Files\Settings\SettingType</Filter>
     </ClCompile>
+    <ClCompile Include="Plugins\Plugin Class.cpp">
+      <Filter>Source Files\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="Plugins\Audio Plugin.cpp">
+      <Filter>Source Files\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="Plugins\Controller Plugin.cpp">
+      <Filter>Source Files\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="Plugins\GFX plugin.cpp">
+      <Filter>Source Files\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="Plugins\Plugin Base.cpp">
+      <Filter>Source Files\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="Plugins\RSP Plugin.cpp">
+      <Filter>Source Files\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\Debug Settings.cpp">
+      <Filter>Source Files\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\Game Settings.cpp">
+      <Filter>Source Files\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\N64System Settings.cpp">
+      <Filter>Source Files\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\Recompiler Settings.cpp">
+      <Filter>Source Files\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rd Party\zlib\contrib\minizip\unzip.c">
+      <Filter>Source Files\3rd Party\ZLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rd Party\zlib\contrib\minizip\zip.c">
+      <Filter>Source Files\3rd Party\ZLib</Filter>
+    </ClCompile>
     <ClCompile Include="logging.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Settings\Logging Settings.cpp">
+      <Filter>Source Files\Settings</Filter>
+    </ClCompile>
     <ClCompile Include="3rdParty\7zip.cpp">
       <Filter>Source Files\3rd Party</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Recompiler\Code Block.cpp">
+      <Filter>Source Files\N64 System\Recompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Recompiler\Code Section.cpp">
+      <Filter>Source Files\N64 System\Recompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Recompiler\Function Info.cpp">
+      <Filter>Source Files\N64 System\Recompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Recompiler\Function Map Class.cpp">
+      <Filter>Source Files\N64 System\Recompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Recompiler\Loop Analysis.cpp">
+      <Filter>Source Files\N64 System\Recompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Recompiler\Recompiler Class.cpp">
+      <Filter>Source Files\N64 System\Recompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Recompiler\Recompiler Memory.cpp">
+      <Filter>Source Files\N64 System\Recompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Recompiler\Recompiler Ops.cpp">
+      <Filter>Source Files\N64 System\Recompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Recompiler\Reg Info.cpp">
+      <Filter>Source Files\N64 System\Recompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Recompiler\Section Info.cpp">
+      <Filter>Source Files\N64 System\Recompiler</Filter>
     </ClCompile>
     <ClCompile Include="N64System\Recompiler\x86CodeLog.cpp">
       <Filter>Source Files\N64 System\Recompiler</Filter>
     </ClCompile>
     <ClCompile Include="N64System\Recompiler\X86ops.cpp">
       <Filter>Source Files\N64 System\Recompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Cheat Class.cpp">
+      <Filter>Source Files\N64 System</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Emulation Thread.cpp">
+      <Filter>Source Files\N64 System</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Frame Per Second Class.cpp">
+      <Filter>Source Files\N64 System</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\N64 Class.cpp">
+      <Filter>Source Files\N64 System</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\N64 Rom Class.cpp">
+      <Filter>Source Files\N64 System</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Profiling Class.cpp">
+      <Filter>Source Files\N64 System</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Speed Limitor Class.cpp">
+      <Filter>Source Files\N64 System</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\System Globals.cpp">
+      <Filter>Source Files\N64 System</Filter>
     </ClCompile>
     <ClCompile Include="N64System\Mips\Audio.cpp">
       <Filter>Source Files\N64 System\Mips</Filter>
@@ -162,10 +258,19 @@
     <ClCompile Include="N64System\Mips\FlashRam.cpp">
       <Filter>Source Files\N64 System\Mips</Filter>
     </ClCompile>
+    <ClCompile Include="N64System\Mips\Memory Virtual Mem.cpp">
+      <Filter>Source Files\N64 System\Mips</Filter>
+    </ClCompile>
     <ClCompile Include="N64System\Mips\Mempak.cpp">
       <Filter>Source Files\N64 System\Mips</Filter>
     </ClCompile>
     <ClCompile Include="N64System\Mips\OpcodeName.cpp">
+      <Filter>Source Files\N64 System\Mips</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Mips\Pif Ram.cpp">
+      <Filter>Source Files\N64 System\Mips</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Mips\Register Class.cpp">
       <Filter>Source Files\N64 System\Mips</Filter>
     </ClCompile>
     <ClCompile Include="N64System\Mips\Rumblepak.cpp">
@@ -174,125 +279,26 @@
     <ClCompile Include="N64System\Mips\Sram.cpp">
       <Filter>Source Files\N64 System\Mips</Filter>
     </ClCompile>
+    <ClCompile Include="N64System\Mips\System Events.cpp">
+      <Filter>Source Files\N64 System\Mips</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Mips\System Timing.cpp">
+      <Filter>Source Files\N64 System\Mips</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Mips\TLB class.cpp">
+      <Filter>Source Files\N64 System\Mips</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Interpreter\Interpreter CPU.cpp">
+      <Filter>Source Files\N64 System\Interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Interpreter\Interpreter Ops 32.cpp">
+      <Filter>Source Files\N64 System\Interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="N64System\Interpreter\Interpreter Ops.cpp">
+      <Filter>Source Files\N64 System\Interpreter</Filter>
+    </ClCompile>
     <ClCompile Include="Settings\SettingsClass.cpp">
       <Filter>Source Files\Settings</Filter>
-    </ClCompile>
-    <ClCompile Include="Multilanguage\LanguageClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\CheatClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\EmulationThread.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\FramePerSecondClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\Interpreter\InterpreterCPU.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\Interpreter\InterpreterOps.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\Interpreter\InterpreterOps32.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\Mips\MemoryVirtualMem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\Mips\PifRam.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\Mips\RegisterClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\Mips\SystemEvents.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\Mips\SystemTiming.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\Mips\TLBclass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\N64Class.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\N64RomClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\ProfilingClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\Recompiler\CodeBlock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\Recompiler\CodeSection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\Recompiler\FunctionInfo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\Recompiler\FunctionMapClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\Recompiler\LoopAnalysis.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\Recompiler\RecompilerClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\Recompiler\RecompilerMemory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\Recompiler\RecompilerOps.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\Recompiler\RegInfo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\Recompiler\SectionInfo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\SpeedLimitorClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="N64System\SystemGlobals.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Plugins\AudioPlugin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Plugins\ControllerPlugin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Plugins\GFXplugin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Plugins\PluginBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Plugins\PluginClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Plugins\RSPPlugin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\DebugSettings.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\GameSettings.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\LoggingSettings.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\N64SystemSettings.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\RecompilerSettings.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -412,6 +418,24 @@
     </ClInclude>
     <ClInclude Include="Settings\Recompiler Settings.h">
       <Filter>Header Files\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd Party\7zip.h">
+      <Filter>Header Files\3rd Party</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd Party\zip.h">
+      <Filter>Header Files\3rd Party</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rd Party\zlib\zconf.h">
+      <Filter>Header Files\3rd Party\Zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rd Party\zlib\zlib.h">
+      <Filter>Header Files\3rd Party\Zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rd Party\zlib\contrib\minizip\unzip.h">
+      <Filter>Header Files\3rd Party\Zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rd Party\zlib\contrib\minizip\zip.h">
+      <Filter>Header Files\3rd Party\Zlib</Filter>
     </ClInclude>
     <ClInclude Include="Logging.h">
       <Filter>Header Files</Filter>
@@ -547,27 +571,6 @@
     </ClInclude>
     <ClInclude Include="Settings\SettingsClass.h">
       <Filter>Header Files\Settings</Filter>
-    </ClInclude>
-    <ClInclude Include="..\3rdParty\zlib\contrib\minizip\unzip.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\3rdParty\zlib\contrib\minizip\zip.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\3rdParty\zlib\zconf.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\3rdParty\zlib\zlib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="3rdParty\7zip.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="3rdParty\zip.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Project64TraceModules.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

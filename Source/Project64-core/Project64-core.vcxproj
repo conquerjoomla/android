@@ -163,7 +163,6 @@
     <ClInclude Include="Plugins\Plugin Base.h" />
     <ClInclude Include="Plugins\Plugin Class.h" />
     <ClInclude Include="Plugins\RSP Plugin.h" />
-    <ClInclude Include="Project64TraceModules.h" />
     <ClInclude Include="Settings\Debug Settings.h" />
     <ClInclude Include="Settings\Game Settings.h" />
     <ClInclude Include="Settings\Logging Settings.h" />

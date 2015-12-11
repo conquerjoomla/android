@@ -17,7 +17,7 @@ class CPath
 public:
 
     enum DIR_CURRENT_DIRECTORY   { CURRENT_DIRECTORY = 1 };
-#ifdef WIN32
+#ifdef _WIN32
     enum DIR_MODULE_DIRECTORY { MODULE_DIRECTORY = 2 };
     enum DIR_MODULE_FILE { MODULE_FILE = 3 };
 #endif
@@ -28,7 +28,7 @@ public:
 private:
 
     std::string	m_strPath;
-#ifdef WIN32
+#ifdef _WIN32
     uint32_t   m_dwFindFileAttributes;
     void *	m_hFindFile;
     static void * m_hInst;
@@ -48,7 +48,7 @@ public:
     CPath(const std::string& strPath, const std::string& NameExten);
 
     CPath(DIR_CURRENT_DIRECTORY sdt, const char * NameExten = NULL);
-#ifdef WIN32
+#ifdef _WIN32
     CPath(DIR_MODULE_DIRECTORY sdt, const char * NameExten = NULL);
     CPath(DIR_MODULE_FILE sdt);
 #endif
@@ -68,7 +68,7 @@ public:
     operator std::string &() { return m_strPath; }
 
     //Get path components
-#ifdef WIN32
+#ifdef _WIN32
     void   GetDriveDirectory(std::string & rDriveDirectory) const;
     std::string GetDriveDirectory(void) const;
 #endif
@@ -83,7 +83,7 @@ public:
     void   GetCurrentDirectory(std::string& rDirectory) const;
     std::string GetCurrentDirectory(void) const;
     void GetFullyQualified(std::string& rFullyQualified) const;
-#ifdef WIN32
+#ifdef _WIN32
     void GetComponents(std::string* pDrive = NULL, std::string* pDirectory = NULL, std::string* pName = NULL, std::string* pExtension = NULL) const;
 #else
     void GetComponents(std::string* pDirectory = NULL, std::string* pName = NULL, std::string* pExtension = NULL) const;
@@ -93,7 +93,7 @@ public:
     bool IsRelative() const;
 
     //Set path components
-#ifdef WIN32
+#ifdef _WIN32
     void SetDrive(char chDrive);
     void SetDriveDirectory(const char * lpszDriveDirectory);
 #endif
@@ -105,7 +105,7 @@ public:
     void SetExtension(int iExtension);
     void AppendDirectory(const char * lpszSubDirectory);
     void UpDirectory(std::string* pLastDirectory = NULL);
-#ifdef WIN32
+#ifdef _WIN32
     void SetComponents(const char * lpszDrive, const char * lpszDirectory, const char * lpszName, const char * lpszExtension);
 #else
     void SetComponents(const char * lpszDirectory, const char * lpszName, const char * lpszExtension);
@@ -113,7 +113,7 @@ public:
     //Set whole path
     void Empty()		{ m_strPath.erase(); }
     void CurrentDirectory();
-#ifdef WIN32
+#ifdef _WIN32
     void Module();
     void Module(void * hInstance);
     void ModuleDirectory();
@@ -142,7 +142,7 @@ public:
     bool FindNext();
 
     // Helpers
-#ifdef WIN32
+#ifdef _WIN32
     static void SethInst(void * hInst);
     static void * GethInst();
 #endif

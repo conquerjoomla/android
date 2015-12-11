@@ -12,7 +12,13 @@
 #include "SettingsType-Application.h"
 #include <Common/path.h>
 
-bool       CSettingTypeApplication::m_UseRegistry = false;
+#if defined(ANDROID)
+#include <android/log.h>
+
+#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "UI-Console", __VA_ARGS__)
+#endif
+
+bool CSettingTypeApplication::m_UseRegistry = false;
 CIniFile * CSettingTypeApplication::m_SettingsIniFile = NULL;
 
 CSettingTypeApplication::CSettingTypeApplication(const char * Section, const char * Name, uint32_t DefaultValue) :
@@ -59,8 +65,23 @@ CSettingTypeApplication::~CSettingTypeApplication()
 {
 }
 
-void CSettingTypeApplication::Initialize(const char * /*AppName*/)
+void CSettingTypeApplication::Initialize(const char * AppName)
 {
+	CPath BaseDir;
+
+#ifdef _WIN32
+    BaseDir.SetDriveDirectory(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str());
+#else
+    BaseDir.SetDirectory(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str());
+#endif
+	printf("g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str() = %s\n",g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str());
+	printf("CSettingTypeApplication::Initialize: BaseDir = %s\n",(const char *)BaseDir);
+	if (!BaseDir.DirectoryExists())
+	{
+		printf("BaseDir does not exists, doing nothing");
+		return;
+	}
+
     stdstr SettingsFile, OrigSettingsFile;
 
     for (int i = 0; i < 100; i++)
@@ -70,6 +91,7 @@ void CSettingTypeApplication::Initialize(const char * /*AppName*/)
         {
             break;
         }
+		printf("SettingsFile = %s\n", SettingsFile.c_str());
         if (SettingsFile == OrigSettingsFile)
         {
             break;
@@ -83,6 +105,7 @@ void CSettingTypeApplication::Initialize(const char * /*AppName*/)
 #else
         CPath SettingsDir(CPath(SettingsFile).GetDirectory(), "");
 #endif
+		printf("SettingsDir = %s\n", (const char *)SettingsDir);
         if (!SettingsDir.DirectoryExists())
         {
             SettingsDir.DirectoryCreate();
@@ -126,7 +149,8 @@ bool CSettingTypeApplication::Load(int /*Index*/, bool & Value) const
             Value = dwValue != 0;
         }
     }
-    else {
+    else 
+	{
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 
@@ -136,7 +160,8 @@ bool CSettingTypeApplication::Load(int /*Index*/, bool & Value) const
         {
             Value = m_DefaultValue != 0;
         }
-        else {
+        else 
+		{
             g_Settings->LoadBool(m_DefaultSetting, Value);
         }
     }
@@ -150,7 +175,8 @@ bool CSettingTypeApplication::Load(int /*Index*/, uint32_t & Value) const
     {
         bRes = m_SettingsIniFile->GetNumber(SectionName(), m_KeyNameIdex.c_str(), Value, Value);
     }
-    else {
+    else
+	{
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
     if (!bRes && m_DefaultSetting != Default_None)
@@ -159,7 +185,8 @@ bool CSettingTypeApplication::Load(int /*Index*/, uint32_t & Value) const
         {
             Value = m_DefaultValue;
         }
-        else {
+        else 
+		{
             g_Settings->LoadDword(m_DefaultSetting, Value);
         }
     }
@@ -198,7 +225,8 @@ void CSettingTypeApplication::LoadDefault(int /*Index*/, bool & Value) const
         {
             Value = m_DefaultValue != 0;
         }
-        else {
+        else 
+		{
             g_Settings->LoadBool(m_DefaultSetting, Value);
         }
     }
@@ -212,7 +240,8 @@ void CSettingTypeApplication::LoadDefault(int /*Index*/, uint32_t & Value) const
         {
             Value = m_DefaultValue;
         }
-        else {
+        else 
+		{
             g_Settings->LoadDword(m_DefaultSetting, Value);
         }
     }
@@ -226,7 +255,8 @@ void CSettingTypeApplication::LoadDefault(int /*Index*/, stdstr & Value) const
         {
             Value = m_DefaultStr;
         }
-        else {
+        else 
+		{
             g_Settings->LoadStringVal(m_DefaultSetting, Value);
         }
     }
@@ -239,7 +269,8 @@ void CSettingTypeApplication::Save(int /*Index*/, bool Value)
     {
         m_SettingsIniFile->SaveNumber(SectionName(), m_KeyNameIdex.c_str(), Value);
     }
-    else {
+    else
+	{
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 }
@@ -250,7 +281,8 @@ void CSettingTypeApplication::Save(int /*Index*/, uint32_t Value)
     {
         m_SettingsIniFile->SaveNumber(SectionName(), m_KeyNameIdex.c_str(), Value);
     }
-    else {
+    else 
+	{
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 }
@@ -261,7 +293,8 @@ void CSettingTypeApplication::Save(int /*Index*/, const stdstr & Value)
     {
         m_SettingsIniFile->SaveString(SectionName(), m_KeyNameIdex.c_str(), Value.c_str());
     }
-    else {
+    else 
+	{
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 }
@@ -272,7 +305,8 @@ void CSettingTypeApplication::Save(int /*Index*/, const char * Value)
     {
         m_SettingsIniFile->SaveString(SectionName(), m_KeyNameIdex.c_str(), Value);
     }
-    else {
+    else 
+	{
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 }
@@ -298,7 +332,8 @@ void CSettingTypeApplication::Delete(int /*Index*/)
     {
         m_SettingsIniFile->SaveString(SectionName(), m_KeyNameIdex.c_str(), NULL);
     }
-    else {
+    else 
+	{
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 }

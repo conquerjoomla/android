@@ -45,9 +45,10 @@ documentation and/or software.
 
 // MD5 simple initialization method
 
-MD5::MD5()
-{
-	init();
+MD5::MD5(){
+
+  init();
+
 }
 
 MD5::~MD5()
@@ -60,58 +61,55 @@ MD5::~MD5()
 // operation, processing another message block, and updating the
 // context.
 
-void MD5::update (const uint1 *input, uint4 input_length) 
-{
-	uint4 input_index, buffer_index;
-	uint4 buffer_space;                // how much space is left in buffer
+void MD5::update (const uint1 *input, uint4 input_length) {
 
-	if (finalized)   // so we can't update!
-	{
-		WriteTrace(TraceMD5, TraceError, "Can't update a finalized digest!");
-		return;
-	}
+  uint4 input_index, buffer_index;
+  uint4 buffer_space;                // how much space is left in buffer
 
-	// Compute number of bytes mod 64
-	buffer_index = (unsigned int)((count[0] >> 3) & 0x3F);
+  if (finalized){  // so we can't update!
+    WriteTrace(TraceError, _T("MD5::update:  Can't update a finalized digest!"));
+    return;
+  }
 
-	// Update number of bits
-	if (  (count[0] += ((uint4) input_length << 3))<((uint4) input_length << 3) )
-	{
-		count[1]++;
-	}
+  // Compute number of bytes mod 64
+  buffer_index = (unsigned int)((count[0] >> 3) & 0x3F);
 
-	count[1] += ((uint4)input_length >> 29);
+  // Update number of bits
+  if (  (count[0] += ((uint4) input_length << 3))<((uint4) input_length << 3) )
+    count[1]++;
 
-	buffer_space = 64 - buffer_index;  // how much space is left in buffer
+  count[1] += ((uint4)input_length >> 29);
 
-	// Transform as many times as possible.
-	if (input_length >= buffer_space) // ie. we have enough to fill the buffer
-	{ 
-		// fill the rest of the buffer and transform
-		memcpy (buffer + buffer_index, (unsigned char *)input, buffer_space);
-		transform (buffer);
 
-		// now, transform each 64-byte piece of the input, bypassing the buffer
-		for (input_index = buffer_space; input_index + 63 < input_length; input_index += 64)
-		{
-			transform ((unsigned char *)(input+input_index));
-		}
+  buffer_space = 64 - buffer_index;  // how much space is left in buffer
 
-		buffer_index = 0;  // so we can buffer remaining
-	}
-	else
-	{
-		input_index=0;     // so we can buffer the whole input
-	}
+  // Transform as many times as possible.
+  if (input_length >= buffer_space) { // ie. we have enough to fill the buffer
+    // fill the rest of the buffer and transform
+    memcpy (buffer + buffer_index, (unsigned char *)input, buffer_space);
+    transform (buffer);
 
-	// and here we do the buffering:
-	memcpy(buffer+buffer_index, (unsigned char *)(input+input_index), input_length-input_index);
+    // now, transform each 64-byte piece of the input, bypassing the buffer
+    for (input_index = buffer_space; input_index + 63 < input_length; 
+	 input_index += 64)
+      transform ((unsigned char *)(input+input_index));
+
+    buffer_index = 0;  // so we can buffer remaining
+  }
+  else
+    input_index=0;     // so we can buffer the whole input
+
+
+  // and here we do the buffering:
+  memcpy(buffer+buffer_index, (unsigned char *)(input+input_index), input_length-input_index);
 }
+
+
 
 // MD5 update for files.
 // Like above, except that it works on files (and uses above as a primitive.)
-void MD5::update(FILE *file)
-{
+
+void MD5::update(FILE *file){
 
   unsigned char buffer[1024];
   int len;
@@ -126,25 +124,26 @@ void MD5::update(FILE *file)
   } while (len);
 
   fclose (file);
+
 }
 
 
 // MD5 finalization. Ends an MD5 message-digest operation, writing the
 // the message digest and zeroizing the context.
-void MD5::finalize ()
-{
+
+
+void MD5::finalize (){
+
   unsigned char bits[8];
   unsigned int index, padLen;
-  static uint1 PADDING[64]=
-  {
+  static uint1 PADDING[64]={
     0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	};
+    };
 
-  if (finalized)
-  {
-    WriteTrace(TraceMD5, TraceError, "Already finalized this digest!");
+  if (finalized){
+    WriteTrace(TraceError, _T("MD5::finalize:  Already finalized this digest!"));
     return;
   }
 
@@ -171,8 +170,8 @@ void MD5::finalize ()
 
 
 
-MD5::MD5(CPath File)
-{
+MD5::MD5(CPath File){
+
   init();  // must be called be all constructors
   if (File.Exists())
   {
@@ -209,24 +208,23 @@ MD5::MD5(const stdstr & string)
 
 const unsigned char *MD5::raw_digest()
 {
-	if (!finalized)
-	{
-		WriteTrace(TraceMD5, TraceError, "Can't get digest if you haven't finalized the digest!");
-		return ( (unsigned char*) "");
-	}
-	return digest;
+  if (!finalized){
+    WriteTrace(TraceError, _T("MD5::raw_digest:  Can't get digest if you haven't finalized the digest!"));
+    return ( (unsigned char*) "");
+  }
+  return digest;
 }
 
 void MD5::get_digest(MD5Digest& extdigest)
 {
-	if (!finalized)
-	{
-		WriteTrace(TraceMD5, TraceError,"Can't get digest if you haven't finalized the digest!");
-		memset(extdigest.digest, 0, sizeof(extdigest.digest));
-		return;
-	}
+  if (!finalized)
+  {
+    WriteTrace(TraceError,_T("MD5::get_digest:  Can't get digest if you haven't finalized the digest!"));
+	memset(extdigest.digest, 0, sizeof(extdigest.digest));
+    return;
+  }
 
-	memcpy(extdigest.digest, digest, 16);
+  memcpy(extdigest.digest, digest, 16);
 }
 
 const char *MD5::hex_digest()
@@ -238,7 +236,7 @@ const char *MD5::hex_digest()
 
 	if (!finalized)
 	{
-		WriteTrace(TraceMD5, TraceError, "Can't get digest if you haven't finalized the digest!");
+		WriteTrace(TraceError,_T("MD5::hex_digest:  Can't get digest if you haven't finalized the digest!"));
 		return "";
 	}
 	char c[33];
@@ -258,8 +256,7 @@ const char *MD5::hex_digest()
 
 
 
-void MD5::init()
-{
+void MD5::init(){
   finalized=0;  // we just started!
 
   // Nothing counted, so count=0

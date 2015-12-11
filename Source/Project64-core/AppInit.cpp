@@ -1,18 +1,21 @@
 #include "stdafx.h"
+#include <Common/path.h>
 #ifdef tofix
-#include <common\path.h>
 #include <common\trace.h>
 #include <Common\Util.h>
 #include <Project64-core/N64System/Mips/MemoryVirtualMem.h>
 #include <Project64-core/N64System/SystemGlobals.h>
 #include <Project64-core/Plugins/PluginClass.h>
 #include <Project64-core/N64System/N64RomClass.h>
+#endif
+#include "Settings/SettingType/SettingsType-Application.h"
 
-void FixDirectories(void);
-void FixLocale(void);
-
+#ifdef _WIN32
+static void FixDirectories(void);
+static void FixLocale(void);
 static void IncreaseThreadPriority(void);
 #endif
+
 CNotification * g_Notify = NULL;
 #ifdef tofix
 static CTraceFileLog * g_LogFile = NULL;
@@ -56,6 +59,12 @@ void InitializeLog(void)
 #define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "UI-Console", __VA_ARGS__)
 #endif
 
+const char * AppName ( void )
+{
+	static stdstr_f ApplicationName("Project64 %s", VER_FILE_VERSION_STR);
+	return ApplicationName.c_str();
+}
+
 static bool ParseCommand(int32_t argc, char **argv)
 {
     if (argc == 1)
@@ -69,7 +78,8 @@ static bool ParseCommand(int32_t argc, char **argv)
         {
             printf("setting Cmd_BaseDirectory to %s", argv[i + 1]);
             g_Settings->SaveString(Cmd_BaseDirectory, argv[i + 1]);
-            i++;
+			CSettingTypeApplication::Initialize(AppName());
+			i++;
         }
         else if (strcmp(argv[i], "--help") == 0)
         {
@@ -93,12 +103,18 @@ bool AppInit(CNotification * Notify, int argc, char **argv)
 {
     try
     {
-#ifdef tofix
         g_Notify = Notify;
+
+#ifdef _WIN32
+		FixDirectories();
+        FixLocale();
+        IncreaseThreadPriority();
 #endif
-        stdstr_f AppName("Project64 %s", VER_FILE_VERSION_STR);
+        printf("AppNames = %s\n", AppName());
         g_Settings = new CSettings;
-        g_Settings->Initialize(AppName.c_str());
+        printf("Created Settings, going to init now\n");
+        g_Settings->Initialize(AppName());
+        printf("g_Settings->Initialize done\n");
 
         printf("SupportFile_Settings = %s\n", g_Settings->LoadStringVal(SupportFile_Settings).c_str());
         if (!ParseCommand(argc, argv))
@@ -115,10 +131,6 @@ bool AppInit(CNotification * Notify, int argc, char **argv)
             g_Settings = new CSettings;
             g_Settings->Initialize(AppName.c_str());
         }
-
-        FixDirectories();
-        FixLocale();
-        IncreaseThreadPriority();
 
         InitializeLog();
 
@@ -163,7 +175,7 @@ void AppCleanup(void)
 #endif
 }
 
-#ifdef tofix
+#ifdef _WIN32
 void FixDirectories(void)
 {
     CPath Directory(CPath::MODULE_DIRECTORY);
