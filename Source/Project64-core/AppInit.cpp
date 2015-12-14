@@ -74,11 +74,13 @@ static bool ParseCommand(int32_t argc, char **argv)
     for (int32_t i = 1; i < argc; i++)
     {
         int32_t ArgsLeft = argc - i - 1;
+        printf("ParseCommand: %d=%s\n",i,argv[i]);
         if (strcmp(argv[i], "--basedir") == 0 && ArgsLeft >= 1)
         {
             printf("setting Cmd_BaseDirectory to %s", argv[i + 1]);
             g_Settings->SaveString(Cmd_BaseDirectory, argv[i + 1]);
 			CSettingTypeApplication::Initialize(AppName());
+            printf("Reinit done\n");
 			i++;
         }
         else if (strcmp(argv[i], "--help") == 0)
@@ -88,7 +90,9 @@ static bool ParseCommand(int32_t argc, char **argv)
         }
         else if (ArgsLeft == 0 && argv[i][0] != '-')
         {
-            g_Settings->SaveString(Cmd_RomFile, argv[i + 1]);
+            printf("before save Cmd_RomFile\n");
+            g_Settings->SaveString(Cmd_RomFile, &(argv[i][0]));
+            printf("after save Cmd_RomFile\n");
             return true;
         }
         else

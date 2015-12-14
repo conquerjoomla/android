@@ -34,6 +34,12 @@
 #include <Project64-core/N64System/N64Types.h>
 #include <Common/TraceDefs.h>
 
+#if defined(ANDROID)
+#include <android/log.h>
+
+#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "UI-Console", __VA_ARGS__)
+#endif
+
 CSettings * g_Settings = NULL;
 
 CSettings::CSettings() :
@@ -590,8 +596,11 @@ void CSettings::RegisterSetting(CSettings * _this, SettingID ID, SettingID Defau
 
 bool CSettings::Initialize(const char * AppName)
 {
+	printf("CSettings::Initialize 1\n");
     AddHowToHandleSetting();
+	printf("CSettings::Initialize 2\n");
 	CSettingTypeApplication::Initialize(AppName);
+	printf("CSettings::Initialize 3\n");
 #ifdef tofix
     CSettingTypeRomDatabase::Initialize();
     CSettingTypeGame::Initialize();
@@ -1027,19 +1036,32 @@ void CSettings::SaveString(SettingID Type, const stdstr & Value)
 
 void CSettings::SaveString(SettingID Type, const char * Buffer)
 {
+	printf("CSettings::SaveString: Type %d\n",Type);
     SETTING_HANDLER FindInfo = m_SettingInfo.find(Type);
+	printf("CSettings::SaveString: FindInfo = %p m_SettingInfo.end() = %p\n",FindInfo, m_SettingInfo.end());
+    if (FindInfo != m_SettingInfo.end())
+    {
+		printf("CSettings::SaveString: Found\n");
+		printf("CSettings::SaveString: FindInfo->second = %p\n",FindInfo->second);
+		printf("CSettings::SaveString: FindInfo->second->IndexBasedSetting() = %s\n",FindInfo->second->IndexBasedSetting() ? "yes" : "no");
+	}
+
     if (FindInfo == m_SettingInfo.end())
     {
+		printf("UnknownSetting %d\n",Type);
         //if not found do nothing
         UnknownSetting(Type);
     }
-    if (FindInfo->second->IndexBasedSetting())
+    else if (FindInfo->second->IndexBasedSetting())
     {
+		printf("CSettings::SaveString: index based???\n");
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
     else
     {
+		printf("Save value %s\n",Buffer ? Buffer : "null");
         FindInfo->second->Save(0, Buffer);
+		printf("value saved\n");
     }
     NotifyCallBacks(Type);
 }

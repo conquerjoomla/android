@@ -99,7 +99,9 @@ CPath::CPath()
 //-------------------------------------------------------------
 CPath::CPath(const CPath& rPath)
 {
-    Init();
+	printf("CPath::CPath(const CPath& rPath): rPath = %s\n",(const char *)rPath);
+
+	Init();
     m_strPath = rPath.m_strPath;
 }
 
@@ -108,14 +110,18 @@ CPath::CPath(const CPath& rPath)
 //-------------------------------------------------------------
 CPath::CPath(const char * lpszPath)
 {
-    Init();
+	printf("CPath::CPath(const char * lpszPath): lpszPath = %s\n",lpszPath);
+
+	Init();
     m_strPath = lpszPath ? lpszPath : "";
     cleanPathString(m_strPath);
 }
 
 CPath::CPath(const char * lpszPath, const char * NameExten)
 {
-    Init();
+	printf("CPath::CPath(const char * lpszPath, const char * NameExten): lpszPath = %s NameExten = %s\n",lpszPath, NameExten);
+
+	Init();
 #ifdef _WIN32
     SetDriveDirectory(lpszPath);
 #else
@@ -129,7 +135,9 @@ CPath::CPath(const char * lpszPath, const char * NameExten)
 //-------------------------------------------------------------
 CPath::CPath(const std::string& strPath)
 {
-    Init();
+	printf("CPath::CPath(const std::string& strPath): strPath = %s\n",strPath.c_str());
+
+	Init();
     m_strPath = strPath;
     cleanPathString(m_strPath);
 }
@@ -139,7 +147,9 @@ CPath::CPath(const std::string& strPath)
 //-------------------------------------------------------------
 CPath::CPath(const std::string& strPath, const char * NameExten)
 {
-    Init();
+	printf("CPath::CPath(const std::string& strPath, const char * NameExten): strPath = %s NameExten = %s\n",strPath.c_str(), NameExten);
+
+	Init();
 #ifdef _WIN32
     SetDriveDirectory(strPath.c_str());
 #else
@@ -153,7 +163,9 @@ CPath::CPath(const std::string& strPath, const char * NameExten)
 //-------------------------------------------------------------
 CPath::CPath(const std::string& strPath, const std::string& NameExten)
 {
-    Init();
+	printf("CPath::CPath(const std::string& strPath, const std::string& NameExten): strPath = %s NameExten = %s\n",strPath.c_str(), NameExten.c_str());
+
+	Init();
 #ifdef _WIN32
     SetDriveDirectory(strPath.c_str());
 #else
@@ -167,7 +179,9 @@ CPath::CPath(const std::string& strPath, const std::string& NameExten)
 //-------------------------------------------------------------
 CPath::~CPath()
 {
+	printf("CPath::~CPath: 1\n");
     Exit();
+	printf("CPath::~CPath: 2\n");
 }
 
 //-------------------------------------------------------------
@@ -340,18 +354,25 @@ void CPath::GetComponents(std::string* pDirectory, std::string* pName, std::stri
     memset(buff_ext, 0, sizeof(buff_ext));
 
 	const char * BasePath = m_strPath.c_str();
+	printf("CPath::GetComponents: BasePath = %s\n",BasePath);
 	const char * last = strrchr(BasePath,DIRECTORY_DELIMITER);
+	printf("CPath::GetComponents: last = %s\n",last ? last : "null");
 	if (last != NULL)
 	{
-		int len = sizeof(buff_dir) < BasePath - last ? sizeof(buff_dir) : BasePath - last;
+		printf("CPath::GetComponents: sizeof(buff_dir) = %d BasePath = %p last = %p BasePath - last = %d\n",sizeof(buff_dir), BasePath, last, BasePath - last);
+		int len = sizeof(buff_dir) < (last - BasePath) ? sizeof(buff_dir) : last - BasePath;
+		printf("CPath::GetComponents: len = %d\n",len);
 		strncpy(buff_dir,BasePath,len);
+		printf("CPath::GetComponents: buff_dir = %s\n",buff_dir);
 		strncpy(buff_name,last + 1,sizeof(buff_name));
+		printf("CPath::GetComponents: buff_name = %s\n",buff_name);
 	}
 	else
 	{
 		strncpy(buff_dir,BasePath,sizeof(buff_dir));
 	}
 	char * ext = strrchr(buff_name,'.');
+	printf("ext = %s\n",ext ? ext : "null");
 	if (ext != NULL)
 	{
 		strncpy(buff_ext,ext + 1,sizeof(buff_ext));
@@ -1254,23 +1275,30 @@ bool CPath::DirectoryCreate(bool bCreateIntermediates /*= TRUE*/)
 //------------------------------------------------------------------------
 void CPath::cleanPathString(std::string& rDirectory) const
 {
+	printf("CPath::cleanPathString: rDirectory = %s\n",rDirectory.c_str());
     std::string::size_type pos = rDirectory.find(DIRECTORY_DELIMITER2);
+	printf("CPath::cleanPathString: pos = %d\n",pos);
     while (pos != std::string::npos)
     {
         rDirectory.replace(pos, 1, &DIRECTORY_DELIMITER);
         pos = rDirectory.find(DIRECTORY_DELIMITER2, pos + 1);
+		printf("CPath::cleanPathString: replaced rDirectory = %s\n",rDirectory.c_str());
     }
 
-    bool AppendEnd = !_strnicmp(rDirectory.c_str(), "\\\\", 2);
+    bool AppendEnd = !_strnicmp(rDirectory.c_str(), DIR_DOUBLEDELIM, 2);
+	printf("CPath::cleanPathString: AppendEnd = %s\n",AppendEnd ? "true" : "false");
     pos = rDirectory.find(DIR_DOUBLEDELIM);
+	printf("CPath::cleanPathString: pos = %d\n",pos);
     while (pos != std::string::npos)
     {
         rDirectory.replace(pos, 2, &DIRECTORY_DELIMITER);
         pos = rDirectory.find(DIR_DOUBLEDELIM, pos + 1);
+		printf("CPath::cleanPathString: replaced rDirectory = %s\n",rDirectory.c_str());
     }
     if (AppendEnd)
     {
-        rDirectory.insert(0, "\\");
+		rDirectory.insert(0, stdstr_f("%c",DIRECTORY_DELIMITER).c_str());
+		printf("CPath::cleanPathString: AppendEnd rDirectory = %s\n",rDirectory.c_str());
     }
 }
 

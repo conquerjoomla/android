@@ -128,8 +128,11 @@ bool CFile::Close()
     }
     m_hFile = INVALID_HANDLE_VALUE;
 #else
-	fclose((FILE *)m_hFile);
-	m_hFile = NULL;
+	if (m_hFile != NULL)
+	{
+		fclose((FILE *)m_hFile);
+		m_hFile = NULL;
+	}
 #endif
 	m_bCloseOnDelete = false;
     return bError;

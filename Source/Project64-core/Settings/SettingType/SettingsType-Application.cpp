@@ -68,11 +68,10 @@ CSettingTypeApplication::~CSettingTypeApplication()
 void CSettingTypeApplication::Initialize(const char * AppName)
 {
 	CPath BaseDir;
-
 #ifdef _WIN32
-    BaseDir.SetDriveDirectory(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str());
+	BaseDir.SetDriveDirectory(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str());
 #else
-    BaseDir.SetDirectory(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str());
+	BaseDir.SetDirectory(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str());
 #endif
 	printf("g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str() = %s\n",g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str());
 	printf("CSettingTypeApplication::Initialize: BaseDir = %s\n",(const char *)BaseDir);
@@ -82,40 +81,44 @@ void CSettingTypeApplication::Initialize(const char * AppName)
 		return;
 	}
 
-    stdstr SettingsFile, OrigSettingsFile;
-
-    for (int i = 0; i < 100; i++)
-    {
-        OrigSettingsFile = SettingsFile;
-        if (!g_Settings->LoadStringVal(SupportFile_Settings, SettingsFile) && i > 0)
-        {
-            break;
-        }
+	stdstr SettingsFile, OrigSettingsFile;
+	for (int i = 0; i < 100; i++)
+	{
+		OrigSettingsFile = SettingsFile;
+		if (!g_Settings->LoadStringVal(SupportFile_Settings, SettingsFile) && i > 0)
+		{
+			break;
+		}
 		printf("SettingsFile = %s\n", SettingsFile.c_str());
-        if (SettingsFile == OrigSettingsFile)
-        {
-            break;
-        }
-        if (m_SettingsIniFile)
-        {
-            delete m_SettingsIniFile;
-        }
+		if (SettingsFile == OrigSettingsFile)
+		{
+			break;
+		}
+		if (m_SettingsIniFile)
+		{
+			delete m_SettingsIniFile;
+		}
 #ifdef _WIN32
-        CPath SettingsDir(CPath(SettingsFile).GetDriveDirectory(), "");
+		CPath SettingsDir(CPath(SettingsFile).GetDriveDirectory(), "");
 #else
-        CPath SettingsDir(CPath(SettingsFile).GetDirectory(), "");
+		CPath SettingsDir(CPath(SettingsFile).GetDirectory(), "");
 #endif
 		printf("SettingsDir = %s\n", (const char *)SettingsDir);
-        if (!SettingsDir.DirectoryExists())
-        {
-            SettingsDir.DirectoryCreate();
-        }
+		if (!SettingsDir.DirectoryExists())
+		{
+			printf("Drirectory does not exist creating %s\n", (const char *)SettingsDir);
+			SettingsDir.DirectoryCreate();
+		}
 
-        m_SettingsIniFile = new CIniFile(SettingsFile.c_str());
-    }
+		m_SettingsIniFile = new CIniFile(SettingsFile.c_str());
+		printf("m_SettingsIniFile = %p\n", m_SettingsIniFile);
+	}
 
-    m_SettingsIniFile->SetAutoFlush(false);
-    m_UseRegistry = g_Settings->LoadBool(Setting_UseFromRegistry);
+	printf("CSettingTypeApplication::Initialize 1\n");
+	m_SettingsIniFile->SetAutoFlush(false);
+	printf("CSettingTypeApplication::Initialize 2\n");
+	m_UseRegistry = g_Settings->LoadBool(Setting_UseFromRegistry);
+	printf("CSettingTypeApplication::Initialize 3\n");
 }
 
 void CSettingTypeApplication::Flush()
