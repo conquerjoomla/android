@@ -96,7 +96,8 @@ void CPifRam::n64_cic_nus_6105(char challenge[], char respone[], int32_t length)
 
 void CPifRam::PifRamRead()
 {
-    if (m_PifRam[0x3F] == 0x2)
+#ifdef tofix
+	if (m_PifRam[0x3F] == 0x2)
     {
         return;
     }
@@ -153,11 +154,13 @@ void CPifRam::PifRamRead()
     {
         g_Plugins->Control()->ReadController(-1, NULL);
     }
+#endif
 }
 
 void CPifRam::PifRamWrite()
 {
-    CONTROL * Controllers = g_Plugins->Control()->PluginControllers();
+#ifdef tofix
+	CONTROL * Controllers = g_Plugins->Control()->PluginControllers();
     int32_t Channel = 0, CurPos;
 
     if (m_PifRam[0x3F] > 0x1)
@@ -274,6 +277,7 @@ void CPifRam::PifRamWrite()
     {
         g_Plugins->Control()->ControllerCommand(-1, NULL);
     }
+#endif
 }
 
 void CPifRam::SI_DMA_READ()
@@ -454,7 +458,8 @@ void CPifRam::SI_DMA_WRITE()
 
 void CPifRam::ProcessControllerCommand(int32_t Control, uint8_t * Command)
 {
-    CONTROL * Controllers = g_Plugins->Control()->PluginControllers();
+#ifdef tofix
+	CONTROL * Controllers = g_Plugins->Control()->PluginControllers();
 
     switch (Command[2])
     {
@@ -599,10 +604,13 @@ void CPifRam::ProcessControllerCommand(int32_t Control, uint8_t * Command)
             g_Notify->DisplayError(stdstr_f("Unknown ControllerCommand %d", Command[2]).ToUTF16().c_str());
         }
     }
+#endif
 }
 
-void CPifRam::ReadControllerCommand(int32_t Control, uint8_t * Command) {
-    CONTROL * Controllers = g_Plugins->Control()->PluginControllers();
+void CPifRam::ReadControllerCommand(int32_t Control, uint8_t * Command) 
+{
+#ifdef tofix
+	CONTROL * Controllers = g_Plugins->Control()->PluginControllers();
 
     switch (Command[2])
     {
@@ -638,6 +646,7 @@ void CPifRam::ReadControllerCommand(int32_t Control, uint8_t * Command) {
         }
         break;
     }
+#endif
 }
 
 void CPifRam::LogControllerPakData(const char * Description)

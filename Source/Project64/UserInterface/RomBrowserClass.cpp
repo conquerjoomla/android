@@ -1483,6 +1483,7 @@ void CRomBrowser::RomList_PopupMenu(DWORD /*pnmh*/)
 		if (inBasicMode) { DeleteMenu(hPopupMenu, 8, MF_BYPOSITION); }
 		if (inBasicMode && !CheatsRemembered) { DeleteMenu(hPopupMenu, 7, MF_BYPOSITION); }
 		DeleteMenu(hPopupMenu, 6, MF_BYPOSITION);
+#ifdef tofix
 		if (!inBasicMode && g_Plugins && g_Plugins->Gfx() && g_Plugins->Gfx()->GetRomBrowserMenu != NULL)
 		{
 			HMENU GfxMenu = (HMENU)g_Plugins->Gfx()->GetRomBrowserMenu();
@@ -1496,6 +1497,7 @@ void CRomBrowser::RomList_PopupMenu(DWORD /*pnmh*/)
 				SetMenuItemInfo(hPopupMenu, (DWORD)GfxMenu, MF_BYCOMMAND, &lpmii);
 			}
 		}
+#endif
 	}
 
 	//Get the current Mouse location

@@ -310,9 +310,10 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(Directory_TextureUseSelected, new CSettingTypeApplication("Directory", "Texture Dir - Use Selected", false));
 
     AddHandler(Directory_LastSave, new CSettingTypeApplication("Directory", "Last Save Directory", Directory_InstantSave));
-
+#endif
     AddHandler(GameRunning_LoadingInProgress, new CSettingTypeTempBool(false));
-    AddHandler(GameRunning_CPU_Running, new CSettingTypeTempBool(false));
+#ifdef tofix
+	AddHandler(GameRunning_CPU_Running, new CSettingTypeTempBool(false));
     AddHandler(GameRunning_CPU_Paused, new CSettingTypeTempBool(false));
     AddHandler(GameRunning_CPU_PausedType, new CSettingTypeTempNumber(Default_None));
     AddHandler(GameRunning_InstantSaveFile, new CSettingTypeTempString(""));

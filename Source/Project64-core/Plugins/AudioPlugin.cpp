@@ -17,6 +17,7 @@
 #include "AudioPlugin.h"
 #include <Windows.h>
 
+#ifdef tofix
 CAudioPlugin::CAudioPlugin() :
     AiLenChanged(NULL),
     AiReadLength(NULL),
@@ -198,3 +199,4 @@ void CAudioPlugin::AudioThread(CAudioPlugin * _this) {
         _this->AiUpdate(true);
     }
 }
+#endif

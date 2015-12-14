@@ -17,8 +17,10 @@ int WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR /
         WriteTrace(TraceDebug, __FUNCTION__ ": Create Main Window");
         CMainGui  MainWindow(true, stdstr_f("Project64 %s", VER_FILE_VERSION_STR).c_str()), HiddenWindow(false);
         CMainMenu MainMenu(&MainWindow);
-        g_Plugins->SetRenderWindows(&MainWindow, &HiddenWindow);
-        Notify().SetMainWindow(&MainWindow);
+#ifdef tofix
+		g_Plugins->SetRenderWindows(&MainWindow, &HiddenWindow);
+#endif
+		Notify().SetMainWindow(&MainWindow);
 
         if (__argc > 1)
         {

@@ -16,6 +16,7 @@
 #include "GFXplugin.h"
 #include <Windows.h>
 
+#ifdef tofix
 CGfxPlugin::CGfxPlugin() :
     CaptureScreen(NULL),
     ChangeWindow(NULL),
@@ -267,3 +268,4 @@ void CGfxPlugin::ProcessMenuItem(int32_t id)
         m_GFXDebug.ProcessMenuItem(id);
     }
 }
+#endif

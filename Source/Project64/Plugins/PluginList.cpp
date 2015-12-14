@@ -51,7 +51,8 @@ bool CPluginList::LoadList()
 
 void CPluginList::AddPluginFromDir(CPath Dir)
 {
-    Dir.SetNameExtension("*.*");
+#ifdef tofix
+	Dir.SetNameExtension("*.*");
     if (Dir.FindFirst(_A_SUBDIR))
     {
         do {
@@ -114,4 +115,5 @@ void CPluginList::AddPluginFromDir(CPath Dir)
             hLib = NULL;
         }
     }
+#endif
 }

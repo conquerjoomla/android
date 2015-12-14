@@ -11,6 +11,7 @@
 #pragma once
 #include "PluginBase.h"
 
+#ifdef tofix
 class CAudioPlugin : public CPlugin
 {
 public:
@@ -43,3 +44,4 @@ private:
     // Function used in a thread for using audio
     static void AudioThread(CAudioPlugin * _this);
 };
+#endif

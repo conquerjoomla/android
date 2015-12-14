@@ -11,8 +11,10 @@
 #pragma once
 
 #include <Project64-core/Settings/DebugSettings.h>
+#include <Common/TraceDefs.h>
 #include "PluginClass.h"
 
+#ifdef tofix
 class CPlugin :
     private CDebugSettings
 {
@@ -67,3 +69,5 @@ protected:
     // i.e. _LoadFunction("CloseDLL", CloseDLL);
 #define LoadFunction(functionName) _LoadFunction(#functionName, functionName)
 };
+
+#endif

@@ -12,6 +12,7 @@
 #include "PluginBase.h"
 #include <Windows.h>
 
+#ifdef tofix
 CPlugin::CPlugin() :
     DllAbout(NULL),
     DllConfig(NULL),
@@ -255,3 +256,4 @@ bool CPlugin::ValidPluginVersion ( PLUGIN_INFO & PluginInfo )
     }
     return FALSE;
 }
+#endif

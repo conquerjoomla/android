@@ -31,7 +31,9 @@ class CRegisters;
 extern CRegisters    * g_Reg; //Current Register Set attached to the g_MMU
 
 class CPlugins;
+#ifdef tofix
 extern CPlugins      * g_Plugins;
+#endif
 
 class CN64Rom;
 extern CN64Rom       * g_Rom;      //The current rom that this system is executing.. it can only execute one file at the time

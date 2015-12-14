@@ -92,11 +92,13 @@ void CAudio::LenChanged()
         m_Status = 0;
     }
 
-    if (g_Plugins->Audio()->AiLenChanged != NULL)
+#ifdef tofix
+	if (g_Plugins->Audio()->AiLenChanged != NULL)
     {
         g_Plugins->Audio()->AiLenChanged();
     }
-    WriteTraceF(TraceAudio, __FUNCTION__ ": Done");
+#endif
+	WriteTraceF(TraceAudio, __FUNCTION__ ": Done");
 }
 
 void CAudio::InterruptTimerDone()

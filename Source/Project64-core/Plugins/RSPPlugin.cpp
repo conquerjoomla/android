@@ -19,6 +19,7 @@
 
 void DummyFunc1(int a) { a += 1;}
 
+#ifdef tofix
 CRSP_Plugin::CRSP_Plugin(void) :
     DoRspCycles(NULL),
     EnableDebugging(NULL),
@@ -216,3 +217,5 @@ void CRSP_Plugin::ProcessMenuItem(int id)
         m_RSPDebug.ProcessMenuItem(id);
     }
 }
+
+#endif

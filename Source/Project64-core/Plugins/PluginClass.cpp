@@ -14,6 +14,7 @@
 #include <Common\path.h>
 #include "PluginClass.h"
 
+#ifdef tofix
 CPlugins::CPlugins(const stdstr & PluginDir) :
 m_MainWindow(NULL),
 m_SyncWindow(NULL),
@@ -435,3 +436,4 @@ bool CPlugins::CopyPlugins(const stdstr & DstDir) const
 	}
 	return true;
 }
+#endif

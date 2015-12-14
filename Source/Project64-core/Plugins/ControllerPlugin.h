@@ -82,6 +82,7 @@ private:
     CCONTROL& operator=(const CCONTROL&);   // Disable assignment
 };
 
+#ifdef tofix
 class CControl_Plugin : public CPlugin
 {
 public:
@@ -118,3 +119,4 @@ private:
     CONTROL m_PluginControllers[4];
     CCONTROL * m_Controllers[4];
 };
+#endif

@@ -137,10 +137,12 @@ private:
     void TLB_Unmaped(uint32_t VAddr, uint32_t Len);
     void TLB_Changed();
 
+#ifdef tofix
     CPlugins      * const m_Plugins;  //The plugin container
+	CPlugins      * m_SyncPlugins;
+#endif
     CN64System    * m_SyncCPU;
-    CPlugins      * m_SyncPlugins;
-    CMipsMemoryVM   m_MMU_VM;   //Memory of the n64
+	CMipsMemoryVM   m_MMU_VM;   //Memory of the n64
     CTLB            m_TLB;
     CRegisters      m_Reg;
     CFramePerSecond m_FPS;

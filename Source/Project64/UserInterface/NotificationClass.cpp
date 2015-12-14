@@ -96,7 +96,8 @@ void CNotificationImp::DisplayMessage(int DisplayTime, const wchar_t * Message) 
 
     if (InFullScreen())
     {
-        if (m_gfxPlugin && m_gfxPlugin->DrawStatus)
+#ifdef tofix
+		if (m_gfxPlugin && m_gfxPlugin->DrawStatus)
         {
             WriteTrace(TraceGfxPlugin, __FUNCTION__ ": DrawStatus - Starting");
             stdstr PluginMessage;
@@ -104,7 +105,8 @@ void CNotificationImp::DisplayMessage(int DisplayTime, const wchar_t * Message) 
             m_gfxPlugin->DrawStatus(PluginMessage.c_str(), FALSE);
             WriteTrace(TraceGfxPlugin, __FUNCTION__ ": DrawStatus - Done");
         }
-    }
+#endif
+	}
     else
     {
         m_hWnd->SetStatusText(0, Message);

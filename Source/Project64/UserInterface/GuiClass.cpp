@@ -474,8 +474,10 @@ WPARAM CMainGui::ProcessAllMessages(void)
         if (m_ResetPlugins)
         {
             m_ResetPlugins = false;
-            m_ResetInfo->res = m_ResetInfo->plugins->Reset(m_ResetInfo->system);
-            SetEvent(m_ResetInfo->hEvent);
+#ifdef tofix
+			m_ResetInfo->res = m_ResetInfo->plugins->Reset(m_ResetInfo->system);
+#endif
+			SetEvent(m_ResetInfo->hEvent);
             m_ResetInfo = NULL;
         }
         if (g_cheatUI && g_cheatUI->IsCheatMessage(&msg)) { continue; }
@@ -740,13 +742,15 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
     }
     if (CGuiSettings::bCPURunning() && g_BaseSystem)
     {
-        if (g_Plugins->Gfx() && g_Plugins->Gfx()->MoveScreen)
+#ifdef tofix
+		if (g_Plugins->Gfx() && g_Plugins->Gfx()->MoveScreen)
         {
             WriteTrace(TraceGfxPlugin, __FUNCTION__ ": Starting");
             g_Plugins->Gfx()->MoveScreen((int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
             WriteTrace(TraceGfxPlugin, __FUNCTION__ ": Done");
         }
-    }
+#endif
+	}
     break;
     case WM_TIMER:
         if (wParam == Timer_SetWindowPos)
@@ -827,10 +831,13 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
         {
             if (g_BaseSystem)
             {
-                if (g_Plugins && g_Plugins->Control()->WM_KeyUp) {
+#ifdef tofix               
+				if (g_Plugins && g_Plugins->Control()->WM_KeyUp) 
+				{
                     g_Plugins->Control()->WM_KeyUp(wParam, lParam);
                 }
-            }
+#endif
+			}
         }
     }
     break;
@@ -842,11 +849,13 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
         {
             if (g_BaseSystem)
             {
-                if (g_Plugins && g_Plugins->Control()->WM_KeyDown)
+#ifdef tofix
+				if (g_Plugins && g_Plugins->Control()->WM_KeyDown)
                 {
                     g_Plugins->Control()->WM_KeyDown(wParam, lParam);
                 }
-            }
+#endif
+			}
         }
     }
     break;
@@ -1014,7 +1023,8 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
         default:
             if (_this->m_Menu)
             {
-                if (LOWORD(wParam) > 5000 && LOWORD(wParam) <= 5100)
+#ifdef tofix
+				if (LOWORD(wParam) > 5000 && LOWORD(wParam) <= 5100)
                 {
                     if (g_Plugins->RSP())
                     {
@@ -1055,7 +1065,9 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
                         }
                     }
                 }
-                else if (_this->m_Menu->ProcessMessage(hWnd, HIWORD(wParam), LOWORD(wParam)))
+                else 
+#endif
+					if (_this->m_Menu->ProcessMessage(hWnd, HIWORD(wParam), LOWORD(wParam)))
                 {
                     return true;
                 }

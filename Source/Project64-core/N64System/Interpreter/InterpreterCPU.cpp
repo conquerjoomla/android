@@ -250,11 +250,13 @@ void CInterpreterCPU::InPermLoop()
         (g_Reg->STATUS_REGISTER & STATUS_ERL) != 0 ||
         (g_Reg->STATUS_REGISTER & 0xFF00) == 0)
     {
-        if (g_Plugins->Gfx()->UpdateScreen != NULL)
+#ifdef tofix
+		if (g_Plugins->Gfx()->UpdateScreen != NULL)
         {
             g_Plugins->Gfx()->UpdateScreen();
         }
-        //CurrentFrame = 0;
+#endif
+		//CurrentFrame = 0;
         //CurrentPercent = 0;
         //DisplayFPS();
         g_Notify->DisplayError(GS(MSG_PERM_LOOP));

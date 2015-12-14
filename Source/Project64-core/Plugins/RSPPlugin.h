@@ -11,6 +11,7 @@
 #pragma once
 #include "PluginBase.h"
 
+#ifdef tofix
 class CRSP_Plugin : public CPlugin
 {
     typedef struct {
@@ -74,3 +75,4 @@ private:
     void(__cdecl *GetDebugInfo)     (RSPDEBUG_INFO * GFXDebugInfo);
     void(__cdecl *InitiateDebugger) (DEBUG_INFO DebugInfo);
 };
+#endif

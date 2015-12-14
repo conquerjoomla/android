@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "SDL_main.h"
-#include <Project64-core\AppInit.h>
+#include <Project64-core/AppInit.h>
+#include <Project64-core/Settings/SettingsClass.h>
+#include <Project64-core/N64System/N64Class.h>
 
 #if defined(ANDROID)
 #include <android/log.h>
@@ -31,9 +33,15 @@ int main(int argc, char * argv[])
         printf("argv[%d] = %s\n", i, argv[i]);
     }
     printf("before app init\n");
-    AppInit(NULL, argc, &argv[0]);
+    if (AppInit(NULL, argc, &argv[0]))
+	{
+		if (g_Settings->LoadStringVal(Cmd_RomFile).length() > 0)
+		{
+			CN64System::RunFileImage(g_Settings->LoadStringVal(Cmd_RomFile).c_str());
+		}
+	}
+	AppCleanup();
     printf("After app init\n");
 
-    AppCleanup();
     return 0;
 }

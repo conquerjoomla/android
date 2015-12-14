@@ -89,7 +89,7 @@ bool CCheats::LoadCode(int CheatNo, const char * CheatString)
 	return true;
 }
 
-void CCheats::LoadPermCheats(CPlugins * Plugins)
+void CCheats::LoadPermCheats(CPlugins * /*Plugins*/)
 {
 	if (g_Settings->LoadBool(Debugger_DisableGameFixes))
 	{
@@ -113,6 +113,7 @@ void CCheats::LoadPermCheats(CPlugins * Plugins)
 			for (size_t i = 0, n = PluginList.size(); i < n; i++)
 			{
 				stdstr PluginName = PluginList[i].Trim();
+#ifdef tofix
 				if (strstr(Plugins->Gfx()->PluginName(), PluginName.c_str()) != NULL)
 				{
 					LoadEntry = true;
@@ -133,6 +134,7 @@ void CCheats::LoadPermCheats(CPlugins * Plugins)
 					LoadEntry = true;
 					break;
 				}
+#endif
 			}
 		}
 

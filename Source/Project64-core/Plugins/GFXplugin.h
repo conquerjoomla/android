@@ -11,6 +11,7 @@
 #pragma once
 #include "PluginBase.h"
 
+#ifdef tofix
 class CGfxPlugin : public CPlugin
 {
     typedef struct
@@ -96,3 +97,5 @@ private:
     static void __cdecl DummyViWidthChanged(void) {}
     static void __cdecl DummySoftReset(void) {}
 };
+
+#endif

@@ -28,8 +28,9 @@ void Rumblepak::ReadFrom(uint8_t * command)
 	}
 }
 
-void Rumblepak::WriteTo(int Control, uint8_t * command)
+void Rumblepak::WriteTo(int /*Control*/, uint8_t * /*command*/)
 {
+#ifdef tofix
 	uint32_t address = (command[3] << 8) | (command[4] & 0xE0);
 
 	if ((address) == 0xC000)
@@ -39,4 +40,5 @@ void Rumblepak::WriteTo(int Control, uint8_t * command)
 			g_Plugins->Control()->RumbleCommand(Control, *(int *)(&command[5]));
 		}
 	}
+#endif
 }
