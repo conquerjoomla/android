@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -143,7 +143,9 @@
   <ItemGroup>
     <None Include="res\divider.cur" />
     <None Include="res\hand.cur" />
-    <None Include="res\ListItems.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\ListItems.bmp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="UserInterface\UIResources.rc" />
