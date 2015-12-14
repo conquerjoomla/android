@@ -37,7 +37,7 @@ int main(int argc, char * argv[])
 	{
 		if (g_Settings->LoadStringVal(Cmd_RomFile).length() > 0)
 		{
-			CN64System::RunFileImage(g_Settings->LoadStringVal(Cmd_RomFile).c_str());
+			//CN64System::RunFileImage(g_Settings->LoadStringVal(Cmd_RomFile).c_str());
 		}
 	}
 	AppCleanup();
