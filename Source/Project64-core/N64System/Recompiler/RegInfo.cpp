@@ -12,7 +12,7 @@
 #include <Project64-core/N64System/SystemGlobals.h>
 #include <Project64-core/N64System/N64Class.h>
 #include "RegInfo.h"
-#include "Recompilerclass.h"
+#include "RecompilerClass.h"
 #include "x86CodeLog.h"
 
 uint32_t CRegInfo::m_fpuControl = 0;
@@ -826,7 +826,7 @@ CX86Ops::x86Reg CRegInfo::Map_TempReg(CX86Ops::x86Reg Reg, int32_t MipsReg, bool
             Reg = FreeX86Reg();
             if (Reg == x86_Unknown)
             {
-                WriteTrace(TraceError, __FUNCTION__ ": Failed to find a free register");
+                WriteTrace(TraceRegisterCache, TraceError, "Failed to find a free register");
                 g_Notify->BreakPoint(__FILE__, __LINE__);
                 return x86_Unknown;
             }
@@ -844,7 +844,7 @@ CX86Ops::x86Reg CRegInfo::Map_TempReg(CX86Ops::x86Reg Reg, int32_t MipsReg, bool
             Reg = Free8BitX86Reg();
             if (Reg < 0)
             {
-                WriteTrace(TraceError, __FUNCTION__ ": Failed to find a free 8 bit register");
+                WriteTrace(TraceRegisterCache, TraceError, "Failed to find a free 8 bit register");
                 g_Notify->BreakPoint(__FILE__, __LINE__);
                 return x86_Unknown;
             }
@@ -854,7 +854,7 @@ CX86Ops::x86Reg CRegInfo::Map_TempReg(CX86Ops::x86Reg Reg, int32_t MipsReg, bool
     {
         if (GetX86Protected(Reg))
         {
-            WriteTrace(TraceError, __FUNCTION__ ": Register is protected");
+            WriteTrace(TraceRegisterCache, TraceError, "Register is protected");
             g_Notify->BreakPoint(__FILE__, __LINE__);
             return x86_Unknown;
         }
@@ -1142,7 +1142,7 @@ void CRegInfo::UnMap_GPR(uint32_t Reg, bool WriteBackValue)
     }
 
     if (IsUnknown(Reg)) { return; }
-    //CPU_Message("UnMap_GPR: State: %X\tReg: %s\tWriteBack: %s",State,CRegName::GPR[Reg],WriteBackValue?"TRUE":"FALSE");
+    //CPU_Message("UnMap_GPR: State: %X\tReg: %s\tWriteBack: %s",State,CRegName::GPR[Reg],WriteBackValue?"true":"false");
     if (IsConst(Reg))
     {
         if (!WriteBackValue)

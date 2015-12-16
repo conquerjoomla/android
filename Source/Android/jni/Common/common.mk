@@ -14,8 +14,11 @@ LOCAL_SRC_FILES := \
     $(SRCDIR)/CriticalSection.cpp        \
     $(SRCDIR)/FileClass.cpp              \
     $(SRCDIR)/IniFileClass.cpp           \
+    $(SRCDIR)/LogClass.cpp               \
     $(SRCDIR)/path.cpp                   \
+    $(SRCDIR)/Platform.cpp               \
     $(SRCDIR)/StdString.cpp              \
+    $(SRCDIR)/Trace.cpp                  \
 
 LOCAL_CFLAGS := $(COMMON_CFLAGS)
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)

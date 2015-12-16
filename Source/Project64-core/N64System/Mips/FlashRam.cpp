@@ -1,6 +1,6 @@
 /****************************************************************************
 *                                                                           *
-* Project 64 - A Nintendo 64 emulator.                                      *
+* Project64 - A Nintendo 64 emulator.                                      *
 * http://www.pj64-emu.com/                                                  *
 * Copyright (C) 2012 Project64. All rights reserved.                        *
 *                                                                           *
@@ -12,16 +12,16 @@
 #include "FlashRam.h"
 #include <Project64-core/N64System/SystemGlobals.h>
 #include <Project64-core/N64System/Mips/MemoryClass.h>
-#include <common\path.h>
+#include <Common/path.h>
 #include <Windows.h>
 
 CFlashram::CFlashram(bool ReadOnly) :
-    m_FlashRamPointer(NULL),
-    m_FlashFlag(FLASHRAM_MODE_NOPES),
-    m_FlashStatus(0),
-    m_FlashRAM_Offset(0),
-    m_ReadOnly(ReadOnly),
-    m_hFile(NULL)
+m_FlashRamPointer(NULL),
+m_FlashFlag(FLASHRAM_MODE_NOPES),
+m_FlashStatus(0),
+m_FlashRAM_Offset(0),
+m_ReadOnly(ReadOnly),
+m_hFile(NULL)
 {
 }
 
@@ -150,7 +150,7 @@ bool CFlashram::LoadFlashram()
         FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS, NULL);
     if (m_hFile == INVALID_HANDLE_VALUE)
     {
-        WriteTraceF(TraceError, __FUNCTION__ ": Failed to open (%s), ReadOnly = %d, LastError = %X", (LPCTSTR)FileName, m_ReadOnly, GetLastError());
+        WriteTrace(TraceN64System, TraceError, "Failed to open (%s), ReadOnly = %d, LastError = %X", (LPCTSTR)FileName, m_ReadOnly, GetLastError());
         g_Notify->DisplayError(GS(MSG_FAIL_OPEN_FLASH));
         return false;
     }

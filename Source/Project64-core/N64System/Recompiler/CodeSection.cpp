@@ -196,7 +196,7 @@ void CCodeSection::CompileExit(uint32_t JumpPC, uint32_t TargetPC, CRegInfo &Exi
         {
             if (LookUpMode() == FuncFind_ChangeMemory)
             {
-                g_Notify->BreakPoint(__FILE__,__LINE__);
+                g_Notify->BreakPoint(__FILE__, __LINE__);
                 //			uint8_t * Jump, * Jump2;
                 //			if (TargetPC >= 0x80000000 && TargetPC < 0xC0000000) {
                 //				uint32_t pAddr = TargetPC & 0x1FFFFFFF;
@@ -357,7 +357,7 @@ void CCodeSection::CompileExit(uint32_t JumpPC, uint32_t TargetPC, CRegInfo &Exi
         ExitCodeBlock();
         break;
     case CExitInfo::TLBWriteMiss:
-        X86BreakPoint(__FILEW__, __LINE__);
+        X86BreakPoint(__FILE__, __LINE__);
         ExitCodeBlock();
         break;
     case CExitInfo::DivByZero:
@@ -377,7 +377,7 @@ void CCodeSection::CompileExit(uint32_t JumpPC, uint32_t TargetPC, CRegInfo &Exi
         ExitCodeBlock();
         break;
     default:
-        WriteTraceF(TraceError, __FUNCTION__ ": how did you want to exit on reason (%d) ???", reason);
+        WriteTrace(TraceRecompiler, TraceError, "how did you want to exit on reason (%d) ???", reason);
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 }
@@ -995,7 +995,7 @@ void TestFunc()
 TestValue += 1;
 if (TestValue >= 4)
 {
-g_Notify->BreakPoint(__FILE__,__LINE__);
+g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 }*/
 
@@ -1142,7 +1142,7 @@ bool CCodeSection::GenerateX86Code(uint32_t Test)
         /*		if (m_CompilePC == 0x803245CC && m_NextInstruction == NORMAL)
         {
         //m_RegWorkingSet.UnMap_AllFPRs();
-        g_Notify->BreakPoint(__FILE__,__LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
         //X86HardBreakPoint();
         //X86BreakPoint(__FILEW__,__LINE__);
         //m_RegWorkingSet.UnMap_AllFPRs();
@@ -2145,7 +2145,7 @@ bool CCodeSection::InheritParentInfo()
                 }
                 break;
             default:
-                WriteTraceF(TraceError, __FUNCTION__ ": Unhandled Reg state %d\nin InheritParentInfo", GetMipsRegState(i2));
+                WriteTrace(TraceRecompiler, TraceError, "Unhandled Reg state %d\nin InheritParentInfo", GetMipsRegState(i2));
                 g_Notify->BreakPoint(__FILE__, __LINE__);
             }
         }
@@ -2172,7 +2172,7 @@ bool CCodeSection::InheritParentInfo()
         }
         //if (m_EnterPC == 0x8031CE44 && m_SectionID == 6)
         //{
-        //	g_Notify->BreakPoint(__FILE__,__LINE__);
+        //	g_Notify->BreakPoint(__FILE__, __LINE__);
         //}
         m_RegWorkingSet = JumpInfo->RegSet;
         if (m_EnterPC < JumpInfo->JumpPC)

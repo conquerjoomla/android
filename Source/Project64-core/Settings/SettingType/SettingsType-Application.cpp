@@ -67,12 +67,7 @@ CSettingTypeApplication::~CSettingTypeApplication()
 
 void CSettingTypeApplication::Initialize(const char * AppName)
 {
-	CPath BaseDir;
-#ifdef _WIN32
-	BaseDir.SetDriveDirectory(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str());
-#else
-	BaseDir.SetDirectory(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str());
-#endif
+	CPath BaseDir(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str(),"");
 	printf("g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str() = %s\n",g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str());
 	printf("CSettingTypeApplication::Initialize: BaseDir = %s\n",(const char *)BaseDir);
 	if (!BaseDir.DirectoryExists())

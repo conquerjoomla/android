@@ -11,7 +11,7 @@
 #pragma once
 
 #include <Project64-core/Settings/DebugSettings.h>
-#include <Common/TraceDefs.h>
+#include <Project64-core/TraceModulesProject64.h>
 #include "PluginClass.h"
 
 #ifdef tofix
@@ -37,12 +37,12 @@ public:
     void(__cdecl *DllAbout)  (void * hWnd);
     void(__cdecl *DllConfig) (void * hParent);
 
-    static bool ValidPluginVersion ( PLUGIN_INFO & PluginInfo );
+    static bool ValidPluginVersion(PLUGIN_INFO & PluginInfo);
 
 protected:
     void UnloadPlugin();
     const char * PluginType() const;
-    TraceType PluginTraceType() const;
+    TraceModuleProject64 PluginTraceType() const;
     virtual void UnloadPluginDetails() = 0;
     virtual PLUGIN_TYPE type() = 0;
     virtual bool LoadFunctions(void) = 0;

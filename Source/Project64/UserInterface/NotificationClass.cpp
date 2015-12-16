@@ -57,7 +57,9 @@ void CNotificationImp::DisplayError(const wchar_t * Message) const
 {
     if (this == NULL) { return; }
 
-    WriteTrace(TraceError, stdstr().FromUTF16(Message).c_str());
+    stdstr TraceMessage;
+    TraceMessage.FromUTF16(Message);
+    WriteTrace(TraceUserInterface, TraceError, TraceMessage.c_str());
     WindowMode();
 
     HWND Parent = NULL;
@@ -97,16 +99,16 @@ void CNotificationImp::DisplayMessage(int DisplayTime, const wchar_t * Message) 
     if (InFullScreen())
     {
 #ifdef tofix
-		if (m_gfxPlugin && m_gfxPlugin->DrawStatus)
+        if (m_gfxPlugin && m_gfxPlugin->DrawStatus)
         {
-            WriteTrace(TraceGfxPlugin, __FUNCTION__ ": DrawStatus - Starting");
+            WriteTrace(TraceGFXPlugin, TraceDebug, "DrawStatus - Starting");
             stdstr PluginMessage;
             PluginMessage.FromUTF16(Message);
             m_gfxPlugin->DrawStatus(PluginMessage.c_str(), FALSE);
-            WriteTrace(TraceGfxPlugin, __FUNCTION__ ": DrawStatus - Done");
+            WriteTrace(TraceGFXPlugin, TraceDebug, "DrawStatus - Done");
         }
 #endif
-	}
+    }
     else
     {
         m_hWnd->SetStatusText(0, Message);
@@ -124,7 +126,7 @@ bool CNotificationImp::AskYesNoQuestion(const wchar_t * Question) const
 {
     if (this == NULL) { return false; }
 
-    WriteTrace(TraceError, stdstr().FromUTF16(Question).c_str());
+    WriteTrace(TraceUserInterface, TraceError, stdstr().FromUTF16(Question).c_str());
     WindowMode();
 
     HWND Parent = NULL;
@@ -205,6 +207,30 @@ void CNotificationImp::RefreshMenu(void)
     m_hWnd->RefreshMenu();
 }
 
+void CNotificationImp::HideRomBrowser(void)
+{
+    if (m_hWnd == NULL) { return; }
+    m_hWnd->HideRomList();
+}
+
+void CNotificationImp::ShowRomBrowser(void)
+{
+    if (m_hWnd == NULL) { return; }
+    if (g_Settings->LoadDword(RomBrowser_Enabled))
+    {
+        //Display the rom browser
+        m_hWnd->ShowRomList();
+        m_hWnd->HighLightLastRom();
+    }
+}
+
+void CNotificationImp::BringToTop(void)
+{
+    if (m_hWnd == NULL) { return; }
+
+    m_hWnd->BringToTop();
+}
+
 void CNotificationImp::ChangeFullScreen(void) const
 {
     if (m_hWnd == NULL) { return; }
@@ -218,7 +244,7 @@ bool CNotificationImp::ProcessGuiMessages(void) const
     return m_hWnd->ProcessGuiMessages();
 }
 
-void CNotificationImp::BreakPoint(const char * FileName, const int LineNumber)
+void CNotificationImp::BreakPoint(const char * FileName, int LineNumber)
 {
     if (g_Settings->LoadBool(Debugger_Enabled))
     {

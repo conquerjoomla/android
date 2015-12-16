@@ -1,6 +1,6 @@
 /****************************************************************************
 *                                                                           *
-* Project 64 - A Nintendo 64 emulator.                                      *
+* Project64 - A Nintendo 64 emulator.                                      *
 * http://www.pj64-emu.com/                                                  *
 * Copyright (C) 2012 Project64. All rights reserved.                        *
 *                                                                           *
@@ -16,10 +16,10 @@ class CFlashram :
 {
     enum Modes
     {
-        FLASHRAM_MODE_NOPES  = 0,
-        FLASHRAM_MODE_ERASE  = 1,
-        FLASHRAM_MODE_WRITE  = 2,
-        FLASHRAM_MODE_READ   = 3,
+        FLASHRAM_MODE_NOPES = 0,
+        FLASHRAM_MODE_ERASE = 1,
+        FLASHRAM_MODE_WRITE = 2,
+        FLASHRAM_MODE_READ = 3,
         FLASHRAM_MODE_STATUS = 4,
     };
 
@@ -27,10 +27,10 @@ public:
     CFlashram(bool ReadOnly);
     ~CFlashram();
 
-    void     DmaFromFlashram     ( uint8_t * dest, int32_t StartOffset, int32_t len );
-    void     DmaToFlashram       ( uint8_t * Source, int32_t StartOffset, int32_t len );
-    uint32_t ReadFromFlashStatus ( uint32_t PAddr );
-    void     WriteToFlashCommand ( uint32_t Value );
+    void  DmaFromFlashram(uint8_t * dest, int32_t StartOffset, int32_t len);
+    void  DmaToFlashram(uint8_t * Source, int32_t StartOffset, int32_t len);
+    uint32_t ReadFromFlashStatus(uint32_t PAddr);
+    void     WriteToFlashCommand(uint32_t Value);
 
 private:
     CFlashram(void);                        // Disable default constructor

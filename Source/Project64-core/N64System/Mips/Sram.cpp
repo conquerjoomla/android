@@ -1,6 +1,6 @@
 /****************************************************************************
 *                                                                           *
-* Project 64 - A Nintendo 64 emulator.                                      *
+* Project64 - A Nintendo 64 emulator.                                      *
 * http://www.pj64-emu.com/                                                  *
 * Copyright (C) 2012 Project64. All rights reserved.                        *
 *                                                                           *
@@ -14,8 +14,8 @@
 #include <Windows.h>
 
 CSram::CSram(bool ReadOnly) :
-    m_ReadOnly(ReadOnly),
-    m_hFile(NULL)
+m_ReadOnly(ReadOnly),
+m_hFile(NULL)
 {
 }
 
@@ -41,14 +41,14 @@ bool CSram::LoadSram()
         FileName.DirectoryCreate();
     }
 
-    m_hFile = CreateFile(FileName,m_ReadOnly ? GENERIC_READ : GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,NULL,OPEN_ALWAYS,
+    m_hFile = CreateFile(FileName, m_ReadOnly ? GENERIC_READ : GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS,
         FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS, NULL);
     if (m_hFile == INVALID_HANDLE_VALUE)
     {
-        WriteTraceF(TraceError,__FUNCTION__ ": Failed to open (%s), ReadOnly = %d, LastError = %X",(LPCTSTR)FileName, m_ReadOnly, GetLastError());
+        WriteTrace(TraceN64System, TraceError, "Failed to open (%s), ReadOnly = %d, LastError = %X", (LPCTSTR)FileName, m_ReadOnly, GetLastError());
         return false;
     }
-    SetFilePointer(m_hFile,0,NULL,FILE_BEGIN);
+    SetFilePointer(m_hFile, 0, NULL, FILE_BEGIN);
     return true;
 }
 
@@ -65,6 +65,10 @@ void CSram::DmaFromSram(uint8_t * dest, int StartOffset, int len)
             return;
         }
     }
+
+    // Fix Dezaemon 3D saves
+    StartOffset = ((StartOffset >> 3) & 0xFFFF8000) | (StartOffset & 0x7FFF);
+
     uint32_t Offset = StartOffset & 3;
 
     if (Offset == 0)
@@ -147,7 +151,12 @@ void CSram::DmaToSram(uint8_t * Source, int StartOffset, int len)
             return;
         }
     }
+
+    // Fix Dezaemon 3D saves
+    StartOffset = ((StartOffset >> 3) & 0xFFFF8000) | (StartOffset & 0x7FFF);
+
     uint32_t Offset = StartOffset & 3;
+
     if (Offset == 0)
     {
         SetFilePointer(m_hFile, StartOffset, NULL, FILE_BEGIN);

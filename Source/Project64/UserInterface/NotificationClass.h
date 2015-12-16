@@ -43,7 +43,9 @@ public:
     // Ask a Yes/No Question to the user, yes = true, no = false
     virtual bool AskYesNoQuestion(const wchar_t * Question) const;
 
-    virtual void BreakPoint(const char * FileName, const int LineNumber);
+    virtual void BreakPoint(const char * FileName, int32_t LineNumber);
+
+    void SetWindowCaption(const wchar_t * Caption);
 
     //Remember roms loaded and Rom Dir selected
     void AddRecentDir(const char * RomDir);
@@ -51,6 +53,9 @@ public:
     //Gui for responses
     void SetMainWindow(CMainGui * Gui);
     void RefreshMenu(void);
+    void HideRomBrowser(void);
+    void ShowRomBrowser(void);
+    void BringToTop(void);
     bool ProcessGuiMessages(void) const;
     void ChangeFullScreen(void) const;
     void SetGfxPlugin(CGfxPlugin * Plugin);
