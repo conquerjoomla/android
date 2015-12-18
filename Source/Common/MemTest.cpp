@@ -14,10 +14,10 @@
 
 #include "MemTest.h"
 #ifdef MEM_LEAK_TEST
+//#include <tchar.h>
 
 #include <shellapi.h>                //Needed for ShellExecute
 #pragma comment(lib, "shell32.lib")  //Needed for ShellExecute
-#include <tchar.h>
 #undef new
 #undef malloc
 #undef realloc
@@ -63,8 +63,8 @@ CMemList::~CMemList()
 	size_t ItemsLeft = MemList.size();
 	if (ItemsLeft > 0)
 	{
-		TCHAR path_buffer[_MAX_PATH], drive[_MAX_DRIVE], dir[_MAX_DIR];
-		TCHAR fname[_MAX_FNAME], ext[_MAX_EXT], LogFileName[_MAX_PATH];
+		char path_buffer[_MAX_PATH], drive[_MAX_DRIVE], dir[_MAX_DIR];
+		char fname[_MAX_FNAME], ext[_MAX_EXT], LogFileName[_MAX_PATH];
 
 		memset(path_buffer, 0, sizeof(path_buffer));
 		memset(drive, 0, sizeof(drive));
@@ -74,9 +74,9 @@ CMemList::~CMemList()
 		memset(LogFileName, 0, sizeof(LogFileName));
 
 		GetModuleFileName(m_hModule,path_buffer,sizeof(path_buffer));
-		_tsplitpath( path_buffer, drive, dir, fname, ext );
+		_splitpath( path_buffer, drive, dir, fname, ext );
 
-		_tmakepath( LogFileName, drive, dir, fname, _T("leak.csv") );
+		_makepath( LogFileName, drive, dir, fname, "leak.csv");
 
 		HANDLE hLogFile = INVALID_HANDLE_VALUE;
 		do 
@@ -95,8 +95,8 @@ CMemList::~CMemList()
 				if (GetLastError() == ERROR_SHARING_VIOLATION)
 				{
 					TCHAR Msg[3000];
-					_stprintf(Msg,TEXT("%s\nCan not be opened for writing please close app using this file\n\nTry Again ?"),LogFileName);
-					int Result = MessageBox(NULL,Msg,_T("Memory Leak"),MB_YESNO|MB_ICONQUESTION|MB_SETFOREGROUND | MB_SERVICE_NOTIFICATION);
+					sprintf(Msg,"%s\nCan not be opened for writing please close app using this file\n\nTry Again ?",LogFileName);
+					int Result = MessageBox(NULL,Msg,"Memory Leak",MB_YESNO|MB_ICONQUESTION|MB_SETFOREGROUND | MB_SERVICE_NOTIFICATION);
 					if (Result == IDNO)
 					{
 						break;
@@ -125,12 +125,12 @@ CMemList::~CMemList()
 			}
 			CloseHandle(hLogFile);
 		}
-		TCHAR Msg[3000];
-		_stprintf(Msg,TEXT("%s%s\n\nMemory Leaks detected\n\nOpen the Log File ?"),fname,ext);
-		int Result = MessageBox(NULL,Msg,_T("Memory Leak"),MB_YESNO|MB_ICONQUESTION|MB_SETFOREGROUND| MB_SERVICE_NOTIFICATION);
+		char Msg[3000];
+		sprintf(Msg,"%s%s\n\nMemory Leaks detected\n\nOpen the Log File ?",fname,ext);
+		int Result = MessageBox(NULL,Msg,"Memory Leak",MB_YESNO|MB_ICONQUESTION|MB_SETFOREGROUND| MB_SERVICE_NOTIFICATION);
 		if (Result == IDYES)
 		{
-			ShellExecute(NULL,_T("open"),LogFileName,NULL,NULL,SW_SHOW);
+			ShellExecute(NULL,"open",LogFileName,NULL,NULL,SW_SHOW);
 		}
 	}
 	CloseHandle(hSemaphone);

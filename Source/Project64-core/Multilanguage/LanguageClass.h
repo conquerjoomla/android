@@ -60,5 +60,9 @@ extern CLanguage * g_Lang;
 
 inline const wchar_t * GS(LanguageStringID StringID)
 {
+	if (g_Lang == NULL)
+	{
+		return L"";
+	}
     return g_Lang->GetString(StringID).c_str();
 }

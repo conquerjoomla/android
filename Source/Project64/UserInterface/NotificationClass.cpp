@@ -255,12 +255,18 @@ void CNotificationImp::BreakPoint(const char * FileName, int LineNumber)
         }
         else
         {
-            g_BaseSystem->CloseCpu();
+            if (g_BaseSystem) 
+			{
+				g_BaseSystem->CloseCpu();
+			}
         }
     }
     else
     {
         DisplayError(L"Fatal Error: Stopping emulation");
-        g_BaseSystem->CloseCpu();
+		if (g_BaseSystem) 
+		{
+			g_BaseSystem->CloseCpu();
+		}
     }
 }

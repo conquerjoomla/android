@@ -38,8 +38,10 @@ public:
     stdstr   & TrimLeft(const char * chars2remove = "\t ");
     stdstr   & TrimRight(const char * chars2remove = "\t ");
 
-    stdstr   & FromUTF16(const wchar_t * UTF16Source, bool * bSuccess = NULL);
+#ifdef _WIN32
+	stdstr   & FromUTF16(const wchar_t * UTF16Source, bool * bSuccess = NULL);
     std::wstring ToUTF16(unsigned int CodePage = CODEPAGE_UTF8, bool * bSuccess = NULL);
+#endif
 
     void ArgFormat(const char * strFormat, va_list & args);
 };
@@ -50,11 +52,13 @@ public:
 	stdstr_f(const char * strFormat, ...);
 };
 
+#ifdef _WIN32
 class stdwstr_f : public std::wstring
 {
 public:
 	stdwstr_f(const wchar_t * strFormat, ... );
 };
+#endif
 
 typedef std::list<stdstr>   strlist;
 typedef strlist::iterator   strlist_iter;

@@ -335,10 +335,13 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(Debugger_ShowRecompMemSize, new CSettingTypeApplication("Debugger", "Show Recompiler Memory size", false));
     AddHandler(Debugger_ShowDivByZero, new CSettingTypeApplication("Debugger", "Show Div by zero", false));
     AddHandler(Debugger_ProfileCode, new CSettingTypeApplication("Debugger", "Profile Code", (uint32_t)false));
-    AddHandler(Debugger_AppLogFlush, new CSettingTypeApplication("Logging", "Log Auto Flush", (uint32_t)false));
+#endif
+	AddHandler(Debugger_AppLogFlush, new CSettingTypeApplication("Logging", "Log Auto Flush", (uint32_t)false));
+#ifdef tofix
     AddHandler(Debugger_GenerateLogFiles, new CSettingTypeApplication("Debugger", "Generate Log Files", false));
 
-    //Logging
+#endif
+	//Logging
     AddHandler(Debugger_TraceMD5, new CSettingTypeApplication("Logging", "MD5", (uint32_t)g_ModuleLogLevel[TraceMD5]));
     AddHandler(Debugger_TraceSettings, new CSettingTypeApplication("Logging", "Settings", (uint32_t)g_ModuleLogLevel[TraceSettings]));
     AddHandler(Debugger_TraceUnknown, new CSettingTypeApplication("Logging", "Unknown", (uint32_t)g_ModuleLogLevel[TraceUnknown]));
@@ -358,6 +361,7 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(Debugger_TraceProtectedMEM, new CSettingTypeApplication("Logging", "Protected MEM", (uint32_t)g_ModuleLogLevel[TraceProtectedMem]));
     AddHandler(Debugger_TraceUserInterface, new CSettingTypeApplication("Logging", "User Interface", (uint32_t)g_ModuleLogLevel[TraceUserInterface]));
 
+#ifdef tofix
     //Plugin
     AddHandler(Plugin_RSP_Current, new CSettingTypeApplication("Plugin", "RSP Dll", "RSP\\RSP 1.7.dll"));
     AddHandler(Plugin_GFX_Current, new CSettingTypeApplication("Plugin", "Graphics Dll", "GFX\\Jabo_Direct3D8.dll"));
@@ -618,11 +622,8 @@ void CSettings::RegisterSetting(CSettings * _this, SettingID ID, SettingID Defau
 
 bool CSettings::Initialize(const char * AppName)
 {
-	printf("CSettings::Initialize 1\n");
     AddHowToHandleSetting();
-	printf("CSettings::Initialize 2\n");
 	CSettingTypeApplication::Initialize(AppName);
-	printf("CSettings::Initialize 3\n");
 #ifdef tofix
     CSettingTypeRomDatabase::Initialize();
     CSettingTypeGame::Initialize();
@@ -698,16 +699,19 @@ bool CSettings::LoadDword(SettingID Type, uint32_t & Value)
     SETTING_HANDLER FindInfo = m_SettingInfo.find(Type);
     if (FindInfo == m_SettingInfo.end())
     {
+		printf("failed to find %d\n",Type);
         //if not found do nothing
         UnknownSetting(Type);
-        return 0;
+        return false;
     }
     if (FindInfo->second->IndexBasedSetting())
     {
+		printf("is IndexBasedSetting (type: %d)\n",Type);
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
     else
     {
+		printf("Looking up value for (type: %d)\n",Type);
         return FindInfo->second->Load(0, Value);
     }
     return false;

@@ -83,18 +83,10 @@ void CSettingTypeRelativePath::Delete(int /*Index*/)
 
 void CSettingTypeRelativePath::BuildPath(void)
 {
-    CPath FullPath;
-
-#ifdef _WIN32
-    FullPath.SetDriveDirectory(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str());
-#else
-    FullPath.SetDirectory(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str());
-#endif
-	printf("CSettingTypeRelativePath::BuildPath: BaseDirectory = %s\n",g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str());
+    CPath FullPath(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str(),"");
     FullPath.AppendDirectory(m_Directory.c_str());
     FullPath.SetNameExtension(m_FileName.c_str());
     m_FullPath = (const char *)FullPath;
-	printf("CSettingTypeRelativePath::BuildPath: FullPath = %s\n",(const char *)FullPath);
 }
 
 void CSettingTypeRelativePath::RefreshSettings(void * _this)

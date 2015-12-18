@@ -1,5 +1,16 @@
+/****************************************************************************
+*                                                                           *
+* Project64 - A Nintendo 64 emulator.                                      *
+* http://www.pj64-emu.com/                                                  *
+* Copyright (C) 2012 Project64. All rights reserved.                        *
+*                                                                           *
+* License:                                                                  *
+* GNU/GPLv2 http://www.gnu.org/licenses/gpl-2.0.html                        *
+*                                                                           *
+****************************************************************************/
 #include "stdafx.h"
 #include "SDL_main.h"
+#include "NotificationClass.h"
 #include <Project64-core/AppInit.h>
 #include <Project64-core/Settings/SettingsClass.h>
 #include <Project64-core/N64System/N64Class.h>
@@ -7,8 +18,6 @@
 
 #if defined(ANDROID)
 #include <android/log.h>
-
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "UI-Console", __VA_ARGS__)
 
 class AndroidLogger : public CTraceModule
 {
@@ -40,16 +49,24 @@ int main(int argc, char * argv[])
 	AndroidLogger Logger;
 	TraceAddModule(&Logger);
 #endif
-	printf("    ____               _           __  _____ __ __\n");
-    printf("   / __ \\_________    (_)__  _____/ /_/ ___// // /\n");
-    printf("  / /_/ / ___/ __ \\  / / _ \\/ ___/ __/ __ \\/ // /_\n");
-    printf(" / ____/ /  / /_/ / / /  __/ /__/ /_/ /_/ /__  __/\n");
-    printf("/_/   /_/   \\____/_/ /\\___/\\___/\\__/\\____/  /_/   \n");
-    printf("                /___/                             \n");
-    printf("http://www.pj64-emu.com/\n");
-    printf("%s Version %s\n\n", VER_FILE_DESCRIPTION_STR, VER_FILE_VERSION_STR);
+	Notify().DisplayMessage(10,_T("    ____               _           __  _____ __ __"));
+    Notify().DisplayMessage(10,_T("   / __ \\_________    (_)__  _____/ /_/ ___// // /"));
+    Notify().DisplayMessage(10,_T("  / /_/ / ___/ __ \\  / / _ \\/ ___/ __/ __ \\/ // /_"));
+    Notify().DisplayMessage(10,_T(" / ____/ /  / /_/ / / /  __/ /__/ /_/ /_/ /__  __/"));
+    Notify().DisplayMessage(10,_T("/_/   /_/   \\____/_/ /\\___/\\___/\\__/\\____/  /_/"));
+    Notify().DisplayMessage(10,_T("                /___/"));
+    Notify().DisplayMessage(10,_T("http://www.pj64-emu.com/"));
+	{
+		stdstr_f version("%s Version %s", VER_FILE_DESCRIPTION_STR, VER_FILE_VERSION_STR);
+#ifdef _WIN32
+		Notify().DisplayMessage(10,version.ToUTF16().c_str());
+#else
+		Notify().DisplayMessage(10,version.c_str());
+#endif
+	}
+    Notify().DisplayMessage(10,_T(""));
 
-    if (!AppInit(NULL, argc, &argv[0]))
+    if (!AppInit(&Notify(), argc, &argv[0]))
 	{
 		AppCleanup();
 		return -1;

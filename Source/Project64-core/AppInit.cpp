@@ -10,12 +10,6 @@
 #endif
 #include "Settings/SettingType/SettingsType-Application.h"
 
-#if defined(ANDROID)
-#include <android/log.h>
-
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "UI-Console", __VA_ARGS__)
-#endif
-
 static void FixDirectories(void);
 
 #ifdef _WIN32
@@ -125,12 +119,9 @@ void SetupTrace(void)
     g_Settings->RegisterChangeCB(Debugger_TraceProtectedMEM, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
     g_Settings->RegisterChangeCB(Debugger_TraceUserInterface, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
     g_Settings->RegisterChangeCB(Debugger_AppLogFlush, g_LogFile, (CSettings::SettingChangedFunc)LogFlushChanged);
-    printf("SetupTrace: 4\n");
     UpdateTraceLevel(NULL);
 
-    printf("SetupTrace: 5\n");
     WriteTrace(TraceAppInit, TraceInfo, "Application Starting %s", VER_FILE_VERSION_STR);
-    printf("SetupTrace: 6\n");
 }
 
 void CleanupTrace(void)
@@ -176,13 +167,10 @@ static bool ParseCommand(int32_t argc, char **argv)
     for (int32_t i = 1; i < argc; i++)
     {
         int32_t ArgsLeft = argc - i - 1;
-        printf("ParseCommand: %d=%s\n",i,argv[i]);
         if (strcmp(argv[i], "--basedir") == 0 && ArgsLeft >= 1)
         {
-            printf("setting Cmd_BaseDirectory to %s", argv[i + 1]);
             g_Settings->SaveString(Cmd_BaseDirectory, argv[i + 1]);
 			CSettingTypeApplication::Initialize(AppName());
-            printf("Reinit done\n");
 			i++;
         }
         else if (strcmp(argv[i], "--help") == 0)
@@ -192,9 +180,7 @@ static bool ParseCommand(int32_t argc, char **argv)
         }
         else if (ArgsLeft == 0 && argv[i][0] != '-')
         {
-            printf("before save Cmd_RomFile\n");
             g_Settings->SaveString(Cmd_RomFile, &(argv[i][0]));
-            printf("after save Cmd_RomFile\n");
             return true;
         }
         else
@@ -217,17 +203,13 @@ bool AppInit(CNotification * Notify, int argc, char **argv)
 			return false;
 		}
         g_Settings = new CSettings;
-        printf("Created Settings, going to init now\n");
         g_Settings->Initialize(AppName());
-        printf("g_Settings->Initialize done\n");
 
-        printf("SupportFile_Settings = %s\n", g_Settings->LoadStringVal(SupportFile_Settings).c_str());
         if (!ParseCommand(argc, argv))
         {
             return false;
         }
 
-        printf("SupportFile_Settings = %s\n", g_Settings->LoadStringVal(SupportFile_Settings).c_str());
 #ifdef _WIN32
         if (g_Settings->LoadBool(Setting_CheckEmuRunning) &&
             pjutil::TerminatedExistingExe())
@@ -238,33 +220,30 @@ bool AppInit(CNotification * Notify, int argc, char **argv)
         }
 #endif
 
-        printf("calling SetupTrace\n");
         SetupTrace();
-        printf("SetupTrace Done\n");
 		FixDirectories();
-        printf("FixDirectories Done\n");
 #ifdef _WIN32
         CMipsMemoryVM::ReserveMemory();
         IncreaseThreadPriority();
 #endif
 
         //Create the plugin container
-        printf("calling WriteTrace\n");
         WriteTrace(TraceAppInit, TraceInfo, "Create Plugins");
-        printf("WriteTrace done\n");
 #ifdef tofix
 		g_Plugins = new CPlugins(g_Settings->LoadStringVal(Directory_Plugin));
         g_Lang = new CLanguage();
         g_Lang->LoadCurrentStrings();
 #endif
-        printf("calling AppInitDone\n");
         g_Notify->AppInitDone();
-        printf("AppInitDone done\n");
     }
     catch (...)
     {
-        g_Notify->DisplayError(stdstr_f("Exception caught\nFile: %s\nLine: %d", __FILE__, __LINE__).ToUTF16().c_str());
-    }
+#ifdef _WIN32
+		g_Notify->DisplayError(stdstr_f("Exception caught\nFile: %s\nLine: %d", __FILE__, __LINE__).ToUTF16().c_str());
+#else
+		g_Notify->DisplayError(stdstr_f("Exception caught\nFile: %s\nLine: %d", __FILE__, __LINE__).c_str());
+#endif
+	}
     return true;
 }
 

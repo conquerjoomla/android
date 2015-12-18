@@ -183,10 +183,10 @@ stdstr & stdstr::Trim(const char * chars2remove)
     return *this;
 }
 
+#ifdef _WIN32
 stdstr & stdstr::FromUTF16(const wchar_t * UTF16Source, bool * bSuccess)
 {
-#ifdef tofix
-	bool bConverted = false;
+    bool bConverted = false;
 
     if (UTF16Source == NULL)
     {
@@ -195,7 +195,7 @@ stdstr & stdstr::FromUTF16(const wchar_t * UTF16Source, bool * bSuccess)
     }
     else if (wcslen(UTF16Source) > 0)
     {
-        uint32_t nNeeded = WideCharToMultiByte(CODEPAGE_UTF8, 0, UTF16Source, -1, NULL, 0, NULL, NULL);
+        uint32_t nNeeded = WideCharToMultiByte(CP_UTF8, 0, UTF16Source, -1, NULL, 0, NULL, NULL);
         if (nNeeded > 0)
         {
             char * buf = (char *)alloca(nNeeded + 1);
@@ -203,7 +203,7 @@ stdstr & stdstr::FromUTF16(const wchar_t * UTF16Source, bool * bSuccess)
             {
                 memset(buf, 0, nNeeded + 1);
 
-                nNeeded = WideCharToMultiByte(CODEPAGE_UTF8, 0, UTF16Source, -1, buf, nNeeded, NULL, NULL);
+                nNeeded = WideCharToMultiByte(CP_UTF8, 0, UTF16Source, -1, buf, nNeeded, NULL, NULL);
                 if (nNeeded)
                 {
                     *this = buf;
@@ -216,16 +216,14 @@ stdstr & stdstr::FromUTF16(const wchar_t * UTF16Source, bool * bSuccess)
     {
         *bSuccess = bConverted;
     }
-#endif
-	return *this;
+    return *this;
 }
 
 std::wstring stdstr::ToUTF16(unsigned int CodePage, bool * bSuccess)
 {
-	bool bConverted = false;
+    bool bConverted = false;
     std::wstring res;
 
-#ifdef tofix
     DWORD nNeeded = MultiByteToWideChar(CodePage, 0, this->c_str(), (int)this->length(), NULL, 0);
     if (nNeeded > 0)
     {
@@ -242,13 +240,13 @@ std::wstring stdstr::ToUTF16(unsigned int CodePage, bool * bSuccess)
             }
         }
     }
-#endif
-	if (bSuccess)
+    if (bSuccess)
     {
         *bSuccess = bConverted;
     }
     return res;
 }
+#endif
 
 stdstr_f::stdstr_f(const char * strFormat, ...)
 { 
@@ -258,9 +256,9 @@ stdstr_f::stdstr_f(const char * strFormat, ...)
 	va_end(args);
 }
 
+#ifdef _WIN32
 stdwstr_f::stdwstr_f(const wchar_t * strFormat, ...)
 {
-#ifdef tofix
 	va_list args;
 	va_start(args, strFormat);
 
@@ -270,6 +268,5 @@ stdwstr_f::stdwstr_f(const wchar_t * strFormat, ...)
 	va_end(args);
 
 	this->assign(Msg);
-#endif
 }
-
+#endif

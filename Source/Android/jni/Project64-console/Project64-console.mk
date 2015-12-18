@@ -12,7 +12,8 @@ LOCAL_C_INCLUDES := ../     \
     $(SDL_INCLUDES)         \
                
 LOCAL_SRC_FILES :=                      \
-    $(SRCDIR)/main.cpp                   \
+    $(SRCDIR)/main.cpp                  \
+    $(SRCDIR)/NotificationClass.cpp     \
 
 LOCAL_CFLAGS := $(COMMON_CFLAGS)
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
