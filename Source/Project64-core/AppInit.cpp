@@ -235,6 +235,8 @@ bool AppInit(CNotification * Notify, int argc, char **argv)
         g_Lang->LoadCurrentStrings();
 #endif
         g_Notify->AppInitDone();
+		WriteTrace(TraceAppInit, TraceDebug, "Initialized Successfully");
+		return true;
     }
     catch (...)
     {
@@ -243,8 +245,9 @@ bool AppInit(CNotification * Notify, int argc, char **argv)
 #else
 		g_Notify->DisplayError(stdstr_f("Exception caught\nFile: %s\nLine: %d", __FILE__, __LINE__).c_str());
 #endif
+		WriteTrace(TraceAppInit, TraceError, "Exception caught, Init was not successfull");
+		return false;
 	}
-    return true;
 }
 
 void AppCleanup(void)

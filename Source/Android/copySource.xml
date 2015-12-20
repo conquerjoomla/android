@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Copy C++ Source" default="Copy C++ Source" basedir="."> 
 	<target name="Copy C++ Source">
+		<copy todir="./jni/3rdParty/zlib/">
+		    <fileset dir="../3rdParty/zlib"/>
+		</copy>
 		<copy todir="./jni/Common/">
 		    <fileset dir="../Common"/>
 		</copy>

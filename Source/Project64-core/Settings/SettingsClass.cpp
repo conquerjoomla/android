@@ -314,9 +314,9 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(Directory_LastSave, new CSettingTypeApplication("Directory", "Last Save Directory", Directory_InstantSave));
 #endif
     AddHandler(GameRunning_LoadingInProgress, new CSettingTypeTempBool(false));
-#ifdef tofix
 	AddHandler(GameRunning_CPU_Running, new CSettingTypeTempBool(false));
     AddHandler(GameRunning_CPU_Paused, new CSettingTypeTempBool(false));
+#ifdef tofix
     AddHandler(GameRunning_CPU_PausedType, new CSettingTypeTempNumber(Default_None));
     AddHandler(GameRunning_InstantSaveFile, new CSettingTypeTempString(""));
     AddHandler(GameRunning_LimitFPS, new CSettingTypeTempBool(true));
@@ -326,7 +326,8 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(File_RecentGameFileCount, new CSettingTypeApplication("", "Remembered Rom Files", (uint32_t)10));
     AddHandler(File_RecentGameFileIndex, new CSettingTypeApplicationIndex("Recent File", "Recent Rom", Default_None));
 
-    AddHandler(Debugger_Enabled, new CSettingTypeApplication("Debugger", "Debugger", false));
+#endif
+	AddHandler(Debugger_Enabled, new CSettingTypeApplication("Debugger", "Debugger", false));
     AddHandler(Debugger_ShowTLBMisses, new CSettingTypeApplication("Debugger", "Show TLB Misses", false));
     AddHandler(Debugger_ShowUnhandledMemory, new CSettingTypeApplication("Debugger", "Show Unhandled Memory", false));
     AddHandler(Debugger_ShowPifErrors, new CSettingTypeApplication("Debugger", "Show Pif Errors", false));
@@ -335,12 +336,9 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(Debugger_ShowRecompMemSize, new CSettingTypeApplication("Debugger", "Show Recompiler Memory size", false));
     AddHandler(Debugger_ShowDivByZero, new CSettingTypeApplication("Debugger", "Show Div by zero", false));
     AddHandler(Debugger_ProfileCode, new CSettingTypeApplication("Debugger", "Profile Code", (uint32_t)false));
-#endif
 	AddHandler(Debugger_AppLogFlush, new CSettingTypeApplication("Logging", "Log Auto Flush", (uint32_t)false));
-#ifdef tofix
     AddHandler(Debugger_GenerateLogFiles, new CSettingTypeApplication("Debugger", "Generate Log Files", false));
 
-#endif
 	//Logging
     AddHandler(Debugger_TraceMD5, new CSettingTypeApplication("Logging", "MD5", (uint32_t)g_ModuleLogLevel[TraceMD5]));
     AddHandler(Debugger_TraceSettings, new CSettingTypeApplication("Logging", "Settings", (uint32_t)g_ModuleLogLevel[TraceSettings]));
@@ -1064,7 +1062,7 @@ void CSettings::SaveString(SettingID Type, const char * Buffer)
 {
 	printf("CSettings::SaveString: Type %d\n",Type);
     SETTING_HANDLER FindInfo = m_SettingInfo.find(Type);
-	printf("CSettings::SaveString: FindInfo = %p m_SettingInfo.end() = %p\n",FindInfo, m_SettingInfo.end());
+	printf("CSettings::SaveString: FindInfo = %p m_SettingInfo.end() = %p\n",(void *)(&(*FindInfo)), (void *)(&(*m_SettingInfo.end())));
     if (FindInfo != m_SettingInfo.end())
     {
 		printf("CSettings::SaveString: Found\n");

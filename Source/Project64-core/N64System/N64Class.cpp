@@ -194,16 +194,15 @@ void CN64System::ExternalEvent(SystemEvent action)
 
 bool CN64System::RunFileImage(const char * FileLoc)
 {
-	printf("CN64System::RunFileImage: FileLoc = %s\n",FileLoc);
+    WriteTrace(TraceN64System, TraceDebug, "FileLoc: %s", FileLoc);
 	CloseSystem();
     if (g_Settings->LoadBool(GameRunning_LoadingInProgress))
     {
-		printf("CN64System::RunFileImage: game loading is in progress\n");
+		WriteTrace(TraceN64System, TraceError, "game loading is in progress, can not load new file");
         return false;
     }
 
     //Mark the rom as loading
-	printf("CN64System::RunFileImage: Mark Rom as loading\n");
     WriteTrace(TraceN64System, TraceDebug, "Mark Rom as loading");
     g_Settings->SaveString(Game_File, "");
     g_Settings->SaveBool(GameRunning_LoadingInProgress, true);
@@ -222,13 +221,15 @@ bool CN64System::RunFileImage(const char * FileLoc)
     WriteTrace(TraceN64System, TraceDebug, "Loading \"%s\"", FileLoc);
     if (g_Rom->LoadN64Image(FileLoc))
     {
+		WriteTrace(TraceN64System, TraceDebug, "Finished Loading rom");
         g_System->RefreshGameSettings();
 
         g_Settings->SaveString(Game_File, FileLoc);
         g_Settings->SaveBool(GameRunning_LoadingInProgress, false);
 
-        if (g_Settings->LoadDword(Setting_AutoStart) != 0)
+        if (g_Settings->LoadBool(Setting_AutoStart) != 0)
         {
+			WriteTrace(TraceN64System, TraceDebug, "Automattically starting rom");
 #ifdef tofix
 			g_BaseSystem = new CN64System(g_Plugins, false);
             if (g_BaseSystem)

@@ -71,12 +71,19 @@ int main(int argc, char * argv[])
 		AppCleanup();
 		return -1;
 	}
+
+#ifdef tofix
+	//Create the main window with Menu
+    WriteTrace(TraceUserInterface, TraceDebug, "Create Main Window");
+    CMainGui  MainWindow(true, stdstr_f("Project64 %s", VER_FILE_VERSION_STR).c_str()), HiddenWindow(false);
+	g_Plugins->SetRenderWindows(&MainWindow, &HiddenWindow);
+	Notify().SetMainWindow(&MainWindow);
+#endif
+
 	if (g_Settings->LoadStringVal(Cmd_RomFile).length() > 0)
 	{
-		//CN64System::RunFileImage(g_Settings->LoadStringVal(Cmd_RomFile).c_str());
+		CN64System::RunFileImage(g_Settings->LoadStringVal(Cmd_RomFile).c_str());
 	}
 	AppCleanup();
-    printf("After app init\n");
-
     return 0;
 }

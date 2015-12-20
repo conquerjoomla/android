@@ -22,11 +22,10 @@ int WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR /
 #endif
 		Notify().SetMainWindow(&MainWindow);
 
-        if (__argc > 1)
-        {
-            WriteTrace(TraceUserInterface, TraceDebug, "Cmd line found \"%s\"", __argv[1]);
+		if (g_Settings->LoadStringVal(Cmd_RomFile).length() > 0)
+		{
             MainWindow.Show(true);	//Show the main window
-            CN64System::RunFileImage(__argv[1]);
+			CN64System::RunFileImage(g_Settings->LoadStringVal(Cmd_RomFile).c_str());
         }
         else
         {
