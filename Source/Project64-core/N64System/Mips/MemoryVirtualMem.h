@@ -9,7 +9,7 @@
 *                                                                           *
 ****************************************************************************/
 #pragma once
-#include "MemoryClass.h"
+#include <Project64-core/N64System/Mips/MemoryClass.h>
 #include "TranslateVaddr.h"
 #include <Project64-core/N64System/Recompiler/RecompilerOps.h>
 #include <Project64-core/N64System/Interpreter/InterpreterOps.h>

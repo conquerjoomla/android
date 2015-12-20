@@ -65,7 +65,7 @@ public:
     bool   operator == (const CPath& rPath) const;
     bool   operator != (const CPath& rPath) const;
     operator const char *() const;
-    operator std::string &() { return m_strPath; }
+    operator const std::string &() { return m_strPath; }
 
     //Get path components
 #ifdef _WIN32

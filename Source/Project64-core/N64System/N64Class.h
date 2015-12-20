@@ -12,18 +12,18 @@
 
 #include <Common/SyncEvent.h>
 #include <Project64-core/Settings/N64SystemSettings.h>
+#include <Project64-core/N64System/ProfilingClass.h>
 #include <Project64-core/N64System/Recompiler/RecompilerClass.h>
 #include <Project64-core/N64System/Mips/MemoryVirtualMem.h>
+#include <Project64-core/N64System/Mips/MemoryClass.h>
 #include <Project64-core/Settings/DebugSettings.h>
 #include <Project64-core/Plugin.h>
 #include <Project64-core/Logging.h>
 
 #include "Mips/SystemEvents.h"
-#include "Mips/MemoryClass.h"
 #include "Mips/TLBClass.h"
 #include "Mips/Audio.h"
 #include "Mips/SystemTiming.h"
-#include "ProfilingClass.h"
 #include "CheatClass.h"
 #include "FramePerSecondClass.h"
 #include "SpeedLimitorClass.h"

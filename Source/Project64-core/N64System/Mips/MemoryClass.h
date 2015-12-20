@@ -10,6 +10,10 @@
 ****************************************************************************/
 #pragma once
 
+#ifndef _MSC_VER
+#define __interface struct
+#endif
+
 __interface CMipsMemory_CallBack
 {
     //Protected memory has been written to, returns true if that memory has been unprotected

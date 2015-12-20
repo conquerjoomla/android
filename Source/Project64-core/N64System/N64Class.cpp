@@ -280,14 +280,18 @@ bool CN64System::EmulationStarting(void * hThread, uint32_t ThreadId)
         }
         catch (...)
         {
-            g_Notify->DisplayError(stdstr_f(__FUNCTION__ ": Exception caught\nFile: %s\nLine: %d", __FILE__, __LINE__).ToUTF16().c_str());
-        }
+#ifdef tofix
+			g_Notify->DisplayError(stdstr_f(__FUNCTION__ ": Exception caught\nFile: %s\nLine: %d", __FILE__, __LINE__).ToUTF16().c_str());
+#endif
+		}
     }
     else
     {
         WriteTrace(TraceN64System, TraceError, "SetActiveSystem failed");
-        g_Notify->DisplayError(__FUNCTIONW__ L": Failed to Initialize N64 System");
-        g_Settings->SaveBool(GameRunning_LoadingInProgress, false);
+#ifdef tofix
+		g_Notify->DisplayError(__FUNCTIONW__ L": Failed to Initialize N64 System");
+#endif
+		g_Settings->SaveBool(GameRunning_LoadingInProgress, false);
         bRes = false;
     }
     return bRes;
@@ -371,10 +375,12 @@ void  CN64System::StartEmulation(bool NewThread)
     }
     __except_catch()
     {
+#ifdef tofix
         wchar_t message[400];
         swprintf(message, sizeof(message), L"Exception caught\nFile: %s\nLine: %d", __FILEW__, __LINE__);
         g_Notify->DisplayError(message);
-    }
+#endif
+	}
 }
 
 void CN64System::Pause()
@@ -440,7 +446,7 @@ void CN64System::PluginReset()
         m_SyncCPU->m_Plugins->RomOpened();
     }
 #endif
-#ifndef _WIN64
+#ifdef _WIN32
     _controlfp(_PC_53, _MCW_PC);
 #endif
 }
@@ -797,14 +803,14 @@ void CN64System::ExecuteCPU()
         m_SyncCPU->m_Plugins->RomOpened();
     }
 #endif
-#ifndef _WIN64
+#ifdef _WIN32
     _controlfp(_PC_53, _MCW_PC);
 #endif
 
     switch ((CPU_TYPE)g_Settings->LoadDword(Game_CpuType))
     {
         // Currently the compiler is 32-bit only.  We might have to ignore that RDB setting for now.
-#ifndef _WIN64
+#ifdef _WIN32
     case CPU_Recompiler: ExecuteRecompiler(); break;
     case CPU_SyncCores:  ExecuteSyncCPU();    break;
 #endif
@@ -1038,20 +1044,21 @@ void CN64System::DumpSyncErrors(CN64System * SecondCPU)
     int count;
 
     {
-        CPath ErrorFile(CPath::MODULE_DIRECTORY);
+		CPath ErrorFile(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str(),"Sync Errors.txt");
         ErrorFile.AppendDirectory("Logs");
-        ErrorFile.SetNameExtension("Sync Errors.txt");
 
         CLog Error;
         Error.Open(ErrorFile);
         Error.Log("Errors:\r\n");
         Error.Log("Register,        Recompiler,         Interpter\r\n");
 #ifdef TEST_SP_TRACKING
-        if (m_CurrentSP != GPR[29].UW[0]) {
+        if (m_CurrentSP != GPR[29].UW[0]) 
+		{
             Error.Log("m_CurrentSP,%X,%X\r\n", m_CurrentSP, GPR[29].UW[0]);
         }
 #endif
-        if (m_Reg.m_PROGRAM_COUNTER != SecondCPU->m_Reg.m_PROGRAM_COUNTER) {
+        if (m_Reg.m_PROGRAM_COUNTER != SecondCPU->m_Reg.m_PROGRAM_COUNTER) 
+		{
             Error.LogF("PROGRAM_COUNTER 0x%X,         0x%X\r\n", m_Reg.m_PROGRAM_COUNTER, SecondCPU->m_Reg.m_PROGRAM_COUNTER);
         }
         if (b32BitCore())
@@ -1265,8 +1272,10 @@ void CN64System::DumpSyncErrors(CN64System * SecondCPU)
         }
     }
 
-    g_Notify->DisplayError(L"Sync Error");
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+#ifdef tofix
+	g_Notify->DisplayError(L"Sync Error");
+#endif
+	g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
 bool CN64System::SaveState()
@@ -1442,8 +1451,7 @@ bool CN64System::LoadState()
         return Result;
     }
 
-    CPath FileName;
-    FileName.SetDriveDirectory(g_Settings->LoadStringVal(Directory_InstantSave).c_str());
+    CPath FileName(g_Settings->LoadStringVal(Directory_InstantSave).c_str(), "");
     if (g_Settings->LoadDword(Game_CurrentSaveState) != 0)
     {
         FileName.SetNameExtension(stdstr_f("%s.pj%d", g_Settings->LoadStringVal(Game_GoodName).c_str(), g_Settings->LoadDword(Game_CurrentSaveState)).c_str());
@@ -1454,7 +1462,7 @@ bool CN64System::LoadState()
     }
 
     CPath ZipFileName;
-    ZipFileName = (std::string)FileName + ".zip";
+    ZipFileName = (const std::string &)FileName + ".zip";
 
     if ((g_Settings->LoadDword(Setting_AutoZipInstantSave) && ZipFileName.Exists()) || FileName.Exists())
     {
@@ -1478,6 +1486,7 @@ bool CN64System::LoadState()
 
 bool CN64System::LoadState(const char * FileName)
 {
+#ifdef tofix
     uint32_t Value, SaveRDRAMSize, NextVITimer = 0, old_status, old_width, old_dacrate;
     bool LoadedZipFile = false, AudioResetOnLoad;
     old_status = g_Reg->VI_STATUS_REG;
@@ -1728,12 +1737,15 @@ bool CN64System::LoadState(const char * FileName)
     std::wstring LoadMsg = g_Lang->GetString(MSG_LOADED_STATE);
     g_Notify->DisplayMessage(5, stdwstr_f(L"%ws %ws", LoadMsg.c_str(), stdstr(CPath(FileNameStr).GetNameExtension()).ToUTF16().c_str()).c_str());
     WriteTrace(TraceN64System, TraceDebug, "Done");
-    return true;
+#endif
+	return true;
 }
 
 void CN64System::DisplayRSPListCount()
 {
-    g_Notify->DisplayMessage(0, stdstr_f("Dlist: %d   Alist: %d   Unknown: %d", m_DlistCount, m_AlistCount, m_UnknownCount).ToUTF16().c_str());
+#ifdef tofix
+	g_Notify->DisplayMessage(0, stdstr_f("Dlist: %d   Alist: %d   Unknown: %d", m_DlistCount, m_AlistCount, m_UnknownCount).ToUTF16().c_str());
+#endif
 }
 
 void CN64System::RunRSP()
