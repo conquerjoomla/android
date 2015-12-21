@@ -85,4 +85,8 @@ public:
     virtual bool Close();
     virtual bool IsOpen() const;
     virtual bool SetEndOfFile();
+
+private:
+	CFile(const CFile&);				// Disable copy constructor
+	CFile& operator=(const CFile&);		// Disable assignment
 };

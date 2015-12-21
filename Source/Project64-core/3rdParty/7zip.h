@@ -19,10 +19,10 @@ class C7zip
 {
 public:
 
-	C7zip (LPCSTR FileName);
+	C7zip (const char * FileName);
 	~C7zip ();
 
-	typedef void (__stdcall *LP7ZNOTIFICATION)( LPCWSTR Status, void * CBInfo );
+	typedef void (*LP7ZNOTIFICATION)( const wchar_t * Status, void * CBInfo );
 
 	inline int           NumFiles ( void )      const { return m_db ? m_db->db.NumFiles : 0; }
 	inline CSzFileItem * FileItem ( int index ) const { return m_db ? &m_db->db.Files[index] : NULL; }
@@ -69,7 +69,7 @@ private:
 
 	//static void __stdcall StatusUpdate(_7Z_STATUS status, int Value1, int Value2, C7zip * _this);
 	
-	static void __stdcall NotfyCallbackDefault ( LPCWSTR /*Status*/, void * /*CBInfo*/ ) { }
+	static void NotfyCallbackDefault ( const wchar_t * /*Status*/, void * /*CBInfo*/ ) { }
 
 	LP7ZNOTIFICATION m_NotfyCallback;
 	void *           m_NotfyCallbackInfo;

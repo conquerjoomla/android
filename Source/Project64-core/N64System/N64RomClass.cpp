@@ -14,11 +14,14 @@
 #include <Project64-core/3rdParty/zip.h>
 #include <Project64-core/3rdParty/7zip.h>
 #include <Common/md5.h>
+#include <Common/Platform.h>
+#include <memory>
+#ifdef _WIN32
 #include <Windows.h>
+#endif
 
 CN64Rom::CN64Rom()
 {
-    m_hRomFile = NULL;
     m_hRomFileMapping = NULL;
     m_ROMImage = NULL;
     m_ErrorMsg = EMPTY_STRING;
@@ -36,80 +39,88 @@ CN64Rom::~CN64Rom()
 
 bool CN64Rom::AllocateAndLoadN64Image(const char * FileLoc, bool LoadBootCodeOnly)
 {
-    //Try to open the target file
-    HANDLE hFile = CreateFile(FileLoc, GENERIC_READ, FILE_SHARE_READ, NULL,
-        OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS,
-        NULL);
-    if (hFile == INVALID_HANDLE_VALUE) { return false; }
+	WriteTrace(TraceN64System, TraceDebug, "Trying to open %s",FileLoc);
+	if (!m_RomFile.Open(FileLoc, CFileBase::modeRead))
+	{
+		WriteTrace(TraceN64System, TraceError, "Failed to open %s",FileLoc);
+		return false;
+	}
 
     //Read the first 4 bytes and make sure it is a valid n64 image
-    DWORD dwRead; uint8_t Test[4];
-
-    SetFilePointer(hFile, 0, 0, FILE_BEGIN);
-    ReadFile(hFile, Test, 4, &dwRead, NULL);
+	uint8_t Test[4];
+	m_RomFile.SeekToBegin();
+	m_RomFile.Read(Test,sizeof(Test));
     if (!IsValidRomImage(Test))
     {
-        CloseHandle(hFile);
+		m_RomFile.Close();
+		WriteTrace(TraceN64System, TraceError, "invalid image file %X %X %X %X",Test[0],Test[1],Test[2],Test[3]);
         return false;
     }
+	uint32_t RomFileSize = m_RomFile.GetLength();
+	WriteTrace(TraceN64System, TraceDebug, "Successfully Opened, size: 0x%X",RomFileSize);
 
-    //Get the size of the rom and try to allocate the memory needed.
-    DWORD RomFileSize = GetFileSize(hFile, NULL);
-    //if loading boot code then just load the first 0x1000 bytes
-    if (LoadBootCodeOnly) { RomFileSize = 0x1000; }
-
-    uint8_t * Image = (uint8_t *)VirtualAlloc(NULL, RomFileSize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-    if (Image == NULL)
+	//if loading boot code then just load the first 0x1000 bytes
+    if (LoadBootCodeOnly) 
+	{
+		WriteTrace(TraceN64System, TraceDebug, "loading boot code, so loading the first 0x1000 bytes",RomFileSize);
+		RomFileSize = 0x1000; 
+	}
+	std::auto_ptr<uint8_t> Image(new uint8_t[RomFileSize]);
+	if (Image.get() == NULL)
     {
-        SetError(MSG_MEM_ALLOC_ERROR);
-        CloseHandle(hFile);
+  		m_RomFile.Close();
+		SetError(MSG_MEM_ALLOC_ERROR);
+		WriteTrace(TraceN64System, TraceError, "Failed to allocate memory for rom (size: 0x%X)",RomFileSize);
         return false;
     }
 
     //Load the n64 rom to the allocated memory
     g_Notify->DisplayMessage(5, MSG_LOADING);
-    SetFilePointer(hFile, 0, 0, FILE_BEGIN);
+	m_RomFile.SeekToBegin();
 
-    DWORD count, TotalRead = 0;
+	uint32_t count, TotalRead = 0;
     for (count = 0; count < (int)RomFileSize; count += ReadFromRomSection)
     {
-        DWORD dwToRead = RomFileSize - count;
+        uint32_t dwToRead = RomFileSize - count;
         if (dwToRead > ReadFromRomSection) { dwToRead = ReadFromRomSection; }
-
-        if (!ReadFile(hFile, &Image[count], dwToRead, &dwRead, NULL))
+		
+        if (!m_RomFile.Read(&Image.get()[count], dwToRead))
         {
-            VirtualFree(Image, 0, MEM_RELEASE);
-            CloseHandle(hFile);
+  			m_RomFile.Close();
             SetError(MSG_FAIL_IMAGE);
+			WriteTrace(TraceN64System, TraceError, "Failed to read file (TotalRead: 0x%X)",TotalRead);
             return false;
         }
-        TotalRead += dwRead;
+        TotalRead += dwToRead;
 
         //Show Message of how much % wise of the rom has been loaded
-        g_Notify->DisplayMessage(0, stdstr_f("%s: %.2f%c", GS(MSG_LOADED), ((float)TotalRead / (float)RomFileSize) * 100.0f, '%').ToUTF16().c_str());
-    }
-    dwRead = TotalRead;
+#ifdef _WIN32
+		g_Notify->DisplayMessage(0, stdstr_f("%s: %.2f%c", GS(MSG_LOADED), ((float)TotalRead / (float)RomFileSize) * 100.0f, '%').ToUTF16().c_str());
+#else
+		g_Notify->DisplayMessage(0, stdstr_f("%s: %.2f%c", GS(MSG_LOADED), ((float)TotalRead / (float)RomFileSize) * 100.0f, '%').c_str());
+#endif
+	}
 
-    if (RomFileSize != dwRead)
+    if (RomFileSize != TotalRead)
     {
-        VirtualFree(Image, 0, MEM_RELEASE);
-        CloseHandle(hFile);
+  		m_RomFile.Close();
         SetError(MSG_FAIL_IMAGE);
+		WriteTrace(TraceN64System, TraceError, "Expected to read: 0x%X, read: 0x%X",TotalRead, RomFileSize);
         return false;
     }
 
     //save information about the rom loaded
-    m_hRomFile = hFile;
-    m_ROMImage = Image;
+	m_ROMImage = Image.release();
     m_RomFileSize = RomFileSize;
 
     g_Notify->DisplayMessage(5, MSG_BYTESWAP);
     ByteSwapRom();
 
-    //Protect the memory so that it can not be written to.
+#ifdef _WIN32
+	//Protect the memory so that it can not be written to.
     DWORD OldProtect;
     VirtualProtect(m_ROMImage, m_RomFileSize, PAGE_READONLY, &OldProtect);
-
+#endif
     return true;
 }
 
@@ -121,8 +132,9 @@ bool CN64Rom::AllocateAndLoadZipImage(const char * FileLoc, bool LoadBootCodeOnl
         return false;
     }
 
-    int port = unzGoToFirstFile(file);
     bool FoundRom = false;
+#ifdef tofix
+	int port = unzGoToFirstFile(file);
 
     //scan through all files in zip to a suitable file is found
     while (port == UNZ_OK && !FoundRom)
@@ -217,15 +229,15 @@ bool CN64Rom::AllocateAndLoadZipImage(const char * FileLoc, bool LoadBootCodeOnl
         }
     }
     unzClose(file);
-
+#endif
     return FoundRom;
 }
 
 void CN64Rom::ByteSwapRom()
 {
-    DWORD count;
+    uint32_t count;
 
-    switch (*((DWORD *)&m_ROMImage[0]))
+    switch (*((uint32_t *)&m_ROMImage[0]))
     {
     case 0x12408037:
         for (count = 0; count < m_RomFileSize; count += 4)
@@ -252,8 +264,12 @@ void CN64Rom::ByteSwapRom()
         break;
     case 0x80371240: break;
     default:
-        g_Notify->DisplayError(stdstr_f("ByteSwapRom: %X", m_ROMImage[0]).ToUTF16().c_str());
-    }
+#ifdef _WIN32
+		g_Notify->DisplayError(stdstr_f("ByteSwapRom: %X", m_ROMImage[0]).ToUTF16().c_str());
+#else
+		g_Notify->DisplayError(stdstr_f("ByteSwapRom: %X", m_ROMImage[0]).c_str());
+#endif
+	}
 }
 
 void CN64Rom::CalculateCicChip()
@@ -268,7 +284,7 @@ void CN64Rom::CalculateCicChip()
 
     for (int count = 0x40; count < 0x1000; count += 4)
     {
-        CRC += *(DWORD *)(m_ROMImage + count);
+        CRC += *(uint32_t *)(m_ROMImage + count);
     }
     switch (CRC) {
     case 0x000000D0027FDF31: m_CicChip = CIC_NUS_6101; break;
@@ -282,18 +298,22 @@ void CN64Rom::CalculateCicChip()
     default:
         if (bHaveDebugger())
         {
-            g_Notify->DisplayError(stdstr_f("Unknown CIC checksum:\n%I64X.", CRC).ToUTF16().c_str());
-        }
+#ifdef _WIN32
+			g_Notify->DisplayError(stdstr_f("Unknown CIC checksum:\n%I64X.", CRC).ToUTF16().c_str());
+#else
+			g_Notify->DisplayError(stdstr_f("Unknown CIC checksum:\n%I64X.", CRC).c_str());
+#endif
+		}
         m_CicChip = CIC_UNKNOWN; break;
     }
 }
 
 void CN64Rom::CalculateRomCrc()
 {
-    DWORD t0, t2, t3, t4, t5;
-    DWORD a0, a1, a2, a3;
-    DWORD s0;
-    DWORD v0, v1;
+    uint32_t t0, t2, t3, t4, t5;
+    uint32_t a0, a1, a2, a3;
+    uint32_t s0;
+    uint32_t v0, v1;
 
     // CIC_NUS_6101	at=0x5D588B65 , s6=0x3F
     // CIC_NUS_6102	at=0x5D588B65 , s6=0x3F
@@ -315,8 +335,10 @@ void CN64Rom::CalculateRomCrc()
         return;
     }
 
-    DWORD OldProtect;
+#ifdef _WIN32
+	DWORD OldProtect;
     VirtualProtect(m_ROMImage, m_RomFileSize, PAGE_READWRITE, &OldProtect);
+#endif
 
     v1 = 0;
     t0 = 0;
@@ -331,7 +353,7 @@ void CN64Rom::CalculateRomCrc()
 
     for (t0 = 0; t0 < 0x00100000; t0 += 4)
     {
-        v0 = *(DWORD *)(m_ROMImage + t0 + 0x1000);
+        v0 = *(uint32_t *)(m_ROMImage + t0 + 0x1000);
 
         v1 = a3 + v0;
         a1 = v1;
@@ -350,7 +372,7 @@ void CN64Rom::CalculateRomCrc()
 
         if (m_CicChip == CIC_NUS_6105)
         {
-            t4 = (v0 ^ (*(DWORD *)(m_ROMImage + (0xFF & t0) + 0x750))) + t4;
+            t4 = (v0 ^ (*(uint32_t *)(m_ROMImage + (0xFF & t0) + 0x750))) + t4;
         }
         else t4 = (v0 ^ s0) + t4;
     }
@@ -370,10 +392,12 @@ void CN64Rom::CalculateRomCrc()
         s0 = s0 ^ a2 ^ t4;
     }
 
-    *(DWORD *)(m_ROMImage + 0x10) = a3;
-    *(DWORD *)(m_ROMImage + 0x14) = s0;
+    *(uint32_t *)(m_ROMImage + 0x10) = a3;
+    *(uint32_t *)(m_ROMImage + 0x14) = s0;
 
+#ifdef _WIN32
     VirtualProtect(m_ROMImage, m_RomFileSize, PAGE_READONLY, &OldProtect);
+#endif
 }
 
 CICChip CN64Rom::CicChipID()
@@ -383,16 +407,18 @@ CICChip CN64Rom::CicChipID()
 
 bool CN64Rom::IsValidRomImage(uint8_t Test[4])
 {
-    if (*((DWORD *)&Test[0]) == 0x40123780) { return true; }
-    if (*((DWORD *)&Test[0]) == 0x12408037) { return true; }
-    if (*((DWORD *)&Test[0]) == 0x80371240) { return true; }
-    if (*((DWORD *)&Test[0]) == 0x40072780) { return true; } //64DD IPL
+    if (*((uint32_t *)&Test[0]) == 0x40123780) { return true; }
+    if (*((uint32_t *)&Test[0]) == 0x12408037) { return true; }
+    if (*((uint32_t *)&Test[0]) == 0x80371240) { return true; }
+    if (*((uint32_t *)&Test[0]) == 0x40072780) { return true; } //64DD IPL
     return false;
 }
 
-void CN64Rom::NotificationCB(LPCWSTR Status, CN64Rom * /*_this*/)
+void CN64Rom::NotificationCB(const wchar_t * Status, CN64Rom * /*_this*/)
 {
-    g_Notify->DisplayMessage(5, stdstr_f("%s", Status).ToUTF16().c_str());
+#ifdef _WIN32
+	g_Notify->DisplayMessage(5, stdstr_f("%ws", Status).ToUTF16().c_str());
+#endif
 }
 
 bool CN64Rom::LoadN64Image(const char * FileLoc, bool LoadBootCodeOnly)
@@ -400,17 +426,16 @@ bool CN64Rom::LoadN64Image(const char * FileLoc, bool LoadBootCodeOnly)
     UnallocateRomImage();
     m_ErrorMsg = EMPTY_STRING;
 
-    char drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
-    _splitpath(FileLoc, drive, dir, fname, ext);
+	stdstr ext = CPath(FileLoc).GetExtension();
     bool Loaded7zFile = false;
 
-    if (strstr(FileLoc, "?") != NULL || strcmp(ext, ".7z") == 0)
+#ifdef tofix
+	if (strstr(FileLoc, "?") != NULL || _stricmp(ext.c_str(), ".7z") == 0)
     {
-        char FullPath[MAX_PATH + 100];
-        strcpy(FullPath, FileLoc);
+		stdstr FullPath = FileLoc;
 
         //this should be a 7zip file
-        char * SubFile = strstr(FullPath, "?");
+        char * SubFile = strstr(const_cast<char*>(FullPath.c_str()), "?");
         if (SubFile == NULL)
         {
             //Pop up a dialog and select file
@@ -423,7 +448,7 @@ bool CN64Rom::LoadN64Image(const char * FileLoc, bool LoadBootCodeOnly)
             SubFile += 1;
         }
 
-        C7zip ZipFile(FullPath);
+        C7zip ZipFile(FullPath.c_str());
         ZipFile.SetNotificationCallback((C7zip::LP7ZNOTIFICATION)NotificationCB, this);
         for (int i = 0; i < ZipFile.NumFiles(); i++)
         {
@@ -444,7 +469,7 @@ bool CN64Rom::LoadN64Image(const char * FileLoc, bool LoadBootCodeOnly)
             }
 
             //Get the size of the rom and try to allocate the memory needed.
-            DWORD RomFileSize = (DWORD)f->Size;
+            uint32_t RomFileSize = (uint32_t)f->Size;
             //if loading boot code then just load the first 0x1000 bytes
             if (LoadBootCodeOnly) { RomFileSize = 0x1000; }
 
@@ -491,6 +516,7 @@ bool CN64Rom::LoadN64Image(const char * FileLoc, bool LoadBootCodeOnly)
             return false;
         }
     }
+#endif
 
     //Try to open the file as a zip file
     if (!Loaded7zFile)
@@ -502,7 +528,9 @@ bool CN64Rom::LoadN64Image(const char * FileLoc, bool LoadBootCodeOnly)
                 return false;
             }
 
-            //other wise treat if normal file and open the passed file
+#ifdef _WIN32
+#ifdef tofix
+			//other wise treat if normal file and open the passed file
             HANDLE hFile = CreateFile(FileLoc, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
                 FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS, NULL);
             if (hFile == INVALID_HANDLE_VALUE) { SetError(MSG_FAIL_OPEN_IMAGE); return false; }
@@ -536,7 +564,7 @@ bool CN64Rom::LoadN64Image(const char * FileLoc, bool LoadBootCodeOnly)
                 return false;
             }
 
-            if (*((DWORD *)Image) == 0x80371240)
+            if (*((uint32_t *)Image) == 0x80371240)
             {
                 m_hRomFile = hFile;
                 m_hRomFileMapping = hFileMapping;
@@ -545,10 +573,19 @@ bool CN64Rom::LoadN64Image(const char * FileLoc, bool LoadBootCodeOnly)
             }
             else
             {
-                if (!AllocateAndLoadN64Image(FileLoc, LoadBootCodeOnly)) { return false; }
+#endif
+#endif
+				if (!AllocateAndLoadN64Image(FileLoc, LoadBootCodeOnly)) 
+				{ 
+					return false; 
+				}
             }
+#ifdef _WIN32
+#ifdef tofix
         }
-    }
+#endif
+#endif
+	}
 
     char RomName[260];
     int  count;
@@ -582,9 +619,7 @@ bool CN64Rom::LoadN64Image(const char * FileLoc, bool LoadBootCodeOnly)
     RomName[20] = '\0';
     if (strlen(RomName) == 0)
     {
-        char drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
-        _splitpath(FileLoc, drive, dir, fname, ext);
-        strcpy(RomName, fname);
+        strcpy(RomName, CPath(FileLoc).GetName().c_str());
     }
 
     //remove all /,\,: from the string
@@ -596,6 +631,7 @@ bool CN64Rom::LoadN64Image(const char * FileLoc, bool LoadBootCodeOnly)
         case ':': RomName[count] = ';'; break;
         }
     }
+	WriteTrace(TraceN64System, TraceDebug, "RomName %s",RomName);
 
     m_RomName = RomName;
     m_FileName = FileLoc;
@@ -605,10 +641,12 @@ bool CN64Rom::LoadN64Image(const char * FileLoc, bool LoadBootCodeOnly)
     {
         //Calculate files MD5
         m_MD5 = MD5((const unsigned char *)m_ROMImage, m_RomFileSize).hex_digest();
+		WriteTrace(TraceN64System, TraceDebug, "MD5: %s",m_MD5.c_str());
     }
 
     m_Country = (Country)m_ROMImage[0x3D];
-    m_RomIdent.Format("%08X-%08X-C:%X", *(DWORD *)(&m_ROMImage[0x10]), *(DWORD *)(&m_ROMImage[0x14]), m_ROMImage[0x3D]);
+    m_RomIdent.Format("%08X-%08X-C:%X", *(uint32_t *)(&m_ROMImage[0x10]), *(uint32_t *)(&m_ROMImage[0x14]), m_ROMImage[0x3D]);
+	WriteTrace(TraceN64System, TraceDebug, "Ident: %s",m_RomIdent.c_str());
     CalculateCicChip();
 
     if (!LoadBootCodeOnly && g_Rom == this)
@@ -660,24 +698,22 @@ void CN64Rom::SetError(LanguageStringID ErrorMsg)
 
 void CN64Rom::UnallocateRomImage()
 {
-    if (m_hRomFileMapping)
+#ifdef _WIN32
+	if (m_hRomFileMapping)
     {
         UnmapViewOfFile(m_ROMImage);
         CloseHandle(m_hRomFileMapping);
         m_ROMImage = NULL;
         m_hRomFileMapping = NULL;
     }
-    if (m_hRomFile)
-    {
-        CloseHandle(m_hRomFile);
-        m_hRomFile = NULL;
-    }
+#endif
+	m_RomFile.Close();
 
     //if this value is still set then the image was not created a map
     //file but created with VirtualAllocate
     if (m_ROMImage)
     {
-        VirtualFree(m_ROMImage, 0, MEM_RELEASE);
+		delete [] m_ROMImage;
         m_ROMImage = NULL;
     }
 }

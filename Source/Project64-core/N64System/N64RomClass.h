@@ -41,7 +41,8 @@ private:
     enum { ReadFromRomSection = 0x400000 };
 
     //class variables
-    void *  m_hRomFile, *m_hRomFileMapping;
+	CFile m_RomFile;
+    void *m_hRomFileMapping;
     uint8_t * m_ROMImage;
     uint32_t m_RomFileSize;
     Country m_Country;

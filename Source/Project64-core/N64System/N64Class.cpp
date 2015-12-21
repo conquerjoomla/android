@@ -30,6 +30,7 @@
 
 #pragma warning(disable:4355) // Disable 'this' : used in base member initializer list
 
+#ifdef tofix
 CN64System::CN64System(CPlugins * Plugins, bool SavesReadOnly) :
 CSystemEvents(this, Plugins),
 m_EndEmulation(false),
@@ -94,9 +95,11 @@ CN64System::~CN64System()
     }
 #endif
 }
+#endif
 
 void CN64System::ExternalEvent(SystemEvent action)
 {
+#ifdef tofix
     switch (action)
     {
     case SysEvent_Profile_GenerateLogs:
@@ -190,13 +193,16 @@ void CN64System::ExternalEvent(SystemEvent action)
         WriteTrace(TraceN64System, TraceError, "Unknown event %d", action);
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
+#endif
 }
 
 bool CN64System::RunFileImage(const char * FileLoc)
 {
     WriteTrace(TraceN64System, TraceDebug, "FileLoc: %s", FileLoc);
+#ifdef tofix
 	CloseSystem();
-    if (g_Settings->LoadBool(GameRunning_LoadingInProgress))
+#endif
+	if (g_Settings->LoadBool(GameRunning_LoadingInProgress))
     {
 		WriteTrace(TraceN64System, TraceError, "game loading is in progress, can not load new file");
         return false;
@@ -221,11 +227,11 @@ bool CN64System::RunFileImage(const char * FileLoc)
     WriteTrace(TraceN64System, TraceDebug, "Loading \"%s\"", FileLoc);
     if (g_Rom->LoadN64Image(FileLoc))
     {
-		WriteTrace(TraceN64System, TraceDebug, "Finished Loading rom");
         g_System->RefreshGameSettings();
-
         g_Settings->SaveString(Game_File, FileLoc);
         g_Settings->SaveBool(GameRunning_LoadingInProgress, false);
+
+		WriteTrace(TraceN64System, TraceDebug, "Finished Loading (GoodName: %s)", g_Settings->LoadStringVal(Game_GoodName).c_str());
 
         if (g_Settings->LoadBool(Setting_AutoStart) != 0)
         {
@@ -248,23 +254,26 @@ bool CN64System::RunFileImage(const char * FileLoc)
         g_Settings->SaveBool(GameRunning_LoadingInProgress, false);
         return false;
     }
-    return true;
+	return true;
 }
 
 void CN64System::CloseSystem()
 {
+#ifdef tofix
     if (g_BaseSystem)
     {
         g_BaseSystem->CloseCpu();
         delete g_BaseSystem;
         g_BaseSystem = NULL;
     }
+#endif
 }
 
 bool CN64System::EmulationStarting(void * hThread, uint32_t ThreadId)
 {
     bool bRes = true;
 
+#ifdef tofix
     WriteTrace(TraceN64System, TraceDebug, "Setting N64 system as active");
     if (g_BaseSystem->SetActiveSystem(true))
     {
@@ -294,11 +303,13 @@ bool CN64System::EmulationStarting(void * hThread, uint32_t ThreadId)
 		g_Settings->SaveBool(GameRunning_LoadingInProgress, false);
         bRes = false;
     }
-    return bRes;
+#endif
+	return bRes;
 }
 
 void CN64System::StartEmulation2(bool NewThread)
 {
+#ifdef tofix
     if (NewThread)
     {
         WriteTrace(TraceN64System, TraceDebug, "Starting");
@@ -365,6 +376,7 @@ void CN64System::StartEmulation2(bool NewThread)
 
         ExecuteCPU();
     }
+#endif
 }
 
 void  CN64System::StartEmulation(bool NewThread)
@@ -385,7 +397,8 @@ void  CN64System::StartEmulation(bool NewThread)
 
 void CN64System::Pause()
 {
-    if (m_EndEmulation)
+#ifdef tofix
+	if (m_EndEmulation)
     {
         return;
     }
@@ -396,6 +409,7 @@ void CN64System::Pause()
     m_hPauseEvent.Reset();
     g_Settings->SaveBool(GameRunning_CPU_Paused, (uint32_t)false);
     g_Notify->DisplayMessage(5, MSG_CPU_RESUMED);
+#endif
 }
 
 void CN64System::GameReset()
@@ -453,6 +467,7 @@ void CN64System::PluginReset()
 
 void CN64System::Reset(bool bInitReg, bool ClearMenory)
 {
+#ifdef tofix
     g_Settings->SaveBool(GameRunning_InReset, true);
     RefreshGameSettings();
     m_Audio.Reset();
@@ -502,6 +517,7 @@ void CN64System::Reset(bool bInitReg, bool ClearMenory)
         m_SyncCPU->Reset(bInitReg, ClearMenory);
     }
     g_Settings->SaveBool(GameRunning_InReset, true);
+#endif
 }
 
 bool CN64System::SetActiveSystem(bool bActive)
@@ -1031,12 +1047,16 @@ void CN64System::SyncCPU(CN64System * const SecondCPU)
 
 void CN64System::SyncSystem()
 {
-    SyncCPU(g_SyncSystem);
+#ifdef tofix
+	SyncCPU(g_SyncSystem);
+#endif
 }
 
 void CN64System::SyncSystemPC()
 {
+#ifdef tofix
     SyncCPUPC(g_SyncSystem);
+#endif
 }
 
 void CN64System::DumpSyncErrors(CN64System * SecondCPU)
@@ -1750,6 +1770,7 @@ void CN64System::DisplayRSPListCount()
 
 void CN64System::RunRSP()
 {
+#ifdef tofix
     WriteTrace(TraceRSP, TraceDebug, "Start (SP Status %X)", m_Reg.SP_STATUS_REG);
     if ((m_Reg.SP_STATUS_REG & SP_STATUS_HALT) == 0)
     {
@@ -1836,6 +1857,7 @@ void CN64System::RunRSP()
         }
     }
     WriteTrace(TraceRSP, TraceDebug, "Done (SP Status %X)", m_Reg.SP_STATUS_REG);
+#endif
 }
 
 void CN64System::SyncToAudio()
@@ -1996,8 +2018,10 @@ void CN64System::TLB_Unmaped(uint32_t VAddr, uint32_t Len)
 
 void CN64System::TLB_Changed()
 {
+#ifdef tofix
     if (g_Debugger)
     {
         g_Debugger->TLBChanged();
     }
+#endif
 }

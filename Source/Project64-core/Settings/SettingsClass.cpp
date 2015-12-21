@@ -108,13 +108,13 @@ void CSettings::AddHowToHandleSetting()
 	AddHandler(SupportFile_Settings, new CSettingTypeApplicationPath("", "ConfigFile", SupportFile_SettingsDefault));
     AddHandler(SupportFile_SettingsDefault, new CSettingTypeRelativePath("Config", "Project64.cfg"));
     
-#ifdef tofix
 	AddHandler(SupportFile_RomDatabase, new CSettingTypeApplicationPath("", "RomDatabase", SupportFile_RomDatabaseDefault));
     AddHandler(SupportFile_RomDatabaseDefault, new CSettingTypeRelativePath("Config", "Project64.rdb"));
     AddHandler(SupportFile_Glide64RDB, new CSettingTypeApplicationPath("", "Glide64RDB", SupportFile_Glide64RDBDefault));
     AddHandler(SupportFile_Glide64RDBDefault, new CSettingTypeRelativePath("Config", "Glide64.rdb"));
     AddHandler(SupportFile_Cheats, new CSettingTypeApplicationPath("", "Cheats", SupportFile_CheatsDefault));
     AddHandler(SupportFile_CheatsDefault, new CSettingTypeRelativePath("Config", "Project64.cht"));
+#ifdef tofix
     AddHandler(SupportFile_Notes, new CSettingTypeApplicationPath("", "Notes", SupportFile_NotesDefault));
     AddHandler(SupportFile_NotesDefault, new CSettingTypeRelativePath("Config", "Project64.rdn"));
     AddHandler(SupportFile_ExtInfo, new CSettingTypeApplicationPath("", "ExtInfo", SupportFile_ExtInfoDefault));
@@ -127,22 +127,20 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(SupportFile_7zipCacheDefault, new CSettingTypeRelativePath("Config", "Project64.zcache"));
 
     //AddHandler(SyncPluginDir,   new CSettingTypeRelativePath("SyncPlugin",""));
+#endif
 
     //Settings location
     AddHandler(Setting_ApplicationName, new CSettingTypeTempString(""));
-#endif
 	AddHandler(Setting_UseFromRegistry, new CSettingTypeApplication("Settings", "Use Registry", (uint32_t)false));
-#ifdef tofix
     AddHandler(Setting_RdbEditor, new CSettingTypeApplication("", "Rdb Editor", false));
     AddHandler(Setting_CN64TimeCritical,new CSettingTypeApplication("","CN64TimeCritical",false));
     AddHandler(Setting_PluginPageFirst, new CSettingTypeApplication("", "Plugin Page First", false));
     AddHandler(Setting_DisableScrSaver, new CSettingTypeApplication("", "Disable Screen Saver", (uint32_t)true));
     AddHandler(Setting_AutoSleep, new CSettingTypeApplication("", "Auto Sleep", (uint32_t)true));
-    AddHandler(Setting_AutoStart, new CSettingTypeApplication("", "Auto Start", (uint32_t)true));
+	AddHandler(Setting_AutoStart, new CSettingTypeApplication("", "Auto Start", (uint32_t)true));
     AddHandler(Setting_AutoFullscreen, new CSettingTypeApplication("", "Auto Full Screen", (uint32_t)false));
     AddHandler(Setting_AutoZipInstantSave, new CSettingTypeApplication("", "Auto Zip Saves", (uint32_t)true));
     AddHandler(Setting_EraseGameDefaults, new CSettingTypeApplication("", "Erase on default", (uint32_t)true));
-#endif
 	AddHandler(Setting_CheckEmuRunning, new CSettingTypeApplication("", "Check Running", (uint32_t)true));
 #ifdef tofix
 
@@ -150,7 +148,7 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(Setting_CurrentLanguage, new CSettingTypeApplication("", "Current Language", ""));
     AddHandler(Setting_LanguageDirDefault, new CSettingTypeRelativePath("Lang", ""));
     AddHandler(Setting_LanguageDir, new CSettingTypeApplicationPath("Directory", "Lang", Setting_LanguageDirDefault));
-
+#endif
     AddHandler(Rdb_GoodName, new CSettingTypeRomDatabase("Good Name", Game_GameName));
     AddHandler(Rdb_SaveChip, new CSettingTypeRDBSaveChip("Save Type", SaveChip_Auto));
 #ifdef _DEBUG
@@ -201,9 +199,11 @@ void CSettings::AddHowToHandleSetting()
 
     AddHandler(Game_IniKey, new CSettingTypeTempString(""));
     AddHandler(Game_File, new CSettingTypeTempString(""));
-    AddHandler(Game_GameName, new CSettingTypeTempString(""));
+	AddHandler(Game_GameName, new CSettingTypeTempString(""));
+#ifdef tofix
     AddHandler(Game_GoodName, new CSettingTypeGame("Good Name", Rdb_GoodName));
-    AddHandler(Game_TempLoaded, new CSettingTypeTempBool(false));
+#endif
+	AddHandler(Game_TempLoaded, new CSettingTypeTempBool(false));
     AddHandler(Game_SystemType, new CSettingTypeTempNumber(SYSTEM_NTSC));
     AddHandler(Game_EditPlugin_Gfx, new CSettingTypeGame("Plugin-Gfx", Default_None));
     AddHandler(Game_EditPlugin_Audio, new CSettingTypeGame("Plugin-Audio", Default_None));
@@ -244,9 +244,10 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(Game_AiCountPerBytes, new CSettingTypeGame("AiCountPerBytes", Rdb_AiCountPerBytes));
     AddHandler(Game_AudioResetOnLoad, new CSettingTypeGame("AudioResetOnLoad", Rdb_AudioResetOnLoad));
     AddHandler(Game_AllowROMWrites, new CSettingTypeGame("AllowROMWrites", Rdb_AllowROMWrites));
-    AddHandler(Game_CRC_Recalc, new CSettingTypeGame("CRC-Recalc", Rdb_CRC_Recalc));
+	AddHandler(Game_CRC_Recalc, new CSettingTypeGame("CRC-Recalc", Rdb_CRC_Recalc));
 
-    //User Interface
+#ifdef tofix
+	//User Interface
     AddHandler(UserInterface_BasicMode, new CSettingTypeApplication("", "Basic Mode", (uint32_t)true));
     AddHandler(UserInterface_ShowCPUPer, new CSettingTypeApplication("", "Display CPU Usage", (uint32_t)false));
     AddHandler(UserInterface_DisplayFrameRate, new CSettingTypeApplication("", "Display Frame Rate", (uint32_t)true));
@@ -622,12 +623,10 @@ bool CSettings::Initialize(const char * AppName)
 {
     AddHowToHandleSetting();
 	CSettingTypeApplication::Initialize(AppName);
-#ifdef tofix
     CSettingTypeRomDatabase::Initialize();
     CSettingTypeGame::Initialize();
     CSettingTypeCheats::Initialize();
     g_Settings->SaveString(Setting_ApplicationName, AppName);
-#endif
     return true;
 }
 
@@ -1062,12 +1061,16 @@ void CSettings::SaveString(SettingID Type, const char * Buffer)
 {
 	printf("CSettings::SaveString: Type %d\n",Type);
     SETTING_HANDLER FindInfo = m_SettingInfo.find(Type);
-	printf("CSettings::SaveString: FindInfo = %p m_SettingInfo.end() = %p\n",(void *)(&(*FindInfo)), (void *)(&(*m_SettingInfo.end())));
+	//printf("CSettings::SaveString: FindInfo = %p m_SettingInfo.end() = %p\n",(void *)(&(*FindInfo)), (void *)(&(*m_SettingInfo.end())));
     if (FindInfo != m_SettingInfo.end())
     {
 		printf("CSettings::SaveString: Found\n");
 		printf("CSettings::SaveString: FindInfo->second = %p\n",FindInfo->second);
 		printf("CSettings::SaveString: FindInfo->second->IndexBasedSetting() = %s\n",FindInfo->second->IndexBasedSetting() ? "yes" : "no");
+	}
+	else 
+	{
+		printf("CSettings::SaveString: Not Found\n");
 	}
 
     if (FindInfo == m_SettingInfo.end())
