@@ -167,7 +167,7 @@ MD5::MD5(CPath File)
     init();  // must be called be all constructors
     if (File.Exists())
     {
-        FILE * fp = fopen((LPCTSTR)File, "rb");
+        FILE * fp = fopen((const char *)File, "rb");
         if (fp)
         {
             update(fp);

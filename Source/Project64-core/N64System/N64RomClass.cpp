@@ -49,7 +49,12 @@ bool CN64Rom::AllocateAndLoadN64Image(const char * FileLoc, bool LoadBootCodeOnl
     //Read the first 4 bytes and make sure it is a valid n64 image
 	uint8_t Test[4];
 	m_RomFile.SeekToBegin();
-	m_RomFile.Read(Test,sizeof(Test));
+	if (m_RomFile.Read(Test,sizeof(Test)) != sizeof(Test))
+	{
+		m_RomFile.Close();
+		WriteTrace(TraceN64System, TraceError, "Failed to read ident bytes");
+        return false;
+	}
     if (!IsValidRomImage(Test))
     {
 		m_RomFile.Close();
@@ -126,14 +131,15 @@ bool CN64Rom::AllocateAndLoadN64Image(const char * FileLoc, bool LoadBootCodeOnl
 
 bool CN64Rom::AllocateAndLoadZipImage(const char * FileLoc, bool LoadBootCodeOnly)
 {
-    unzFile file = unzOpen(FileLoc);
+#ifdef tofix
+	unzFile file = unzOpen(FileLoc);
     if (file == NULL)
     {
         return false;
     }
 
     bool FoundRom = false;
-#ifdef tofix
+
 	int port = unzGoToFirstFile(file);
 
     //scan through all files in zip to a suitable file is found
@@ -229,8 +235,9 @@ bool CN64Rom::AllocateAndLoadZipImage(const char * FileLoc, bool LoadBootCodeOnl
         }
     }
     unzClose(file);
-#endif
     return FoundRom;
+#endif
+	return false;
 }
 
 void CN64Rom::ByteSwapRom()

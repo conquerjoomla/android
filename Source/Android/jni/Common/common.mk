@@ -15,6 +15,7 @@ LOCAL_SRC_FILES := \
     $(SRCDIR)/FileClass.cpp              \
     $(SRCDIR)/IniFileClass.cpp           \
     $(SRCDIR)/LogClass.cpp               \
+    $(SRCDIR)/md5.cpp               \
     $(SRCDIR)/path.cpp                   \
     $(SRCDIR)/Platform.cpp               \
     $(SRCDIR)/StdString.cpp              \

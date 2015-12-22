@@ -140,12 +140,15 @@ bool CSettingTypeApplication::Load(int /*Index*/, bool & Value) const
 
     if (!m_UseRegistry)
     {
-        uint32_t dwValue;
-        bRes = m_SettingsIniFile->GetNumber(SectionName(), m_KeyNameIdex.c_str(), Value, dwValue);
-        if (bRes)
-        {
-            Value = dwValue != 0;
-        }
+		if (m_SettingsIniFile)
+		{
+			uint32_t dwValue;
+			bRes = m_SettingsIniFile->GetNumber(SectionName(), m_KeyNameIdex.c_str(), Value, dwValue);
+			if (bRes)
+			{
+				Value = dwValue != 0;
+			}
+		}
     }
     else 
 	{

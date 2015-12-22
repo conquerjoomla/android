@@ -448,12 +448,10 @@ void CN64System::PluginReset()
             }
         }
     }
-#endif
     if (m_Recomp)
     {
         m_Recomp->Reset();
     }
-#ifdef tofix
     m_Plugins->RomOpened();
     if (m_SyncCPU)
     {
@@ -522,6 +520,7 @@ void CN64System::Reset(bool bInitReg, bool ClearMenory)
 
 bool CN64System::SetActiveSystem(bool bActive)
 {
+#ifdef tofix
     bool bInitPlugin = false;
     bool bReset = false;
     bool bRes = true;
@@ -618,10 +617,13 @@ bool CN64System::SetActiveSystem(bool bActive)
         Reset(true, true);
     }
     return bRes;
+#endif
+	return false;
 }
 
 void CN64System::InitRegisters(bool bPostPif, CMipsMemory & MMU)
 {
+#ifdef tofix
     m_Reg.Reset();
 
     //COP0 Registers
@@ -801,10 +803,12 @@ void CN64System::InitRegisters(bool bPostPif, CMipsMemory & MMU)
         case CIC_NUS_6106:	PIF_Ram[37] = 0x02; PIF_Ram[38] = 0x85; break;
         }*/
     }
+#endif
 }
 
 void CN64System::ExecuteCPU()
 {
+#ifdef tofix
     //reset code
     g_Settings->SaveBool(GameRunning_CPU_Paused, false);
     g_Settings->SaveBool(GameRunning_CPU_Running, true);
@@ -812,13 +816,11 @@ void CN64System::ExecuteCPU()
 
     m_EndEmulation = false;
 
-#ifdef tofix
 	m_Plugins->RomOpened();
     if (m_SyncCPU)
     {
         m_SyncCPU->m_Plugins->RomOpened();
     }
-#endif
 #ifdef _WIN32
     _controlfp(_PC_53, _MCW_PC);
 #endif
@@ -833,7 +835,6 @@ void CN64System::ExecuteCPU()
     default:             ExecuteInterpret();  break;
     }
     g_Settings->SaveBool(GameRunning_CPU_Running, (uint32_t)false);
-#ifdef tofix
 	m_Plugins->RomClosed();
     if (m_SyncCPU)
     {
@@ -844,22 +845,29 @@ void CN64System::ExecuteCPU()
 
 void CN64System::ExecuteInterpret()
 {
+#ifdef tofix
     SetActiveSystem();
     CInterpreterCPU::ExecuteCPU();
+#endif
 }
 
 void CN64System::ExecuteRecompiler()
 {
+#ifdef tofix
     m_Recomp->Run();
+#endif
 }
 
 void CN64System::ExecuteSyncCPU()
 {
+#ifdef tofix
     m_Recomp->Run();
+#endif
 }
 
 void CN64System::CpuStopped()
 {
+#ifdef tofix
     if (!m_InReset)
     {
         g_Settings->SaveBool(GameRunning_CPU_Running, (uint32_t)false);
@@ -870,10 +878,12 @@ void CN64System::CpuStopped()
         m_SyncCPU->CpuStopped();
     }
     m_CPU_Handle = NULL;
+#endif
 }
 
 void CN64System::UpdateSyncCPU(CN64System * const SecondCPU, uint32_t const Cycles)
 {
+#ifdef tofix
     int CyclesToExecute = Cycles - m_CyclesToSkip;
 
     //Update the number of cycles to skip
@@ -888,10 +898,12 @@ void CN64System::UpdateSyncCPU(CN64System * const SecondCPU, uint32_t const Cycl
     CInterpreterCPU::ExecuteOps(Cycles);
 
     SetActiveSystem(true);
+#endif
 }
 
 void CN64System::SyncCPUPC(CN64System * const SecondCPU)
 {
+#ifdef tofix
     bool ErrorFound = false;
 
     g_SystemTimer->UpdateTimers();
@@ -911,10 +923,12 @@ void CN64System::SyncCPUPC(CN64System * const SecondCPU)
         m_LastSuccessSyncPC[i] = m_LastSuccessSyncPC[i - 1];
     }
     m_LastSuccessSyncPC[0] = m_Reg.m_PROGRAM_COUNTER;
+#endif
 }
 
 void CN64System::SyncCPU(CN64System * const SecondCPU)
 {
+#ifdef tofix
     bool ErrorFound = false;
 
     m_SyncCount += 1;
@@ -1043,6 +1057,7 @@ void CN64System::SyncCPU(CN64System * const SecondCPU)
     //	if (PROGRAM_COUNTER == 0x8009BBD8) {
     //		g_Notify->BreakPoint(__FILE__, __LINE__);
     //	}
+#endif
 }
 
 void CN64System::SyncSystem()
@@ -1061,6 +1076,7 @@ void CN64System::SyncSystemPC()
 
 void CN64System::DumpSyncErrors(CN64System * SecondCPU)
 {
+#ifdef tofix
     int count;
 
     {
@@ -1292,10 +1308,9 @@ void CN64System::DumpSyncErrors(CN64System * SecondCPU)
         }
     }
 
-#ifdef tofix
 	g_Notify->DisplayError(L"Sync Error");
-#endif
 	g_Notify->BreakPoint(__FILE__, __LINE__);
+#endif
 }
 
 bool CN64System::SaveState()
@@ -1862,7 +1877,8 @@ void CN64System::RunRSP()
 
 void CN64System::SyncToAudio()
 {
-    if (!bSyncToAudio() || !bLimitFPS())
+#ifdef tofix
+	if (!bSyncToAudio() || !bLimitFPS())
     {
         return;
     }
@@ -1883,10 +1899,12 @@ void CN64System::SyncToAudio()
     {
         m_CPU_Usage.StartTimer(CPU_UsageAddr != Timer_None ? CPU_UsageAddr : Timer_R4300);
     }
+#endif
 }
 
 void CN64System::RefreshScreen()
 {
+#ifdef tofix
     SPECIAL_TIMERS CPU_UsageAddr = Timer_None/*, ProfilingAddr = Timer_None*/;
     uint32_t VI_INTR_TIME = 500000;
 
@@ -1911,7 +1929,6 @@ void CN64System::RefreshScreen()
     {
         g_Audio->SetViIntr(VI_INTR_TIME);
     }
-#ifdef tofix
 	if (g_Plugins->Control()->GetKeys)
     {
         BUTTONS Keys;
@@ -1923,12 +1940,10 @@ void CN64System::RefreshScreen()
             m_Buttons[Control] = Keys.Value;
         }
     }
-#endif
 
     if (bShowCPUPer()) { m_CPU_Usage.StartTimer(Timer_UpdateScreen); }
     //	if (bProfiling)    { m_Profile.StartTimer(Timer_UpdateScreen); }
 
-#ifdef tofix
 	__try
     {
         WriteTrace(TraceGFXPlugin, TraceDebug, "Starting");
@@ -1939,7 +1954,6 @@ void CN64System::RefreshScreen()
     {
         WriteTrace(TraceGFXPlugin, TraceError, "Exception caught");
     }
-#endif
     g_MMU->UpdateFieldSerration((m_Reg.VI_STATUS_REG & 0x40) != 0);
 
     if ((bBasicMode() || bLimitFPS()) && !bSyncToAudio())
@@ -1987,33 +2001,38 @@ void CN64System::RefreshScreen()
         m_Cheats.ApplyCheats(g_MMU);
     }
     //	if (bProfiling)    { m_Profile.StartTimer(ProfilingAddr != Timer_None ? ProfilingAddr : Timer_R4300); }
+#endif
 }
 
 bool CN64System::WriteToProtectedMemory(uint32_t Address, int length)
 {
+#ifdef tofix
     WriteTrace(TraceN64System, TraceDebug, "Address: %X Len: %d", Address, length);
     if (m_Recomp)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
-#ifdef tofix
         return m_Recomp->ClearRecompCode_Phys(Address, length, CRecompiler::Remove_ProtectedMem);
-#endif
     }
+#endif
     return false;
 }
 
 void CN64System::TLB_Mapped(uint32_t VAddr, uint32_t Len, uint32_t PAddr, bool bReadOnly)
 {
+#ifdef tofix
     m_MMU_VM.TLB_Mapped(VAddr, Len, PAddr, bReadOnly);
+#endif
 }
 
 void CN64System::TLB_Unmaped(uint32_t VAddr, uint32_t Len)
 {
+#ifdef tofix
     m_MMU_VM.TLB_Unmaped(VAddr, Len);
     if (m_Recomp && bSMM_TLB())
     {
         m_Recomp->ClearRecompCode_Virt(VAddr, Len, CRecompiler::Remove_TLB);
     }
+#endif
 }
 
 void CN64System::TLB_Changed()
