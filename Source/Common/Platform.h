@@ -1,16 +1,6 @@
 #pragma once
 
-#define _T(x)       __T(x)
-
-#ifdef _WIN32
-
-#define __T(x)      L ## x
-
-#else
-
-#define __T(x)      x
-
-
+#ifndef _WIN32
 #include <alloca.h>
 #include <stdarg.h>
 

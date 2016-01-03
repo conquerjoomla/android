@@ -1,7 +1,8 @@
 #include "stdafx.h"
+#include <io.h>
 
 #ifdef _WIN32
-//#define USE_WINDOWS_API
+#define USE_WINDOWS_API
 #endif
 
 #if defined(_MSC_VER)
@@ -12,17 +13,17 @@
 
 CFile::CFile() :
 #ifdef USE_WINDOWS_API
-m_hFile(INVALID_HANDLE_VALUE),
+    m_hFile(INVALID_HANDLE_VALUE),
 #else
-m_hFile(NULL),
+    m_hFile(NULL),
 #endif
-m_bCloseOnDelete(false)
+    m_bCloseOnDelete(false)
 {
 }
 
 CFile::CFile(void * hFile) :
-m_hFile(hFile),
-m_bCloseOnDelete(true)
+    m_hFile(hFile),
+    m_bCloseOnDelete(true)
 {
     if (hFile == 0)
     {
@@ -32,11 +33,11 @@ m_bCloseOnDelete(true)
 
 CFile::CFile(const char * lpszFileName, uint32_t nOpenFlags) :
 #ifdef USE_WINDOWS_API
-m_hFile(INVALID_HANDLE_VALUE),
+    m_hFile(INVALID_HANDLE_VALUE),
 #else
-m_hFile(NULL),
+    m_hFile(NULL),
 #endif
-m_bCloseOnDelete(true)
+    m_bCloseOnDelete(true)
 {
     Open(lpszFileName, nOpenFlags);
 }
@@ -116,24 +117,54 @@ bool CFile::Open(const char * lpszFileName, uint32_t nOpenFlags)
     m_hFile = hFile;
 #else
 
-    if ((nOpenFlags & CFileBase::modeReadWrite) == CFileBase::modeReadWrite)
+    if ((nOpenFlags & CFileBase::modeCreate) != CFileBase::modeCreate)
     {
-        if ((nOpenFlags & CFileBase::modeCreate) != CFileBase::modeCreate)
+        if (!CPath(lpszFileName).Exists())
         {
-            if (!CPath(lpszFileName).Exists())
+            return false;
+        }
+    }
+
+    if ((nOpenFlags & CFileBase::modeCreate) == CFileBase::modeCreate)
+    {
+        CPath file(lpszFileName);
+        if (!file.Exists())
+        {
+            FILE * fp = fopen(lpszFileName,"wb");
+            if (fp)
+            {
+                fclose(fp);
+            }
+            if (!file.Exists())
             {
                 return false;
             }
         }
-        m_hFile = fopen(lpszFileName, "wb+");
+    }
+
+    if ((nOpenFlags & CFileBase::modeWrite) == CFileBase::modeWrite ||
+        (nOpenFlags & CFileBase::modeReadWrite) == CFileBase::modeReadWrite)
+    {
+        m_hFile = fopen(lpszFileName, "rb+");
         if (m_hFile != NULL)
         {
             SeekToBegin();
         }
     }
+    else if ((nOpenFlags & CFileBase::modeRead) == CFileBase::modeRead)
+    {
+        m_hFile = fopen(lpszFileName, "rb");
+        if (m_hFile != NULL)
+        {
+            SeekToBegin();
+        }
+    }
+    else
+    {
+        return false;
+    }
 #endif
     m_bCloseOnDelete = true;
-
     return true;
 }
 
@@ -238,7 +269,7 @@ uint32_t CFile::Read(void* lpBuf, uint32_t nCount)
 #endif
 }
 
-long CFile::Seek(long lOff, SeekPosition nFrom)
+int32_t CFile::Seek(int32_t lOff, SeekPosition nFrom)
 {
 #ifdef USE_WINDOWS_API
     ULONG dwNew = ::SetFilePointer(m_hFile, lOff, NULL, (ULONG)nFrom);
@@ -280,15 +311,8 @@ uint32_t CFile::GetPosition() const
 
 bool CFile::SetLength(uint32_t dwNewLen)
 {
-#ifdef USE_WINDOWS_API
-    Seek((LONG)dwNewLen, begin);
-
-    return ::SetEndOfFile(m_hFile) != 0;
-#else
-    int a = 5;
-    a = 7;
-    return false;
-#endif
+    Seek((int32_t)dwNewLen, begin);
+    return SetEndOfFile();
 }
 
 uint32_t CFile::GetLength() const
@@ -305,6 +329,11 @@ bool CFile::SetEndOfFile()
 #ifdef USE_WINDOWS_API
     return ::SetEndOfFile(m_hFile) != 0;
 #else
-    return false;
+    Flush();
+#ifdef _WIN32
+    return _chsize(_fileno((FILE *)m_hFile),GetPosition()) == 0;
+#else
+    return ftruncate(fileno((FILE *)m_hFile),GetPosition()) == 0;
+#endif
 #endif
 }
