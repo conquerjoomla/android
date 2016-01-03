@@ -1,5 +1,9 @@
 #include "stdafx.h"
 
+#ifdef _WIN32
+//#define USE_WINDOWS_API
+#endif
+
 #if defined(_MSC_VER)
 #include <crtdbg.h>
 #else
@@ -7,7 +11,7 @@
 #endif
 
 CFile::CFile() :
-#ifdef _WIN32
+#ifdef USE_WINDOWS_API
 m_hFile(INVALID_HANDLE_VALUE),
 #else
 m_hFile(NULL),
@@ -17,8 +21,8 @@ m_bCloseOnDelete(false)
 }
 
 CFile::CFile(void * hFile) :
-    m_hFile(hFile),
-    m_bCloseOnDelete(true)
+m_hFile(hFile),
+m_bCloseOnDelete(true)
 {
     if (hFile == 0)
     {
@@ -27,24 +31,24 @@ CFile::CFile(void * hFile) :
 }
 
 CFile::CFile(const char * lpszFileName, uint32_t nOpenFlags) :
-#ifdef _WIN32
-    m_hFile(INVALID_HANDLE_VALUE),
+#ifdef USE_WINDOWS_API
+m_hFile(INVALID_HANDLE_VALUE),
 #else
-    m_hFile(NULL),
+m_hFile(NULL),
 #endif
-	m_bCloseOnDelete(true)
+m_bCloseOnDelete(true)
 {
     Open(lpszFileName, nOpenFlags);
 }
 
-	CFile::~CFile()
+CFile::~CFile()
 {
-#ifdef _WIN32
+#ifdef USE_WINDOWS_API
     if (m_hFile != INVALID_HANDLE_VALUE && m_bCloseOnDelete)
 #else
     if (m_hFile != NULL && m_bCloseOnDelete)
 #endif
-	{
+    {
         Close();
     }
 }
@@ -62,8 +66,8 @@ bool CFile::Open(const char * lpszFileName, uint32_t nOpenFlags)
     }
 
     m_bCloseOnDelete = true;
-#ifdef _WIN32
-	m_hFile = INVALID_HANDLE_VALUE;
+#ifdef USE_WINDOWS_API
+    m_hFile = INVALID_HANDLE_VALUE;
 
     ULONG dwAccess = 0;
     switch (nOpenFlags & 3)
@@ -111,9 +115,24 @@ bool CFile::Open(const char * lpszFileName, uint32_t nOpenFlags)
     }
     m_hFile = hFile;
 #else
-    m_hFile = NULL; //need to use fopen
+
+    if ((nOpenFlags & CFileBase::modeReadWrite) == CFileBase::modeReadWrite)
+    {
+        if ((nOpenFlags & CFileBase::modeCreate) != CFileBase::modeCreate)
+        {
+            if (!CPath(lpszFileName).Exists())
+            {
+                return false;
+            }
+        }
+        m_hFile = fopen(lpszFileName, "wb+");
+        if (m_hFile != NULL)
+        {
+            SeekToBegin();
+        }
+    }
 #endif
-	m_bCloseOnDelete = true;
+    m_bCloseOnDelete = true;
 
     return true;
 }
@@ -121,36 +140,36 @@ bool CFile::Open(const char * lpszFileName, uint32_t nOpenFlags)
 bool CFile::Close()
 {
     bool bError = true;
-#ifdef _WIN32
+#ifdef USE_WINDOWS_API
     if (m_hFile != INVALID_HANDLE_VALUE)
     {
         bError = !::CloseHandle(m_hFile);
     }
     m_hFile = INVALID_HANDLE_VALUE;
 #else
-	if (m_hFile != NULL)
-	{
-		fclose((FILE *)m_hFile);
-		m_hFile = NULL;
-	}
+    if (m_hFile != NULL)
+    {
+        fclose((FILE *)m_hFile);
+        m_hFile = NULL;
+    }
 #endif
-	m_bCloseOnDelete = false;
+    m_bCloseOnDelete = false;
     return bError;
 }
 
-uint32_t CFile::SeekToEnd ( void )
+uint32_t CFile::SeekToEnd(void)
 {
     return Seek(0, CFile::end);
 }
 
-void CFile::SeekToBegin ( void )
+void CFile::SeekToBegin(void)
 {
     Seek(0, CFile::begin);
 }
 
-bool CFile::IsOpen( void ) const
+bool CFile::IsOpen(void) const
 {
-#ifdef _WIN32
+#ifdef USE_WINDOWS_API
     return m_hFile != INVALID_HANDLE_VALUE;
 #else
     return m_hFile != NULL;
@@ -159,7 +178,7 @@ bool CFile::IsOpen( void ) const
 
 bool CFile::Flush()
 {
-#ifdef _WIN32
+#ifdef USE_WINDOWS_API
     if (m_hFile == INVALID_HANDLE_VALUE)
     {
         return true;
@@ -167,7 +186,7 @@ bool CFile::Flush()
 
     return ::FlushFileBuffers(m_hFile) != 0;
 #else
-	return false;
+    return fflush((FILE *)m_hFile) == 0;
 #endif
 }
 
@@ -178,7 +197,7 @@ bool CFile::Write(const void* lpBuf, uint32_t nCount)
         return true;     // avoid Win32 "null-write" option
     }
 
-#ifdef _WIN32
+#ifdef USE_WINDOWS_API
     ULONG nWritten = 0;
     if (!::WriteFile(m_hFile, lpBuf, nCount, &nWritten, NULL))
     {
@@ -191,12 +210,12 @@ bool CFile::Write(const void* lpBuf, uint32_t nCount)
         return false;
     }
 #else
-	if (fwrite(lpBuf,1,nCount,(FILE *)m_hFile) != nCount)
-	{
-		return false;
-	}
+    if (fwrite(lpBuf, 1, nCount, (FILE *)m_hFile) != nCount)
+    {
+        return false;
+    }
 #endif
-	return true;
+    return true;
 }
 
 uint32_t CFile::Read(void* lpBuf, uint32_t nCount)
@@ -206,7 +225,7 @@ uint32_t CFile::Read(void* lpBuf, uint32_t nCount)
         return 0;   // avoid Win32 "null-read"
     }
 
-#ifdef _WIN32
+#ifdef USE_WINDOWS_API
     DWORD dwRead = 0;
     if (!::ReadFile(m_hFile, lpBuf, nCount, &dwRead, NULL))
     {
@@ -214,13 +233,14 @@ uint32_t CFile::Read(void* lpBuf, uint32_t nCount)
     }
     return (uint32_t)dwRead;
 #else
-	return 0;
+    uint32_t res = fread(lpBuf, sizeof(uint8_t), nCount, (FILE *)m_hFile);
+    return res;
 #endif
 }
 
 long CFile::Seek(long lOff, SeekPosition nFrom)
 {
-#ifdef _WIN32
+#ifdef USE_WINDOWS_API
     ULONG dwNew = ::SetFilePointer(m_hFile, lOff, NULL, (ULONG)nFrom);
     if (dwNew  == (ULONG)-1)
     {
@@ -228,44 +248,63 @@ long CFile::Seek(long lOff, SeekPosition nFrom)
     }
     return dwNew;
 #else
-	return -1;
+    if (m_hFile == NULL)
+    {
+        return -1;
+    }
+    int origin;
+
+    switch (nFrom)
+    {
+    case begin: origin = SEEK_SET; break;
+    case current: origin = SEEK_CUR; break;
+    case end: origin = SEEK_END; break;
+    default:
+        return -1;
+    }
+
+    Flush();
+    int res = fseek((FILE *)m_hFile, lOff, origin);
+    return res;
 #endif
 }
 
 uint32_t CFile::GetPosition() const
 {
-#ifdef _WIN32
+#ifdef USE_WINDOWS_API
     return ::SetFilePointer(m_hFile, 0, NULL, FILE_CURRENT);
 #else
-	return -1;
+    return (uint32_t)ftell((FILE *)m_hFile);
 #endif
 }
 
 bool CFile::SetLength(uint32_t dwNewLen)
 {
-#ifdef _WIN32
+#ifdef USE_WINDOWS_API
     Seek((LONG)dwNewLen, begin);
 
     return ::SetEndOfFile(m_hFile) != 0;
 #else
-	return false;
+    int a = 5;
+    a = 7;
+    return false;
 #endif
 }
 
 uint32_t CFile::GetLength() const
 {
-#ifdef _WIN32
-    return GetFileSize(m_hFile,0);
+#ifdef USE_WINDOWS_API
+    return GetFileSize(m_hFile, 0);
 #else
-	return 0;
+    return ftell((FILE *)m_hFile);
 #endif
 }
 
 bool CFile::SetEndOfFile()
 {
-#ifdef _WIN32
+#ifdef USE_WINDOWS_API
     return ::SetEndOfFile(m_hFile) != 0;
 #else
-	return false;
+    return false;
 #endif
 }

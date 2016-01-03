@@ -4,6 +4,17 @@
 
 int WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR /*lpszArgs*/, int /*nWinMode*/)
 {
+    {
+        CPath ConfigFile(CPath::MODULE_DIRECTORY, "Project64.cfg");
+        ConfigFile.AppendDirectory("Config");
+        CFile testfile;
+        testfile.Open(ConfigFile, CFileBase::modeReadWrite | CFileBase::shareDenyWrite);
+
+        uint8_t buffer[0x2000];
+        memset(buffer, 0, sizeof(buffer));
+        testfile.Read(buffer, sizeof(buffer));
+    }
+
     try
     {
         CoInitialize(NULL);
