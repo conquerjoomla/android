@@ -51,6 +51,7 @@ public:
 
 protected:
     static void GameChanged ( void * /*Data */ );
+    static void BaseDirChanged ( void * /*Data */ );
 
     static bool IsGlideSetting (const char * Name);
     static const char * StripNameSection (const char * Name);

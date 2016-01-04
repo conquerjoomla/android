@@ -6,6 +6,7 @@
 #include <Shlobj.h>
 #include <dos.h>
 #else
+#include <sys/stat.h>
 #include <dirent.h>
 #endif
 #include "Platform.h"
@@ -944,7 +945,8 @@ bool CPath::Exists() const
 
     return bSuccess;
 #else
-    return false;
+	struct stat statbuf;
+	return stat(m_strPath.c_str(), &statbuf) == 0; 
 #endif
 }
 

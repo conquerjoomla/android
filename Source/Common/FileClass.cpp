@@ -1,8 +1,15 @@
 #include "stdafx.h"
-#include <io.h>
-
 #ifdef _WIN32
+#include <io.h>
 #define USE_WINDOWS_API
+#else
+#include <unistd.h>
+#endif
+
+#if defined(ANDROID)
+#include <android/log.h>
+
+#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "UI-Console", __VA_ARGS__)
 #endif
 
 #if defined(_MSC_VER)
@@ -119,8 +126,10 @@ bool CFile::Open(const char * lpszFileName, uint32_t nOpenFlags)
 
     if ((nOpenFlags & CFileBase::modeCreate) != CFileBase::modeCreate)
     {
-        if (!CPath(lpszFileName).Exists())
+		printf("Checking if %s exists\n",lpszFileName);
+		if (!CPath(lpszFileName).Exists())
         {
+			printf("%s does not exists\n",lpszFileName);
             return false;
         }
     }
@@ -145,6 +154,7 @@ bool CFile::Open(const char * lpszFileName, uint32_t nOpenFlags)
     if ((nOpenFlags & CFileBase::modeWrite) == CFileBase::modeWrite ||
         (nOpenFlags & CFileBase::modeReadWrite) == CFileBase::modeReadWrite)
     {
+		printf("tryinng to open %s (rb+)\n",lpszFileName);
         m_hFile = fopen(lpszFileName, "rb+");
         if (m_hFile != NULL)
         {
@@ -153,6 +163,7 @@ bool CFile::Open(const char * lpszFileName, uint32_t nOpenFlags)
     }
     else if ((nOpenFlags & CFileBase::modeRead) == CFileBase::modeRead)
     {
+		printf("tryinng to open %s (rb)\n",lpszFileName);
         m_hFile = fopen(lpszFileName, "rb");
         if (m_hFile != NULL)
         {
@@ -320,7 +331,11 @@ uint32_t CFile::GetLength() const
 #ifdef USE_WINDOWS_API
     return GetFileSize(m_hFile, 0);
 #else
-    return ftell((FILE *)m_hFile);
+	uint32_t pos = GetPosition();
+    fseek((FILE *)m_hFile, 0, SEEK_END);
+	uint32_t FileSize = GetPosition();
+    fseek((FILE *)m_hFile, (int32_t)pos, SEEK_SET);
+    return FileSize;
 #endif
 }
 

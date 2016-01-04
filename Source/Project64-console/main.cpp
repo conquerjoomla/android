@@ -49,22 +49,15 @@ int main(int argc, char * argv[])
 	AndroidLogger Logger;
 	TraceAddModule(&Logger);
 #endif
-	Notify().DisplayMessage(10,_T("    ____               _           __  _____ __ __"));
-    Notify().DisplayMessage(10,_T("   / __ \\_________    (_)__  _____/ /_/ ___// // /"));
-    Notify().DisplayMessage(10,_T("  / /_/ / ___/ __ \\  / / _ \\/ ___/ __/ __ \\/ // /_"));
-    Notify().DisplayMessage(10,_T(" / ____/ /  / /_/ / / /  __/ /__/ /_/ /_/ /__  __/"));
-    Notify().DisplayMessage(10,_T("/_/   /_/   \\____/_/ /\\___/\\___/\\__/\\____/  /_/"));
-    Notify().DisplayMessage(10,_T("                /___/"));
-    Notify().DisplayMessage(10,_T("http://www.pj64-emu.com/"));
-	{
-		stdstr_f version("%s Version %s", VER_FILE_DESCRIPTION_STR, VER_FILE_VERSION_STR);
-#ifdef _WIN32
-		Notify().DisplayMessage(10,version.ToUTF16().c_str());
-#else
-		Notify().DisplayMessage(10,version.c_str());
-#endif
-	}
-    Notify().DisplayMessage(10,_T(""));
+	Notify().DisplayMessage(10,"    ____               _           __  _____ __ __");
+    Notify().DisplayMessage(10,"   / __ \\_________    (_)__  _____/ /_/ ___// // /");
+    Notify().DisplayMessage(10,"  / /_/ / ___/ __ \\  / / _ \\/ ___/ __/ __ \\/ // /_");
+    Notify().DisplayMessage(10," / ____/ /  / /_/ / / /  __/ /__/ /_/ /_/ /__  __/");
+    Notify().DisplayMessage(10,"/_/   /_/   \\____/_/ /\\___/\\___/\\__/\\____/  /_/");
+    Notify().DisplayMessage(10,"                /___/");
+    Notify().DisplayMessage(10,"http://www.pj64-emu.com/");
+	Notify().DisplayMessage(10,stdstr_f("%s Version %s", VER_FILE_DESCRIPTION_STR, VER_FILE_VERSION_STR).c_str());
+    Notify().DisplayMessage(10,"");
 
     if (!AppInit(&Notify(), argc, &argv[0]))
 	{
