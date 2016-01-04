@@ -26,7 +26,7 @@
 #include "Mips/SystemTiming.h"
 #include "CheatClass.h"
 #include "FramePerSecondClass.h"
-#include "SpeedLimitorClass.h"
+#include "SpeedLimiterClass.h"
 
 typedef std::list<SystemEvent>   EVENT_LIST;
 
@@ -64,8 +64,8 @@ public:
     void   ExternalEvent(SystemEvent action); //covers gui interacting and timers etc..
     void   StartEmulation(bool NewThread);
     void   SyncToAudio();
-    void   IncreaseSpeed() { m_Limitor.IncreaseSpeed(); }
-    void   DecreaseSpeed() { m_Limitor.DecreaseSpeed(); }
+    void   IncreaseSpeed() { m_Limiter.IncreaseSpeed(); }
+    void   DecreaseSpeed() { m_Limiter.DecreaseSpeed(); }
     void   Reset(bool bInitReg, bool ClearMenory);
     void   GameReset();
     void   PluginReset();
@@ -105,7 +105,7 @@ private:
     //Used for loading and potentially executing the CPU in its own thread.
     struct ThreadInfo
     {
-        void * ThreadHandle;
+        void** ThreadHandle;
         uint32_t ThreadID;
     };
 
@@ -139,17 +139,17 @@ private:
 
 #ifdef tofix
     CPlugins      * const m_Plugins;  //The plugin container
-	CPlugins      * m_SyncPlugins;
+    CPlugins      * m_SyncPlugins;
 #endif
     CN64System    * m_SyncCPU;
-	CMipsMemoryVM   m_MMU_VM;   //Memory of the n64
+    CMipsMemoryVM   m_MMU_VM;   //Memory of the n64
     CTLB            m_TLB;
     CRegisters      m_Reg;
     CFramePerSecond m_FPS;
     CProfiling      m_CPU_Usage; //used to track the cpu usage
     CRecompiler   * m_Recomp;
     CAudio          m_Audio;
-    CSpeedLimitor   m_Limitor;
+    CSpeedLimiter   m_Limiter;
     bool            m_InReset;
     int32_t         m_NextTimer;
     CSystemTimer    m_SystemTimer;

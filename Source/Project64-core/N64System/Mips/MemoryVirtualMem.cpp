@@ -15,12 +15,16 @@
 #include <Project64-core/N64System/N64Class.h>
 #include <Project64-core/N64System/Recompiler/x86CodeLog.h>
 #include <Project64-core/N64System/Mips/OpcodeName.h>
+#include <Project64-core/ExceptionHandler.h>
 #include <Windows.h>
 
 uint32_t RegModValue;
 
 uint8_t * CMipsMemoryVM::m_Reserve1 = NULL;
 uint8_t * CMipsMemoryVM::m_Reserve2 = NULL;
+uint32_t CMipsMemoryVM::m_MemLookupAddress = 0;
+MIPS_DWORD CMipsMemoryVM::m_MemLookupValue;
+bool CMipsMemoryVM::m_MemLookupValid = true;
 
 CMipsMemoryVM::CMipsMemoryVM(CMipsMemory_CallBack * CallBack, bool SavesReadOnly) :
 
@@ -604,7 +608,7 @@ void CMipsMemoryVM::Compile_LB(x86Reg Reg, uint32_t VAddr, bool SignExtend)
         CPU_Message("Compile_LB\nFailed to translate address %08X", VAddr);
         if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
         {
-            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address %08X", VAddr).ToUTF16().c_str());
+            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address %08X", VAddr).c_str());
         }
         return;
     }
@@ -634,7 +638,7 @@ void CMipsMemoryVM::Compile_LB(x86Reg Reg, uint32_t VAddr, bool SignExtend)
         MoveConstToX86reg(0, Reg);
         if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
         {
-            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to compile address: %08X", VAddr).ToUTF16().c_str());
+            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to compile address: %08X", VAddr).c_str());
         }
     }
 }
@@ -675,7 +679,7 @@ void  CMipsMemoryVM::Compile_LH(x86Reg Reg, uint32_t VAddr, bool SignExtend)
         CPU_Message("Compile_LH\nFailed to translate address %08X", VAddr);
         if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
         {
-            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address %08X", VAddr).ToUTF16().c_str());
+            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address %08X", VAddr).c_str());
         }
         return;
     }
@@ -705,7 +709,7 @@ void  CMipsMemoryVM::Compile_LH(x86Reg Reg, uint32_t VAddr, bool SignExtend)
         MoveConstToX86reg(0, Reg);
         if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
         {
-            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to compile address: %08X", VAddr).ToUTF16().c_str());
+            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to compile address: %08X", VAddr).c_str());
         }
     }
 }
@@ -772,7 +776,7 @@ void  CMipsMemoryVM::Compile_LW(x86Reg Reg, uint32_t VAddr)
                 MoveConstToX86reg(0, Reg);
                 if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
                 {
-                    g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).ToUTF16().c_str());
+                    g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).c_str());
                 }
             }
             break;
@@ -797,7 +801,7 @@ void  CMipsMemoryVM::Compile_LW(x86Reg Reg, uint32_t VAddr)
             case 0x0430000C: MoveVariableToX86reg(&g_Reg->MI_INTR_MASK_REG, "MI_INTR_MASK_REG", Reg); break;
             default:
                 MoveConstToX86reg(0, Reg);
-                if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory)) { g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).ToUTF16().c_str()); }
+                if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory)) { g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).c_str()); }
             }
             break;
         case 0x04400000:
@@ -817,7 +821,7 @@ void  CMipsMemoryVM::Compile_LW(x86Reg Reg, uint32_t VAddr)
                 MoveConstToX86reg(0, Reg);
                 if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
                 {
-                    g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).ToUTF16().c_str());
+                    g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).c_str());
                 }
             }
             break;
@@ -874,7 +878,7 @@ void  CMipsMemoryVM::Compile_LW(x86Reg Reg, uint32_t VAddr)
                 MoveConstToX86reg(0, Reg);
                 if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
                 {
-                    g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).ToUTF16().c_str());
+                    g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).c_str());
                 }
             }
             break;
@@ -894,7 +898,7 @@ void  CMipsMemoryVM::Compile_LW(x86Reg Reg, uint32_t VAddr)
                 MoveConstToX86reg(0, Reg);
                 if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
                 {
-                    g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).ToUTF16().c_str());
+                    g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).c_str());
                 }
             }
             break;
@@ -907,7 +911,7 @@ void  CMipsMemoryVM::Compile_LW(x86Reg Reg, uint32_t VAddr)
                 MoveConstToX86reg(0, Reg);
                 if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
                 {
-                    g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).ToUTF16().c_str());
+                    g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).c_str());
                 }
             }
             break;
@@ -919,7 +923,7 @@ void  CMipsMemoryVM::Compile_LW(x86Reg Reg, uint32_t VAddr)
                 MoveConstToX86reg(0, Reg);
                 if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
                 {
-                    g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).ToUTF16().c_str());
+                    g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).c_str());
                 }
             }
             break;
@@ -940,7 +944,7 @@ void  CMipsMemoryVM::Compile_LW(x86Reg Reg, uint32_t VAddr)
                 if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
                 {
                     CPU_Message(__FUNCTION__ "\nFailed to translate address: %08X", VAddr);
-                    g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).ToUTF16().c_str());
+                    g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).c_str());
                 }
             }
         }
@@ -968,7 +972,7 @@ void  CMipsMemoryVM::Compile_SB_Const(uint8_t Value, uint32_t VAddr)
     if (!TranslateVaddr(VAddr, PAddr))
     {
         CPU_Message("Compile_SB\nFailed to translate address: %08X", VAddr);
-        if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory)) { g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).ToUTF16().c_str()); }
+        if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory)) { g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).c_str()); }
         return;
     }
 
@@ -988,7 +992,7 @@ void  CMipsMemoryVM::Compile_SB_Const(uint8_t Value, uint32_t VAddr)
     default:
         if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
         {
-            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %02X in %08X?", Value, VAddr).ToUTF16().c_str());
+            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %02X in %08X?", Value, VAddr).c_str());
         }
     }
 }
@@ -1018,7 +1022,7 @@ void  CMipsMemoryVM::Compile_SB_Register(x86Reg Reg, uint32_t VAddr)
         CPU_Message("Compile_SB\nFailed to translate address: %08X", VAddr);
         if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
         {
-            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).ToUTF16().c_str());
+            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).c_str());
         }
         return;
     }
@@ -1039,7 +1043,7 @@ void  CMipsMemoryVM::Compile_SB_Register(x86Reg Reg, uint32_t VAddr)
     default:
         if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
         {
-            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", VAddr).ToUTF16().c_str());
+            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", VAddr).c_str());
         }
     }
 }
@@ -1066,7 +1070,7 @@ void  CMipsMemoryVM::Compile_SH_Const(uint16_t Value, uint32_t VAddr)
         CPU_Message("Compile_SH\nFailed to translate address: %08X", VAddr);
         if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
         {
-            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).ToUTF16().c_str());
+            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).c_str());
         }
         return;
     }
@@ -1087,7 +1091,7 @@ void  CMipsMemoryVM::Compile_SH_Const(uint16_t Value, uint32_t VAddr)
     default:
         if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
         {
-            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %04X in %08X?", Value, VAddr).ToUTF16().c_str());
+            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %04X in %08X?", Value, VAddr).c_str());
         }
     }
 }
@@ -1116,7 +1120,7 @@ void CMipsMemoryVM::Compile_SH_Register(x86Reg Reg, uint32_t VAddr)
         CPU_Message("Compile_SH\nFailed to translate address: %08X", VAddr);
         if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
         {
-            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).ToUTF16().c_str());
+            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).c_str());
         }
         return;
     }
@@ -1137,7 +1141,7 @@ void CMipsMemoryVM::Compile_SH_Register(x86Reg Reg, uint32_t VAddr)
     default:
         if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
         {
-            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", PAddr).ToUTF16().c_str());
+            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", PAddr).c_str());
         }
     }
 }
@@ -1166,7 +1170,7 @@ void CMipsMemoryVM::Compile_SW_Const(uint32_t Value, uint32_t VAddr)
         CPU_Message("Compile_SW\nFailed to translate address: %08X", VAddr);
         if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
         {
-            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).ToUTF16().c_str());
+            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).c_str());
         }
         return;
     }
@@ -1206,7 +1210,7 @@ void CMipsMemoryVM::Compile_SW_Const(uint32_t Value, uint32_t VAddr)
         default:
             if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
             {
-                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %08X in %08X?", Value, VAddr).ToUTF16().c_str());
+                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %08X in %08X?", Value, VAddr).c_str());
             }
         }
         break;
@@ -1247,7 +1251,7 @@ void CMipsMemoryVM::Compile_SW_Const(uint32_t Value, uint32_t VAddr)
         default:
             if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
             {
-                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %08X in %08X?", Value, VAddr).ToUTF16().c_str());
+                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %08X in %08X?", Value, VAddr).c_str());
             }
         }
         break;
@@ -1265,7 +1269,7 @@ void CMipsMemoryVM::Compile_SW_Const(uint32_t Value, uint32_t VAddr)
         default:
             if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
             {
-                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %08X in %08X?", Value, VAddr).ToUTF16().c_str());
+                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %08X in %08X?", Value, VAddr).c_str());
             }
         }
         break;
@@ -1383,7 +1387,7 @@ void CMipsMemoryVM::Compile_SW_Const(uint32_t Value, uint32_t VAddr)
         default:
             if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
             {
-                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %08X in %08X?", Value, VAddr).ToUTF16().c_str());
+                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %08X in %08X?", Value, VAddr).c_str());
             }
         }
         break;
@@ -1445,7 +1449,7 @@ void CMipsMemoryVM::Compile_SW_Const(uint32_t Value, uint32_t VAddr)
         default:
             if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
             {
-                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %08X in %08X?", Value, VAddr).ToUTF16().c_str());
+                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %08X in %08X?", Value, VAddr).c_str());
             }
         }
         break;
@@ -1490,7 +1494,7 @@ void CMipsMemoryVM::Compile_SW_Const(uint32_t Value, uint32_t VAddr)
             MoveConstToVariable(Value, PAddr + m_RDRAM, VarName);
             if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
             {
-                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %08X in %08X?", Value, VAddr).ToUTF16().c_str());
+                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %08X in %08X?", Value, VAddr).c_str());
             }
         }
         break;
@@ -1530,7 +1534,7 @@ void CMipsMemoryVM::Compile_SW_Const(uint32_t Value, uint32_t VAddr)
         default:
             if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
             {
-                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %08X in %08X?", Value, VAddr).ToUTF16().c_str());
+                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %08X in %08X?", Value, VAddr).c_str());
             }
         }
         break;
@@ -1544,7 +1548,7 @@ void CMipsMemoryVM::Compile_SW_Const(uint32_t Value, uint32_t VAddr)
         default:
             if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
             {
-                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %08X in %08X?", Value, VAddr).ToUTF16().c_str());
+                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %08X in %08X?", Value, VAddr).c_str());
             }
         }
         break;
@@ -1583,7 +1587,7 @@ void CMipsMemoryVM::Compile_SW_Const(uint32_t Value, uint32_t VAddr)
         default:
             if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
             {
-                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %08X in %08X?", Value, VAddr).ToUTF16().c_str());
+                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %08X in %08X?", Value, VAddr).c_str());
             }
         }
         break;
@@ -1604,7 +1608,7 @@ void CMipsMemoryVM::Compile_SW_Const(uint32_t Value, uint32_t VAddr)
     default:
         if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
         {
-            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %08X in %08X?", Value, VAddr).ToUTF16().c_str());
+            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store %08X in %08X?", Value, VAddr).c_str());
         }
         m_RegWorkingSet.SetBlockCycleCount(m_RegWorkingSet.GetBlockCycleCount() - g_System->CountPerOp());
         UpdateCounters(m_RegWorkingSet, false, true);
@@ -1645,7 +1649,7 @@ void CMipsMemoryVM::Compile_SW_Register(x86Reg Reg, uint32_t VAddr)
         CPU_Message("Compile_SW_Register\nFailed to translate address: %08X", VAddr);
         if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
         {
-            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).ToUTF16().c_str());
+            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\nFailed to translate address: %08X", VAddr).c_str());
         }
         return;
     }
@@ -1707,7 +1711,7 @@ void CMipsMemoryVM::Compile_SW_Register(x86Reg Reg, uint32_t VAddr)
                 CPU_Message("    Should be moving %s in to %08X ?!?", x86_Name(Reg), VAddr);
                 if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
                 {
-                    g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", VAddr).ToUTF16().c_str());
+                    g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", VAddr).c_str());
                 }
             }
         }
@@ -1745,7 +1749,7 @@ void CMipsMemoryVM::Compile_SW_Register(x86Reg Reg, uint32_t VAddr)
             CPU_Message("    Should be moving %s in to %08X ?!?", x86_Name(Reg), VAddr);
             if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
             {
-                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", VAddr).ToUTF16().c_str());
+                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", VAddr).c_str());
             }
         }
         break;
@@ -1810,7 +1814,7 @@ void CMipsMemoryVM::Compile_SW_Register(x86Reg Reg, uint32_t VAddr)
             CPU_Message("    Should be moving %s in to %08X ?!?", x86_Name(Reg), VAddr);
             if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
             {
-                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", VAddr).ToUTF16().c_str());
+                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", VAddr).c_str());
             }
         }
         break;
@@ -1858,7 +1862,7 @@ void CMipsMemoryVM::Compile_SW_Register(x86Reg Reg, uint32_t VAddr)
             MoveX86regToVariable(Reg, PAddr + m_RDRAM, VarName);
             if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
             {
-                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", VAddr).ToUTF16().c_str());
+                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", VAddr).c_str());
             }
         }
         break;
@@ -1884,7 +1888,7 @@ void CMipsMemoryVM::Compile_SW_Register(x86Reg Reg, uint32_t VAddr)
         case 0x04600010:
             if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
             {
-                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", VAddr).ToUTF16().c_str());
+                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", VAddr).c_str());
             }
             AndConstToVariable((uint32_t)~MI_INTR_PI, &g_Reg->MI_INTR_REG, "MI_INTR_REG");
             BeforeCallDirect(m_RegWorkingSet);
@@ -1912,7 +1916,7 @@ void CMipsMemoryVM::Compile_SW_Register(x86Reg Reg, uint32_t VAddr)
             CPU_Message("    Should be moving %s in to %08X ?!?", x86_Name(Reg), VAddr);
             if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
             {
-                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", VAddr).ToUTF16().c_str());
+                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", VAddr).c_str());
             }
         }
         break;
@@ -1923,7 +1927,7 @@ void CMipsMemoryVM::Compile_SW_Register(x86Reg Reg, uint32_t VAddr)
         default:
             if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
             {
-                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", VAddr).ToUTF16().c_str());
+                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", VAddr).c_str());
             }
         }
         break;
@@ -1956,7 +1960,7 @@ void CMipsMemoryVM::Compile_SW_Register(x86Reg Reg, uint32_t VAddr)
         default:
             if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
             {
-                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", VAddr).ToUTF16().c_str());
+                g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", VAddr).c_str());
             }
         }
         break;
@@ -1968,7 +1972,7 @@ void CMipsMemoryVM::Compile_SW_Register(x86Reg Reg, uint32_t VAddr)
         CPU_Message("    Should be moving %s in to %08X ?!?", x86_Name(Reg), VAddr);
         if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
         {
-            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", VAddr).ToUTF16().c_str());
+            g_Notify->DisplayError(stdstr_f(__FUNCTION__ "\ntrying to store in %08X?", VAddr).c_str());
         }
     }
 }
@@ -2205,7 +2209,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
                 {
                     g_Notify->DisplayError(stdstr_f("Failed to load byte\n\nMIPS Address: %08X\nX86 Address: %08X",
                         (char *)exRec.ExceptionInformation[1] - (char *)m_RDRAM,
-                        (uint8_t *)lpEP->ContextRecord->Eip).ToUTF16().c_str());
+                        (uint8_t *)lpEP->ContextRecord->Eip).c_str());
                 }
             }
             lpEP->ContextRecord->Eip = (uint32_t)ReadPos;
@@ -2217,7 +2221,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
                 {
                     g_Notify->DisplayError(stdstr_f("Failed to load half word\n\nMIPS Address: %08X\nX86 Address: %08X",
                         (char *)exRec.ExceptionInformation[1] - (char *)m_RDRAM,
-                        (uint8_t *)lpEP->ContextRecord->Eip).ToUTF16().c_str());
+                        (uint8_t *)lpEP->ContextRecord->Eip).c_str());
                 }
             }
             lpEP->ContextRecord->Eip = (uint32_t)ReadPos;
@@ -2229,7 +2233,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
                 {
                     g_Notify->DisplayError(stdstr_f("Failed to load byte\n\nMIPS Address: %08X\nX86 Address: %08X",
                         (char *)exRec.ExceptionInformation[1] - (char *)m_RDRAM,
-                        (uint8_t *)lpEP->ContextRecord->Eip).ToUTF16().c_str());
+                        (uint8_t *)lpEP->ContextRecord->Eip).c_str());
                 }
             }
             lpEP->ContextRecord->Eip = (uint32_t)ReadPos;
@@ -2241,7 +2245,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
                 {
                     g_Notify->DisplayError(stdstr_f("Failed to load half word\n\nMIPS Address: %08X\nX86 Address: %08X",
                         (char *)exRec.ExceptionInformation[1] - (char *)m_RDRAM,
-                        (uint8_t *)lpEP->ContextRecord->Eip).ToUTF16().c_str());
+                        (uint8_t *)lpEP->ContextRecord->Eip).c_str());
                 }
             }
             lpEP->ContextRecord->Eip = (uint32_t)ReadPos;
@@ -2264,7 +2268,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
                 {
                     g_Notify->DisplayError(stdstr_f("Failed to half word\n\nMIPS Address: %08X\nX86 Address: %08X",
                         (char *)exRec.ExceptionInformation[1] - (char *)m_RDRAM,
-                        (uint8_t *)lpEP->ContextRecord->Eip).ToUTF16().c_str());
+                        (uint8_t *)lpEP->ContextRecord->Eip).c_str());
                 }
             }
             lpEP->ContextRecord->Eip = (uint32_t)ReadPos;
@@ -2275,7 +2279,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
                 if (g_Settings->LoadDword(Debugger_ShowUnhandledMemory))
                 {
                     g_Notify->DisplayError(stdstr_f("Failed to store half word\n\nMIPS Address: %08X\nX86 Address: %08X", MemAddress,
-                        (uint8_t *)lpEP->ContextRecord->Eip).ToUTF16().c_str());
+                        (uint8_t *)lpEP->ContextRecord->Eip).c_str());
                 }
             }
             lpEP->ContextRecord->Eip = (uint32_t)ReadPos;
@@ -2293,7 +2297,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
                 if (g_Settings->LoadDword(Debugger_ShowUnhandledMemory))
                 {
                     g_Notify->DisplayError(stdstr_f("Failed to store half word\n\nMIPS Address: %08X\nX86 Address: %08X", MemAddress,
-                        (uint8_t *)lpEP->ContextRecord->Eip).ToUTF16().c_str());
+                        (uint8_t *)lpEP->ContextRecord->Eip).c_str());
                 }
             }
             lpEP->ContextRecord->Eip = (uint32_t)(ReadPos + 2);
@@ -2313,7 +2317,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
             {
                 g_Notify->DisplayError(stdstr_f("Failed to store byte\n\nMIPS Address: %08X\nX86 Address: %08X",
                     (char *)exRec.ExceptionInformation[1] - (char *)m_RDRAM,
-                    (uint8_t *)lpEP->ContextRecord->Eip).ToUTF16().c_str());
+                    (uint8_t *)lpEP->ContextRecord->Eip).c_str());
             }
         }
         lpEP->ContextRecord->Eip = (uint32_t)ReadPos;
@@ -2325,7 +2329,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
             {
                 g_Notify->DisplayError(stdstr_f("Failed to load byte\n\nMIPS Address: %08X\nX86 Address: %08X",
                     (char *)exRec.ExceptionInformation[1] - (char *)m_RDRAM,
-                    (uint8_t *)lpEP->ContextRecord->Eip).ToUTF16().c_str());
+                    (uint8_t *)lpEP->ContextRecord->Eip).c_str());
             }
         }
         lpEP->ContextRecord->Eip = (uint32_t)ReadPos;
@@ -2337,7 +2341,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
             {
                 g_Notify->DisplayError(stdstr_f("Failed to load word\n\nMIPS Address: %08X\nX86 Address: %08X",
                     (char *)exRec.ExceptionInformation[1] - (char *)m_RDRAM,
-                    (uint8_t *)lpEP->ContextRecord->Eip).ToUTF16().c_str());
+                    (uint8_t *)lpEP->ContextRecord->Eip).c_str());
             }
         }
         lpEP->ContextRecord->Eip = (uint32_t)ReadPos;
@@ -2348,7 +2352,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
             if (g_Settings->LoadDword(Debugger_ShowUnhandledMemory))
             {
                 g_Notify->DisplayError(stdstr_f("Failed to store word\n\nMIPS Address: %08X\nX86 Address: %08X", MemAddress,
-                    (uint8_t *)lpEP->ContextRecord->Eip).ToUTF16().c_str());
+                    (uint8_t *)lpEP->ContextRecord->Eip).c_str());
             }
         }
         lpEP->ContextRecord->Eip = (uint32_t)ReadPos;
@@ -2367,7 +2371,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
             if (g_Settings->LoadDword(Debugger_ShowUnhandledMemory))
             {
                 g_Notify->DisplayError(stdstr_f("Failed to store byte\n\nMIPS Address: %08X\nX86 Address: %08X", MemAddress,
-                    (uint8_t *)lpEP->ContextRecord->Eip).ToUTF16().c_str());
+                    (uint8_t *)lpEP->ContextRecord->Eip).c_str());
             }
         }
         lpEP->ContextRecord->Eip = (uint32_t)(ReadPos + 1);
@@ -2386,7 +2390,7 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
             if (g_Settings->LoadDword(Debugger_ShowUnhandledMemory))
             {
                 g_Notify->DisplayError(stdstr_f("Failed to store word\n\nMIPS Address: %08X\nX86 Address: %08X", MemAddress,
-                    (uint8_t *)lpEP->ContextRecord->Eip).ToUTF16().c_str());
+                    (uint8_t *)lpEP->ContextRecord->Eip).c_str());
             }
         }
         lpEP->ContextRecord->Eip = (uint32_t)(ReadPos + 4);
@@ -2413,7 +2417,7 @@ bool CMipsMemoryVM::LB_NonMemory(uint32_t PAddr, uint32_t* Value, bool /*SignExt
     if (PAddr >= 0x10000000 && PAddr < 0x16000000)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
-#ifdef tofix
+#ifdef legacycode
         if (WrittenToRom)
         {
             return false;
@@ -2490,252 +2494,38 @@ bool CMipsMemoryVM::LW_NonMemory(uint32_t PAddr, uint32_t* Value)
         return true;
     }
 #endif
+
+    m_MemLookupAddress = PAddr;
     if (PAddr >= 0x10000000 && PAddr < 0x16000000)
     {
-        if (m_RomWrittenTo)
-        {
-            *Value = m_RomWroteValue;
-            //LogMessage("%X: Read crap from Rom %08X from %08X",PROGRAM_COUNTER,*Value,PAddr);
-            m_RomWrittenTo = false;
-#ifdef ROM_IN_MAPSPACE
-            {
-                uint32_t OldProtect;
-                VirtualProtect(ROM,RomFileSize,PAGE_READONLY, &OldProtect);
-            }
-#endif
-            return true;
-        }
-        if ((PAddr - 0x10000000) < m_RomSize)
-        {
-            *Value = *(uint32_t *)&m_Rom[PAddr - 0x10000000];
-            return true;
-        }
-        else
-        {
-            *Value = PAddr & 0xFFFF;
-            *Value = (*Value << 16) | *Value;
-            return false;
-        }
+        Load32Rom();
     }
-
-    switch (PAddr & 0xFFF00000)
+    else
     {
-    case 0x03F00000:
-        switch (PAddr)
+        switch (PAddr & 0xFFF00000)
         {
-        case 0x03F00000: *Value = g_Reg->RDRAM_CONFIG_REG; break;
-        case 0x03F00004: *Value = g_Reg->RDRAM_DEVICE_ID_REG; break;
-        case 0x03F00008: *Value = g_Reg->RDRAM_DELAY_REG; break;
-        case 0x03F0000C: *Value = g_Reg->RDRAM_MODE_REG; break;
-        case 0x03F00010: *Value = g_Reg->RDRAM_REF_INTERVAL_REG; break;
-        case 0x03F00014: *Value = g_Reg->RDRAM_REF_ROW_REG; break;
-        case 0x03F00018: *Value = g_Reg->RDRAM_RAS_INTERVAL_REG; break;
-        case 0x03F0001C: *Value = g_Reg->RDRAM_MIN_INTERVAL_REG; break;
-        case 0x03F00020: *Value = g_Reg->RDRAM_ADDR_SELECT_REG; break;
-        case 0x03F00024: *Value = g_Reg->RDRAM_DEVICE_MANUF_REG; break;
+        case 0x03F00000: Load32RDRAMRegisters(); break;
+        case 0x04000000: Load32SPRegisters(); break;
+        case 0x04100000: Load32DPCommand(); break;
+        case 0x04300000: Load32MIPSInterface(); break;
+        case 0x04400000: Load32VideoInterface(); break;
+        case 0x04500000: Load32AudioInterface(); break;
+        case 0x04600000: Load32PeripheralInterface(); break;
+        case 0x04700000: Load32RDRAMInterface(); break;
+        case 0x04800000: Load32SerialInterface(); break;
+        case 0x05000000: Load32CartridgeDomain2Address1(); break;
+        case 0x08000000: Load32CartridgeDomain2Address2(); break;
+        case 0x1FC00000: Load32PifRam(); break;
         default:
-            *Value = 0;
-            return false;
-        }
-        break;
-    case 0x04000000:
-        switch (PAddr)
-        {
-        case 0x04040010: *Value = g_Reg->SP_STATUS_REG; break;
-        case 0x04040014: *Value = g_Reg->SP_DMA_FULL_REG; break;
-        case 0x04040018: *Value = g_Reg->SP_DMA_BUSY_REG; break;
-        case 0x0404001C:
-            *Value = g_Reg->SP_SEMAPHORE_REG;
-            g_Reg->SP_SEMAPHORE_REG = 1;
-            break;
-        case 0x04080000: *Value = g_Reg->SP_PC_REG; break;
-        default:
-            *Value = 0;
-            return false;
-        }
-        break;
-    case 0x04100000:
-        switch (PAddr)
-        {
-        case 0x0410000C: *Value = g_Reg->DPC_STATUS_REG; break;
-        case 0x04100010: *Value = g_Reg->DPC_CLOCK_REG; break;
-        case 0x04100014: *Value = g_Reg->DPC_BUFBUSY_REG; break;
-        case 0x04100018: *Value = g_Reg->DPC_PIPEBUSY_REG; break;
-        case 0x0410001C: *Value = g_Reg->DPC_TMEM_REG; break;
-        default:
-            *Value = 0;
-            return false;
-        }
-        break;
-    case 0x04300000:
-        switch (PAddr)
-        {
-        case 0x04300000: *Value = g_Reg->MI_MODE_REG; break;
-        case 0x04300004: *Value = g_Reg->MI_VERSION_REG; break;
-        case 0x04300008: *Value = g_Reg->MI_INTR_REG; break;
-        case 0x0430000C: *Value = g_Reg->MI_INTR_MASK_REG; break;
-        default:
-            *Value = 0;
-            return false;
-        }
-        break;
-    case 0x04400000:
-        switch (PAddr)
-        {
-        case 0x04400000: *Value = g_Reg->VI_STATUS_REG; break;
-        case 0x04400004: *Value = g_Reg->VI_ORIGIN_REG; break;
-        case 0x04400008: *Value = g_Reg->VI_WIDTH_REG; break;
-        case 0x0440000C: *Value = g_Reg->VI_INTR_REG; break;
-        case 0x04400010:
-            UpdateHalfLine();
-            *Value = m_HalfLine;
-            break;
-        case 0x04400014: *Value = g_Reg->VI_BURST_REG; break;
-        case 0x04400018: *Value = g_Reg->VI_V_SYNC_REG; break;
-        case 0x0440001C: *Value = g_Reg->VI_H_SYNC_REG; break;
-        case 0x04400020: *Value = g_Reg->VI_LEAP_REG; break;
-        case 0x04400024: *Value = g_Reg->VI_H_START_REG; break;
-        case 0x04400028: *Value = g_Reg->VI_V_START_REG; break;
-        case 0x0440002C: *Value = g_Reg->VI_V_BURST_REG; break;
-        case 0x04400030: *Value = g_Reg->VI_X_SCALE_REG; break;
-        case 0x04400034: *Value = g_Reg->VI_Y_SCALE_REG; break;
-        default:
-            *Value = 0;
-            return false;
-        }
-        break;
-    case 0x04500000:
-        switch (PAddr)
-        {
-        case 0x04500004:
-            if (g_System->bFixedAudio())
+            if (bHaveDebugger())
             {
-                *Value = g_Audio->GetLength();
+                g_Notify->BreakPoint(__FILE__, __LINE__);
             }
-            else
-            {
-#ifdef tofix
-                if (g_Plugins->Audio()->AiReadLength != NULL)
-                {
-                    *Value = g_Plugins->Audio()->AiReadLength();
-                }
-                else
-                {
-                    *Value = 0;
-                }
-#endif
-            }
-            break;
-        case 0x0450000C:
-            if (g_System->bFixedAudio())
-            {
-                *Value = g_Audio->GetStatus();
-            }
-            else
-            {
-                *Value = g_Reg->AI_STATUS_REG;
-            }
-            break;
-        default:
-            *Value = 0;
-            return false;
+            m_MemLookupValue.UW[0] = PAddr & 0xFFFF;
+            m_MemLookupValue.UW[0] = (m_MemLookupValue.UW[0] << 16) | m_MemLookupValue.UW[0];
         }
-        break;
-    case 0x04600000:
-        switch (PAddr)
-        {
-        case 0x04600010: *Value = g_Reg->PI_STATUS_REG; break;
-        case 0x04600014: *Value = g_Reg->PI_DOMAIN1_REG; break;
-        case 0x04600018: *Value = g_Reg->PI_BSD_DOM1_PWD_REG; break;
-        case 0x0460001C: *Value = g_Reg->PI_BSD_DOM1_PGS_REG; break;
-        case 0x04600020: *Value = g_Reg->PI_BSD_DOM1_RLS_REG; break;
-        case 0x04600024: *Value = g_Reg->PI_DOMAIN2_REG; break;
-        case 0x04600028: *Value = g_Reg->PI_BSD_DOM2_PWD_REG; break;
-        case 0x0460002C: *Value = g_Reg->PI_BSD_DOM2_PGS_REG; break;
-        case 0x04600030: *Value = g_Reg->PI_BSD_DOM2_RLS_REG; break;
-        default:
-            *Value = 0;
-            return false;
-        }
-        break;
-    case 0x04700000:
-        switch (PAddr)
-        {
-        case 0x04700000: *Value = g_Reg->RI_MODE_REG; break;
-        case 0x04700004: *Value = g_Reg->RI_CONFIG_REG; break;
-        case 0x04700008: *Value = g_Reg->RI_CURRENT_LOAD_REG; break;
-        case 0x0470000C: *Value = g_Reg->RI_SELECT_REG; break;
-        case 0x04700010: *Value = g_Reg->RI_REFRESH_REG; break;
-        case 0x04700014: *Value = g_Reg->RI_LATENCY_REG; break;
-        case 0x04700018: *Value = g_Reg->RI_RERROR_REG; break;
-        case 0x0470001C: *Value = g_Reg->RI_WERROR_REG; break;
-        default:
-            *Value = 0;
-            return false;
-        }
-        break;
-    case 0x04800000:
-        switch (PAddr)
-        {
-        case 0x04800018: *Value = g_Reg->SI_STATUS_REG; break;
-        default:
-            *Value = 0;
-            return false;
-        }
-        break;
-    case 0x05000000:
-        *Value = PAddr & 0xFFFF;
-        *Value = (*Value << 16) | *Value;
-        return false;
-    case 0x08000000:
-        if (g_System->m_SaveUsing == SaveChip_Auto)
-        {
-            g_System->m_SaveUsing = SaveChip_FlashRam;
-        }
-        if (g_System->m_SaveUsing == SaveChip_Sram)
-        {
-            //Load Sram
-            uint8_t tmp[4] = "";
-            DmaFromSram(tmp, PAddr - 0x08000000, 4);
-            *Value = tmp[3] << 24 | tmp[2] << 16 | tmp[1] << 8 | tmp[0];
-            return true;
-        }
-        else if (g_System->m_SaveUsing != SaveChip_FlashRam)
-        {
-            *Value = PAddr & 0xFFFF;
-            *Value = (*Value << 16) | *Value;
-            return false;
-        }
-        *Value = ReadFromFlashStatus(PAddr);
-        break;
-    case 0x1FC00000:
-        if (PAddr < 0x1FC007C0)
-        {
-            /*			*Value = *(uint32_t *)(&PifRom[PAddr - 0x1FC00000]);
-            *Value = swap32by8(*Value); */
-            g_Notify->BreakPoint(__FILE__, __LINE__);
-            return true;
-        }
-        else if (PAddr < 0x1FC00800)
-        {
-            uint8_t * PIF_Ram = g_MMU->PifRam();
-            *Value = *(uint32_t *)(&PIF_Ram[PAddr - 0x1FC007C0]);
-            *Value = swap32by8(*Value);
-            return true;
-        }
-        else
-        {
-            *Value = 0;
-            return false;
-        }
-        break;
-    default:
-        *Value = PAddr & 0xFFFF;
-        *Value = (*Value << 16) | *Value;
-        return false;
-        break;
     }
-
+    *Value = m_MemLookupValue.UW[0];
     return true;
 }
 
@@ -2755,11 +2545,11 @@ bool CMipsMemoryVM::SB_NonMemory(uint32_t PAddr, uint8_t Value)
         if (PAddr >= CFBStart && PAddr < CFBEnd)
         {
             uint32_t OldProtect;
-            VirtualProtect(m_RDRAM+(PAddr & ~0xFFF),0xFFC,PAGE_READWRITE, &OldProtect);
-            *(uint8_t *)(m_RDRAM+PAddr) = Value;
-            VirtualProtect(m_RDRAM+(PAddr & ~0xFFF),0xFFC,OldProtect, &OldProtect);
-            g_Notify->DisplayError(L"FrameBufferWrite");
-            if (FrameBufferWrite) { FrameBufferWrite(PAddr,1); }
+            VirtualProtect(m_RDRAM + (PAddr & ~0xFFF), 0xFFC, PAGE_READWRITE, &OldProtect);
+            *(uint8_t *)(m_RDRAM + PAddr) = Value;
+            VirtualProtect(m_RDRAM + (PAddr & ~0xFFF), 0xFFC, OldProtect, &OldProtect);
+            g_Notify->DisplayError("FrameBufferWrite");
+            if (FrameBufferWrite) { FrameBufferWrite(PAddr, 1); }
             break;
         }
 #endif
@@ -2794,12 +2584,12 @@ bool CMipsMemoryVM::SH_NonMemory(uint32_t PAddr, uint16_t Value)
         if (PAddr >= CFBStart && PAddr < CFBEnd)
         {
             uint32_t OldProtect;
-            VirtualProtect(m_RDRAM+(PAddr & ~0xFFF),0xFFC,PAGE_READWRITE, &OldProtect);
-            *(uint16_t *)(m_RDRAM+PAddr) = Value;
-            if (FrameBufferWrite) { FrameBufferWrite(PAddr & ~0xFFF,2); }
+            VirtualProtect(m_RDRAM + (PAddr & ~0xFFF), 0xFFC, PAGE_READWRITE, &OldProtect);
+            *(uint16_t *)(m_RDRAM + PAddr) = Value;
+            if (FrameBufferWrite) { FrameBufferWrite(PAddr & ~0xFFF, 2); }
             //*(uint16_t *)(m_RDRAM+PAddr) = 0xFFFF;
             //VirtualProtect(m_RDRAM+(PAddr & ~0xFFF),0xFFC,PAGE_NOACCESS, &OldProtect);
-            g_Notify->DisplayError(L"PAddr = %x",PAddr);
+            g_Notify->DisplayError("PAddr = %x", PAddr);
             break;
         }
 #endif
@@ -2820,6 +2610,9 @@ bool CMipsMemoryVM::SH_NonMemory(uint32_t PAddr, uint16_t Value)
 
 bool CMipsMemoryVM::SW_NonMemory(uint32_t PAddr, uint32_t Value)
 {
+    m_MemLookupValue.UW[0] = Value;
+    m_MemLookupAddress = PAddr;
+
     if (PAddr >= 0x10000000 && PAddr < 0x16000000)
     {
         if ((PAddr - 0x10000000) < g_Rom->GetRomSize())
@@ -2829,7 +2622,7 @@ bool CMipsMemoryVM::SW_NonMemory(uint32_t PAddr, uint32_t Value)
 #ifdef ROM_IN_MAPSPACE
             {
                 uint32_t OldProtect;
-                VirtualProtect(ROM,RomFileSize,PAGE_NOACCESS, &OldProtect);
+                VirtualProtect(ROM, RomFileSize, PAGE_NOACCESS, &OldProtect);
             }
 #endif
             //LogMessage("%X: Wrote To Rom %08X from %08X",PROGRAM_COUNTER,Value,PAddr);
@@ -2854,11 +2647,11 @@ bool CMipsMemoryVM::SW_NonMemory(uint32_t PAddr, uint32_t Value)
         if (PAddr >= CFBStart && PAddr < CFBEnd)
         {
             uint32_t OldProtect;
-            VirtualProtect(m_RDRAM+(PAddr & ~0xFFF),0xFFC,PAGE_READWRITE, &OldProtect);
-            *(uint32_t *)(m_RDRAM+PAddr) = Value;
-            VirtualProtect(m_RDRAM+(PAddr & ~0xFFF),0xFFC,OldProtect, &OldProtect);
-            g_Notify->DisplayError(L"FrameBufferWrite %X",PAddr);
-            if (FrameBufferWrite) { FrameBufferWrite(PAddr,4); }
+            VirtualProtect(m_RDRAM + (PAddr & ~0xFFF), 0xFFC, PAGE_READWRITE, &OldProtect);
+            *(uint32_t *)(m_RDRAM + PAddr) = Value;
+            VirtualProtect(m_RDRAM + (PAddr & ~0xFFF), 0xFFC, OldProtect, &OldProtect);
+            g_Notify->DisplayError("FrameBufferWrite %X", PAddr);
+            if (FrameBufferWrite) { FrameBufferWrite(PAddr, 4); }
             break;
         }
 #endif
@@ -2870,29 +2663,7 @@ bool CMipsMemoryVM::SW_NonMemory(uint32_t PAddr, uint32_t Value)
             *(uint32_t *)(m_RDRAM + PAddr) = Value;
         }
         break;
-    case 0x03F00000:
-        switch (PAddr)
-        {
-        case 0x03F00000: g_Reg->RDRAM_CONFIG_REG = Value; break;
-        case 0x03F00004: g_Reg->RDRAM_DEVICE_ID_REG = Value; break;
-        case 0x03F00008: g_Reg->RDRAM_DELAY_REG = Value; break;
-        case 0x03F0000C: g_Reg->RDRAM_MODE_REG = Value; break;
-        case 0x03F00010: g_Reg->RDRAM_REF_INTERVAL_REG = Value; break;
-        case 0x03F00014: g_Reg->RDRAM_REF_ROW_REG = Value; break;
-        case 0x03F00018: g_Reg->RDRAM_RAS_INTERVAL_REG = Value; break;
-        case 0x03F0001C: g_Reg->RDRAM_MIN_INTERVAL_REG = Value; break;
-        case 0x03F00020: g_Reg->RDRAM_ADDR_SELECT_REG = Value; break;
-        case 0x03F00024: g_Reg->RDRAM_DEVICE_MANUF_REG = Value; break;
-        case 0x03F04004: break;
-        case 0x03F08004: break;
-        case 0x03F80004: break;
-        case 0x03F80008: break;
-        case 0x03F8000C: break;
-        case 0x03F80014: break;
-        default:
-            return false;
-        }
-        break;
+    case 0x03F00000: Write32RDRAMRegisters(); break;
     case 0x04000000:
         if (PAddr < 0x04002000)
         {
@@ -2901,542 +2672,18 @@ bool CMipsMemoryVM::SW_NonMemory(uint32_t PAddr, uint32_t Value)
         }
         else
         {
-            switch (PAddr)
-            {
-            case 0x04040000: g_Reg->SP_MEM_ADDR_REG = Value; break;
-            case 0x04040004: g_Reg->SP_DRAM_ADDR_REG = Value; break;
-            case 0x04040008:
-                g_Reg->SP_RD_LEN_REG = Value;
-                SP_DMA_READ();
-                break;
-            case 0x0404000C:
-                g_Reg->SP_WR_LEN_REG = Value;
-                SP_DMA_WRITE();
-                break;
-            case 0x04040010:
-                if ((Value & SP_CLR_HALT) != 0)
-                {
-                    g_Reg->SP_STATUS_REG &= ~SP_STATUS_HALT;
-                }
-                if ((Value & SP_SET_HALT) != 0)
-                {
-                    g_Reg->SP_STATUS_REG |= SP_STATUS_HALT;
-                }
-                if ((Value & SP_CLR_BROKE) != 0)
-                {
-                    g_Reg->SP_STATUS_REG &= ~SP_STATUS_BROKE;
-                }
-                if ((Value & SP_CLR_INTR) != 0)
-                {
-                    g_Reg->MI_INTR_REG &= ~MI_INTR_SP;
-                    g_Reg->m_RspIntrReg &= ~MI_INTR_SP;
-                    g_Reg->CheckInterrupts();
-                }
-                if ((Value & SP_SET_INTR) != 0)
-                {
-                    g_Notify->DisplayError(L"SP_SET_INTR");
-                }
-                if ((Value & SP_CLR_SSTEP) != 0)
-                {
-                    g_Reg->SP_STATUS_REG &= ~SP_STATUS_SSTEP;
-                }
-                if ((Value & SP_SET_SSTEP) != 0)
-                {
-                    g_Reg->SP_STATUS_REG |= SP_STATUS_SSTEP;
-                }
-                if ((Value & SP_CLR_INTR_BREAK) != 0)
-                {
-                    g_Reg->SP_STATUS_REG &= ~SP_STATUS_INTR_BREAK;
-                }
-                if ((Value & SP_SET_INTR_BREAK) != 0)
-                {
-                    g_Reg->SP_STATUS_REG |= SP_STATUS_INTR_BREAK;
-                }
-                if ((Value & SP_CLR_SIG0) != 0)
-                {
-                    g_Reg->SP_STATUS_REG &= ~SP_STATUS_SIG0;
-                }
-                if ((Value & SP_SET_SIG0) != 0)
-                {
-                    g_Reg->SP_STATUS_REG |= SP_STATUS_SIG0;
-                }
-                if ((Value & SP_CLR_SIG1) != 0)
-                {
-                    g_Reg->SP_STATUS_REG &= ~SP_STATUS_SIG1;
-                }
-                if ((Value & SP_SET_SIG1) != 0)
-                {
-                    g_Reg->SP_STATUS_REG |= SP_STATUS_SIG1;
-                }
-                if ((Value & SP_CLR_SIG2) != 0)
-                {
-                    g_Reg->SP_STATUS_REG &= ~SP_STATUS_SIG2;
-                }
-                if ((Value & SP_SET_SIG2) != 0)
-                {
-                    g_Reg->SP_STATUS_REG |= SP_STATUS_SIG2;
-                }
-                if ((Value & SP_CLR_SIG3) != 0)
-                {
-                    g_Reg->SP_STATUS_REG &= ~SP_STATUS_SIG3;
-                }
-                if ((Value & SP_SET_SIG3) != 0)
-                {
-                    g_Reg->SP_STATUS_REG |= SP_STATUS_SIG3;
-                }
-                if ((Value & SP_CLR_SIG4) != 0)
-                {
-                    g_Reg->SP_STATUS_REG &= ~SP_STATUS_SIG4;
-                }
-                if ((Value & SP_SET_SIG4) != 0)
-                {
-                    g_Reg->SP_STATUS_REG |= SP_STATUS_SIG4;
-                }
-                if ((Value & SP_CLR_SIG5) != 0)
-                {
-                    g_Reg->SP_STATUS_REG &= ~SP_STATUS_SIG5;
-                }
-                if ((Value & SP_SET_SIG5) != 0)
-                {
-                    g_Reg->SP_STATUS_REG |= SP_STATUS_SIG5;
-                }
-                if ((Value & SP_CLR_SIG6) != 0)
-                {
-                    g_Reg->SP_STATUS_REG &= ~SP_STATUS_SIG6;
-                }
-                if ((Value & SP_SET_SIG6) != 0)
-                {
-                    g_Reg->SP_STATUS_REG |= SP_STATUS_SIG6;
-                }
-                if ((Value & SP_CLR_SIG7) != 0)
-                {
-                    g_Reg->SP_STATUS_REG &= ~SP_STATUS_SIG7;
-                }
-                if ((Value & SP_SET_SIG7) != 0)
-                {
-                    g_Reg->SP_STATUS_REG |= SP_STATUS_SIG7;
-                }
-                if ((Value & SP_SET_SIG0) != 0 && g_System->RspAudioSignal())
-                {
-                    g_Reg->MI_INTR_REG |= MI_INTR_SP;
-                    g_Reg->CheckInterrupts();
-                }
-                //if (*( uint32_t *)(DMEM + 0xFC0) == 1)
-                //{
-                //	ChangeTimer(RspTimer,0x30000);
-                //}
-                //else
-                //{
-                try
-                {
-                    g_System->RunRSP();
-                }
-                catch (...)
-                {
-                    g_Notify->BreakPoint(__FILE__, __LINE__);
-                }
-                //}
-                break;
-            case 0x0404001C: g_Reg->SP_SEMAPHORE_REG = 0; break;
-            case 0x04080000: g_Reg->SP_PC_REG = Value & 0xFFC; break;
-            default:
-                return false;
-            }
+            Write32SPRegisters();
         }
         break;
-    case 0x04100000:
-        switch (PAddr)
-        {
-        case 0x04100000:
-            g_Reg->DPC_START_REG = Value;
-            g_Reg->DPC_CURRENT_REG = Value;
-            break;
-        case 0x04100004:
-            g_Reg->DPC_END_REG = Value;
-#ifdef tofix
-            if (g_Plugins->Gfx()->ProcessRDPList)
-            {
-                g_Plugins->Gfx()->ProcessRDPList();
-            }
-#endif
-            break;
-            //case 0x04100008: g_Reg->DPC_CURRENT_REG = Value; break;
-        case 0x0410000C:
-            if ((Value & DPC_CLR_XBUS_DMEM_DMA) != 0)
-            {
-                g_Reg->DPC_STATUS_REG &= ~DPC_STATUS_XBUS_DMEM_DMA;
-            }
-            if ((Value & DPC_SET_XBUS_DMEM_DMA) != 0)
-            {
-                g_Reg->DPC_STATUS_REG |= DPC_STATUS_XBUS_DMEM_DMA;
-            }
-            if ((Value & DPC_CLR_FREEZE) != 0)
-            {
-                g_Reg->DPC_STATUS_REG &= ~DPC_STATUS_FREEZE;
-            }
-            if ((Value & DPC_SET_FREEZE) != 0)
-            {
-                g_Reg->DPC_STATUS_REG |= DPC_STATUS_FREEZE;
-            }
-            if ((Value & DPC_CLR_FLUSH) != 0)
-            {
-                g_Reg->DPC_STATUS_REG &= ~DPC_STATUS_FLUSH;
-            }
-            if ((Value & DPC_SET_FLUSH) != 0)
-            {
-                g_Reg->DPC_STATUS_REG |= DPC_STATUS_FLUSH;
-            }
-            if ((Value & DPC_CLR_FREEZE) != 0)
-            {
-                if ((g_Reg->SP_STATUS_REG & SP_STATUS_HALT) == 0)
-                {
-                    if ((g_Reg->SP_STATUS_REG & SP_STATUS_BROKE) == 0)
-                    {
-                        try
-                        {
-                            g_System->RunRSP();
-                        }
-                        catch (...)
-                        {
-                            g_Notify->BreakPoint(__FILE__, __LINE__);
-                        }
-                    }
-                }
-            }
-#ifdef tofix
-            if (ShowUnhandledMemory)
-            {
-                //if ( ( Value & DPC_CLR_TMEM_CTR ) != 0)
-                //{
-                //	g_Notify->DisplayError(L"RSP: DPC_STATUS_REG: DPC_CLR_TMEM_CTR");
-                //}
-                //if ( ( Value & DPC_CLR_PIPE_CTR ) != 0)
-                //{
-                //	g_Notify->DisplayError(L"RSP: DPC_STATUS_REG: DPC_CLR_PIPE_CTR");
-                //}
-                //if ( ( Value & DPC_CLR_CMD_CTR ) != 0)
-                //{
-                //	g_Notify->DisplayError(L"RSP: DPC_STATUS_REG: DPC_CLR_CMD_CTR");
-                //}
-                //if ( ( Value & DPC_CLR_CLOCK_CTR ) != 0)
-                //{
-                //	g_Notify->DisplayError(L"RSP: DPC_STATUS_REG: DPC_CLR_CLOCK_CTR");
-                //}
-            }
-#endif
-            break;
-        default:
-            return false;
-        }
-        break;
-    case 0x04300000:
-        switch (PAddr)
-        {
-        case 0x04300000:
-            g_Reg->MI_MODE_REG &= ~0x7F;
-            g_Reg->MI_MODE_REG |= (Value & 0x7F);
-            if ((Value & MI_CLR_INIT) != 0)
-            {
-                g_Reg->MI_MODE_REG &= ~MI_MODE_INIT;
-            }
-            if ((Value & MI_SET_INIT) != 0)
-            {
-                g_Reg->MI_MODE_REG |= MI_MODE_INIT;
-            }
-            if ((Value & MI_CLR_EBUS) != 0)
-            {
-                g_Reg->MI_MODE_REG &= ~MI_MODE_EBUS;
-            }
-            if ((Value & MI_SET_EBUS) != 0)
-            {
-                g_Reg->MI_MODE_REG |= MI_MODE_EBUS;
-            }
-            if ((Value & MI_CLR_DP_INTR) != 0)
-            {
-                g_Reg->MI_INTR_REG &= ~MI_INTR_DP;
-                g_Reg->m_GfxIntrReg &= ~MI_INTR_DP;
-                g_Reg->CheckInterrupts();
-            }
-            if ((Value & MI_CLR_RDRAM) != 0)
-            {
-                g_Reg->MI_MODE_REG &= ~MI_MODE_RDRAM;
-            }
-            if ((Value & MI_SET_RDRAM) != 0)
-            {
-                g_Reg->MI_MODE_REG |= MI_MODE_RDRAM;
-            }
-            break;
-        case 0x0430000C:
-            if ((Value & MI_INTR_MASK_CLR_SP) != 0)
-            {
-                g_Reg->MI_INTR_MASK_REG &= ~MI_INTR_MASK_SP;
-            }
-            if ((Value & MI_INTR_MASK_SET_SP) != 0)
-            {
-                g_Reg->MI_INTR_MASK_REG |= MI_INTR_MASK_SP;
-            }
-            if ((Value & MI_INTR_MASK_CLR_SI) != 0)
-            {
-                g_Reg->MI_INTR_MASK_REG &= ~MI_INTR_MASK_SI;
-            }
-            if ((Value & MI_INTR_MASK_SET_SI) != 0)
-            {
-                g_Reg->MI_INTR_MASK_REG |= MI_INTR_MASK_SI;
-            }
-            if ((Value & MI_INTR_MASK_CLR_AI) != 0)
-            {
-                g_Reg->MI_INTR_MASK_REG &= ~MI_INTR_MASK_AI;
-            }
-            if ((Value & MI_INTR_MASK_SET_AI) != 0)
-            {
-                g_Reg->MI_INTR_MASK_REG |= MI_INTR_MASK_AI;
-            }
-            if ((Value & MI_INTR_MASK_CLR_VI) != 0)
-            {
-                g_Reg->MI_INTR_MASK_REG &= ~MI_INTR_MASK_VI;
-            }
-            if ((Value & MI_INTR_MASK_SET_VI) != 0)
-            {
-                g_Reg->MI_INTR_MASK_REG |= MI_INTR_MASK_VI;
-            }
-            if ((Value & MI_INTR_MASK_CLR_PI) != 0)
-            {
-                g_Reg->MI_INTR_MASK_REG &= ~MI_INTR_MASK_PI;
-            }
-            if ((Value & MI_INTR_MASK_SET_PI) != 0)
-            {
-                g_Reg->MI_INTR_MASK_REG |= MI_INTR_MASK_PI;
-            }
-            if ((Value & MI_INTR_MASK_CLR_DP) != 0)
-            {
-                g_Reg->MI_INTR_MASK_REG &= ~MI_INTR_MASK_DP;
-            }
-            if ((Value & MI_INTR_MASK_SET_DP) != 0)
-            {
-                g_Reg->MI_INTR_MASK_REG |= MI_INTR_MASK_DP;
-            }
-            break;
-        default:
-            return false;
-        }
-        break;
-    case 0x04400000:
-        switch (PAddr)
-        {
-        case 0x04400000:
-            if (g_Reg->VI_STATUS_REG != Value)
-            {
-                g_Reg->VI_STATUS_REG = Value;
-#ifdef tofix
-                if (g_Plugins->Gfx()->ViStatusChanged != NULL)
-                {
-                    g_Plugins->Gfx()->ViStatusChanged();
-                }
-#endif
-            }
-            break;
-        case 0x04400004:
-#ifdef CFB_READ
-            if (g_Reg->VI_ORIGIN_REG > 0x280)
-            {
-                SetFrameBuffer(g_Reg->VI_ORIGIN_REG, (uint32_t)(VI_WIDTH_REG * (VI_WIDTH_REG *.75)));
-            }
-#endif
-            g_Reg->VI_ORIGIN_REG = (Value & 0xFFFFFF);
-            //if (UpdateScreen != NULL )
-            //{
-            //	UpdateScreen();
-            //}
-            break;
-        case 0x04400008:
-            if (g_Reg->VI_WIDTH_REG != Value)
-            {
-                g_Reg->VI_WIDTH_REG = Value;
-#ifdef tofix
-                if (g_Plugins->Gfx()->ViWidthChanged != NULL)
-                {
-                    g_Plugins->Gfx()->ViWidthChanged();
-                }
-#endif
-            }
-            break;
-        case 0x0440000C: g_Reg->VI_INTR_REG = Value; break;
-        case 0x04400010:
-            g_Reg->MI_INTR_REG &= ~MI_INTR_VI;
-            g_Reg->CheckInterrupts();
-            break;
-        case 0x04400014: g_Reg->VI_BURST_REG = Value; break;
-        case 0x04400018: g_Reg->VI_V_SYNC_REG = Value; break;
-        case 0x0440001C: g_Reg->VI_H_SYNC_REG = Value; break;
-        case 0x04400020: g_Reg->VI_LEAP_REG = Value; break;
-        case 0x04400024: g_Reg->VI_H_START_REG = Value; break;
-        case 0x04400028: g_Reg->VI_V_START_REG = Value; break;
-        case 0x0440002C: g_Reg->VI_V_BURST_REG = Value; break;
-        case 0x04400030: g_Reg->VI_X_SCALE_REG = Value; break;
-        case 0x04400034: g_Reg->VI_Y_SCALE_REG = Value; break;
-        default:
-            return false;
-        }
-        break;
-    case 0x04500000:
-        switch (PAddr)
-        {
-        case 0x04500000: g_Reg->AI_DRAM_ADDR_REG = Value; break;
-        case 0x04500004:
-            g_Reg->AI_LEN_REG = Value;
-            if (g_System->bFixedAudio())
-            {
-                g_Audio->LenChanged();
-            }
-            else
-            {
-#ifdef tofix
-                if (g_Plugins->Audio()->AiLenChanged != NULL)
-                {
-                    g_Plugins->Audio()->AiLenChanged();
-                }
-#endif
-            }
-            break;
-        case 0x04500008: g_Reg->AI_CONTROL_REG = (Value & 1); break;
-        case 0x0450000C:
-            /* Clear Interrupt */;
-            g_Reg->MI_INTR_REG &= ~MI_INTR_AI;
-            g_Reg->m_AudioIntrReg &= ~MI_INTR_AI;
-            g_Reg->CheckInterrupts();
-            break;
-        case 0x04500010:
-            g_Reg->AI_DACRATE_REG = Value;
-#ifdef tofix
-            g_Plugins->Audio()->DacrateChanged(g_System->SystemType());
-#endif
-            if (g_System->bFixedAudio())
-            {
-                g_Audio->SetFrequency(Value, g_System->SystemType());
-            }
-            break;
-        case 0x04500014:  g_Reg->AI_BITRATE_REG = Value; break;
-        default:
-            return false;
-        }
-        break;
-    case 0x04600000:
-        switch (PAddr)
-        {
-        case 0x04600000: g_Reg->PI_DRAM_ADDR_REG = Value; break;
-        case 0x04600004: g_Reg->PI_CART_ADDR_REG = Value; break;
-        case 0x04600008:
-            g_Reg->PI_RD_LEN_REG = Value;
-            PI_DMA_READ();
-            break;
-        case 0x0460000C:
-            g_Reg->PI_WR_LEN_REG = Value;
-            PI_DMA_WRITE();
-            break;
-        case 0x04600010:
-            //if ((Value & PI_SET_RESET) != 0 )
-            //{
-            //	g_Notify->DisplayError(L"reset Controller");
-            //}
-            if ((Value & PI_CLR_INTR) != 0)
-            {
-                g_Reg->MI_INTR_REG &= ~MI_INTR_PI;
-                g_Reg->CheckInterrupts();
-            }
-            break;
-        case 0x04600014: g_Reg->PI_DOMAIN1_REG = (Value & 0xFF); break;
-        case 0x04600018: g_Reg->PI_BSD_DOM1_PWD_REG = (Value & 0xFF); break;
-        case 0x0460001C: g_Reg->PI_BSD_DOM1_PGS_REG = (Value & 0xFF); break;
-        case 0x04600020: g_Reg->PI_BSD_DOM1_RLS_REG = (Value & 0xFF); break;
-        case 0x04600024: g_Reg->PI_DOMAIN2_REG = (Value & 0xFF); break;
-        case 0x04600028: g_Reg->PI_BSD_DOM2_PWD_REG = (Value & 0xFF); break;
-        case 0x0460002C: g_Reg->PI_BSD_DOM2_PGS_REG = (Value & 0xFF); break;
-        case 0x04600030: g_Reg->PI_BSD_DOM2_RLS_REG = (Value & 0xFF); break;
-        default:
-            return false;
-        }
-        break;
-    case 0x04700000:
-        switch (PAddr)
-        {
-        case 0x04700000: g_Reg->RI_MODE_REG = Value; break;
-        case 0x04700004: g_Reg->RI_CONFIG_REG = Value; break;
-        case 0x04700008: g_Reg->RI_CURRENT_LOAD_REG = Value; break;
-        case 0x0470000C: g_Reg->RI_SELECT_REG = Value; break;
-        case 0x04700010: g_Reg->RI_REFRESH_REG = Value; break;
-        case 0x04700014: g_Reg->RI_LATENCY_REG = Value; break;
-        case 0x04700018: g_Reg->RI_RERROR_REG = Value; break;
-        case 0x0470001C: g_Reg->RI_WERROR_REG = Value; break;
-        default:
-            return false;
-        }
-        break;
-    case 0x04800000:
-        switch (PAddr)
-        {
-        case 0x04800000: g_Reg->SI_DRAM_ADDR_REG = Value; break;
-        case 0x04800004:
-            g_Reg->SI_PIF_ADDR_RD64B_REG = Value;
-            SI_DMA_READ();
-            break;
-        case 0x04800010:
-            g_Reg->SI_PIF_ADDR_WR64B_REG = Value;
-            SI_DMA_WRITE();
-            break;
-        case 0x04800018:
-            g_Reg->MI_INTR_REG &= ~MI_INTR_SI;
-            g_Reg->SI_STATUS_REG &= ~SI_STATUS_INTERRUPT;
-            g_Reg->CheckInterrupts();
-            break;
-        default:
-            return false;
-        }
-        break;
-    case 0x08000000:
-        if (g_System->m_SaveUsing == SaveChip_Sram)
-        {
-            //Store Sram
-            uint8_t tmp[4] = "";
-            tmp[0] = 0xFF & (Value);
-            tmp[1] = 0xFF & (Value >> 8);
-            tmp[2] = 0xFF & (Value >> 16);
-            tmp[3] = 0xFF & (Value >> 24);
-            DmaFromSram(tmp, PAddr - 0x08000000, 4);
-            return true;
-        }
-        if (PAddr != 0x08010000)
-        {
-            return false;
-        }
-        if (g_System->m_SaveUsing == SaveChip_Auto)
-        {
-            g_System->m_SaveUsing = SaveChip_FlashRam;
-        }
-        if (g_System->m_SaveUsing != SaveChip_FlashRam)
-        {
-            return true;
-        }
-
-        WriteToFlashCommand(Value);
-        return true;
-        break;
-    case 0x1FC00000:
-        if (PAddr < 0x1FC007C0)
-        {
-            return false;
-        }
-        else if (PAddr < 0x1FC00800)
-        {
-            Value = swap32by8(Value);
-            *(uint32_t *)(&m_PifRam[PAddr - 0x1FC007C0]) = Value;
-            if (PAddr == 0x1FC007FC)
-            {
-                PifRamWrite();
-            }
-            return true;
-        }
-        return false;
-        break;
+    case 0x04100000: Write32DPCommandRegisters(); break;
+    case 0x04300000: Write32MIPSInterface(); break;
+    case 0x04400000: Write32VideoInterface(); break;
+    case 0x04500000: Write32AudioInterface(); break;
+    case 0x04600000: Write32PeripheralInterface(); break;
+    case 0x04700000: Write32RDRAMInterface(); break;
+    case 0x04800000: Write32SerialInterface(); break;
+    case 0x08000000: Write32CartridgeDomain2Address2(); break;
+    case 0x1FC00000: Write32PifRam(); break;
     default:
         return false;
         break;
@@ -5492,7 +4739,7 @@ void CMipsMemoryVM::ChangeSpStatus()
     }
     if ((RegModValue & SP_SET_INTR) != 0 && bHaveDebugger())
     {
-        g_Notify->DisplayError(L"SP_SET_INTR");
+        g_Notify->DisplayError("SP_SET_INTR");
     }
     if ((RegModValue & SP_CLR_SSTEP) != 0)
     {
@@ -5646,5 +4893,909 @@ void CMipsMemoryVM::ChangeMiIntrMask()
     if ((RegModValue & MI_INTR_MASK_SET_DP) != 0)
     {
         g_Reg->MI_INTR_MASK_REG |= MI_INTR_MASK_DP;
+    }
+}
+
+void CMipsMemoryVM::Load32RDRAMRegisters(void)
+{
+    switch (m_MemLookupAddress & 0x1FFFFFFF)
+    {
+    case 0x03F00000: m_MemLookupValue.UW[0] = g_Reg->RDRAM_CONFIG_REG; break;
+    case 0x03F00004: m_MemLookupValue.UW[0] = g_Reg->RDRAM_DEVICE_ID_REG; break;
+    case 0x03F00008: m_MemLookupValue.UW[0] = g_Reg->RDRAM_DELAY_REG; break;
+    case 0x03F0000C: m_MemLookupValue.UW[0] = g_Reg->RDRAM_MODE_REG; break;
+    case 0x03F00010: m_MemLookupValue.UW[0] = g_Reg->RDRAM_REF_INTERVAL_REG; break;
+    case 0x03F00014: m_MemLookupValue.UW[0] = g_Reg->RDRAM_REF_ROW_REG; break;
+    case 0x03F00018: m_MemLookupValue.UW[0] = g_Reg->RDRAM_RAS_INTERVAL_REG; break;
+    case 0x03F0001C: m_MemLookupValue.UW[0] = g_Reg->RDRAM_MIN_INTERVAL_REG; break;
+    case 0x03F00020: m_MemLookupValue.UW[0] = g_Reg->RDRAM_ADDR_SELECT_REG; break;
+    case 0x03F00024: m_MemLookupValue.UW[0] = g_Reg->RDRAM_DEVICE_MANUF_REG; break;
+    default:
+        m_MemLookupValue.UW[0] = 0;
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    m_MemLookupValid = true;
+}
+
+void CMipsMemoryVM::Load32SPRegisters(void)
+{
+    switch (m_MemLookupAddress & 0x1FFFFFFF)
+    {
+    case 0x04040010: m_MemLookupValue.UW[0] = g_Reg->SP_STATUS_REG; break;
+    case 0x04040014: m_MemLookupValue.UW[0] = g_Reg->SP_DMA_FULL_REG; break;
+    case 0x04040018: m_MemLookupValue.UW[0] = g_Reg->SP_DMA_BUSY_REG; break;
+    case 0x0404001C:
+        m_MemLookupValue.UW[0] = g_Reg->SP_SEMAPHORE_REG;
+        g_Reg->SP_SEMAPHORE_REG = 1;
+        break;
+    case 0x04080000: m_MemLookupValue.UW[0] = g_Reg->SP_PC_REG; break;
+    default:
+        m_MemLookupValue.UW[0] = 0;
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+}
+
+void CMipsMemoryVM::Load32DPCommand(void)
+{
+    switch (m_MemLookupAddress & 0x1FFFFFFF)
+    {
+    case 0x0410000C: m_MemLookupValue.UW[0] = g_Reg->DPC_STATUS_REG; break;
+    case 0x04100010: m_MemLookupValue.UW[0] = g_Reg->DPC_CLOCK_REG; break;
+    case 0x04100014: m_MemLookupValue.UW[0] = g_Reg->DPC_BUFBUSY_REG; break;
+    case 0x04100018: m_MemLookupValue.UW[0] = g_Reg->DPC_PIPEBUSY_REG; break;
+    case 0x0410001C: m_MemLookupValue.UW[0] = g_Reg->DPC_TMEM_REG; break;
+    default:
+        m_MemLookupValue.UW[0] = 0;
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+}
+
+void CMipsMemoryVM::Load32MIPSInterface(void)
+{
+    switch (m_MemLookupAddress & 0x1FFFFFFF)
+    {
+    case 0x04300000: m_MemLookupValue.UW[0] = g_Reg->MI_MODE_REG; break;
+    case 0x04300004: m_MemLookupValue.UW[0] = g_Reg->MI_VERSION_REG; break;
+    case 0x04300008: m_MemLookupValue.UW[0] = g_Reg->MI_INTR_REG; break;
+    case 0x0430000C: m_MemLookupValue.UW[0] = g_Reg->MI_INTR_MASK_REG; break;
+    default:
+        m_MemLookupValue.UW[0] = 0;
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+}
+
+void CMipsMemoryVM::Load32VideoInterface(void)
+{
+    switch (m_MemLookupAddress & 0x1FFFFFFF)
+    {
+    case 0x04400000: m_MemLookupValue.UW[0] = g_Reg->VI_STATUS_REG; break;
+    case 0x04400004: m_MemLookupValue.UW[0] = g_Reg->VI_ORIGIN_REG; break;
+    case 0x04400008: m_MemLookupValue.UW[0] = g_Reg->VI_WIDTH_REG; break;
+    case 0x0440000C: m_MemLookupValue.UW[0] = g_Reg->VI_INTR_REG; break;
+    case 0x04400010:
+        g_MMU->UpdateHalfLine();
+        m_MemLookupValue.UW[0] = g_MMU->m_HalfLine;
+        break;
+    case 0x04400014: m_MemLookupValue.UW[0] = g_Reg->VI_BURST_REG; break;
+    case 0x04400018: m_MemLookupValue.UW[0] = g_Reg->VI_V_SYNC_REG; break;
+    case 0x0440001C: m_MemLookupValue.UW[0] = g_Reg->VI_H_SYNC_REG; break;
+    case 0x04400020: m_MemLookupValue.UW[0] = g_Reg->VI_LEAP_REG; break;
+    case 0x04400024: m_MemLookupValue.UW[0] = g_Reg->VI_H_START_REG; break;
+    case 0x04400028: m_MemLookupValue.UW[0] = g_Reg->VI_V_START_REG; break;
+    case 0x0440002C: m_MemLookupValue.UW[0] = g_Reg->VI_V_BURST_REG; break;
+    case 0x04400030: m_MemLookupValue.UW[0] = g_Reg->VI_X_SCALE_REG; break;
+    case 0x04400034: m_MemLookupValue.UW[0] = g_Reg->VI_Y_SCALE_REG; break;
+    default:
+        m_MemLookupValue.UW[0] = 0;
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+}
+
+void CMipsMemoryVM::Load32AudioInterface(void)
+{
+    switch (m_MemLookupAddress & 0x1FFFFFFF)
+    {
+    case 0x04500004:
+        if (g_System->bFixedAudio())
+        {
+            m_MemLookupValue.UW[0] = g_Audio->GetLength();
+        }
+        else
+        {
+#ifdef tofix
+            if (g_Plugins->Audio()->AiReadLength != NULL)
+            {
+                m_MemLookupValue.UW[0] = g_Plugins->Audio()->AiReadLength();
+            }
+            else
+            {
+#endif
+                m_MemLookupValue.UW[0] = 0;
+#ifdef tofix
+            }
+#endif
+        }
+        break;
+    case 0x0450000C:
+        if (g_System->bFixedAudio())
+        {
+            m_MemLookupValue.UW[0] = g_Audio->GetStatus();
+        }
+        else
+        {
+            m_MemLookupValue.UW[0] = g_Reg->AI_STATUS_REG;
+        }
+        break;
+    default:
+        m_MemLookupValue.UW[0] = 0;
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+}
+
+void CMipsMemoryVM::Load32PeripheralInterface(void)
+{
+    switch (m_MemLookupAddress & 0x1FFFFFFF)
+    {
+    case 0x04600010: m_MemLookupValue.UW[0] = g_Reg->PI_STATUS_REG; break;
+    case 0x04600014: m_MemLookupValue.UW[0] = g_Reg->PI_DOMAIN1_REG; break;
+    case 0x04600018: m_MemLookupValue.UW[0] = g_Reg->PI_BSD_DOM1_PWD_REG; break;
+    case 0x0460001C: m_MemLookupValue.UW[0] = g_Reg->PI_BSD_DOM1_PGS_REG; break;
+    case 0x04600020: m_MemLookupValue.UW[0] = g_Reg->PI_BSD_DOM1_RLS_REG; break;
+    case 0x04600024: m_MemLookupValue.UW[0] = g_Reg->PI_DOMAIN2_REG; break;
+    case 0x04600028: m_MemLookupValue.UW[0] = g_Reg->PI_BSD_DOM2_PWD_REG; break;
+    case 0x0460002C: m_MemLookupValue.UW[0] = g_Reg->PI_BSD_DOM2_PGS_REG; break;
+    case 0x04600030: m_MemLookupValue.UW[0] = g_Reg->PI_BSD_DOM2_RLS_REG; break;
+    default:
+        m_MemLookupValue.UW[0] = 0;
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+}
+
+void CMipsMemoryVM::Load32RDRAMInterface(void)
+{
+    switch (m_MemLookupAddress & 0x1FFFFFFF)
+    {
+    case 0x04700000: m_MemLookupValue.UW[0] = g_Reg->RI_MODE_REG; break;
+    case 0x04700004: m_MemLookupValue.UW[0] = g_Reg->RI_CONFIG_REG; break;
+    case 0x04700008: m_MemLookupValue.UW[0] = g_Reg->RI_CURRENT_LOAD_REG; break;
+    case 0x0470000C: m_MemLookupValue.UW[0] = g_Reg->RI_SELECT_REG; break;
+    case 0x04700010: m_MemLookupValue.UW[0] = g_Reg->RI_REFRESH_REG; break;
+    case 0x04700014: m_MemLookupValue.UW[0] = g_Reg->RI_LATENCY_REG; break;
+    case 0x04700018: m_MemLookupValue.UW[0] = g_Reg->RI_RERROR_REG; break;
+    case 0x0470001C: m_MemLookupValue.UW[0] = g_Reg->RI_WERROR_REG; break;
+    default:
+        m_MemLookupValue.UW[0] = 0;
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+}
+
+void CMipsMemoryVM::Load32SerialInterface(void)
+{
+    switch (m_MemLookupAddress & 0x1FFFFFFF)
+    {
+    case 0x04800018: m_MemLookupValue.UW[0] = g_Reg->SI_STATUS_REG; break;
+    default:
+        m_MemLookupValue.UW[0] = 0;
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+}
+
+void CMipsMemoryVM::Load32CartridgeDomain2Address1(void)
+{
+    m_MemLookupValue.UW[0] = m_MemLookupAddress & 0xFFFF;
+    m_MemLookupValue.UW[0] = (m_MemLookupValue.UW[0] << 16) | m_MemLookupValue.UW[0];
+    if (bHaveDebugger())
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
+void CMipsMemoryVM::Load32CartridgeDomain2Address2(void)
+{
+    if (g_System->m_SaveUsing == SaveChip_Auto)
+    {
+        g_System->m_SaveUsing = SaveChip_FlashRam;
+    }
+    if (g_System->m_SaveUsing == SaveChip_Sram)
+    {
+        //Load Sram
+        uint8_t tmp[4] = "";
+        g_MMU->DmaFromSram(tmp, (m_MemLookupAddress & 0x1FFFFFFF) - 0x08000000, 4);
+        m_MemLookupValue.UW[0] = tmp[3] << 24 | tmp[2] << 16 | tmp[1] << 8 | tmp[0];
+    }
+    else if (g_System->m_SaveUsing != SaveChip_FlashRam)
+    {
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        m_MemLookupValue.UW[0] = m_MemLookupAddress & 0xFFFF;
+        m_MemLookupValue.UW[0] = (m_MemLookupValue.UW[0] << 16) | m_MemLookupValue.UW[0];
+    }
+    else
+    {
+        m_MemLookupValue.UW[0] = g_MMU->ReadFromFlashStatus(m_MemLookupAddress & 0x1FFFFFFF);
+    }
+}
+
+void CMipsMemoryVM::Load32PifRam(void)
+{
+    if ((m_MemLookupAddress & 0x1FFFFFFF) < 0x1FC007C0)
+    {
+        //m_MemLookupValue.UW[0] = swap32by8(*(uint32_t *)(&PifRom[PAddr - 0x1FC00000]));
+        m_MemLookupValue.UW[0] = 0;
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    else if ((m_MemLookupAddress & 0x1FFFFFFF) < 0x1FC00800)
+    {
+        uint8_t * PIF_Ram = g_MMU->PifRam();
+        m_MemLookupValue.UW[0] = *(uint32_t *)(&PIF_Ram[(m_MemLookupAddress & 0x1FFFFFFF) - 0x1FC007C0]);
+        m_MemLookupValue.UW[0] = swap32by8(m_MemLookupValue.UW[0]);
+    }
+    else
+    {
+        m_MemLookupValue.UW[0] = 0;
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+}
+
+void CMipsMemoryVM::Load32Rom(void)
+{
+    if (g_MMU->m_RomWrittenTo)
+    {
+        m_MemLookupValue.UW[0] = g_MMU->m_RomWroteValue;
+        //LogMessage("%X: Read crap from Rom %08X from %08X",PROGRAM_COUNTER,*Value,PAddr);
+        g_MMU->m_RomWrittenTo = false;
+#ifdef ROM_IN_MAPSPACE
+        {
+            uint32_t OldProtect;
+            VirtualProtect(ROM, RomFileSize, PAGE_READONLY, &OldProtect);
+        }
+#endif
+    }
+    else if ((m_MemLookupAddress & 0xFFFFFFF) < g_MMU->m_RomSize)
+    {
+        m_MemLookupValue.UW[0] = *(uint32_t *)&g_MMU->m_Rom[(m_MemLookupAddress & 0xFFFFFFF)];
+    }
+    else
+    {
+        m_MemLookupValue.UW[0] = m_MemLookupAddress & 0xFFFF;
+        m_MemLookupValue.UW[0] = (m_MemLookupValue.UW[0] << 16) | m_MemLookupValue.UW[0];
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+}
+
+void CMipsMemoryVM::Write32RDRAMRegisters(void)
+{
+    switch ((m_MemLookupAddress & 0xFFFFFFF))
+    {
+    case 0x03F00000: g_Reg->RDRAM_CONFIG_REG = m_MemLookupValue.UW[0]; break;
+    case 0x03F00004: g_Reg->RDRAM_DEVICE_ID_REG = m_MemLookupValue.UW[0]; break;
+    case 0x03F00008: g_Reg->RDRAM_DELAY_REG = m_MemLookupValue.UW[0]; break;
+    case 0x03F0000C: g_Reg->RDRAM_MODE_REG = m_MemLookupValue.UW[0]; break;
+    case 0x03F00010: g_Reg->RDRAM_REF_INTERVAL_REG = m_MemLookupValue.UW[0]; break;
+    case 0x03F00014: g_Reg->RDRAM_REF_ROW_REG = m_MemLookupValue.UW[0]; break;
+    case 0x03F00018: g_Reg->RDRAM_RAS_INTERVAL_REG = m_MemLookupValue.UW[0]; break;
+    case 0x03F0001C: g_Reg->RDRAM_MIN_INTERVAL_REG = m_MemLookupValue.UW[0]; break;
+    case 0x03F00020: g_Reg->RDRAM_ADDR_SELECT_REG = m_MemLookupValue.UW[0]; break;
+    case 0x03F00024: g_Reg->RDRAM_DEVICE_MANUF_REG = m_MemLookupValue.UW[0]; break;
+    case 0x03F04004: break;
+    case 0x03F08004: break;
+    case 0x03F80004: break;
+    case 0x03F80008: break;
+    case 0x03F8000C: break;
+    case 0x03F80014: break;
+    default:
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+}
+
+void CMipsMemoryVM::Write32SPRegisters(void)
+{
+    switch ((m_MemLookupAddress & 0xFFFFFFF))
+    {
+    case 0x04040000: g_Reg->SP_MEM_ADDR_REG = m_MemLookupValue.UW[0]; break;
+    case 0x04040004: g_Reg->SP_DRAM_ADDR_REG = m_MemLookupValue.UW[0]; break;
+    case 0x04040008:
+        g_Reg->SP_RD_LEN_REG = m_MemLookupValue.UW[0];
+        g_MMU->SP_DMA_READ();
+        break;
+    case 0x0404000C:
+        g_Reg->SP_WR_LEN_REG = m_MemLookupValue.UW[0];
+        g_MMU->SP_DMA_WRITE();
+        break;
+    case 0x04040010:
+        if ((m_MemLookupValue.UW[0] & SP_CLR_HALT) != 0)
+        {
+            g_Reg->SP_STATUS_REG &= ~SP_STATUS_HALT;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_SET_HALT) != 0)
+        {
+            g_Reg->SP_STATUS_REG |= SP_STATUS_HALT;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_CLR_BROKE) != 0)
+        {
+            g_Reg->SP_STATUS_REG &= ~SP_STATUS_BROKE;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_CLR_INTR) != 0)
+        {
+            g_Reg->MI_INTR_REG &= ~MI_INTR_SP;
+            g_Reg->m_RspIntrReg &= ~MI_INTR_SP;
+            g_Reg->CheckInterrupts();
+        }
+        if ((m_MemLookupValue.UW[0] & SP_SET_INTR) != 0)
+        {
+            g_Notify->DisplayError("SP_SET_INTR");
+        }
+        if ((m_MemLookupValue.UW[0] & SP_CLR_SSTEP) != 0)
+        {
+            g_Reg->SP_STATUS_REG &= ~SP_STATUS_SSTEP;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_SET_SSTEP) != 0)
+        {
+            g_Reg->SP_STATUS_REG |= SP_STATUS_SSTEP;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_CLR_INTR_BREAK) != 0)
+        {
+            g_Reg->SP_STATUS_REG &= ~SP_STATUS_INTR_BREAK;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_SET_INTR_BREAK) != 0)
+        {
+            g_Reg->SP_STATUS_REG |= SP_STATUS_INTR_BREAK;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_CLR_SIG0) != 0)
+        {
+            g_Reg->SP_STATUS_REG &= ~SP_STATUS_SIG0;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_SET_SIG0) != 0)
+        {
+            g_Reg->SP_STATUS_REG |= SP_STATUS_SIG0;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_CLR_SIG1) != 0)
+        {
+            g_Reg->SP_STATUS_REG &= ~SP_STATUS_SIG1;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_SET_SIG1) != 0)
+        {
+            g_Reg->SP_STATUS_REG |= SP_STATUS_SIG1;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_CLR_SIG2) != 0)
+        {
+            g_Reg->SP_STATUS_REG &= ~SP_STATUS_SIG2;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_SET_SIG2) != 0)
+        {
+            g_Reg->SP_STATUS_REG |= SP_STATUS_SIG2;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_CLR_SIG3) != 0)
+        {
+            g_Reg->SP_STATUS_REG &= ~SP_STATUS_SIG3;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_SET_SIG3) != 0)
+        {
+            g_Reg->SP_STATUS_REG |= SP_STATUS_SIG3;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_CLR_SIG4) != 0)
+        {
+            g_Reg->SP_STATUS_REG &= ~SP_STATUS_SIG4;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_SET_SIG4) != 0)
+        {
+            g_Reg->SP_STATUS_REG |= SP_STATUS_SIG4;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_CLR_SIG5) != 0)
+        {
+            g_Reg->SP_STATUS_REG &= ~SP_STATUS_SIG5;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_SET_SIG5) != 0)
+        {
+            g_Reg->SP_STATUS_REG |= SP_STATUS_SIG5;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_CLR_SIG6) != 0)
+        {
+            g_Reg->SP_STATUS_REG &= ~SP_STATUS_SIG6;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_SET_SIG6) != 0)
+        {
+            g_Reg->SP_STATUS_REG |= SP_STATUS_SIG6;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_CLR_SIG7) != 0)
+        {
+            g_Reg->SP_STATUS_REG &= ~SP_STATUS_SIG7;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_SET_SIG7) != 0)
+        {
+            g_Reg->SP_STATUS_REG |= SP_STATUS_SIG7;
+        }
+        if ((m_MemLookupValue.UW[0] & SP_SET_SIG0) != 0 && g_System->RspAudioSignal())
+        {
+            g_Reg->MI_INTR_REG |= MI_INTR_SP;
+            g_Reg->CheckInterrupts();
+        }
+        //if (*( uint32_t *)(DMEM + 0xFC0) == 1)
+        //{
+        //	ChangeTimer(RspTimer,0x30000);
+        //}
+        //else
+        //{
+        try
+        {
+            g_System->RunRSP();
+        }
+        catch (...)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        //}
+        break;
+    case 0x0404001C: g_Reg->SP_SEMAPHORE_REG = 0; break;
+    case 0x04080000: g_Reg->SP_PC_REG = m_MemLookupValue.UW[0] & 0xFFC; break;
+    default:
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+}
+
+void CMipsMemoryVM::Write32DPCommandRegisters(void)
+{
+    switch ((m_MemLookupAddress & 0xFFFFFFF))
+    {
+    case 0x04100000:
+        g_Reg->DPC_START_REG = m_MemLookupValue.UW[0];
+        g_Reg->DPC_CURRENT_REG = m_MemLookupValue.UW[0];
+        break;
+    case 0x04100004:
+        g_Reg->DPC_END_REG = m_MemLookupValue.UW[0];
+        if (g_Plugins->Gfx()->ProcessRDPList)
+        {
+            g_Plugins->Gfx()->ProcessRDPList();
+        }
+        break;
+        //case 0x04100008: g_Reg->DPC_CURRENT_REG = Value; break;
+    case 0x0410000C:
+        if ((m_MemLookupValue.UW[0] & DPC_CLR_XBUS_DMEM_DMA) != 0)
+        {
+            g_Reg->DPC_STATUS_REG &= ~DPC_STATUS_XBUS_DMEM_DMA;
+        }
+        if ((m_MemLookupValue.UW[0] & DPC_SET_XBUS_DMEM_DMA) != 0)
+        {
+            g_Reg->DPC_STATUS_REG |= DPC_STATUS_XBUS_DMEM_DMA;
+        }
+        if ((m_MemLookupValue.UW[0] & DPC_CLR_FREEZE) != 0)
+        {
+            g_Reg->DPC_STATUS_REG &= ~DPC_STATUS_FREEZE;
+        }
+        if ((m_MemLookupValue.UW[0] & DPC_SET_FREEZE) != 0)
+        {
+            g_Reg->DPC_STATUS_REG |= DPC_STATUS_FREEZE;
+        }
+        if ((m_MemLookupValue.UW[0] & DPC_CLR_FLUSH) != 0)
+        {
+            g_Reg->DPC_STATUS_REG &= ~DPC_STATUS_FLUSH;
+        }
+        if ((m_MemLookupValue.UW[0] & DPC_SET_FLUSH) != 0)
+        {
+            g_Reg->DPC_STATUS_REG |= DPC_STATUS_FLUSH;
+        }
+        if ((m_MemLookupValue.UW[0] & DPC_CLR_FREEZE) != 0)
+        {
+            if ((g_Reg->SP_STATUS_REG & SP_STATUS_HALT) == 0)
+            {
+                if ((g_Reg->SP_STATUS_REG & SP_STATUS_BROKE) == 0)
+                {
+                    __except_try()
+                    {
+                        g_System->RunRSP();
+                    }
+                    __except_catch()
+                    {
+                        g_Notify->BreakPoint(__FILE__, __LINE__);
+                    }
+                }
+            }
+        }
+#ifdef legacycode
+        if (ShowUnhandledMemory)
+        {
+            //if ( ( m_MemLookupValue.UW[0] & DPC_CLR_TMEM_CTR ) != 0)
+            //{
+            //	g_Notify->DisplayError("RSP: DPC_STATUS_REG: DPC_CLR_TMEM_CTR");
+            //}
+            //if ( ( m_MemLookupValue.UW[0] & DPC_CLR_PIPE_CTR ) != 0)
+            //{
+            //	g_Notify->DisplayError("RSP: DPC_STATUS_REG: DPC_CLR_PIPE_CTR");
+            //}
+            //if ( ( m_MemLookupValue.UW[0] & DPC_CLR_CMD_CTR ) != 0)
+            //{
+            //	g_Notify->DisplayError("RSP: DPC_STATUS_REG: DPC_CLR_CMD_CTR");
+            //}
+            //if ( ( m_MemLookupValue.UW[0] & DPC_CLR_CLOCK_CTR ) != 0)
+            //{
+            //	g_Notify->DisplayError("RSP: DPC_STATUS_REG: DPC_CLR_CLOCK_CTR");
+            //}
+        }
+#endif
+        break;
+    default:
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+}
+
+void CMipsMemoryVM::Write32MIPSInterface(void)
+{
+    switch ((m_MemLookupAddress & 0xFFFFFFF))
+    {
+    case 0x04300000:
+        g_Reg->MI_MODE_REG &= ~0x7F;
+        g_Reg->MI_MODE_REG |= (m_MemLookupValue.UW[0] & 0x7F);
+        if ((m_MemLookupValue.UW[0] & MI_CLR_INIT) != 0)
+        {
+            g_Reg->MI_MODE_REG &= ~MI_MODE_INIT;
+        }
+        if ((m_MemLookupValue.UW[0] & MI_SET_INIT) != 0)
+        {
+            g_Reg->MI_MODE_REG |= MI_MODE_INIT;
+        }
+        if ((m_MemLookupValue.UW[0] & MI_CLR_EBUS) != 0)
+        {
+            g_Reg->MI_MODE_REG &= ~MI_MODE_EBUS;
+        }
+        if ((m_MemLookupValue.UW[0] & MI_SET_EBUS) != 0)
+        {
+            g_Reg->MI_MODE_REG |= MI_MODE_EBUS;
+        }
+        if ((m_MemLookupValue.UW[0] & MI_CLR_DP_INTR) != 0)
+        {
+            g_Reg->MI_INTR_REG &= ~MI_INTR_DP;
+            g_Reg->m_GfxIntrReg &= ~MI_INTR_DP;
+            g_Reg->CheckInterrupts();
+        }
+        if ((m_MemLookupValue.UW[0] & MI_CLR_RDRAM) != 0)
+        {
+            g_Reg->MI_MODE_REG &= ~MI_MODE_RDRAM;
+        }
+        if ((m_MemLookupValue.UW[0] & MI_SET_RDRAM) != 0)
+        {
+            g_Reg->MI_MODE_REG |= MI_MODE_RDRAM;
+        }
+        break;
+    case 0x0430000C:
+        if ((m_MemLookupValue.UW[0] & MI_INTR_MASK_CLR_SP) != 0)
+        {
+            g_Reg->MI_INTR_MASK_REG &= ~MI_INTR_MASK_SP;
+        }
+        if ((m_MemLookupValue.UW[0] & MI_INTR_MASK_SET_SP) != 0)
+        {
+            g_Reg->MI_INTR_MASK_REG |= MI_INTR_MASK_SP;
+        }
+        if ((m_MemLookupValue.UW[0] & MI_INTR_MASK_CLR_SI) != 0)
+        {
+            g_Reg->MI_INTR_MASK_REG &= ~MI_INTR_MASK_SI;
+        }
+        if ((m_MemLookupValue.UW[0] & MI_INTR_MASK_SET_SI) != 0)
+        {
+            g_Reg->MI_INTR_MASK_REG |= MI_INTR_MASK_SI;
+        }
+        if ((m_MemLookupValue.UW[0] & MI_INTR_MASK_CLR_AI) != 0)
+        {
+            g_Reg->MI_INTR_MASK_REG &= ~MI_INTR_MASK_AI;
+        }
+        if ((m_MemLookupValue.UW[0] & MI_INTR_MASK_SET_AI) != 0)
+        {
+            g_Reg->MI_INTR_MASK_REG |= MI_INTR_MASK_AI;
+        }
+        if ((m_MemLookupValue.UW[0] & MI_INTR_MASK_CLR_VI) != 0)
+        {
+            g_Reg->MI_INTR_MASK_REG &= ~MI_INTR_MASK_VI;
+        }
+        if ((m_MemLookupValue.UW[0] & MI_INTR_MASK_SET_VI) != 0)
+        {
+            g_Reg->MI_INTR_MASK_REG |= MI_INTR_MASK_VI;
+        }
+        if ((m_MemLookupValue.UW[0] & MI_INTR_MASK_CLR_PI) != 0)
+        {
+            g_Reg->MI_INTR_MASK_REG &= ~MI_INTR_MASK_PI;
+        }
+        if ((m_MemLookupValue.UW[0] & MI_INTR_MASK_SET_PI) != 0)
+        {
+            g_Reg->MI_INTR_MASK_REG |= MI_INTR_MASK_PI;
+        }
+        if ((m_MemLookupValue.UW[0] & MI_INTR_MASK_CLR_DP) != 0)
+        {
+            g_Reg->MI_INTR_MASK_REG &= ~MI_INTR_MASK_DP;
+        }
+        if ((m_MemLookupValue.UW[0] & MI_INTR_MASK_SET_DP) != 0)
+        {
+            g_Reg->MI_INTR_MASK_REG |= MI_INTR_MASK_DP;
+        }
+        break;
+    default:
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+}
+
+void CMipsMemoryVM::Write32VideoInterface(void)
+{
+    switch ((m_MemLookupAddress & 0xFFFFFFF))
+    {
+    case 0x04400000:
+        if (g_Reg->VI_STATUS_REG != m_MemLookupValue.UW[0])
+        {
+            g_Reg->VI_STATUS_REG = m_MemLookupValue.UW[0];
+            if (g_Plugins->Gfx()->ViStatusChanged != NULL)
+            {
+                g_Plugins->Gfx()->ViStatusChanged();
+            }
+        }
+        break;
+    case 0x04400004:
+#ifdef CFB_READ
+        if (g_Reg->VI_ORIGIN_REG > 0x280)
+        {
+            SetFrameBuffer(g_Reg->VI_ORIGIN_REG, (uint32_t)(VI_WIDTH_REG * (VI_WIDTH_REG *.75)));
+        }
+#endif
+        g_Reg->VI_ORIGIN_REG = (m_MemLookupValue.UW[0] & 0xFFFFFF);
+        //if (UpdateScreen != NULL )
+        //{
+        //	UpdateScreen();
+        //}
+        break;
+    case 0x04400008:
+        if (g_Reg->VI_WIDTH_REG != m_MemLookupValue.UW[0])
+        {
+            g_Reg->VI_WIDTH_REG = m_MemLookupValue.UW[0];
+            if (g_Plugins->Gfx()->ViWidthChanged != NULL)
+            {
+                g_Plugins->Gfx()->ViWidthChanged();
+            }
+        }
+        break;
+    case 0x0440000C: g_Reg->VI_INTR_REG = m_MemLookupValue.UW[0]; break;
+    case 0x04400010:
+        g_Reg->MI_INTR_REG &= ~MI_INTR_VI;
+        g_Reg->CheckInterrupts();
+        break;
+    case 0x04400014: g_Reg->VI_BURST_REG = m_MemLookupValue.UW[0]; break;
+    case 0x04400018: g_Reg->VI_V_SYNC_REG = m_MemLookupValue.UW[0]; break;
+    case 0x0440001C: g_Reg->VI_H_SYNC_REG = m_MemLookupValue.UW[0]; break;
+    case 0x04400020: g_Reg->VI_LEAP_REG = m_MemLookupValue.UW[0]; break;
+    case 0x04400024: g_Reg->VI_H_START_REG = m_MemLookupValue.UW[0]; break;
+    case 0x04400028: g_Reg->VI_V_START_REG = m_MemLookupValue.UW[0]; break;
+    case 0x0440002C: g_Reg->VI_V_BURST_REG = m_MemLookupValue.UW[0]; break;
+    case 0x04400030: g_Reg->VI_X_SCALE_REG = m_MemLookupValue.UW[0]; break;
+    case 0x04400034: g_Reg->VI_Y_SCALE_REG = m_MemLookupValue.UW[0]; break;
+    default:
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+}
+
+void CMipsMemoryVM::Write32AudioInterface(void)
+{
+    switch (m_MemLookupAddress & 0xFFFFFFF)
+    {
+    case 0x04500000: g_Reg->AI_DRAM_ADDR_REG = m_MemLookupValue.UW[0]; break;
+    case 0x04500004:
+        g_Reg->AI_LEN_REG = m_MemLookupValue.UW[0];
+        if (g_System->bFixedAudio())
+        {
+            g_Audio->LenChanged();
+        }
+        else
+        {
+            if (g_Plugins->Audio()->AiLenChanged != NULL)
+            {
+                g_Plugins->Audio()->AiLenChanged();
+            }
+        }
+        break;
+    case 0x04500008: g_Reg->AI_CONTROL_REG = (m_MemLookupValue.UW[0] & 1); break;
+    case 0x0450000C:
+        /* Clear Interrupt */;
+        g_Reg->MI_INTR_REG &= ~MI_INTR_AI;
+        g_Reg->m_AudioIntrReg &= ~MI_INTR_AI;
+        g_Reg->CheckInterrupts();
+        break;
+    case 0x04500010:
+        g_Reg->AI_DACRATE_REG = m_MemLookupValue.UW[0];
+        g_Plugins->Audio()->DacrateChanged(g_System->SystemType());
+        if (g_System->bFixedAudio())
+        {
+            g_Audio->SetFrequency(m_MemLookupValue.UW[0], g_System->SystemType());
+        }
+        break;
+    case 0x04500014:  g_Reg->AI_BITRATE_REG = m_MemLookupValue.UW[0]; break;
+    default:
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+}
+
+void CMipsMemoryVM::Write32PeripheralInterface(void)
+{
+    switch (m_MemLookupAddress & 0xFFFFFFF)
+    {
+    case 0x04600000: g_Reg->PI_DRAM_ADDR_REG = m_MemLookupValue.UW[0]; break;
+    case 0x04600004: g_Reg->PI_CART_ADDR_REG = m_MemLookupValue.UW[0]; break;
+    case 0x04600008:
+        g_Reg->PI_RD_LEN_REG = m_MemLookupValue.UW[0];
+        g_MMU->PI_DMA_READ();
+        break;
+    case 0x0460000C:
+        g_Reg->PI_WR_LEN_REG = m_MemLookupValue.UW[0];
+        g_MMU->PI_DMA_WRITE();
+        break;
+    case 0x04600010:
+        //if ((Value & PI_SET_RESET) != 0 )
+        //{
+        //	g_Notify->DisplayError("reset Controller");
+        //}
+        if ((m_MemLookupValue.UW[0] & PI_CLR_INTR) != 0)
+        {
+            g_Reg->MI_INTR_REG &= ~MI_INTR_PI;
+            g_Reg->CheckInterrupts();
+        }
+        break;
+    case 0x04600014: g_Reg->PI_DOMAIN1_REG = (m_MemLookupValue.UW[0] & 0xFF); break;
+    case 0x04600018: g_Reg->PI_BSD_DOM1_PWD_REG = (m_MemLookupValue.UW[0] & 0xFF); break;
+    case 0x0460001C: g_Reg->PI_BSD_DOM1_PGS_REG = (m_MemLookupValue.UW[0] & 0xFF); break;
+    case 0x04600020: g_Reg->PI_BSD_DOM1_RLS_REG = (m_MemLookupValue.UW[0] & 0xFF); break;
+    case 0x04600024: g_Reg->PI_DOMAIN2_REG = (m_MemLookupValue.UW[0] & 0xFF); break;
+    case 0x04600028: g_Reg->PI_BSD_DOM2_PWD_REG = (m_MemLookupValue.UW[0] & 0xFF); break;
+    case 0x0460002C: g_Reg->PI_BSD_DOM2_PGS_REG = (m_MemLookupValue.UW[0] & 0xFF); break;
+    case 0x04600030: g_Reg->PI_BSD_DOM2_RLS_REG = (m_MemLookupValue.UW[0] & 0xFF); break;
+    default:
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+}
+
+void CMipsMemoryVM::Write32RDRAMInterface(void)
+{
+    switch (m_MemLookupAddress & 0xFFFFFFF)
+    {
+    case 0x04700000: g_Reg->RI_MODE_REG = m_MemLookupValue.UW[0]; break;
+    case 0x04700004: g_Reg->RI_CONFIG_REG = m_MemLookupValue.UW[0]; break;
+    case 0x04700008: g_Reg->RI_CURRENT_LOAD_REG = m_MemLookupValue.UW[0]; break;
+    case 0x0470000C: g_Reg->RI_SELECT_REG = m_MemLookupValue.UW[0]; break;
+    case 0x04700010: g_Reg->RI_REFRESH_REG = m_MemLookupValue.UW[0]; break;
+    case 0x04700014: g_Reg->RI_LATENCY_REG = m_MemLookupValue.UW[0]; break;
+    case 0x04700018: g_Reg->RI_RERROR_REG = m_MemLookupValue.UW[0]; break;
+    case 0x0470001C: g_Reg->RI_WERROR_REG = m_MemLookupValue.UW[0]; break;
+    default:
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+}
+
+void CMipsMemoryVM::Write32SerialInterface(void)
+{
+    switch (m_MemLookupAddress & 0xFFFFFFF)
+    {
+    case 0x04800000: g_Reg->SI_DRAM_ADDR_REG = m_MemLookupValue.UW[0]; break;
+    case 0x04800004:
+        g_Reg->SI_PIF_ADDR_RD64B_REG = m_MemLookupValue.UW[0];
+        g_MMU->SI_DMA_READ();
+        break;
+    case 0x04800010:
+        g_Reg->SI_PIF_ADDR_WR64B_REG = m_MemLookupValue.UW[0];
+        g_MMU->SI_DMA_WRITE();
+        break;
+    case 0x04800018:
+        g_Reg->MI_INTR_REG &= ~MI_INTR_SI;
+        g_Reg->SI_STATUS_REG &= ~SI_STATUS_INTERRUPT;
+        g_Reg->CheckInterrupts();
+        break;
+    default:
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+}
+
+void CMipsMemoryVM::Write32CartridgeDomain2Address2(void)
+{
+    if (g_System->m_SaveUsing == SaveChip_Sram)
+    {
+        //Store Sram
+        uint8_t tmp[4] = "";
+        tmp[0] = 0xFF & (m_MemLookupValue.UW[0]);
+        tmp[1] = 0xFF & (m_MemLookupValue.UW[0] >> 8);
+        tmp[2] = 0xFF & (m_MemLookupValue.UW[0] >> 16);
+        tmp[3] = 0xFF & (m_MemLookupValue.UW[0] >> 24);
+        g_MMU->DmaFromSram(tmp, (m_MemLookupAddress & 0x1FFFFFFF) - 0x08000000, 4);
+        return;
+    }
+    if ((m_MemLookupAddress & 0x1FFFFFFF) != 0x08010000)
+    {
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    if (g_System->m_SaveUsing == SaveChip_Auto)
+    {
+        g_System->m_SaveUsing = SaveChip_FlashRam;
+    }
+    if (g_System->m_SaveUsing == SaveChip_FlashRam)
+    {
+        g_MMU->WriteToFlashCommand(m_MemLookupValue.UW[0]);
+    }
+}
+
+void CMipsMemoryVM::Write32PifRam(void)
+{
+    if ((m_MemLookupAddress & 0x1FFFFFFF) < 0x1FC007C0)
+    {
+        if (bHaveDebugger())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    else if ((m_MemLookupAddress & 0x1FFFFFFF) < 0x1FC00800)
+    {
+        uint32_t Value = swap32by8(m_MemLookupValue.UW[0]);
+        *(uint32_t *)(&g_MMU->m_PifRam[(m_MemLookupAddress & 0x1FFFFFFF) - 0x1FC007C0]) = Value;
+        if ((m_MemLookupAddress & 0x1FFFFFFF) == 0x1FC007FC)
+        {
+            g_MMU->PifRamWrite();
+        }
     }
 }

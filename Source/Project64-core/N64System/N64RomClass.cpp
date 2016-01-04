@@ -74,7 +74,7 @@ bool CN64Rom::AllocateAndLoadN64Image(const char * FileLoc, bool LoadBootCodeOnl
 	if (Image.get() == NULL)
     {
   		m_RomFile.Close();
-		SetError(MSG_MEM_ALLOC_ERROR);
+        SetError(MSG_MEM_ALLOC_ERROR);
 		WriteTrace(TraceN64System, TraceError, "Failed to allocate memory for rom (size: 0x%X)",RomFileSize);
         return false;
     }
@@ -88,7 +88,7 @@ bool CN64Rom::AllocateAndLoadN64Image(const char * FileLoc, bool LoadBootCodeOnl
     {
         uint32_t dwToRead = RomFileSize - count;
         if (dwToRead > ReadFromRomSection) { dwToRead = ReadFromRomSection; }
-		
+
         if (!m_RomFile.Read(&Image.get()[count], dwToRead))
         {
   			m_RomFile.Close();
@@ -99,12 +99,8 @@ bool CN64Rom::AllocateAndLoadN64Image(const char * FileLoc, bool LoadBootCodeOnl
         TotalRead += dwToRead;
 
         //Show Message of how much % wise of the rom has been loaded
-#ifdef _WIN32
-		g_Notify->DisplayMessage(0, stdstr_f("%s: %.2f%c", GS(MSG_LOADED), ((float)TotalRead / (float)RomFileSize) * 100.0f, '%').ToUTF16().c_str());
-#else
-		g_Notify->DisplayMessage(0, stdstr_f("%s: %.2f%c", GS(MSG_LOADED), ((float)TotalRead / (float)RomFileSize) * 100.0f, '%').c_str());
-#endif
-	}
+        g_Notify->DisplayMessage(0, stdstr_f("%s: %.2f%c", GS(MSG_LOADED), ((float)TotalRead / (float)RomFileSize) * 100.0f, '%').c_str());
+    }
 
     if (RomFileSize != TotalRead)
     {
@@ -122,7 +118,7 @@ bool CN64Rom::AllocateAndLoadN64Image(const char * FileLoc, bool LoadBootCodeOnl
     ByteSwapRom();
 
 #ifdef _WIN32
-	//Protect the memory so that it can not be written to.
+    //Protect the memory so that it can not be written to.
     DWORD OldProtect;
     VirtualProtect(m_ROMImage, m_RomFileSize, PAGE_READONLY, &OldProtect);
 #endif
@@ -132,15 +128,14 @@ bool CN64Rom::AllocateAndLoadN64Image(const char * FileLoc, bool LoadBootCodeOnl
 bool CN64Rom::AllocateAndLoadZipImage(const char * FileLoc, bool LoadBootCodeOnly)
 {
 #ifdef tofix
-	unzFile file = unzOpen(FileLoc);
+    unzFile file = unzOpen(FileLoc);
     if (file == NULL)
     {
         return false;
     }
 
+    int port = unzGoToFirstFile(file);
     bool FoundRom = false;
-
-	int port = unzGoToFirstFile(file);
 
     //scan through all files in zip to a suitable file is found
     while (port == UNZ_OK && !FoundRom)
@@ -200,7 +195,7 @@ bool CN64Rom::AllocateAndLoadZipImage(const char * FileLoc, bool LoadBootCodeOnl
                 TotalRead += dwRead;
 
                 //Show Message of how much % wise of the rom has been loaded
-                g_Notify->DisplayMessage(5, stdstr_f("%s: %.2f%c", GS(MSG_LOADED), ((float)TotalRead / (float)RomFileSize) * 100.0f, '%').ToUTF16().c_str());
+                g_Notify->DisplayMessage(5, stdstr_f("%s: %.2f%c", GS(MSG_LOADED), ((float)TotalRead / (float)RomFileSize) * 100.0f, '%').c_str());
             }
             dwRead = TotalRead + 4;
 
@@ -209,7 +204,7 @@ bool CN64Rom::AllocateAndLoadZipImage(const char * FileLoc, bool LoadBootCodeOnl
                 VirtualFree(Image, 0, MEM_RELEASE);
                 unzCloseCurrentFile(file);
                 SetError(MSG_FAIL_ZIP);
-                g_Notify->DisplayMessage(1, L"");
+                g_Notify->DisplayMessage(1, "");
                 break;
             }
 
@@ -225,7 +220,7 @@ bool CN64Rom::AllocateAndLoadZipImage(const char * FileLoc, bool LoadBootCodeOnl
             //Protect the memory so that it can not be written to.
             DWORD OldProtect;
             VirtualProtect(m_ROMImage, m_RomFileSize, PAGE_READONLY, &OldProtect);
-            g_Notify->DisplayMessage(1, L"");
+            g_Notify->DisplayMessage(1, "");
         }
         unzCloseCurrentFile(file);
 
@@ -235,6 +230,7 @@ bool CN64Rom::AllocateAndLoadZipImage(const char * FileLoc, bool LoadBootCodeOnl
         }
     }
     unzClose(file);
+
     return FoundRom;
 #endif
 	return false;
@@ -271,12 +267,8 @@ void CN64Rom::ByteSwapRom()
         break;
     case 0x80371240: break;
     default:
-#ifdef _WIN32
-		g_Notify->DisplayError(stdstr_f("ByteSwapRom: %X", m_ROMImage[0]).ToUTF16().c_str());
-#else
-		g_Notify->DisplayError(stdstr_f("ByteSwapRom: %X", m_ROMImage[0]).c_str());
-#endif
-	}
+        g_Notify->DisplayError(stdstr_f("ByteSwapRom: %X", m_ROMImage[0]).c_str());
+    }
 }
 
 void CN64Rom::CalculateCicChip()
@@ -305,12 +297,8 @@ void CN64Rom::CalculateCicChip()
     default:
         if (bHaveDebugger())
         {
-#ifdef _WIN32
-			g_Notify->DisplayError(stdstr_f("Unknown CIC checksum:\n%I64X.", CRC).ToUTF16().c_str());
-#else
-			g_Notify->DisplayError(stdstr_f("Unknown CIC checksum:\n%I64X.", CRC).c_str());
-#endif
-		}
+            g_Notify->DisplayError(stdstr_f("Unknown CIC checksum:\n%I64X.", CRC).c_str());
+        }
         m_CicChip = CIC_UNKNOWN; break;
     }
 }
@@ -343,7 +331,7 @@ void CN64Rom::CalculateRomCrc()
     }
 
 #ifdef _WIN32
-	DWORD OldProtect;
+    DWORD OldProtect;
     VirtualProtect(m_ROMImage, m_RomFileSize, PAGE_READWRITE, &OldProtect);
 #endif
 
@@ -421,11 +409,9 @@ bool CN64Rom::IsValidRomImage(uint8_t Test[4])
     return false;
 }
 
-void CN64Rom::NotificationCB(const wchar_t * Status, CN64Rom * /*_this*/)
+void CN64Rom::NotificationCB(const char * Status, CN64Rom * /*_this*/)
 {
-#ifdef _WIN32
-	g_Notify->DisplayMessage(5, stdstr_f("%ws", Status).ToUTF16().c_str());
-#endif
+    g_Notify->DisplayMessage(5, stdstr_f("%s", Status).c_str());
 }
 
 bool CN64Rom::LoadN64Image(const char * FileLoc, bool LoadBootCodeOnly)
@@ -537,7 +523,7 @@ bool CN64Rom::LoadN64Image(const char * FileLoc, bool LoadBootCodeOnly)
 
 #ifdef _WIN32
 #ifdef tofix
-			//other wise treat if normal file and open the passed file
+            //other wise treat if normal file and open the passed file
             HANDLE hFile = CreateFile(FileLoc, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
                 FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS, NULL);
             if (hFile == INVALID_HANDLE_VALUE) { SetError(MSG_FAIL_OPEN_IMAGE); return false; }

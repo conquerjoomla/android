@@ -47,7 +47,7 @@ void CPifRamSettings::RefreshSettings(void *)
 }
 
 CPifRam::CPifRam(bool SavesReadOnly) :
-    CEeprom(SavesReadOnly)
+CEeprom(SavesReadOnly)
 {
     Reset();
 }
@@ -143,7 +143,7 @@ void CPifRam::PifRamRead()
             {
                 if (bShowPifRamErrors())
                 {
-                    g_Notify->DisplayError(stdstr_f("Unknown Command in PifRamRead(%X)", m_PifRam[CurPos]).ToUTF16().c_str());
+                    g_Notify->DisplayError(stdstr_f("Unknown Command in PifRamRead(%X)", m_PifRam[CurPos]).c_str());
                 }
                 CurPos = 0x40;
             }
@@ -210,7 +210,7 @@ void CPifRam::PifRamWrite()
         default:
             if (bShowPifRamErrors())
             {
-                g_Notify->DisplayError(stdstr_f("Unkown PifRam control: %d", m_PifRam[0x3F]).ToUTF16().c_str());
+                g_Notify->DisplayError(stdstr_f("Unkown PifRam control: %d", m_PifRam[0x3F]).c_str());
             }
         }
         return;
@@ -255,7 +255,7 @@ void CPifRam::PifRamWrite()
                 {
                     if (bShowPifRamErrors())
                     {
-                        g_Notify->DisplayError(L"Command on channel 5?");
+                        g_Notify->DisplayError("Command on channel 5?");
                     }
                 }
                 CurPos += m_PifRam[CurPos] + (m_PifRam[CurPos + 1] & 0x3F) + 1;
@@ -265,7 +265,7 @@ void CPifRam::PifRamWrite()
             {
                 if (bShowPifRamErrors())
                 {
-                    g_Notify->DisplayError(stdstr_f("Unknown Command in PifRamWrite(%X)", m_PifRam[CurPos]).ToUTF16().c_str());
+                    g_Notify->DisplayError(stdstr_f("Unknown Command in PifRamWrite(%X)", m_PifRam[CurPos]).c_str());
                 }
                 CurPos = 0x40;
             }
@@ -290,7 +290,7 @@ void CPifRam::SI_DMA_READ()
     {
         if (bShowPifRamErrors())
         {
-            g_Notify->DisplayError(__FUNCTIONW__ L"\nSI_DRAM_ADDR_REG not in RDRam space");
+            g_Notify->DisplayError(__FUNCTION__ "\nSI_DRAM_ADDR_REG not in RDRam space");
         }
         return;
     }
@@ -313,9 +313,9 @@ void CPifRam::SI_DMA_READ()
     }
     else
     {
-        for (size_t i = 0; i < 64; i += 4)
+        for (size_t i = 0; i < 64; i++)
         {
-			RDRAM[(SI_DRAM_ADDR_REG + i) ^ 3] = PifRamPos[i];
+            RDRAM[(SI_DRAM_ADDR_REG + i) ^ 3] = PifRamPos[i];
         }
     }
 
@@ -325,31 +325,31 @@ void CPifRam::SI_DMA_READ()
         char HexData[100], AsciiData[100], Addon[20];
         LogMessage("\tData DMAed to RDRAM:");
         LogMessage("\t--------------------");
-        for (count = 0; count < 16; count ++ )
+        for (count = 0; count < 16; count++)
         {
             if ((count % 4) == 0)
             {
-                sprintf(HexData,"\0");
-                sprintf(AsciiData,"\0");
+                sprintf(HexData, "\0");
+                sprintf(AsciiData, "\0");
             }
-            sprintf(Addon,"%02X %02X %02X %02X",
+            sprintf(Addon, "%02X %02X %02X %02X",
                 m_PifRam[(count << 2) + 0], m_PifRam[(count << 2) + 1],
-                m_PifRam[(count << 2) + 2], m_PifRam[(count << 2) + 3] );
-            strcat(HexData,Addon);
+                m_PifRam[(count << 2) + 2], m_PifRam[(count << 2) + 3]);
+            strcat(HexData, Addon);
             if (((count + 1) % 4) != 0)
             {
-                sprintf(Addon,"-");
-                strcat(HexData,Addon);
+                sprintf(Addon, "-");
+                strcat(HexData, Addon);
             }
 
-            sprintf(Addon,"%c%c%c%c",
+            sprintf(Addon, "%c%c%c%c",
                 m_PifRam[(count << 2) + 0], m_PifRam[(count << 2) + 1],
-                m_PifRam[(count << 2) + 2], m_PifRam[(count << 2) + 3] );
-            strcat(AsciiData,Addon);
+                m_PifRam[(count << 2) + 2], m_PifRam[(count << 2) + 3]);
+            strcat(AsciiData, Addon);
 
             if (((count + 1) % 4) == 0)
             {
-                LogMessage("\t%s %s",HexData, AsciiData);
+                LogMessage("\t%s %s", HexData, AsciiData);
             }
         }
         LogMessage("");
@@ -376,7 +376,7 @@ void CPifRam::SI_DMA_WRITE()
     {
         if (bShowPifRamErrors())
         {
-            g_Notify->DisplayError(L"SI DMA\nSI_DRAM_ADDR_REG not in RDRam space");
+            g_Notify->DisplayError("SI DMA\nSI_DRAM_ADDR_REG not in RDRam space");
         }
         return;
     }
@@ -399,9 +399,9 @@ void CPifRam::SI_DMA_WRITE()
     }
     else
     {
-        for (size_t i = 0; i < 64; i += 4)
+        for (size_t i = 0; i < 64; i++)
         {
-			PifRamPos[i] = RDRAM[(SI_DRAM_ADDR_REG + i) ^ 3];
+            PifRamPos[i] = RDRAM[(SI_DRAM_ADDR_REG + i) ^ 3];
         }
     }
 
@@ -412,31 +412,31 @@ void CPifRam::SI_DMA_WRITE()
         LogMessage("");
         LogMessage("\tData DMAed to the Pif Ram:");
         LogMessage("\t--------------------------");
-        for (count = 0; count < 16; count ++ )
+        for (count = 0; count < 16; count++)
         {
             if ((count % 4) == 0)
             {
-                sprintf(HexData,"\0");
-                sprintf(AsciiData,"\0");
+                sprintf(HexData, "\0");
+                sprintf(AsciiData, "\0");
             }
-            sprintf(Addon,"%02X %02X %02X %02X",
+            sprintf(Addon, "%02X %02X %02X %02X",
                 m_PifRam[(count << 2) + 0], m_PifRam[(count << 2) + 1],
-                m_PifRam[(count << 2) + 2], m_PifRam[(count << 2) + 3] );
-            strcat(HexData,Addon);
+                m_PifRam[(count << 2) + 2], m_PifRam[(count << 2) + 3]);
+            strcat(HexData, Addon);
             if (((count + 1) % 4) != 0)
             {
-                sprintf(Addon,"-");
-                strcat(HexData,Addon);
+                sprintf(Addon, "-");
+                strcat(HexData, Addon);
             }
 
-            sprintf(Addon,"%c%c%c%c",
+            sprintf(Addon, "%c%c%c%c",
                 m_PifRam[(count << 2) + 0], m_PifRam[(count << 2) + 1],
-                m_PifRam[(count << 2) + 2], m_PifRam[(count << 2) + 3] );
-            strcat(AsciiData,Addon);
+                m_PifRam[(count << 2) + 2], m_PifRam[(count << 2) + 3]);
+            strcat(AsciiData, Addon);
 
             if (((count + 1) % 4) == 0)
             {
-                LogMessage("\t%s %s",HexData, AsciiData);
+                LogMessage("\t%s %s", HexData, AsciiData);
             }
         }
         LogMessage("");
@@ -459,7 +459,7 @@ void CPifRam::SI_DMA_WRITE()
 void CPifRam::ProcessControllerCommand(int32_t Control, uint8_t * Command)
 {
 #ifdef tofix
-	CONTROL * Controllers = g_Plugins->Control()->PluginControllers();
+    CONTROL * Controllers = g_Plugins->Control()->PluginControllers();
 
     switch (Command[2])
     {
@@ -473,14 +473,14 @@ void CPifRam::ProcessControllerCommand(int32_t Control, uint8_t * Command)
         {
             if (Command[0] != 1)
             {
-                g_Notify->DisplayError(L"What am I meant to do with this Controller Command");
+                g_Notify->DisplayError("What am I meant to do with this Controller Command");
             }
             if (Command[1] != 3)
             {
-                g_Notify->DisplayError(L"What am I meant to do with this Controller Command");
+                g_Notify->DisplayError("What am I meant to do with this Controller Command");
             }
         }
-        if (Controllers[Control].Present != 0)
+        if (Controllers[Control].Present == true)
         {
             Command[3] = 0x05;
             Command[4] = 0x00;
@@ -504,14 +504,14 @@ void CPifRam::ProcessControllerCommand(int32_t Control, uint8_t * Command)
         {
             if (Command[0] != 1)
             {
-                g_Notify->DisplayError(L"What am I meant to do with this Controller Command");
+                g_Notify->DisplayError("What am I meant to do with this Controller Command");
             }
             if (Command[1] != 4)
             {
-                g_Notify->DisplayError(L"What am I meant to do with this Controller Command");
+                g_Notify->DisplayError("What am I meant to do with this Controller Command");
             }
         }
-        if (Controllers[Control].Present == 0)
+        if (Controllers[Control].Present == false)
         {
             Command[1] |= 0x80;
         }
@@ -525,14 +525,14 @@ void CPifRam::ProcessControllerCommand(int32_t Control, uint8_t * Command)
         {
             if (Command[0] != 3)
             {
-                g_Notify->DisplayError(L"What am I meant to do with this Controller Command");
+                g_Notify->DisplayError("What am I meant to do with this Controller Command");
             }
             if (Command[1] != 33)
             {
-                g_Notify->DisplayError(L"What am I meant to do with this Controller Command");
+                g_Notify->DisplayError("What am I meant to do with this Controller Command");
             }
         }
-        if (Controllers[Control].Present != 0)
+        if (Controllers[Control].Present == true)
         {
             switch (Controllers[Control].Plugin)
             {
@@ -567,14 +567,14 @@ void CPifRam::ProcessControllerCommand(int32_t Control, uint8_t * Command)
         {
             if (Command[0] != 35)
             {
-                g_Notify->DisplayError(L"What am I meant to do with this Controller Command");
+                g_Notify->DisplayError("What am I meant to do with this Controller Command");
             }
             if (Command[1] != 1)
             {
-                g_Notify->DisplayError(L"What am I meant to do with this Controller Command");
+                g_Notify->DisplayError("What am I meant to do with this Controller Command");
             }
         }
-        if (Controllers[Control].Present != 0)
+        if (Controllers[Control].Present == true)
         {
             switch (Controllers[Control].Plugin)
             {
@@ -601,7 +601,7 @@ void CPifRam::ProcessControllerCommand(int32_t Control, uint8_t * Command)
     default:
         if (bShowPifRamErrors())
         {
-            g_Notify->DisplayError(stdstr_f("Unknown ControllerCommand %d", Command[2]).ToUTF16().c_str());
+            g_Notify->DisplayError(stdstr_f("Unknown ControllerCommand %d", Command[2]).c_str());
         }
     }
 #endif
@@ -610,17 +610,17 @@ void CPifRam::ProcessControllerCommand(int32_t Control, uint8_t * Command)
 void CPifRam::ReadControllerCommand(int32_t Control, uint8_t * Command) 
 {
 #ifdef tofix
-	CONTROL * Controllers = g_Plugins->Control()->PluginControllers();
+    CONTROL * Controllers = g_Plugins->Control()->PluginControllers();
 
     switch (Command[2])
     {
     case 0x01: // read controller
-        if (Controllers[Control].Present != 0)
+        if (Controllers[Control].Present == true)
         {
             if (bShowPifRamErrors())
             {
-                if (Command[0] != 1) { g_Notify->DisplayError(L"What am I meant to do with this Controller Command"); }
-                if (Command[1] != 4) { g_Notify->DisplayError(L"What am I meant to do with this Controller Command"); }
+                if (Command[0] != 1) { g_Notify->DisplayError("What am I meant to do with this Controller Command"); }
+                if (Command[1] != 4) { g_Notify->DisplayError("What am I meant to do with this Controller Command"); }
             }
 
             const uint32_t buttons = g_BaseSystem->GetButtons(Control);
@@ -628,7 +628,7 @@ void CPifRam::ReadControllerCommand(int32_t Control, uint8_t * Command)
         }
         break;
     case 0x02: //read from controller pack
-        if (Controllers[Control].Present != 0)
+        if (Controllers[Control].Present == true)
         {
             switch (Controllers[Control].Plugin)
             {
@@ -637,7 +637,7 @@ void CPifRam::ReadControllerCommand(int32_t Control, uint8_t * Command)
         }
         break;
     case 0x03: //write controller pak
-        if (Controllers[Control].Present != 0)
+        if (Controllers[Control].Present == true)
         {
             switch (Controllers[Control].Plugin)
             {

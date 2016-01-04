@@ -1,6 +1,6 @@
 /****************************************************************************
 *                                                                           *
-* Project 64 - A Nintendo 64 emulator.                                      *
+* Project64 - A Nintendo 64 emulator.                                      *
 * http://www.pj64-emu.com/                                                  *
 * Copyright (C) 2012 Project64. All rights reserved.                        *
 *                                                                           *
@@ -66,34 +66,34 @@ public:
     static void ReserveMemory();
     static void FreeReservedMemory();
 
-    bool   Initialize   ();
-    void   Reset        ( bool EraseMemory );
+    bool   Initialize();
+    void   Reset(bool EraseMemory);
 
-    uint8_t * Rdram        ();
-    uint32_t  RdramSize    ();
-    uint8_t * Dmem         ();
-    uint8_t * Imem         ();
-    uint8_t * PifRam       ();
+    uint8_t * Rdram();
+    uint32_t  RdramSize();
+    uint8_t * Dmem();
+    uint8_t * Imem();
+    uint8_t * PifRam();
 
-    bool  LB_VAddr     ( uint32_t VAddr, uint8_t & Value );
-    bool  LH_VAddr     ( uint32_t VAddr, uint16_t & Value );
-    bool  LW_VAddr     ( uint32_t VAddr, uint32_t & Value );
-    bool  LD_VAddr     ( uint32_t VAddr, uint64_t & Value );
+    bool  LB_VAddr(uint32_t VAddr, uint8_t & Value);
+    bool  LH_VAddr(uint32_t VAddr, uint16_t & Value);
+    bool  LW_VAddr(uint32_t VAddr, uint32_t & Value);
+    bool  LD_VAddr(uint32_t VAddr, uint64_t & Value);
 
-    bool  LB_PAddr     ( uint32_t PAddr, uint8_t & Value );
-    bool  LH_PAddr     ( uint32_t PAddr, uint16_t & Value );
-    bool  LW_PAddr     ( uint32_t PAddr, uint32_t & Value );
-    bool  LD_PAddr     ( uint32_t PAddr, uint64_t & Value );
+    bool  LB_PAddr(uint32_t PAddr, uint8_t & Value);
+    bool  LH_PAddr(uint32_t PAddr, uint16_t & Value);
+    bool  LW_PAddr(uint32_t PAddr, uint32_t & Value);
+    bool  LD_PAddr(uint32_t PAddr, uint64_t & Value);
 
-    bool  SB_VAddr     ( uint32_t VAddr, uint8_t Value );
-    bool  SH_VAddr     ( uint32_t VAddr, uint16_t Value );
-    bool  SW_VAddr     ( uint32_t VAddr, uint32_t Value );
-    bool  SD_VAddr     ( uint32_t VAddr, uint64_t Value );
+    bool  SB_VAddr(uint32_t VAddr, uint8_t Value);
+    bool  SH_VAddr(uint32_t VAddr, uint16_t Value);
+    bool  SW_VAddr(uint32_t VAddr, uint32_t Value);
+    bool  SD_VAddr(uint32_t VAddr, uint64_t Value);
 
-    bool  SB_PAddr     ( uint32_t PAddr, uint8_t Value );
-    bool  SH_PAddr     ( uint32_t PAddr, uint16_t Value );
-    bool  SW_PAddr     ( uint32_t PAddr, uint32_t Value );
-    bool  SD_PAddr     ( uint32_t PAddr, uint64_t Value );
+    bool  SB_PAddr(uint32_t PAddr, uint8_t Value);
+    bool  SH_PAddr(uint32_t PAddr, uint16_t Value);
+    bool  SW_PAddr(uint32_t PAddr, uint32_t Value);
+    bool  SD_PAddr(uint32_t PAddr, uint64_t Value);
 
     int32_t   MemoryFilter(uint32_t dwExptCode, void * lpExceptionPointer);
     void  UpdateFieldSerration(uint32_t interlaced);
@@ -131,17 +131,17 @@ public:
     void Compile_SWC1();
     void Compile_SDC1();
 
-    void ResetMemoryStack    ( CRegInfo& RegInfo );
-    void Compile_LB          ( CX86Ops::x86Reg Reg, uint32_t Addr, bool SignExtend );
-    void Compile_LH          ( CX86Ops::x86Reg Reg, uint32_t Addr, bool SignExtend );
-    void Compile_LW          ( CX86Ops::x86Reg Reg, uint32_t Addr );
-    void Compile_SB_Const    ( uint8_t Value, uint32_t Addr );
-    void Compile_SB_Register ( CX86Ops::x86Reg Reg, uint32_t Addr );
-    void Compile_SH_Const    ( uint16_t Value, uint32_t Addr );
-    void Compile_SH_Register ( CX86Ops::x86Reg Reg, uint32_t Addr );
-    void Compile_SW_Const    ( uint32_t Value, uint32_t Addr );
+    void ResetMemoryStack(CRegInfo& RegInfo);
+    void Compile_LB(CX86Ops::x86Reg Reg, uint32_t Addr, bool SignExtend);
+    void Compile_LH(CX86Ops::x86Reg Reg, uint32_t Addr, bool SignExtend);
+    void Compile_LW(CX86Ops::x86Reg Reg, uint32_t Addr);
+    void Compile_SB_Const(uint8_t Value, uint32_t Addr);
+    void Compile_SB_Register(CX86Ops::x86Reg Reg, uint32_t Addr);
+    void Compile_SH_Const(uint16_t Value, uint32_t Addr);
+    void Compile_SH_Register(CX86Ops::x86Reg Reg, uint32_t Addr);
+    void Compile_SW_Const(uint32_t Value, uint32_t Addr);
 
-    void Compile_SW_Register ( CX86Ops::x86Reg Reg, uint32_t Addr );
+    void Compile_SW_Register(CX86Ops::x86Reg Reg, uint32_t Addr);
 
     //Functions for TLB notification
     void TLB_Mapped(uint32_t VAddr, uint32_t Len, uint32_t PAddr, bool bReadOnly);
@@ -160,36 +160,62 @@ private:
     CMipsMemoryVM(const CMipsMemoryVM&);            // Disable copy constructor
     CMipsMemoryVM& operator=(const CMipsMemoryVM&); // Disable assignment
 
-    void Compile_LW          ( bool ResultSigned, bool bRecordLLbit );
-    void Compile_SW          ( bool bCheckLLbit );
+    void Compile_LW(bool ResultSigned, bool bRecordLLbit);
+    void Compile_SW(bool bCheckLLbit);
 
-    static void RdramChanged    ( CMipsMemoryVM * _this );
-    static void ChangeSpStatus  ();
+    static void RdramChanged(CMipsMemoryVM * _this);
+    static void ChangeSpStatus();
     static void ChangeMiIntrMask();
 
-    bool LB_NonMemory         ( uint32_t PAddr, uint32_t * Value, bool SignExtend );
-    bool LH_NonMemory         ( uint32_t PAddr, uint32_t * Value, bool SignExtend );
-    bool LW_NonMemory         ( uint32_t PAddr, uint32_t * Value );
+    bool LB_NonMemory(uint32_t PAddr, uint32_t * Value, bool SignExtend);
+    bool LH_NonMemory(uint32_t PAddr, uint32_t * Value, bool SignExtend);
+    bool LW_NonMemory(uint32_t PAddr, uint32_t * Value);
 
-    bool SB_NonMemory         ( uint32_t PAddr, uint8_t Value );
-    bool SH_NonMemory         ( uint32_t PAddr, uint16_t Value );
-    bool SW_NonMemory         ( uint32_t PAddr, uint32_t Value );
+    bool SB_NonMemory(uint32_t PAddr, uint8_t Value);
+    bool SH_NonMemory(uint32_t PAddr, uint16_t Value);
+    bool SW_NonMemory(uint32_t PAddr, uint32_t Value);
 
-    void Compile_StoreInstructClean (x86Reg AddressReg, int32_t Length );
+    void Compile_StoreInstructClean(x86Reg AddressReg, int32_t Length);
+
+    static void Load32RDRAMRegisters(void);
+    static void Load32SPRegisters(void);
+    static void Load32DPCommand(void);
+    static void Load32MIPSInterface(void);
+    static void Load32VideoInterface(void);
+    static void Load32AudioInterface(void);
+    static void Load32PeripheralInterface(void);
+    static void Load32RDRAMInterface(void);
+    static void Load32SerialInterface(void);
+    static void Load32CartridgeDomain2Address1(void);
+    static void Load32CartridgeDomain2Address2(void);
+    static void Load32PifRam(void);
+    static void Load32Rom(void);
+
+    static void Write32RDRAMRegisters(void);
+    static void Write32SPRegisters(void);
+    static void Write32DPCommandRegisters(void);
+    static void Write32MIPSInterface(void);
+    static void Write32VideoInterface(void);
+    static void Write32AudioInterface(void);
+    static void Write32PeripheralInterface(void);
+    static void Write32RDRAMInterface(void);
+    static void Write32SerialInterface(void);
+    static void Write32CartridgeDomain2Address2(void);
+    static void Write32PifRam(void);
 
     CMipsMemory_CallBack * const m_CBClass;
 
     //Memory Locations
-    static uint8_t   * m_Reserve1, * m_Reserve2;
-    uint8_t          * m_RDRAM, * m_DMEM, * m_IMEM;
+    static uint8_t   * m_Reserve1, *m_Reserve2;
+    uint8_t          * m_RDRAM, *m_DMEM, *m_IMEM;
     uint32_t         m_AllocatedRdramSize;
 
     //Rom Information
     bool          m_RomMapped;
-    uint8_t *        m_Rom;
-    uint32_t         m_RomSize;
+    uint8_t *     m_Rom;
+    uint32_t      m_RomSize;
     bool          m_RomWrittenTo;
-    uint32_t         m_RomWroteValue;
+    uint32_t      m_RomWroteValue;
 
     //Current Half line
     void UpdateHalfLine();
@@ -206,4 +232,8 @@ private:
     //BIG look up table to quickly translate the tlb to real mem address
     size_t * m_TLB_ReadMap;
     size_t * m_TLB_WriteMap;
+
+    static uint32_t m_MemLookupAddress;
+    static MIPS_DWORD m_MemLookupValue;
+    static bool m_MemLookupValid;
 };
