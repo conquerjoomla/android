@@ -200,9 +200,7 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(Game_IniKey, new CSettingTypeTempString(""));
     AddHandler(Game_File, new CSettingTypeTempString(""));
 	AddHandler(Game_GameName, new CSettingTypeTempString(""));
-#ifdef tofix
     AddHandler(Game_GoodName, new CSettingTypeGame("Good Name", Rdb_GoodName));
-#endif
 	AddHandler(Game_TempLoaded, new CSettingTypeTempBool(false));
     AddHandler(Game_SystemType, new CSettingTypeTempNumber(SYSTEM_NTSC));
     AddHandler(Game_EditPlugin_Gfx, new CSettingTypeGame("Plugin-Gfx", Default_None));

@@ -14,6 +14,7 @@ LOCAL_C_INCLUDES := ../     \
                
 LOCAL_SRC_FILES :=                                                     \
     $(SRCDIR)/AppInit.cpp                                              \
+    $(SRCDIR)/Multilanguage/LanguageClass.cpp                          \
     $(SRCDIR)/Settings/SettingsClass.cpp                               \
     $(SRCDIR)/N64System/N64Class.cpp                                   \
     $(SRCDIR)/N64System/N64RomClass.cpp                                \

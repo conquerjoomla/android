@@ -70,7 +70,9 @@ bool CN64Rom::AllocateAndLoadN64Image(const char * FileLoc, bool LoadBootCodeOnl
 		WriteTrace(TraceN64System, TraceDebug, "loading boot code, so loading the first 0x1000 bytes",RomFileSize);
 		RomFileSize = 0x1000; 
 	}
+	WriteTrace(TraceN64System, TraceDebug, "Allocating memory for rom");
 	std::auto_ptr<uint8_t> Image(new uint8_t[RomFileSize]);
+	WriteTrace(TraceN64System, TraceDebug, "Allocated rom memory (%p)",Image.get());
 	if (Image.get() == NULL)
     {
   		m_RomFile.Close();
@@ -89,7 +91,7 @@ bool CN64Rom::AllocateAndLoadN64Image(const char * FileLoc, bool LoadBootCodeOnl
         uint32_t dwToRead = RomFileSize - count;
         if (dwToRead > ReadFromRomSection) { dwToRead = ReadFromRomSection; }
 
-        if (!m_RomFile.Read(&Image.get()[count], dwToRead))
+        if (m_RomFile.Read(&Image.get()[count], dwToRead) != dwToRead)
         {
   			m_RomFile.Close();
             SetError(MSG_FAIL_IMAGE);
