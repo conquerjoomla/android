@@ -18,7 +18,6 @@
 
 #include "WTLApp.h"
 #include "UserInterface/MenuShortCuts.h"
-
 #include "UserInterface/RomBrowser.h"
 #include "UserInterface/GuiClass.h"
 #include "UserInterface/MenuClass.h"

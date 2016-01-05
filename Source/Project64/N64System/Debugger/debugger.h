@@ -1,6 +1,6 @@
 /****************************************************************************
 *                                                                           *
-* Project 64 - A Nintendo 64 emulator.                                      *
+* Project64 - A Nintendo 64 emulator.                                      *
 * http://www.pj64-emu.com/                                                  *
 * Copyright (C) 2012 Project64. All rights reserved.                        *
 *                                                                           *
@@ -20,25 +20,25 @@ class CDebugTlb;
 class CDebuggerUI :
 	public CDebugger
 {
-	CDumpMemory        * m_MemoryDump;
-	CDebugMemoryView   * m_MemoryView;
-	CDebugMemorySearch * m_MemorySearch;
-	CDebugTlb          * m_DebugTLB;
+    CDumpMemory        * m_MemoryDump;
+    CDebugMemoryView   * m_MemoryView;
+    CDebugMemorySearch * m_MemorySearch;
+    CDebugTlb          * m_DebugTLB;
 
 protected:
-	CDebuggerUI();
-	virtual ~CDebuggerUI();
+    CDebuggerUI();
+    virtual ~CDebuggerUI();
 
-	void TLBChanged(void);
+	void TLBChanged ( void );
 
 public:
-	void Debug_Reset(void);
-	void Debug_ShowMemoryDump(void);
-	void Debug_ShowMemoryWindow(void);
-	void Debug_ShowMemoryLocation(uint32_t Address, bool VAddr);
-	void Debug_ShowMemorySearch(void);
-	void Debug_ShowTLBWindow(void);
-	void Debug_RefreshTLBWindow(void);
+    void Debug_Reset              ( void );
+    void Debug_ShowMemoryDump     ( void );
+    void Debug_ShowMemoryWindow   ( void );
+    void Debug_ShowMemoryLocation ( uint32_t Address, bool VAddr );
+    void Debug_ShowMemorySearch   ( void );
+    void Debug_ShowTLBWindow      ( void );
+    void Debug_RefreshTLBWindow   ( void );
 
-	static void GameReset(CDebuggerUI * _this);
+	static void GameReset ( CDebuggerUI * _this );
 };

@@ -11,17 +11,17 @@
 #include "stdafx.h"
 #include "FlashRam.h"
 #include <Project64-core/N64System/SystemGlobals.h>
-#include <Project64-core/N64System/Mips/MemoryClass.h>
+#include <Project64-core/N64System/Mips/MemoryVirtualMem.h>
 #include <Common/path.h>
 #include <Windows.h>
 
 CFlashram::CFlashram(bool ReadOnly) :
-m_FlashRamPointer(NULL),
-m_FlashFlag(FLASHRAM_MODE_NOPES),
-m_FlashStatus(0),
-m_FlashRAM_Offset(0),
-m_ReadOnly(ReadOnly),
-m_hFile(NULL)
+    m_FlashRamPointer(NULL),
+    m_FlashFlag(FLASHRAM_MODE_NOPES),
+    m_FlashStatus(0),
+    m_FlashRAM_Offset(0),
+    m_ReadOnly(ReadOnly),
+    m_hFile(NULL)
 {
 }
 

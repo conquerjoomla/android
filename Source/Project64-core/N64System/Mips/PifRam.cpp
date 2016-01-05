@@ -13,7 +13,7 @@
 #include <Project64-core/N64System/SystemGlobals.h>
 #include <Project64-core/Plugins/ControllerPlugin.h>
 #include <Project64-core/N64System/Mips/RegisterClass.h>
-#include <Project64-core/N64System/Mips/MemoryClass.h>
+#include <Project64-core/N64System/Mips/MemoryVirtualMem.h>
 #include <Project64-core/N64System/N64Class.h>
 #include <Project64-core/N64System/Mips/Rumblepak.h>
 #include <Project64-core/N64System/Mips/Mempak.H>
@@ -47,7 +47,7 @@ void CPifRamSettings::RefreshSettings(void *)
 }
 
 CPifRam::CPifRam(bool SavesReadOnly) :
-CEeprom(SavesReadOnly)
+    CEeprom(SavesReadOnly)
 {
     Reset();
 }
@@ -97,7 +97,7 @@ void CPifRam::n64_cic_nus_6105(char challenge[], char respone[], int32_t length)
 void CPifRam::PifRamRead()
 {
 #ifdef tofix
-	if (m_PifRam[0x3F] == 0x2)
+    if (m_PifRam[0x3F] == 0x2)
     {
         return;
     }
@@ -160,7 +160,7 @@ void CPifRam::PifRamRead()
 void CPifRam::PifRamWrite()
 {
 #ifdef tofix
-	CONTROL * Controllers = g_Plugins->Control()->PluginControllers();
+    CONTROL * Controllers = g_Plugins->Control()->PluginControllers();
     int32_t Channel = 0, CurPos;
 
     if (m_PifRam[0x3F] > 0x1)
@@ -607,7 +607,7 @@ void CPifRam::ProcessControllerCommand(int32_t Control, uint8_t * Command)
 #endif
 }
 
-void CPifRam::ReadControllerCommand(int32_t Control, uint8_t * Command) 
+void CPifRam::ReadControllerCommand(int32_t Control, uint8_t * Command)
 {
 #ifdef tofix
     CONTROL * Controllers = g_Plugins->Control()->PluginControllers();

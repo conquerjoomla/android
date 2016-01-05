@@ -15,7 +15,6 @@
 #include <Project64-core/N64System/ProfilingClass.h>
 #include <Project64-core/N64System/Recompiler/RecompilerClass.h>
 #include <Project64-core/N64System/Mips/MemoryVirtualMem.h>
-#include <Project64-core/N64System/Mips/MemoryClass.h>
 #include <Project64-core/Settings/DebugSettings.h>
 #include <Project64-core/Plugin.h>
 #include <Project64-core/Logging.h>
@@ -40,7 +39,6 @@ class CRecompiler;
 
 class CN64System :
     public CLogging,
-    public CMipsMemory_CallBack,
     public CTLB_CB,
     private CSystemEvents,
     protected CN64SystemSettings,
@@ -118,8 +116,8 @@ private:
     void   DumpSyncErrors(CN64System * SecondCPU);
     void   StartEmulation2(bool NewThread);
     bool   SetActiveSystem(bool bActive = true);
-    void   InitRegisters(bool bPostPif, CMipsMemory & MMU);
-    void    DisplayRSPListCount();
+    void   InitRegisters(bool bPostPif, CMipsMemoryVM & MMU);
+    void   DisplayRSPListCount();
 
     //CPU Methods
     void   ExecuteRecompiler();

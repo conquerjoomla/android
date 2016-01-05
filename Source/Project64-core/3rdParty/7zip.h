@@ -21,7 +21,7 @@ public:
     C7zip(const char * FileName);
     ~C7zip();
 
-    typedef void(*LP7ZNOTIFICATION)(const wchar_t * Status, void * CBInfo);
+    typedef void (*LP7ZNOTIFICATION)(const char * Status, void * CBInfo);
 
     inline int           NumFiles(void)      const { return m_db ? m_db->db.NumFiles : 0; }
     inline CSzFileItem * FileItem(int index) const { return m_db ? &m_db->db.Files[index] : NULL; }

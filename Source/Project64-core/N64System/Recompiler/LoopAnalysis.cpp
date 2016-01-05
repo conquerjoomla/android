@@ -16,7 +16,7 @@
 #include <Project64-core/N64System/Recompiler/CodeBlock.h>
 #include <Project64-core/N64System/Recompiler/x86CodeLog.h>
 #include <Project64-core/N64System/SystemGlobals.h>
-#include <Project64-core/N64System/Mips/MemoryClass.h>
+#include <Project64-core/N64System/Mips/MemoryVirtualMem.h>
 #include <Project64-core/N64System/Mips/OpcodeName.h>
 
 #ifdef _DEBUG
@@ -26,11 +26,11 @@
 bool DelaySlotEffectsCompare(uint32_t PC, uint32_t Reg1, uint32_t Reg2);
 
 LoopAnalysis::LoopAnalysis(CCodeBlock * CodeBlock, CCodeSection * Section) :
-m_EnterSection(Section),
-m_BlockInfo(CodeBlock),
-m_PC((uint32_t)-1),
-m_NextInstruction(NORMAL),
-m_Test(m_BlockInfo->NextTest())
+    m_EnterSection(Section),
+    m_BlockInfo(CodeBlock),
+    m_PC((uint32_t)-1),
+    m_NextInstruction(NORMAL),
+    m_Test(m_BlockInfo->NextTest())
 {
     memset(&m_Command, 0, sizeof(m_Command));
 }
@@ -761,19 +761,19 @@ bool LoopAnalysis::CheckLoopRegisterUsage(CCodeSection * Section)
                 }
                 break;
             case LIKELY_DELAY_SLOT:
-            {
-                SetContinueRegSet(Section, m_Reg);
-                SetJumpRegSet(Section, m_Reg);
-            }
-            m_NextInstruction = END_BLOCK;
-            break;
+                {
+                    SetContinueRegSet(Section, m_Reg);
+                    SetJumpRegSet(Section, m_Reg);
+                }
+                m_NextInstruction = END_BLOCK;
+                break;
             case DELAY_SLOT_DONE:
-            {
-                SetContinueRegSet(Section, m_Reg);
-                SetJumpRegSet(Section, m_Reg);
-            }
-            m_NextInstruction = END_BLOCK;
-            break;
+                {
+                    SetContinueRegSet(Section, m_Reg);
+                    SetJumpRegSet(Section, m_Reg);
+                }
+                m_NextInstruction = END_BLOCK;
+                break;
             case LIKELY_DELAY_SLOT_DONE:
                 g_Notify->BreakPoint(__FILE__, __LINE__);
                 if (Section->m_CompiledLocation)

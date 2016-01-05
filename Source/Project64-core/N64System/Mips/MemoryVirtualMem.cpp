@@ -26,24 +26,22 @@ uint32_t CMipsMemoryVM::m_MemLookupAddress = 0;
 MIPS_DWORD CMipsMemoryVM::m_MemLookupValue;
 bool CMipsMemoryVM::m_MemLookupValid = true;
 
-CMipsMemoryVM::CMipsMemoryVM(CMipsMemory_CallBack * CallBack, bool SavesReadOnly) :
-
-CPifRam(SavesReadOnly),
-CFlashram(SavesReadOnly),
-CSram(SavesReadOnly),
-CDMA(*this, *this),
-m_CBClass(CallBack),
-m_RomMapped(false),
-m_Rom(NULL),
-m_RomSize(0),
-m_RomWrittenTo(false),
-m_RomWroteValue(0),
-m_HalfLine(0),
-m_HalfLineCheck(false),
-m_FieldSerration(0),
-m_TempValue(0),
-m_TLB_ReadMap(NULL),
-m_TLB_WriteMap(NULL)
+CMipsMemoryVM::CMipsMemoryVM(bool SavesReadOnly) :
+    CPifRam(SavesReadOnly),
+    CFlashram(SavesReadOnly),
+    CSram(SavesReadOnly),
+    CDMA(*this, *this),
+    m_RomMapped(false),
+    m_Rom(NULL),
+    m_RomSize(0),
+    m_RomWrittenTo(false),
+    m_RomWroteValue(0),
+    m_HalfLine(0),
+    m_HalfLineCheck(false),
+    m_FieldSerration(0),
+    m_TempValue(0),
+    m_TLB_ReadMap(NULL),
+    m_TLB_WriteMap(NULL)
 {
     g_Settings->RegisterChangeCB(Game_RDRamSize, this, (CSettings::SettingChangedFunc)RdramChanged);
     m_RDRAM = NULL;
@@ -781,17 +779,17 @@ void  CMipsMemoryVM::Compile_LW(x86Reg Reg, uint32_t VAddr)
             }
             break;
         case 0x04100000:
-        {
-            static uint32_t TempValue = 0;
-            BeforeCallDirect(m_RegWorkingSet);
-            PushImm32("TempValue", (uint32_t)&TempValue);
-            PushImm32(PAddr);
-            MoveConstToX86reg((ULONG)((CMipsMemoryVM *)this), x86_ECX);
-            Call_Direct(AddressOf(&CMipsMemoryVM::LW_NonMemory), "CMipsMemoryVM::LW_NonMemory");
-            AfterCallDirect(m_RegWorkingSet);
-            MoveVariableToX86reg(&TempValue, "TempValue", Reg);
-        }
-        break;
+            {
+                static uint32_t TempValue = 0;
+                BeforeCallDirect(m_RegWorkingSet);
+                PushImm32("TempValue", (uint32_t)&TempValue);
+                PushImm32(PAddr);
+                MoveConstToX86reg((ULONG)((CMipsMemoryVM *)this), x86_ECX);
+                Call_Direct(AddressOf(&CMipsMemoryVM::LW_NonMemory), "CMipsMemoryVM::LW_NonMemory");
+                AfterCallDirect(m_RegWorkingSet);
+                MoveVariableToX86reg(&TempValue, "TempValue", Reg);
+            }
+            break;
         case 0x04300000:
             switch (PAddr)
             {
@@ -1233,19 +1231,19 @@ void CMipsMemoryVM::Compile_SW_Const(uint32_t Value, uint32_t VAddr)
             AfterCallDirect(m_RegWorkingSet);
             break;
         case 0x04040010:
-        {
-            m_RegWorkingSet.SetBlockCycleCount(m_RegWorkingSet.GetBlockCycleCount() - g_System->CountPerOp());
-            UpdateCounters(m_RegWorkingSet, false, true);
-            m_RegWorkingSet.SetBlockCycleCount(m_RegWorkingSet.GetBlockCycleCount() + g_System->CountPerOp());
+            {
+                m_RegWorkingSet.SetBlockCycleCount(m_RegWorkingSet.GetBlockCycleCount() - g_System->CountPerOp());
+                UpdateCounters(m_RegWorkingSet, false, true);
+                m_RegWorkingSet.SetBlockCycleCount(m_RegWorkingSet.GetBlockCycleCount() + g_System->CountPerOp());
 
-            BeforeCallDirect(m_RegWorkingSet);
-            PushImm32(Value);
-            PushImm32(PAddr);
-            MoveConstToX86reg((ULONG)((CMipsMemoryVM *)this), x86_ECX);
-            Call_Direct(AddressOf(&CMipsMemoryVM::SW_NonMemory), "CMipsMemoryVM::SW_NonMemory");
-            AfterCallDirect(m_RegWorkingSet);
-        }
-        break;
+                BeforeCallDirect(m_RegWorkingSet);
+                PushImm32(Value);
+                PushImm32(PAddr);
+                MoveConstToX86reg((ULONG)((CMipsMemoryVM *)this), x86_ECX);
+                Call_Direct(AddressOf(&CMipsMemoryVM::SW_NonMemory), "CMipsMemoryVM::SW_NonMemory");
+                AfterCallDirect(m_RegWorkingSet);
+            }
+            break;
         case 0x0404001C: MoveConstToVariable(0, &g_Reg->SP_SEMAPHORE_REG, "SP_SEMAPHORE_REG"); break;
         case 0x04080000: MoveConstToVariable(Value & 0xFFC, &g_Reg->SP_PC_REG, "SP_PC_REG"); break;
         default:
@@ -1277,113 +1275,113 @@ void CMipsMemoryVM::Compile_SW_Const(uint32_t Value, uint32_t VAddr)
         switch (PAddr)
         {
         case 0x04300000:
-        {
-            uint32_t ModValue;
-            ModValue = 0x7F;
-            if ((Value & MI_CLR_INIT) != 0)
             {
-                ModValue |= MI_MODE_INIT;
-            }
-            if ((Value & MI_CLR_EBUS) != 0)
-            {
-                ModValue |= MI_MODE_EBUS;
-            }
-            if ((Value & MI_CLR_RDRAM) != 0)
-            {
-                ModValue |= MI_MODE_RDRAM;
-            }
-            if (ModValue != 0)
-            {
-                AndConstToVariable(~ModValue, &g_Reg->MI_MODE_REG, "MI_MODE_REG");
-            }
+                uint32_t ModValue;
+                ModValue = 0x7F;
+                if ((Value & MI_CLR_INIT) != 0)
+                {
+                    ModValue |= MI_MODE_INIT;
+                }
+                if ((Value & MI_CLR_EBUS) != 0)
+                {
+                    ModValue |= MI_MODE_EBUS;
+                }
+                if ((Value & MI_CLR_RDRAM) != 0)
+                {
+                    ModValue |= MI_MODE_RDRAM;
+                }
+                if (ModValue != 0)
+                {
+                    AndConstToVariable(~ModValue, &g_Reg->MI_MODE_REG, "MI_MODE_REG");
+                }
 
-            ModValue = (Value & 0x7F);
-            if ((Value & MI_SET_INIT) != 0)
-            {
-                ModValue |= MI_MODE_INIT;
+                ModValue = (Value & 0x7F);
+                if ((Value & MI_SET_INIT) != 0)
+                {
+                    ModValue |= MI_MODE_INIT;
+                }
+                if ((Value & MI_SET_EBUS) != 0)
+                {
+                    ModValue |= MI_MODE_EBUS;
+                }
+                if ((Value & MI_SET_RDRAM) != 0)
+                {
+                    ModValue |= MI_MODE_RDRAM;
+                }
+                if (ModValue != 0) {
+                    OrConstToVariable(ModValue, &g_Reg->MI_MODE_REG, "MI_MODE_REG");
+                }
+                if ((Value & MI_CLR_DP_INTR) != 0)
+                {
+                    AndConstToVariable((uint32_t)~MI_INTR_DP, &g_Reg->MI_INTR_REG, "MI_INTR_REG");
+                    AndConstToVariable((uint32_t)~MI_INTR_DP, &g_Reg->m_GfxIntrReg, "m_GfxIntrReg");
+                }
             }
-            if ((Value & MI_SET_EBUS) != 0)
-            {
-                ModValue |= MI_MODE_EBUS;
-            }
-            if ((Value & MI_SET_RDRAM) != 0)
-            {
-                ModValue |= MI_MODE_RDRAM;
-            }
-            if (ModValue != 0) {
-                OrConstToVariable(ModValue, &g_Reg->MI_MODE_REG, "MI_MODE_REG");
-            }
-            if ((Value & MI_CLR_DP_INTR) != 0)
-            {
-                AndConstToVariable((uint32_t)~MI_INTR_DP, &g_Reg->MI_INTR_REG, "MI_INTR_REG");
-                AndConstToVariable((uint32_t)~MI_INTR_DP, &g_Reg->m_GfxIntrReg, "m_GfxIntrReg");
-            }
-        }
-        break;
+            break;
         case 0x0430000C:
-        {
-            uint32_t ModValue;
-            ModValue = 0;
-            if ((Value & MI_INTR_MASK_CLR_SP) != 0)
             {
-                ModValue |= MI_INTR_MASK_SP;
-            }
-            if ((Value & MI_INTR_MASK_CLR_SI) != 0)
-            {
-                ModValue |= MI_INTR_MASK_SI;
-            }
-            if ((Value & MI_INTR_MASK_CLR_AI) != 0)
-            {
-                ModValue |= MI_INTR_MASK_AI;
-            }
-            if ((Value & MI_INTR_MASK_CLR_VI) != 0)
-            {
-                ModValue |= MI_INTR_MASK_VI;
-            }
-            if ((Value & MI_INTR_MASK_CLR_PI) != 0)
-            {
-                ModValue |= MI_INTR_MASK_PI;
-            }
-            if ((Value & MI_INTR_MASK_CLR_DP) != 0)
-            {
-                ModValue |= MI_INTR_MASK_DP;
-            }
-            if (ModValue != 0)
-            {
-                AndConstToVariable(~ModValue, &g_Reg->MI_INTR_MASK_REG, "MI_INTR_MASK_REG");
-            }
+                uint32_t ModValue;
+                ModValue = 0;
+                if ((Value & MI_INTR_MASK_CLR_SP) != 0)
+                {
+                    ModValue |= MI_INTR_MASK_SP;
+                }
+                if ((Value & MI_INTR_MASK_CLR_SI) != 0)
+                {
+                    ModValue |= MI_INTR_MASK_SI;
+                }
+                if ((Value & MI_INTR_MASK_CLR_AI) != 0)
+                {
+                    ModValue |= MI_INTR_MASK_AI;
+                }
+                if ((Value & MI_INTR_MASK_CLR_VI) != 0)
+                {
+                    ModValue |= MI_INTR_MASK_VI;
+                }
+                if ((Value & MI_INTR_MASK_CLR_PI) != 0)
+                {
+                    ModValue |= MI_INTR_MASK_PI;
+                }
+                if ((Value & MI_INTR_MASK_CLR_DP) != 0)
+                {
+                    ModValue |= MI_INTR_MASK_DP;
+                }
+                if (ModValue != 0)
+                {
+                    AndConstToVariable(~ModValue, &g_Reg->MI_INTR_MASK_REG, "MI_INTR_MASK_REG");
+                }
 
-            ModValue = 0;
-            if ((Value & MI_INTR_MASK_SET_SP) != 0)
-            {
-                ModValue |= MI_INTR_MASK_SP;
+                ModValue = 0;
+                if ((Value & MI_INTR_MASK_SET_SP) != 0)
+                {
+                    ModValue |= MI_INTR_MASK_SP;
+                }
+                if ((Value & MI_INTR_MASK_SET_SI) != 0)
+                {
+                    ModValue |= MI_INTR_MASK_SI;
+                }
+                if ((Value & MI_INTR_MASK_SET_AI) != 0)
+                {
+                    ModValue |= MI_INTR_MASK_AI;
+                }
+                if ((Value & MI_INTR_MASK_SET_VI) != 0)
+                {
+                    ModValue |= MI_INTR_MASK_VI;
+                }
+                if ((Value & MI_INTR_MASK_SET_PI) != 0)
+                {
+                    ModValue |= MI_INTR_MASK_PI;
+                }
+                if ((Value & MI_INTR_MASK_SET_DP) != 0)
+                {
+                    ModValue |= MI_INTR_MASK_DP;
+                }
+                if (ModValue != 0)
+                {
+                    OrConstToVariable(ModValue, &g_Reg->MI_INTR_MASK_REG, "MI_INTR_MASK_REG");
+                }
             }
-            if ((Value & MI_INTR_MASK_SET_SI) != 0)
-            {
-                ModValue |= MI_INTR_MASK_SI;
-            }
-            if ((Value & MI_INTR_MASK_SET_AI) != 0)
-            {
-                ModValue |= MI_INTR_MASK_AI;
-            }
-            if ((Value & MI_INTR_MASK_SET_VI) != 0)
-            {
-                ModValue |= MI_INTR_MASK_VI;
-            }
-            if ((Value & MI_INTR_MASK_SET_PI) != 0)
-            {
-                ModValue |= MI_INTR_MASK_PI;
-            }
-            if ((Value & MI_INTR_MASK_SET_DP) != 0)
-            {
-                ModValue |= MI_INTR_MASK_DP;
-            }
-            if (ModValue != 0)
-            {
-                OrConstToVariable(ModValue, &g_Reg->MI_INTR_MASK_REG, "MI_INTR_MASK_REG");
-            }
-        }
-        break;
+            break;
         default:
             if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
             {
@@ -1592,19 +1590,19 @@ void CMipsMemoryVM::Compile_SW_Const(uint32_t Value, uint32_t VAddr)
         }
         break;
     case 0x1fc00000:
-    {
-        m_RegWorkingSet.SetBlockCycleCount(m_RegWorkingSet.GetBlockCycleCount() - g_System->CountPerOp());
-        UpdateCounters(m_RegWorkingSet, false, true);
-        m_RegWorkingSet.SetBlockCycleCount(m_RegWorkingSet.GetBlockCycleCount() + g_System->CountPerOp());
+        {
+            m_RegWorkingSet.SetBlockCycleCount(m_RegWorkingSet.GetBlockCycleCount() - g_System->CountPerOp());
+            UpdateCounters(m_RegWorkingSet, false, true);
+            m_RegWorkingSet.SetBlockCycleCount(m_RegWorkingSet.GetBlockCycleCount() + g_System->CountPerOp());
 
-        BeforeCallDirect(m_RegWorkingSet);
-        PushImm32(Value);
-        PushImm32(PAddr);
-        MoveConstToX86reg((ULONG)((CMipsMemoryVM *)this), x86_ECX);
-        Call_Direct(AddressOf(&CMipsMemoryVM::SW_NonMemory), "CMipsMemoryVM::SW_NonMemory");
-        AfterCallDirect(m_RegWorkingSet);
-    }
-    break;
+            BeforeCallDirect(m_RegWorkingSet);
+            PushImm32(Value);
+            PushImm32(PAddr);
+            MoveConstToX86reg((ULONG)((CMipsMemoryVM *)this), x86_ECX);
+            Call_Direct(AddressOf(&CMipsMemoryVM::SW_NonMemory), "CMipsMemoryVM::SW_NonMemory");
+            AfterCallDirect(m_RegWorkingSet);
+        }
+        break;
     default:
         if (g_Settings->LoadBool(Debugger_ShowUnhandledMemory))
         {
@@ -5387,10 +5385,12 @@ void CMipsMemoryVM::Write32DPCommandRegisters(void)
         break;
     case 0x04100004:
         g_Reg->DPC_END_REG = m_MemLookupValue.UW[0];
+#ifdef tofix
         if (g_Plugins->Gfx()->ProcessRDPList)
         {
             g_Plugins->Gfx()->ProcessRDPList();
         }
+#endif
         break;
         //case 0x04100008: g_Reg->DPC_CURRENT_REG = Value; break;
     case 0x0410000C:
@@ -5569,10 +5569,12 @@ void CMipsMemoryVM::Write32VideoInterface(void)
         if (g_Reg->VI_STATUS_REG != m_MemLookupValue.UW[0])
         {
             g_Reg->VI_STATUS_REG = m_MemLookupValue.UW[0];
+#ifdef tofix
             if (g_Plugins->Gfx()->ViStatusChanged != NULL)
             {
                 g_Plugins->Gfx()->ViStatusChanged();
             }
+#endif
         }
         break;
     case 0x04400004:
@@ -5592,10 +5594,12 @@ void CMipsMemoryVM::Write32VideoInterface(void)
         if (g_Reg->VI_WIDTH_REG != m_MemLookupValue.UW[0])
         {
             g_Reg->VI_WIDTH_REG = m_MemLookupValue.UW[0];
+#ifdef tofix
             if (g_Plugins->Gfx()->ViWidthChanged != NULL)
             {
                 g_Plugins->Gfx()->ViWidthChanged();
             }
+#endif
         }
         break;
     case 0x0440000C: g_Reg->VI_INTR_REG = m_MemLookupValue.UW[0]; break;
@@ -5633,10 +5637,12 @@ void CMipsMemoryVM::Write32AudioInterface(void)
         }
         else
         {
+#ifdef tofix
             if (g_Plugins->Audio()->AiLenChanged != NULL)
             {
                 g_Plugins->Audio()->AiLenChanged();
             }
+#endif
         }
         break;
     case 0x04500008: g_Reg->AI_CONTROL_REG = (m_MemLookupValue.UW[0] & 1); break;
@@ -5648,11 +5654,13 @@ void CMipsMemoryVM::Write32AudioInterface(void)
         break;
     case 0x04500010:
         g_Reg->AI_DACRATE_REG = m_MemLookupValue.UW[0];
+#ifdef tofix
         g_Plugins->Audio()->DacrateChanged(g_System->SystemType());
         if (g_System->bFixedAudio())
         {
             g_Audio->SetFrequency(m_MemLookupValue.UW[0], g_System->SystemType());
         }
+#endif
         break;
     case 0x04500014:  g_Reg->AI_BITRATE_REG = m_MemLookupValue.UW[0]; break;
     default:

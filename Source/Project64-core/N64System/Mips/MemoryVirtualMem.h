@@ -9,7 +9,7 @@
 *                                                                           *
 ****************************************************************************/
 #pragma once
-#include <Project64-core/N64System/Mips/MemoryClass.h>
+#include <Project64-core/N64System/Mips/MemoryVirtualMem.h>
 #include "TranslateVaddr.h"
 #include <Project64-core/N64System/Recompiler/RecompilerOps.h>
 #include <Project64-core/N64System/Interpreter/InterpreterOps.h>
@@ -50,7 +50,6 @@
  */
 
 class CMipsMemoryVM :
-    public CMipsMemory,
     public CTransVaddr,
     private CRecompilerOps,
     private R4300iOp,
@@ -60,7 +59,7 @@ class CMipsMemoryVM :
     private CDMA
 {
 public:
-    CMipsMemoryVM(CMipsMemory_CallBack * CallBack, bool SavesReadOnly);
+    CMipsMemoryVM(bool SavesReadOnly);
     ~CMipsMemoryVM();
 
     static void ReserveMemory();
@@ -202,8 +201,6 @@ private:
     static void Write32SerialInterface(void);
     static void Write32CartridgeDomain2Address2(void);
     static void Write32PifRam(void);
-
-    CMipsMemory_CallBack * const m_CBClass;
 
     //Memory Locations
     static uint8_t   * m_Reserve1, *m_Reserve2;

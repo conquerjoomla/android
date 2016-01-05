@@ -9,7 +9,7 @@
 *                                                                           *
 ****************************************************************************/
 #include "stdafx.h"
-#include "N64class.h"
+#include "N64Class.h"
 #include <Project64-core/3rdParty/zip.h>
 #include <Project64-core/N64System/Recompiler/x86CodeLog.h>
 #include <Project64-core/N64System/SystemGlobals.h>
@@ -621,7 +621,7 @@ bool CN64System::SetActiveSystem(bool bActive)
 	return false;
 }
 
-void CN64System::InitRegisters(bool bPostPif, CMipsMemory & MMU)
+void CN64System::InitRegisters(bool bPostPif, CMipsMemoryVM & MMU)
 {
 #ifdef tofix
     m_Reg.Reset();

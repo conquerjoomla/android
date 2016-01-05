@@ -12,7 +12,7 @@
 #include "InterpreterOps.h"
 #include <Project64-core/N64System/SystemGlobals.h>
 #include <Project64-core/N64System/N64Class.h>
-#include <Project64-core/N64System/Mips/MemoryClass.h>
+#include <Project64-core/N64System/Mips/MemoryVirtualMem.h>
 #include <Project64-core/N64System/Mips/SystemTiming.h>
 #include <Project64-core/N64System/Mips/TLBClass.h>
 #include <Project64-core/N64System/Mips/OpcodeName.h>
@@ -1030,9 +1030,9 @@ void R4300iOp::LDL()
 }
 
 uint64_t LDR_MASK[8] = { 0xFFFFFFFFFFFFFF00, 0xFFFFFFFFFFFF0000,
-0xFFFFFFFFFF000000, 0xFFFFFFFF00000000,
-0xFFFFFF0000000000, 0xFFFF000000000000,
-0xFF00000000000000, 0 };
+    0xFFFFFFFFFF000000, 0xFFFFFFFF00000000,
+    0xFFFFFF0000000000, 0xFFFF000000000000,
+    0xFF00000000000000, 0 };
 int32_t LDR_SHIFT[8] = { 56, 48, 40, 32, 24, 16, 8, 0 };
 
 void R4300iOp::LDR()
@@ -1321,12 +1321,12 @@ void R4300iOp::SW()
 }
 
 uint64_t SDL_MASK[8] = { 0, 0xFF00000000000000,
-0xFFFF000000000000,
-0xFFFFFF0000000000,
-0xFFFFFFFF00000000,
-0xFFFFFFFFFF000000,
-0xFFFFFFFFFFFF0000,
-0xFFFFFFFFFFFFFF00 };
+    0xFFFF000000000000,
+    0xFFFFFF0000000000,
+    0xFFFFFFFF00000000,
+    0xFFFFFFFFFF000000,
+    0xFFFFFFFFFFFF0000,
+    0xFFFFFFFFFFFFFF00 };
 
 int32_t SDL_SHIFT[8] = { 0, 8, 16, 24, 32, 40, 48, 56 };
 
@@ -1368,13 +1368,13 @@ void R4300iOp::SDL()
 }
 
 uint64_t SDR_MASK[8] = { 0x00FFFFFFFFFFFFFF,
-0x0000FFFFFFFFFFFF,
-0x000000FFFFFFFFFF,
-0x00000000FFFFFFFF,
-0x0000000000FFFFFF,
-0x000000000000FFFF,
-0x00000000000000FF,
-0x0000000000000000 };
+    0x0000FFFFFFFFFFFF,
+    0x000000FFFFFFFFFF,
+    0x00000000FFFFFFFF,
+    0x0000000000FFFFFF,
+    0x000000000000FFFF,
+    0x00000000000000FF,
+    0x0000000000000000 };
 
 int32_t SDR_SHIFT[8] = { 56, 48, 40, 32, 24, 16, 8, 0 };
 
@@ -1487,10 +1487,10 @@ void R4300iOp::LWC1()
 {
     uint32_t Address = _GPR[m_Opcode.base].UW[0] + (uint32_t)((int16_t)m_Opcode.offset);
     TEST_COP1_USABLE_EXCEPTION
-        if ((Address & 3) != 0)
-        {
-            ADDRESS_ERROR_EXCEPTION(Address, true);
-        }
+    if ((Address & 3) != 0)
+    {
+        ADDRESS_ERROR_EXCEPTION(Address, true);
+    }
     if (!g_MMU->LW_VAddr(Address, *(uint32_t *)_FPR_S[m_Opcode.ft]))
     {
         if (bShowTLBMisses())
@@ -1555,10 +1555,10 @@ void R4300iOp::LDC1()
     uint32_t Address = _GPR[m_Opcode.base].UW[0] + (int16_t)m_Opcode.offset;
 
     TEST_COP1_USABLE_EXCEPTION
-        if ((Address & 7) != 0)
-        {
-            ADDRESS_ERROR_EXCEPTION(Address, true);
-        }
+    if ((Address & 7) != 0)
+    {
+        ADDRESS_ERROR_EXCEPTION(Address, true);
+    }
     if (!g_MMU->LD_VAddr(Address, *(uint64_t *)_FPR_D[m_Opcode.ft]))
     {
         if (bHaveDebugger())
@@ -2263,7 +2263,7 @@ void R4300iOp::COP1_CF()
             }
             return;
         }
-    _GPR[m_Opcode.rt].DW = (int32_t)_FPCR[m_Opcode.fs];
+        _GPR[m_Opcode.rt].DW = (int32_t)_FPCR[m_Opcode.fs];
 }
 
 void R4300iOp::COP1_MT()
@@ -2292,10 +2292,10 @@ void R4300iOp::COP1_CT()
             }
             return;
         }
-    if (bHaveDebugger())
-    {
-        g_Notify->DisplayError("CTC1 what register are you writing to ?");
-    }
+        if (bHaveDebugger())
+        {
+            g_Notify->DisplayError("CTC1 what register are you writing to ?");
+        }
 }
 
 /************************* COP1: BC1 functions ***********************/
@@ -2363,9 +2363,9 @@ __inline void Float_RoundToInteger32(int32_t * Dest, float * Source)
     _asm
     {
         mov esi, [Source]
-            mov edi, [Dest]
-            fld dword ptr[esi]
-            fistp dword ptr[edi]
+        mov edi, [Dest]
+        fld dword ptr[esi]
+        fistp dword ptr[edi]
     }
 #else
     __m128 xmm;
@@ -2381,9 +2381,9 @@ __inline void Float_RoundToInteger64(int64_t * Dest, float * Source)
     _asm
     {
         mov esi, [Source]
-            mov edi, [Dest]
-            fld dword ptr[esi]
-            fistp qword ptr[edi]
+        mov edi, [Dest]
+        fld dword ptr[esi]
+        fistp qword ptr[edi]
     }
 #else
     __m128 xmm;
@@ -2433,11 +2433,11 @@ void R4300iOp::COP1_S_SQRT()
     {
         push esi
             mov esi, dword ptr[Source]
-            fld dword ptr[esi]
-            fsqrt
+        fld dword ptr[esi]
+        fsqrt
             mov esi, dword ptr[Dest]
-            fstp dword ptr[esi]
-            pop esi
+        fstp dword ptr[esi]
+        pop esi
     }
 #else
     __m128 xmm;

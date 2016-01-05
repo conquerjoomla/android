@@ -12,11 +12,11 @@
 #include "InterpreterCPU.h"
 #include <Project64-core/N64System/SystemGlobals.h>
 #include <Project64-core/N64System/N64Class.h>
-#include <Project64-core/N64System/Mips/MemoryClass.h>
+#include <Project64-core/N64System/Mips/MemoryVirtualMem.h>
 #include <Project64-core/N64System/Mips/OpcodeName.h>
 #include <Project64-core/N64System/Interpreter/InterpreterOps32.h>
 #include <Project64-core/Plugins/PluginClass.h>
-#include <Project64-core/Plugins/GFXplugin.h>
+#include <Project64-core/Plugins/GFXPlugin.h>
 #include <Project64-core/ExceptionHandler.h>
 
 R4300iOp::Func * CInterpreterCPU::m_R4300i_Opcode = NULL;
@@ -32,7 +32,7 @@ bool DelaySlotEffectsCompare(uint32_t PC, uint32_t Reg1, uint32_t Reg2)
 
     if (!g_MMU->LW_VAddr(PC + 4, Command.Hex))
     {
-        //g_Notify->DisplayError(L"Failed to load word 2");
+        //g_Notify->DisplayError("Failed to load word 2");
         //ExitThread(0);
         return true;
     }
@@ -96,7 +96,7 @@ bool DelaySlotEffectsCompare(uint32_t PC, uint32_t Reg1, uint32_t Reg2)
         default:
             if (g_Settings->LoadBool(Debugger_Enabled))
             {
-                g_Notify->DisplayError(stdstr_f("Does %s effect Delay slot at %X?", R4300iOpcodeName(Command.Hex, PC + 4), PC).ToUTF16().c_str());
+                g_Notify->DisplayError(stdstr_f("Does %s effect Delay slot at %X?", R4300iOpcodeName(Command.Hex, PC + 4), PC).c_str());
             }
             return true;
         }
@@ -127,7 +127,7 @@ bool DelaySlotEffectsCompare(uint32_t PC, uint32_t Reg1, uint32_t Reg2)
                 default:
                     if (g_Settings->LoadBool(Debugger_Enabled))
                     {
-                        g_Notify->DisplayError(stdstr_f("Does %s effect Delay slot at %X?\n6", R4300iOpcodeName(Command.Hex, PC + 4), PC).ToUTF16().c_str());
+                        g_Notify->DisplayError(stdstr_f("Does %s effect Delay slot at %X?\n6", R4300iOpcodeName(Command.Hex, PC + 4), PC).c_str());
                     }
                     return true;
                 }
@@ -136,7 +136,7 @@ bool DelaySlotEffectsCompare(uint32_t PC, uint32_t Reg1, uint32_t Reg2)
             {
                 if (g_Settings->LoadBool(Debugger_Enabled))
                 {
-                    g_Notify->DisplayError(stdstr_f("Does %s effect Delay slot at %X?\n7", R4300iOpcodeName(Command.Hex, PC + 4), PC).ToUTF16().c_str());
+                    g_Notify->DisplayError(stdstr_f("Does %s effect Delay slot at %X?\n7", R4300iOpcodeName(Command.Hex, PC + 4), PC).c_str());
                 }
                 return true;
             }
@@ -165,7 +165,7 @@ bool DelaySlotEffectsCompare(uint32_t PC, uint32_t Reg1, uint32_t Reg2)
         default:
             if (g_Settings->LoadBool(Debugger_Enabled))
             {
-                g_Notify->DisplayError(stdstr_f("Does %s effect Delay slot at %X?", R4300iOpcodeName(Command.Hex, PC + 4), PC).ToUTF16().c_str());
+                g_Notify->DisplayError(stdstr_f("Does %s effect Delay slot at %X?", R4300iOpcodeName(Command.Hex, PC + 4), PC).c_str());
             }
             return true;
         }
@@ -213,7 +213,7 @@ bool DelaySlotEffectsCompare(uint32_t PC, uint32_t Reg1, uint32_t Reg2)
     default:
         if (g_Settings->LoadBool(Debugger_Enabled))
         {
-            g_Notify->DisplayError(stdstr_f("Does %s effect Delay slot at %X?", R4300iOpcodeName(Command.Hex, PC + 4), PC).ToUTF16().c_str());
+            g_Notify->DisplayError(stdstr_f("Does %s effect Delay slot at %X?", R4300iOpcodeName(Command.Hex, PC + 4), PC).c_str());
         }
         return true;
     }
@@ -251,12 +251,12 @@ void CInterpreterCPU::InPermLoop()
         (g_Reg->STATUS_REGISTER & 0xFF00) == 0)
     {
 #ifdef tofix
-		if (g_Plugins->Gfx()->UpdateScreen != NULL)
+        if (g_Plugins->Gfx()->UpdateScreen != NULL)
         {
             g_Plugins->Gfx()->UpdateScreen();
         }
 #endif
-		//CurrentFrame = 0;
+        //CurrentFrame = 0;
         //CurrentPercent = 0;
         //DisplayFPS();
         g_Notify->DisplayError(GS(MSG_PERM_LOOP));
@@ -295,30 +295,28 @@ void CInterpreterCPU::ExecuteCPU()
             }
 
             /* if (PROGRAM_COUNTER > 0x80000300 && PROGRAM_COUNTER < 0x80380000)
-               {
-               WriteTraceF((TraceType)(TraceError | TraceNoHeader),"%X: %s",*_PROGRAM_COUNTER,R4300iOpcodeName(Opcode.Hex,*_PROGRAM_COUNTER));
-               // WriteTraceF((TraceType)(TraceError | TraceNoHeader),"%X: %s t9: %08X v1: %08X",*_PROGRAM_COUNTER,R4300iOpcodeName(Opcode.Hex,*_PROGRAM_COUNTER),_GPR[0x19].UW[0],_GPR[0x03].UW[0]);
-               // WriteTraceF((TraceType)(TraceError | TraceNoHeader),"%X: %d %d",*_PROGRAM_COUNTER,*g_NextTimer,g_SystemTimer->CurrentType());
-               } */
+            {
+            WriteTraceF((TraceType)(TraceError | TraceNoHeader),"%X: %s",*_PROGRAM_COUNTER,R4300iOpcodeName(Opcode.Hex,*_PROGRAM_COUNTER));
+            // WriteTraceF((TraceType)(TraceError | TraceNoHeader),"%X: %s t9: %08X v1: %08X",*_PROGRAM_COUNTER,R4300iOpcodeName(Opcode.Hex,*_PROGRAM_COUNTER),_GPR[0x19].UW[0],_GPR[0x03].UW[0]);
+            // WriteTraceF((TraceType)(TraceError | TraceNoHeader),"%X: %d %d",*_PROGRAM_COUNTER,*g_NextTimer,g_SystemTimer->CurrentType());
+            } */
             m_R4300i_Opcode[Opcode.op]();
             NextTimer -= CountPerOp;
 
+            PROGRAM_COUNTER += 4;
             switch (R4300iOp::m_NextInstruction)
             {
             case NORMAL:
-                PROGRAM_COUNTER += 4;
                 break;
             case DELAY_SLOT:
                 R4300iOp::m_NextInstruction = JUMP;
-                PROGRAM_COUNTER += 4;
                 break;
             case PERMLOOP_DO_DELAY:
                 R4300iOp::m_NextInstruction = PERMLOOP_DELAY_DONE;
-                PROGRAM_COUNTER += 4;
                 break;
             case JUMP:
             {
-                bool CheckTimer = (JumpToLocation < PROGRAM_COUNTER || TestTimer);
+                bool CheckTimer = (JumpToLocation < PROGRAM_COUNTER - 4 || TestTimer);
                 PROGRAM_COUNTER = JumpToLocation;
                 R4300iOp::m_NextInstruction = NORMAL;
                 if (CheckTimer)
@@ -420,24 +418,24 @@ void CInterpreterCPU::ExecuteOps(int32_t Cycles)
                     PROGRAM_COUNTER += 4;
                     break;
                 case JUMP:
-                {
-                    bool CheckTimer = (JumpToLocation < PROGRAM_COUNTER || TestTimer);
-                    PROGRAM_COUNTER = JumpToLocation;
-                    R4300iOp::m_NextInstruction = NORMAL;
-                    if (CheckTimer)
                     {
-                        TestTimer = false;
-                        if (*g_NextTimer < 0)
+                        bool CheckTimer = (JumpToLocation < PROGRAM_COUNTER || TestTimer);
+                        PROGRAM_COUNTER = JumpToLocation;
+                        R4300iOp::m_NextInstruction = NORMAL;
+                        if (CheckTimer)
                         {
-                            g_SystemTimer->TimerDone();
-                        }
-                        if (DoSomething)
-                        {
-                            g_SystemEvents->ExecuteEvents();
+                            TestTimer = false;
+                            if (*g_NextTimer < 0)
+                            {
+                                g_SystemTimer->TimerDone();
+                            }
+                            if (DoSomething)
+                            {
+                                g_SystemEvents->ExecuteEvents();
+                            }
                         }
                     }
-                }
-                break;
+                    break;
                 case PERMLOOP_DELAY_DONE:
                     PROGRAM_COUNTER = JumpToLocation;
                     R4300iOp::m_NextInstruction = NORMAL;

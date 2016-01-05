@@ -11,7 +11,7 @@
 #include "stdafx.h"
 #include <Project64-core/N64System/SystemGlobals.h>
 #include <Project64-core/N64System/N64RomClass.h>
-#include <Project64-core/N64System/Mips/MemoryClass.h>
+#include <Project64-core/N64System/Mips/MemoryVirtualMem.h>
 #include <Project64-core/N64System/Mips/RegisterClass.h>
 #include <Project64-core/N64System/N64Class.h>
 #include "AudioPlugin.h"
@@ -190,11 +190,11 @@ void CAudioPlugin::DacrateChanged(SYSTEM_TYPE Type)
 
 void CAudioPlugin::AudioThread(CAudioPlugin * _this) {
     SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
-	if (g_Settings->LoadBool(Setting_CN64TimeCritical))
-	{
- 		SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_HIGHEST);
-	}
-	for (;;)
+    if (g_Settings->LoadBool(Setting_CN64TimeCritical))
+    {
+        SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_HIGHEST);
+    }
+    for (;;)
     {
         _this->AiUpdate(true);
     }

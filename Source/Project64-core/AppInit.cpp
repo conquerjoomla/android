@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include <Common/path.h>
-#include <Common/trace.h>
+#include <Common/Trace.h>
 #include <Common/Util.h>
 #include <Project64-core/N64System/Mips/MemoryVirtualMem.h>
 #ifdef tofix
@@ -16,12 +16,38 @@ static void FixDirectories(void);
 static void IncreaseThreadPriority(void);
 #endif
 
-CNotification * g_Notify = NULL;
 static CTraceFileLog * g_LogFile = NULL;
 
 void LogFlushChanged(CTraceFileLog * LogFile)
 {
     LogFile->SetFlushFile(g_Settings->LoadDword(Debugger_AppLogFlush) != 0);
+}
+
+void InitializeLog(void)
+{
+#ifdef ANDROID
+    TraceSetMaxModule(MaxTraceModuleProject64, TraceVerbose);
+#else
+#ifdef _DEBUG
+    TraceSetMaxModule(MaxTraceModuleProject64, TraceInfo);
+#else
+    TraceSetMaxModule(MaxTraceModuleProject64, TraceError);
+#endif
+#endif
+}
+
+void AddLogModule(void)
+{
+	CPath LogFilePath(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str(),"");
+    LogFilePath.AppendDirectory("Logs");
+    if (!LogFilePath.DirectoryExists())
+    {
+        LogFilePath.DirectoryCreate();
+    }
+    LogFilePath.SetNameExtension("Project64.log");
+
+    g_LogFile = new CTraceFileLog(LogFilePath, g_Settings->LoadDword(Debugger_AppLogFlush) != 0, Log_New, 500);
+    TraceAddModule(g_LogFile);
 }
 
 void SetTraceModuleNames(void)
@@ -44,34 +70,6 @@ void SetTraceModuleNames(void)
     TraceSetModuleName(TraceTLB, "TLB");
     TraceSetModuleName(TraceProtectedMem, "Protected Memory");
     TraceSetModuleName(TraceUserInterface, "User Interface");
-}
-
-void InitializeLog(void)
-{
-#ifdef ANDROID
-    TraceSetMaxModule(MaxTraceModuleProject64, TraceVerbose);
-#else
-#ifdef _DEBUG
-    TraceSetMaxModule(MaxTraceModuleProject64, TraceInfo);
-#else
-    TraceSetMaxModule(MaxTraceModuleProject64, TraceError);
-#endif
-#endif
-    SetTraceModuleNames();
-}
-
-void AddLogModule(void)
-{
-	CPath LogFilePath(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str(),"");
-    LogFilePath.AppendDirectory("Logs");
-    if (!LogFilePath.DirectoryExists())
-    {
-        LogFilePath.DirectoryCreate();
-    }
-    LogFilePath.SetNameExtension("Project64.log");
-
-    g_LogFile = new CTraceFileLog(LogFilePath, g_Settings->LoadDword(Debugger_AppLogFlush) != 0, Log_New, 500);
-    TraceAddModule(g_LogFile);
 }
 
 void UpdateTraceLevel(void * /*NotUsed*/)
@@ -98,6 +96,7 @@ void UpdateTraceLevel(void * /*NotUsed*/)
 
 void SetupTrace(void)
 {
+    SetTraceModuleNames();
     AddLogModule();
 
     g_Settings->RegisterChangeCB(Debugger_TraceMD5, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
@@ -147,7 +146,10 @@ void CleanupTrace(void)
     g_Settings->UnregisterChangeCB(Debugger_TraceProtectedMEM, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
     g_Settings->UnregisterChangeCB(Debugger_TraceUserInterface, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
     g_Settings->UnregisterChangeCB(Debugger_AppLogFlush, g_LogFile, (CSettings::SettingChangedFunc)LogFlushChanged);
+}
 
+void TraceDone(void)
+{
     CloseTrace();
     if (g_LogFile) { delete g_LogFile; g_LogFile = NULL; }
 }
@@ -234,18 +236,13 @@ bool AppInit(CNotification * Notify, int argc, char **argv)
 #endif
         g_Lang = new CLanguage();
         g_Lang->LoadCurrentStrings();
-
 		g_Notify->AppInitDone();
 		WriteTrace(TraceAppInit, TraceDebug, "Initialized Successfully");
 		return true;
     }
     catch (...)
     {
-#ifdef _WIN32
-		g_Notify->DisplayError(stdstr_f("Exception caught\nFile: %s\nLine: %d", __FILE__, __LINE__).ToUTF16().c_str());
-#else
-		g_Notify->DisplayError(stdstr_f("Exception caught\nFile: %s\nLine: %d", __FILE__, __LINE__).c_str());
-#endif
+        g_Notify->DisplayError(stdstr_f("Exception caught\nFile: %s\nLine: %d", __FILE__, __LINE__).c_str());
 		WriteTrace(TraceAppInit, TraceError, "Exception caught, Init was not successfull");
 		return false;
 	}
@@ -254,6 +251,8 @@ bool AppInit(CNotification * Notify, int argc, char **argv)
 void AppCleanup(void)
 {
     WriteTrace(TraceAppCleanup, TraceDebug, "cleaning up global objects");
+    CleanupTrace();
+
 
 #ifdef tofix
     if (g_Rom)      { delete g_Rom; g_Rom = NULL; }
@@ -267,7 +266,7 @@ void AppCleanup(void)
 #ifdef tofix
     CMipsMemoryVM::FreeReservedMemory();
 #endif
-    CleanupTrace();
+    TraceDone();
 }
 
 void FixDirectories(void)
