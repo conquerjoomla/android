@@ -18,22 +18,22 @@ class CNotificationImp :
 public:
     CNotificationImp(void);
 
+    //Error Messages
+    void DisplayError(const char * Message) const;
     void DisplayError(LanguageStringID StringID) const;
+
+    void FatalError(const char * Message) const;
     void FatalError(LanguageStringID StringID) const;
+
+    //User Feedback
+    void DisplayMessage(int DisplayTime, const char * Message) const;
     void DisplayMessage(int DisplayTime, LanguageStringID StringID) const;
 
 #ifdef _WIN32
-    void DisplayError(const wchar_t * Message) const;
-    void FatalError(const wchar_t * Message) const;
-    void DisplayMessage(int DisplayTime, const wchar_t * Message) const;
-    void DisplayMessage2(const wchar_t * Message) const;
+    void DisplayMessage2(const char * Message) const;
 
     // Ask a Yes/No Question to the user, yes = true, no = false
-    bool AskYesNoQuestion(const wchar_t * Question) const;
-#else
-	void DisplayError(const char * Message) const;
-    void FatalError(const char * Message) const;
-    void DisplayMessage(int DisplayTime, const char * Message) const;
+    bool AskYesNoQuestion(const char * Question) const;
 #endif
     void BreakPoint(const char * FileName, int32_t LineNumber);
 

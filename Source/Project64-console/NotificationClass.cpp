@@ -44,15 +44,13 @@ void CNotificationImp::DisplayMessage(int /*DisplayTime*/, LanguageStringID /*St
 }
 
 #ifdef _WIN32
-void CNotificationImp::DisplayError(const wchar_t * Message) const
+void CNotificationImp::DisplayError(const char * Message) const
 {
     if (this == NULL) { return; }
 
-    stdstr TraceMessage;
-    TraceMessage.FromUTF16(Message);
-    WriteTrace(TraceUserInterface, TraceError, TraceMessage.c_str());
+    WriteTrace(TraceUserInterface, TraceError, Message);
 #ifdef tofix
-	WindowMode();
+    WindowMode();
 #endif
 
     HWND Parent = NULL;
@@ -62,67 +60,66 @@ void CNotificationImp::DisplayError(const wchar_t * Message) const
         Parent = reinterpret_cast<HWND>(m_hWnd->GetWindowHandle());
     }
 #endif
-    MessageBoxW(Parent, Message, GS(MSG_MSGBOX_TITLE), MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
-}
-
-void CNotificationImp::FatalError(const wchar_t * Message) const
-{
-	DisplayMessage(0,Message);
-}
-
-//User Feedback
-void CNotificationImp::DisplayMessage(int /*DisplayTime*/, const wchar_t * Message) const
-{
-	printf("%ws\n",Message);
-}
-
-void CNotificationImp::DisplayMessage2(const wchar_t * /*Message*/) const
-{
-}
-
-// Ask a Yes/No Question to the user, yes = true, no = false
-bool CNotificationImp::AskYesNoQuestion(const wchar_t * /*Question*/) const
-{
-	return false;
-}
-#else
-void CNotificationImp::DisplayError(const char * Message) const
-{
-	DisplayMessage(10,Message);
+    MessageBoxW(Parent, stdstr(Message).ToUTF16().c_str(), wGS(MSG_MSGBOX_TITLE).c_str(), MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
 }
 
 void CNotificationImp::FatalError(const char * Message) const
 {
-	DisplayMessage(10,Message);
+    DisplayMessage(0,Message);
+}
+
+//User Feedback
+void CNotificationImp::DisplayMessage(int /*DisplayTime*/, const char * Message) const
+{
+    printf("%ws\n",Message);
+}
+
+void CNotificationImp::DisplayMessage2(const char * /*Message*/) const
+{
+}
+
+// Ask a Yes/No Question to the user, yes = true, no = false
+bool CNotificationImp::AskYesNoQuestion(const char * /*Question*/) const
+{
+    return false;
+}
+#else
+void CNotificationImp::DisplayError(const char * Message) const
+{
+    DisplayMessage(10,Message);
+}
+
+void CNotificationImp::FatalError(const char * Message) const
+{
+    DisplayMessage(10,Message);
 }
 
 void CNotificationImp::DisplayMessage(int DisplayTime, const char * Message) const
 {
-	printf("%s\n",Message);
+    printf("%s\n",Message);
 }
 #endif
 
 void CNotificationImp::BreakPoint(const char * FileName, int32_t LineNumber)
 {
-	stdstr_f notice("Break point found at\n%s\n%d", FileName, LineNumber);
+    DisplayError(stdstr_f("Break point found at\n%s\n%d", FileName, LineNumber).c_str());
 #ifdef _WIN32
-    DisplayError(notice.ToUTF16().c_str());
-   if (IsDebuggerPresent() != 0)
+    if (IsDebuggerPresent() != 0)
     {
-		DebugBreak();
+        DebugBreak();
     }
     else
     {
 #ifdef tofix
-		if (g_BaseSystem) 
-		{
-			g_BaseSystem->CloseCpu();
-		}
+        if (g_BaseSystem)
+        {
+            g_BaseSystem->CloseCpu();
+        }
 #endif
-	}
+    }
 #else
     DisplayError(notice.c_str());
-	__builtin_trap();
+    __builtin_trap();
 #endif
 }
 
@@ -132,7 +129,7 @@ void CNotificationImp::AppInitDone(void)
 
 bool CNotificationImp::ProcessGuiMessages(void) const
 {
-	return true;
+    return true;
 }
 
 void CNotificationImp::ChangeFullScreen(void) const

@@ -5,9 +5,9 @@
 #include <commdlg.h>
 
 CMainMenu::CMainMenu(CMainGui * hMainWindow) :
-CBaseMenu(),
-m_ResetAccelerators(true),
-m_Gui(hMainWindow)
+    CBaseMenu(),
+    m_ResetAccelerators(true),
+    m_Gui(hMainWindow)
 {
     ResetMenu();
 
@@ -115,23 +115,23 @@ bool CMainMenu::ProcessMessage(HWND hWnd, DWORD /*FromAccelerator*/, DWORD MenuI
 {
     switch (MenuID) {
     case ID_FILE_OPEN_ROM:
-    {
-        stdstr File = ChooseFileToOpen(hWnd);
-        if (File.length() > 0)
         {
-            g_BaseSystem->RunFileImage(File.c_str());
+            stdstr File = ChooseFileToOpen(hWnd);
+            if (File.length() > 0)
+            {
+                g_BaseSystem->RunFileImage(File.c_str(), true);
+            }
         }
-    }
-    break;
+        break;
     case ID_FILE_ROM_INFO:
-    {
-        if (g_Rom)
         {
-            RomInformation Info(g_Rom);
-            Info.DisplayInformation(hWnd);
+            if (g_Rom)
+            {
+                RomInformation Info(g_Rom);
+                Info.DisplayInformation(hWnd);
+            }
         }
-    }
-    break;
+        break;
     case ID_FILE_STARTEMULATION:
         m_Gui->SaveWindowLoc();
         //Before we go and create the new system, ensure the previous one has been closed
@@ -172,15 +172,15 @@ bool CMainMenu::ProcessMessage(HWND hWnd, DWORD /*FromAccelerator*/, DWORD MenuI
         WriteTrace(TraceUserInterface, TraceDebug, "ID_SYSTEM_PAUSE 1");
         break;
     case ID_SYSTEM_BITMAP:
-    {
-        stdstr Dir(g_Settings->LoadStringVal(Directory_SnapShot));
-        WriteTrace(TraceGFXPlugin, TraceDebug, "CaptureScreen(%s): Starting", Dir.c_str());
+        {
+            stdstr Dir(g_Settings->LoadStringVal(Directory_SnapShot));
+            WriteTrace(TraceGFXPlugin, TraceDebug, "CaptureScreen(%s): Starting", Dir.c_str());
 #ifdef tofix
-        g_Plugins->Gfx()->CaptureScreen(Dir.c_str());
+            g_Plugins->Gfx()->CaptureScreen(Dir.c_str());
 #endif
-        WriteTrace(TraceGFXPlugin, TraceDebug, "CaptureScreen: Done");
-    }
-    break;
+            WriteTrace(TraceGFXPlugin, TraceDebug, "CaptureScreen: Done");
+        }
+        break;
     case ID_SYSTEM_LIMITFPS:
         WriteTrace(TraceUserInterface, TraceDebug, "ID_SYSTEM_LIMITFPS");
         g_Settings->SaveBool(GameRunning_LimitFPS, !g_Settings->LoadBool(GameRunning_LimitFPS));
@@ -191,86 +191,86 @@ bool CMainMenu::ProcessMessage(HWND hWnd, DWORD /*FromAccelerator*/, DWORD MenuI
         g_BaseSystem->ExternalEvent(SysEvent_SaveMachineState);
         break;
     case ID_SYSTEM_SAVEAS:
-    {
-        char drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
-        char Directory[255], SaveFile[255];
-        OPENFILENAME openfilename;
-
-        memset(&SaveFile, 0, sizeof(SaveFile));
-        memset(&openfilename, 0, sizeof(openfilename));
-
-        g_Settings->LoadStringVal(Directory_LastSave, Directory, sizeof(Directory));
-
-        openfilename.lStructSize = sizeof(openfilename);
-        openfilename.hwndOwner = (HWND)hWnd;
-        openfilename.lpstrFilter = "PJ64 Saves (*.zip, *.pj)\0*.pj?;*.pj;*.zip;";
-        openfilename.lpstrFile = SaveFile;
-        openfilename.lpstrInitialDir = Directory;
-        openfilename.nMaxFile = MAX_PATH;
-        openfilename.Flags = OFN_HIDEREADONLY;
-
-        g_BaseSystem->ExternalEvent(SysEvent_PauseCPU_SaveGame);
-        if (GetSaveFileName(&openfilename))
         {
-            _splitpath(SaveFile, drive, dir, fname, ext);
-            if (_stricmp(ext, ".pj") == 0 || _stricmp(ext, ".zip") == 0)
+            char drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
+            char Directory[255], SaveFile[255];
+            OPENFILENAME openfilename;
+
+            memset(&SaveFile, 0, sizeof(SaveFile));
+            memset(&openfilename, 0, sizeof(openfilename));
+
+            g_Settings->LoadStringVal(Directory_LastSave, Directory, sizeof(Directory));
+
+            openfilename.lStructSize = sizeof(openfilename);
+            openfilename.hwndOwner = (HWND)hWnd;
+            openfilename.lpstrFilter = "PJ64 Saves (*.zip, *.pj)\0*.pj?;*.pj;*.zip;";
+            openfilename.lpstrFile = SaveFile;
+            openfilename.lpstrInitialDir = Directory;
+            openfilename.nMaxFile = MAX_PATH;
+            openfilename.Flags = OFN_HIDEREADONLY;
+
+            g_BaseSystem->ExternalEvent(SysEvent_PauseCPU_SaveGame);
+            if (GetSaveFileName(&openfilename))
             {
-                _makepath(SaveFile, drive, dir, fname, NULL);
                 _splitpath(SaveFile, drive, dir, fname, ext);
-                if (_stricmp(ext, ".pj") == 0)
+                if (_stricmp(ext, ".pj") == 0 || _stricmp(ext, ".zip") == 0)
                 {
                     _makepath(SaveFile, drive, dir, fname, NULL);
+                    _splitpath(SaveFile, drive, dir, fname, ext);
+                    if (_stricmp(ext, ".pj") == 0)
+                    {
+                        _makepath(SaveFile, drive, dir, fname, NULL);
+                    }
                 }
-            }
-            g_Settings->SaveString(GameRunning_InstantSaveFile, SaveFile);
+                g_Settings->SaveString(GameRunning_InstantSaveFile, SaveFile);
 
-            char SaveDir[MAX_PATH];
-            _makepath(SaveDir, drive, dir, NULL, NULL);
-            g_Settings->SaveString(Directory_LastSave, SaveDir);
-            g_BaseSystem->ExternalEvent(SysEvent_SaveMachineState);
+                char SaveDir[MAX_PATH];
+                _makepath(SaveDir, drive, dir, NULL, NULL);
+                g_Settings->SaveString(Directory_LastSave, SaveDir);
+                g_BaseSystem->ExternalEvent(SysEvent_SaveMachineState);
+            }
+            g_BaseSystem->ExternalEvent(SysEvent_ResumeCPU_SaveGame);
         }
-        g_BaseSystem->ExternalEvent(SysEvent_ResumeCPU_SaveGame);
-    }
-    break;
+        break;
     case ID_SYSTEM_RESTORE:   WriteTrace(TraceUserInterface, TraceDebug, "ID_SYSTEM_RESTORE");   g_BaseSystem->ExternalEvent(SysEvent_LoadMachineState); break;
     case ID_SYSTEM_LOAD:
-    {
-        char Directory[255], SaveFile[255];
-        OPENFILENAME openfilename;
-
-        memset(&SaveFile, 0, sizeof(SaveFile));
-        memset(&openfilename, 0, sizeof(openfilename));
-
-        g_Settings->LoadStringVal(Directory_LastSave, Directory, sizeof(Directory));
-
-        openfilename.lStructSize = sizeof(openfilename);
-        openfilename.hwndOwner = (HWND)hWnd;
-        openfilename.lpstrFilter = "PJ64 Saves (*.zip, *.pj)\0*.pj?;*.pj;*.zip;";
-        openfilename.lpstrFile = SaveFile;
-        openfilename.lpstrInitialDir = Directory;
-        openfilename.nMaxFile = MAX_PATH;
-        openfilename.Flags = OFN_HIDEREADONLY;
-
-        g_BaseSystem->ExternalEvent(SysEvent_PauseCPU_LoadGame);
-        if (GetOpenFileName(&openfilename))
         {
-            g_Settings->SaveString(GameRunning_InstantSaveFile, SaveFile);
-            char SaveDir[MAX_PATH], drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
-            _splitpath(SaveFile, drive, dir, fname, ext);
-            _makepath(SaveDir, drive, dir, NULL, NULL);
-            g_Settings->SaveString(Directory_LastSave, SaveDir);
-            g_System->LoadState();
+            char Directory[255], SaveFile[255];
+            OPENFILENAME openfilename;
+
+            memset(&SaveFile, 0, sizeof(SaveFile));
+            memset(&openfilename, 0, sizeof(openfilename));
+
+            g_Settings->LoadStringVal(Directory_LastSave, Directory, sizeof(Directory));
+
+            openfilename.lStructSize = sizeof(openfilename);
+            openfilename.hwndOwner = (HWND)hWnd;
+            openfilename.lpstrFilter = "PJ64 Saves (*.zip, *.pj)\0*.pj?;*.pj;*.zip;";
+            openfilename.lpstrFile = SaveFile;
+            openfilename.lpstrInitialDir = Directory;
+            openfilename.nMaxFile = MAX_PATH;
+            openfilename.Flags = OFN_HIDEREADONLY;
+
+            g_BaseSystem->ExternalEvent(SysEvent_PauseCPU_LoadGame);
+            if (GetOpenFileName(&openfilename))
+            {
+                g_Settings->SaveString(GameRunning_InstantSaveFile, SaveFile);
+                char SaveDir[MAX_PATH], drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
+                _splitpath(SaveFile, drive, dir, fname, ext);
+                _makepath(SaveDir, drive, dir, NULL, NULL);
+                g_Settings->SaveString(Directory_LastSave, SaveDir);
+                g_System->LoadState();
+            }
+            g_BaseSystem->ExternalEvent(SysEvent_ResumeCPU_LoadGame);
         }
-        g_BaseSystem->ExternalEvent(SysEvent_ResumeCPU_LoadGame);
-    }
-    break;
+        break;
     case ID_SYSTEM_CHEAT:
-    {
-        CCheatsUI * cheatUI = new CCheatsUI;
-        g_cheatUI = cheatUI;
-        cheatUI->SelectCheats(hWnd, false);
-    }
-    break;
+        {
+            CCheatsUI * cheatUI = new CCheatsUI;
+            g_cheatUI = cheatUI;
+            cheatUI->SelectCheats(hWnd, false);
+        }
+        break;
     case ID_SYSTEM_GSBUTTON:
         g_BaseSystem->ExternalEvent(SysEvent_GSButtonPressed);
         break;
@@ -398,11 +398,11 @@ bool CMainMenu::ProcessMessage(HWND hWnd, DWORD /*FromAccelerator*/, DWORD MenuI
         }
         break;
     case ID_OPTIONS_SETTINGS:
-    {
-        CSettingConfig SettingConfig;
-        SettingConfig.Display(hWnd);
-    }
-    break;
+        {
+            CSettingConfig SettingConfig;
+            SettingConfig.Display(hWnd);
+        }
+        break;
     case ID_PROFILE_PROFILE:
         g_Settings->SaveBool(Debugger_ProfileCode, !g_Settings->LoadBool(Debugger_ProfileCode));
         g_BaseSystem->ExternalEvent(SysEvent_Profile_StartStop);
@@ -499,7 +499,7 @@ bool CMainMenu::ProcessMessage(HWND hWnd, DWORD /*FromAccelerator*/, DWORD MenuI
             if (g_Settings->LoadStringIndex(File_RecentGameFileIndex, MenuID - ID_RECENT_ROM_START, FileName) &&
                 FileName.length() > 0)
             {
-                g_BaseSystem->RunFileImage(FileName.c_str());
+                g_BaseSystem->RunFileImage(FileName.c_str(), true);
             }
         }
         if (MenuID >= ID_RECENT_DIR_START && MenuID < ID_RECENT_DIR_END)
