@@ -14,10 +14,10 @@
 #include <Project64-core/N64System/Mips/MemoryVirtualMem.h>
 #include <Project64-core/N64System/Interpreter/InterpreterOps.h>
 #include <Project64-core/N64System/Interpreter/InterpreterCPU.h>
+#include <Project64-core/N64System/Recompiler/RecompilerClass.h>
 #include <Project64-core/N64System/N64Class.h>
 
 #include <stdio.h>
-#include "RecompilerClass.h"
 #include "RecompilerOps.h"
 #include "CodeSection.h"
 #include "x86CodeLog.h"
@@ -5575,10 +5575,10 @@ void CRecompilerOps::COP0_CO_ERET(void)
 void CRecompilerOps::ChangeDefaultRoundingModel()
 {
     switch ((_FPCR[31] & 3)) {
-    case 0: *_RoundingModel = ROUND_NEAR; break;
-    case 1: *_RoundingModel = ROUND_CHOP; break;
-    case 2: *_RoundingModel = ROUND_UP;   break;
-    case 3: *_RoundingModel = ROUND_DOWN; break;
+    case 0: *_RoundingModel = FE_TONEAREST; break;
+    case 1: *_RoundingModel = FE_TOWARDZERO; break;
+    case 2: *_RoundingModel = FE_UPWARD;   break;
+    case 3: *_RoundingModel = FE_DOWNWARD; break;
     }
 }
 

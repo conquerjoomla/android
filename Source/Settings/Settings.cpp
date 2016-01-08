@@ -1,6 +1,6 @@
 #include <windows.h>
 #include <stdio.h>
-#include "Settings.h"
+#include <Settings/Settings.h>
 
 enum SettingLocation {
 	SettingType_ConstString       = 0, 

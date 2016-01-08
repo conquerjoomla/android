@@ -30,17 +30,14 @@
 
 #pragma warning(disable:4355) // Disable 'this' : used in base member initializer list
 
-#ifdef tofix
 CN64System::CN64System(CPlugins * Plugins, bool SavesReadOnly) :
     CSystemEvents(this, Plugins),
     m_EndEmulation(false),
     m_SaveUsing((SAVE_CHIP_TYPE)g_Settings->LoadDword(Game_SaveChip)),
-#ifdef tofix
     m_Plugins(Plugins),
     m_SyncPlugins(NULL),
-#endif
     m_SyncCPU(NULL),
-    m_MMU_VM(this, SavesReadOnly),
+    m_MMU_VM(SavesReadOnly),
     m_TLB(this),
     m_Reg(this, this),
     m_Recomp(NULL),
@@ -67,7 +64,7 @@ CN64System::CN64System(CPlugins * Plugins, bool SavesReadOnly) :
     {
         gameHertz = (SystemType() == SYSTEM_PAL) ? 50 : 60;
     }
-    m_Limitor.SetHertz(gameHertz);
+    m_Limiter.SetHertz(gameHertz);
     g_Settings->SaveDword(GameRunning_ScreenHertz, gameHertz);
     m_Cheats.LoadCheats(!g_Settings->LoadDword(Setting_RememberCheats), Plugins);
 }
@@ -95,7 +92,6 @@ CN64System::~CN64System()
     }
 #endif
 }
-#endif
 
 void CN64System::ExternalEvent(SystemEvent action)
 {
@@ -236,13 +232,11 @@ bool CN64System::RunFileImage(const char * FileLoc, bool InNewThread)
         if (g_Settings->LoadBool(Setting_AutoStart) != 0)
         {
             WriteTrace(TraceN64System, TraceDebug, "Automattically starting rom");
-#ifdef tofix
-            g_BaseSystem = new CN64System(g_Plugins, false);
+            g_BaseSystem = new CN64System(/*g_Plugins*/ NULL, false);
             if (g_BaseSystem)
             {
-                g_BaseSystem->StartEmulation(InThread);
+                g_BaseSystem->StartEmulation(InNewThread);
             }
-#endif
         }
     }
     else

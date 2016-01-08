@@ -15,10 +15,11 @@ LOCAL_SRC_FILES := \
     $(SRCDIR)/FileClass.cpp              \
     $(SRCDIR)/IniFileClass.cpp           \
     $(SRCDIR)/LogClass.cpp               \
-    $(SRCDIR)/md5.cpp               \
+    $(SRCDIR)/md5.cpp                    \
     $(SRCDIR)/path.cpp                   \
     $(SRCDIR)/Platform.cpp               \
     $(SRCDIR)/StdString.cpp              \
+    $(SRCDIR)/SyncEvent.cpp              \
     $(SRCDIR)/Trace.cpp                  \
 
 LOCAL_CFLAGS := $(COMMON_CFLAGS)

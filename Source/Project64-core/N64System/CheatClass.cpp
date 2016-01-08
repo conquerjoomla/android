@@ -10,6 +10,7 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include <string.h>
+#include <stdlib.h>
 #include "CheatClass.h"
 
 #include <Project64-core/Settings/SettingType/SettingsType-Cheats.h>
@@ -40,7 +41,7 @@ bool CCheats::LoadCode(int CheatNo, const char * CheatString)
     {
         GAMESHARK_CODE CodeEntry;
 
-        CodeEntry.Command = std::strtoul(ReadPos, 0, 16);
+        CodeEntry.Command = strtoul(ReadPos, 0, 16);
         ReadPos = strchr(ReadPos, ' ');
         if (ReadPos == NULL) { break; }
         ReadPos += 1;
@@ -50,27 +51,27 @@ bool CCheats::LoadCode(int CheatNo, const char * CheatString)
             if (CheatNo < 0 || CheatNo > MaxCheats) { return false; }
             stdstr CheatExt = g_Settings->LoadStringIndex(Cheat_Extension, CheatNo);
             if (CheatExt.empty()) { return false; }
-            CodeEntry.Value = CheatExt[0] == '$' ? (uint16_t)std::strtoul(&CheatExt.c_str()[1], 0, 16) : (uint16_t)atol(CheatExt.c_str());
+            CodeEntry.Value = CheatExt[0] == '$' ? (uint16_t)strtoul(&CheatExt.c_str()[1], 0, 16) : (uint16_t)atol(CheatExt.c_str());
         }
         else if (strncmp(ReadPos, "??", 2) == 0)
         {
             if (CheatNo < 0 || CheatNo > MaxCheats) { return false; }
             stdstr CheatExt = g_Settings->LoadStringIndex(Cheat_Extension, CheatNo);
             if (CheatExt.empty()) { return false; }
-            CodeEntry.Value = (uint8_t)(std::strtoul(ReadPos, 0, 16));
-            CodeEntry.Value |= (CheatExt[0] == '$' ? (uint8_t)std::strtoul(&CheatExt.c_str()[1], 0, 16) : (uint8_t)atol(CheatExt.c_str())) << 16;
+            CodeEntry.Value = (uint8_t)(strtoul(ReadPos, 0, 16));
+            CodeEntry.Value |= (CheatExt[0] == '$' ? (uint8_t)strtoul(&CheatExt.c_str()[1], 0, 16) : (uint8_t)atol(CheatExt.c_str())) << 16;
         }
         else if (strncmp(&ReadPos[2], "??", 2) == 0)
         {
             if (CheatNo < 0 || CheatNo > MaxCheats) { return false; }
             stdstr CheatExt = g_Settings->LoadStringIndex(Cheat_Extension, CheatNo);
             if (CheatExt.empty()) { return false; }
-            CodeEntry.Value = (uint16_t)(std::strtoul(ReadPos, 0, 16) << 16);
-            CodeEntry.Value |= CheatExt[0] == '$' ? (uint8_t)std::strtoul(&CheatExt.c_str()[1], 0, 16) : (uint8_t)atol(CheatExt.c_str());
+            CodeEntry.Value = (uint16_t)(strtoul(ReadPos, 0, 16) << 16);
+            CodeEntry.Value |= CheatExt[0] == '$' ? (uint8_t)strtoul(&CheatExt.c_str()[1], 0, 16) : (uint8_t)atol(CheatExt.c_str());
         }
         else
         {
-            CodeEntry.Value = (uint16_t)std::strtoul(ReadPos, 0, 16);
+            CodeEntry.Value = (uint16_t)strtoul(ReadPos, 0, 16);
         }
         Code.push_back(CodeEntry);
 
@@ -266,7 +267,7 @@ bool CCheats::IsValid16BitCode(const char * CheatString)
     {
         GAMESHARK_CODE CodeEntry;
 
-        CodeEntry.Command = std::strtoul(ReadPos, 0, 16);
+        CodeEntry.Command = strtoul(ReadPos, 0, 16);
         ReadPos = strchr(ReadPos, ' ');
         if (ReadPos == NULL) { break; }
         ReadPos += 1;

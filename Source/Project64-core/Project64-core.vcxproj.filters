@@ -291,6 +291,9 @@
     <ClCompile Include="Multilanguage\LanguageClass.cpp">
       <Filter>Source Files\Multilanguage</Filter>
     </ClCompile>
+    <ClCompile Include="MemoryExceptionFilter.cpp">
+      <Filter>Source Files\N64 System\Mips</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -564,9 +567,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TraceModulesProject64.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ExceptionHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

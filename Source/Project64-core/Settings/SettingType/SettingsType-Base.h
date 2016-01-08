@@ -10,7 +10,7 @@
 ****************************************************************************/
 #pragma once
 
-#include "../Settings.h"
+#include <Project64-core/Settings/Settings.h>
 #include <Common/StdString.h>
 
 enum SettingType 

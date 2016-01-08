@@ -9,7 +9,7 @@
 *                                                                           *
 ****************************************************************************/
 #include "stdafx.h"
-#include "SystemTiming.h"
+#include <Project64-core/N64System/Mips/SystemTiming.h>
 #include <Project64-core/N64System/SystemGlobals.h>
 #include <Project64-core/N64System/Mips/RegisterClass.h>
 #include <Project64-core/N64System/N64Class.h>
@@ -298,7 +298,8 @@ bool CSystemTimer::SaveAllowed(void)
 
 void CSystemTimer::SaveData(void * file) const
 {
-    uint32_t TimerDetailsSize = sizeof(TIMER_DETAILS);
+#ifdef _WIN32
+	uint32_t TimerDetailsSize = sizeof(TIMER_DETAILS);
     uint32_t Entries = sizeof(m_TimerDetatils) / sizeof(m_TimerDetatils[0]);
     zipWriteInFileInZip(file, &TimerDetailsSize, sizeof(TimerDetailsSize));
     zipWriteInFileInZip(file, &Entries, sizeof(Entries));
@@ -306,11 +307,13 @@ void CSystemTimer::SaveData(void * file) const
     zipWriteInFileInZip(file, (void *)&m_LastUpdate, sizeof(m_LastUpdate));
     zipWriteInFileInZip(file, &m_NextTimer, sizeof(m_NextTimer));
     zipWriteInFileInZip(file, (void *)&m_Current, sizeof(m_Current));
+#endif
 }
 
 void CSystemTimer::LoadData(void * file)
 {
-    uint32_t TimerDetailsSize, Entries;
+#ifdef _WIN32
+	uint32_t TimerDetailsSize, Entries;
 
     unzReadCurrentFile(file, &TimerDetailsSize, sizeof(TimerDetailsSize));
     unzReadCurrentFile(file, &Entries, sizeof(Entries));
@@ -330,6 +333,7 @@ void CSystemTimer::LoadData(void * file)
     unzReadCurrentFile(file, (void *)&m_LastUpdate, sizeof(m_LastUpdate));
     unzReadCurrentFile(file, &m_NextTimer, sizeof(m_NextTimer));
     unzReadCurrentFile(file, (void *)&m_Current, sizeof(m_Current));
+#endif
 }
 
 void CSystemTimer::RecordDifference(CLog &LogFile, const CSystemTimer& rSystemTimer)

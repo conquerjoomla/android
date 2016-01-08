@@ -17,7 +17,8 @@ void SetSetting ( short SettingID, unsigned int Value );
 void SetSettingSz ( short SettingID, const char * Value );
 
 // enum's
-enum SETTING_DATA_TYPE {
+enum SETTING_DATA_TYPE 
+{
 	Data_DWORD_General      = 0, // A unsigned int setting used anywhere
 	Data_String_General     = 1, // A string setting used anywhere
 	Data_DWORD_Game         = 2, // A unsigned int associated with the current game

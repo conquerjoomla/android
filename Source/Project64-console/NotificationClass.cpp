@@ -11,6 +11,8 @@
 #include "stdafx.h"
 #include <common/StdString.h>
 #include <Common/Trace.h>
+#include <Project64-core/N64System/SystemGlobals.h>
+#include <Project64-core/Settings/SettingsClass.h>
 #ifdef _WIN32
 #include <Windows.h>
 #endif
@@ -102,25 +104,39 @@ void CNotificationImp::DisplayMessage(int DisplayTime, const char * Message) con
 
 void CNotificationImp::BreakPoint(const char * FileName, int32_t LineNumber)
 {
-    DisplayError(stdstr_f("Break point found at\n%s\n%d", FileName, LineNumber).c_str());
+    if (g_Settings->LoadBool(Debugger_Enabled))
+    {
+        DisplayError(stdstr_f("Break point found at\n%s\n%d", FileName, LineNumber).c_str());
 #ifdef _WIN32
-    if (IsDebuggerPresent() != 0)
-    {
-        DebugBreak();
-    }
-    else
-    {
-#ifdef tofix
-        if (g_BaseSystem)
+        if (IsDebuggerPresent() != 0)
         {
-            g_BaseSystem->CloseCpu();
+            DebugBreak();
+        }
+        else
+        {
+#else
+		__builtin_trap();
+#endif
+#ifdef tofix
+			if (g_BaseSystem) 
+			{
+				g_BaseSystem->CloseCpu();
+			}
+#endif
+#ifdef _WIN32
         }
 #endif
     }
-#else
-    DisplayError(notice.c_str());
-    __builtin_trap();
+    else
+    {
+        DisplayError("Fatal Error: Stopping emulation");
+#ifdef tofix
+		if (g_BaseSystem) 
+		{
+			g_BaseSystem->CloseCpu();
+		}
 #endif
+	}
 }
 
 void CNotificationImp::AppInitDone(void)

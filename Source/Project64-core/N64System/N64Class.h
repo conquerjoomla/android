@@ -14,15 +14,15 @@
 #include <Project64-core/Settings/N64SystemSettings.h>
 #include <Project64-core/N64System/ProfilingClass.h>
 #include <Project64-core/N64System/Recompiler/RecompilerClass.h>
+#include <Project64-core/N64System/Mips/Audio.h>
 #include <Project64-core/N64System/Mips/MemoryVirtualMem.h>
+#include <Project64-core/N64System/Mips/SystemEvents.h>
+#include <Project64-core/N64System/Mips/SystemTiming.h>
 #include <Project64-core/Settings/DebugSettings.h>
 #include <Project64-core/Plugin.h>
 #include <Project64-core/Logging.h>
 
-#include "Mips/SystemEvents.h"
 #include "Mips/TLBClass.h"
-#include "Mips/Audio.h"
-#include "Mips/SystemTiming.h"
 #include "CheatClass.h"
 #include "FramePerSecondClass.h"
 #include "SpeedLimiterClass.h"
@@ -135,10 +135,8 @@ private:
     void TLB_Unmaped(uint32_t VAddr, uint32_t Len);
     void TLB_Changed();
 
-#ifdef tofix
     CPlugins      * const m_Plugins;  //The plugin container
     CPlugins      * m_SyncPlugins;
-#endif
     CN64System    * m_SyncCPU;
     CMipsMemoryVM   m_MMU_VM;   //Memory of the n64
     CTLB            m_TLB;

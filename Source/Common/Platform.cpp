@@ -11,3 +11,24 @@ int _vscprintf (const char * format, va_list pargs)
     return retval; 
 }
 #endif
+
+
+#ifdef _MSC_VER
+#include <float.h>
+
+int fesetround(int RoundType)
+{
+    static const unsigned int msRound[4] = { _RC_NEAR, _RC_CHOP, _RC_UP, _RC_DOWN };
+#if defined(__x86_64__)
+    int32_t res = _controlfp(msRound[RoundType], _MCW_RC);
+#else
+    unsigned int oldX87, oldSSE2;
+    int32_t res =__control87_2(msRound[RoundType], _MCW_RC, &oldX87, &oldSSE2);
+#endif
+	if (res == _RC_NEAR) { return FE_TONEAREST; }
+	if (res == _RC_CHOP) { return FE_TOWARDZERO; }
+	if (res == _RC_UP) { return FE_UPWARD; }
+	if (res == _RC_DOWN) { return FE_DOWNWARD; }
+	return FE_TONEAREST;
+}
+#endif
