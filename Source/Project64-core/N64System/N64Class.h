@@ -114,6 +114,7 @@ private:
     void   ExecuteCPU();
     void   RefreshScreen();
     void   DumpSyncErrors(CN64System * SecondCPU);
+	bool   SetupSystem(void);
     void   StartEmulation2(bool NewThread);
     bool   SetActiveSystem(bool bActive = true);
     void   InitRegisters(bool bPostPif, CMipsMemoryVM & MMU);

@@ -9,7 +9,7 @@
 *                                                                           *
 ****************************************************************************/
 #include "stdafx.h"
-#include "PifRam.h"
+#include <Project64-core/N64System/Mips/PifRam.h>
 #include <Project64-core/N64System/SystemGlobals.h>
 #include <Project64-core/Plugins/ControllerPlugin.h>
 #include <Project64-core/N64System/Mips/RegisterClass.h>
@@ -290,7 +290,7 @@ void CPifRam::SI_DMA_READ()
     {
         if (bShowPifRamErrors())
         {
-            g_Notify->DisplayError(__FUNCTION__ "\nSI_DRAM_ADDR_REG not in RDRam space");
+			g_Notify->DisplayError(stdstr_f("%s\nSI_DRAM_ADDR_REG not in RDRam space",__FUNCTION__ ).c_str());
         }
         return;
     }
@@ -329,8 +329,8 @@ void CPifRam::SI_DMA_READ()
         {
             if ((count % 4) == 0)
             {
-                sprintf(HexData, "\0");
-                sprintf(AsciiData, "\0");
+				HexData[0] = '\0';
+				AsciiData[0] = '\0';
             }
             sprintf(Addon, "%02X %02X %02X %02X",
                 m_PifRam[(count << 2) + 0], m_PifRam[(count << 2) + 1],
@@ -416,8 +416,8 @@ void CPifRam::SI_DMA_WRITE()
         {
             if ((count % 4) == 0)
             {
-                sprintf(HexData, "\0");
-                sprintf(AsciiData, "\0");
+				HexData[0] = '\0';
+				AsciiData[0] = '\0';
             }
             sprintf(Addon, "%02X %02X %02X %02X",
                 m_PifRam[(count << 2) + 0], m_PifRam[(count << 2) + 1],
@@ -661,8 +661,8 @@ void CPifRam::LogControllerPakData(const char * Description)
     {
         if ((count % 4) == 0)
         {
-            sprintf(HexData, "\0");
-            sprintf(AsciiData, "\0");
+			HexData[0] = '\0';
+			AsciiData[0] = '\0';
         }
         sprintf(Addon, "%02X %02X %02X %02X",
             PIF_Ram[(count << 2) + 0], PIF_Ram[(count << 2) + 1],

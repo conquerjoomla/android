@@ -22,12 +22,6 @@
 #include <Common/Util.h>
 #include <float.h>
 
-#if defined(ANDROID)
-#include <android/log.h>
-
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "UI-Console", __VA_ARGS__)
-#endif
-
 #pragma warning(disable:4355) // Disable 'this' : used in base member initializer list
 
 CN64System::CN64System(CPlugins * Plugins, bool SavesReadOnly) :
@@ -95,7 +89,6 @@ CN64System::~CN64System()
 
 void CN64System::ExternalEvent(SystemEvent action)
 {
-#ifdef tofix
     switch (action)
     {
     case SysEvent_Profile_GenerateLogs:
@@ -189,16 +182,14 @@ void CN64System::ExternalEvent(SystemEvent action)
         WriteTrace(TraceN64System, TraceError, "Unknown event %d", action);
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
-#endif
 }
 
 bool CN64System::RunFileImage(const char * FileLoc, bool InNewThread)
 {
     WriteTrace(TraceN64System, TraceDebug, "FileLoc: %s", FileLoc);
-#ifdef tofix
     CloseSystem();
-#endif
-    if (g_Settings->LoadBool(GameRunning_LoadingInProgress))
+
+	if (g_Settings->LoadBool(GameRunning_LoadingInProgress))
     {
         WriteTrace(TraceN64System, TraceError, "game loading is in progress, can not load new file");
         return false;
@@ -253,14 +244,12 @@ bool CN64System::RunFileImage(const char * FileLoc, bool InNewThread)
 
 void CN64System::CloseSystem()
 {
-#ifdef tofix
     if (g_BaseSystem)
     {
         g_BaseSystem->CloseCpu();
         delete g_BaseSystem;
         g_BaseSystem = NULL;
     }
-#endif
 }
 
 bool CN64System::EmulationStarting(void * hThread, uint32_t ThreadId)
@@ -277,8 +266,10 @@ bool CN64System::EmulationStarting(void * hThread, uint32_t ThreadId)
         g_Settings->SaveBool(GameRunning_LoadingInProgress, false);
         try
         {
-            WriteTrace(TraceN64System, TraceDebug, "Game set to auto start, starting");
-            g_BaseSystem->StartEmulation2(false);
+            WriteTrace(TraceN64System, TraceDebug, "Game starting");
+            //mark the emulation as starting and fix up menus
+			g_Notify->DisplayMessage(5, MSG_EMULATION_STARTED);
+			ExecuteCPU();
             WriteTrace(TraceN64System, TraceDebug, "Game Done");
         }
         catch (...)
@@ -301,83 +292,89 @@ bool CN64System::EmulationStarting(void * hThread, uint32_t ThreadId)
     return bRes;
 }
 
+bool CN64System::SetupSystem(void)
+{
+    WriteTrace(TraceN64System, TraceDebug, "Starting");
+    if (bHaveDebugger())
+    {
+        StartLog();
+    }
+
+    CInterpreterCPU::BuildCPU();
+
+    uint32_t CpuType = g_Settings->LoadDword(Game_CpuType);
+
+    if (CpuType == CPU_SyncCores && !g_Settings->LoadBool(Debugger_Enabled))
+    {
+        g_Settings->SaveDword(Game_CpuType, CPU_Recompiler);
+        CpuType = CPU_Recompiler;
+    }
+
+    if (CpuType == CPU_SyncCores)
+    {
+#ifdef tofix
+        if (g_Plugins->SyncWindow() == NULL)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        g_Notify->DisplayMessage(5, L"Copy Plugins");
+        g_Plugins->CopyPlugins(g_Settings->LoadStringVal(Directory_PluginSync));
+        m_SyncPlugins = new CPlugins(g_Settings->LoadStringVal(Directory_PluginSync));
+        m_SyncPlugins->SetRenderWindows(g_Plugins->SyncWindow(), NULL);
+        m_SyncCPU = new CN64System(m_SyncPlugins, true);
+#endif
+    }
+
+    if (CpuType == CPU_Recompiler || CpuType == CPU_SyncCores)
+    {
+        m_Recomp = new CRecompiler(m_Reg, m_Profile, m_EndEmulation);
+    }
+
+    bool bSetActive = true;
+    if (m_SyncCPU)
+    {
+        bSetActive = m_SyncCPU->SetActiveSystem();
+    }
+
+    if (bSetActive)
+    {
+        bSetActive = SetActiveSystem();
+    }
+
+    if (!bSetActive)
+    {
+        g_Settings->SaveBool(GameRunning_LoadingInProgress, false);
+        g_Notify->DisplayError(MSG_PLUGIN_NOT_INIT);
+		return false;
+    }
+	return true;
+}
+
 void CN64System::StartEmulation2(bool NewThread)
 {
+    WriteTrace(TraceN64System, TraceDebug, "Start (NewThread: %s)",NewThread ? "true" : "false");
 #ifdef tofix
     if (NewThread)
     {
-        WriteTrace(TraceN64System, TraceDebug, "Starting");
-        if (bHaveDebugger())
-        {
-            StartLog();
-        }
-
-        CInterpreterCPU::BuildCPU();
-
-        uint32_t CpuType = g_Settings->LoadDword(Game_CpuType);
-
-        if (CpuType == CPU_SyncCores && !g_Settings->LoadBool(Debugger_Enabled))
-        {
-            g_Settings->SaveDword(Game_CpuType, CPU_Recompiler);
-            CpuType = CPU_Recompiler;
-        }
-
-        if (CpuType == CPU_SyncCores)
-        {
-#ifdef tofix
-            if (g_Plugins->SyncWindow() == NULL)
-            {
-                g_Notify->BreakPoint(__FILE__, __LINE__);
-            }
-            g_Notify->DisplayMessage(5, L"Copy Plugins");
-            g_Plugins->CopyPlugins(g_Settings->LoadStringVal(Directory_PluginSync));
-            m_SyncPlugins = new CPlugins(g_Settings->LoadStringVal(Directory_PluginSync));
-            m_SyncPlugins->SetRenderWindows(g_Plugins->SyncWindow(), NULL);
-            m_SyncCPU = new CN64System(m_SyncPlugins, true);
-#endif
-        }
-
-        if (CpuType == CPU_Recompiler || CpuType == CPU_SyncCores)
-        {
-            m_Recomp = new CRecompiler(m_Reg, m_Profile, m_EndEmulation);
-        }
-
-        bool bSetActive = true;
-        if (m_SyncCPU)
-        {
-            bSetActive = m_SyncCPU->SetActiveSystem();
-        }
-
-        if (bSetActive)
-        {
-            bSetActive = SetActiveSystem();
-        }
-
-        if (!bSetActive)
-        {
-            g_Settings->SaveBool(GameRunning_LoadingInProgress, false);
-            g_Notify->DisplayError(MSG_PLUGIN_NOT_INIT);
-        }
-        else
-        {
-            StartEmulationThead();
-        }
+		StartEmulationThead();
     }
     else
     {
-        //mark the emulation as starting and fix up menus
-        g_Notify->DisplayMessage(5, MSG_EMULATION_STARTED);
-
         ExecuteCPU();
     }
 #endif
+    WriteTrace(TraceN64System, TraceDebug, "Done");
 }
 
 void  CN64System::StartEmulation(bool NewThread)
 {
+    WriteTrace(TraceN64System, TraceDebug, "Start");
     __except_try()
     {
-        StartEmulation2(NewThread);
+		if (SetupSystem())
+		{
+	        StartEmulation2(NewThread);
+		}
     }
     __except_catch()
     {
@@ -387,6 +384,7 @@ void  CN64System::StartEmulation(bool NewThread)
         g_Notify->DisplayError(message);
 #endif
     }
+    WriteTrace(TraceN64System, TraceDebug, "Done");
 }
 
 void CN64System::Pause()
@@ -617,7 +615,6 @@ bool CN64System::SetActiveSystem(bool bActive)
 
 void CN64System::InitRegisters(bool bPostPif, CMipsMemoryVM & MMU)
 {
-#ifdef tofix
     m_Reg.Reset();
 
     //COP0 Registers
@@ -797,7 +794,6 @@ void CN64System::InitRegisters(bool bPostPif, CMipsMemoryVM & MMU)
         case CIC_NUS_6106:	PIF_Ram[37] = 0x02; PIF_Ram[38] = 0x85; break;
         }*/
     }
-#endif
 }
 
 void CN64System::ExecuteCPU()

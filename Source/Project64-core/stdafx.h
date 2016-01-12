@@ -2,8 +2,8 @@
 #include <Common/StdString.h>
 #include <Common/Trace.h>
 
-#include "Multilanguage.h"
-#include "Notification.h"
+#include <Project64-core/Multilanguage.h>
+#include <Project64-core/Notification.h>
 #include "version.h"
 #include "Settings/SettingsClass.h"
 #include <Project64-core/TraceModulesProject64.h>

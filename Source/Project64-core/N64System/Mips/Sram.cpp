@@ -11,7 +11,9 @@
 #include "stdafx.h"
 #include "Sram.h"
 #include <Common/path.h>
+#ifdef tofix
 #include <Windows.h>
+#endif
 
 CSram::CSram(bool ReadOnly) :
 m_ReadOnly(ReadOnly),
@@ -21,15 +23,18 @@ m_hFile(NULL)
 
 CSram::~CSram()
 {
+#ifdef tofix
     if (m_hFile)
     {
         CloseHandle(m_hFile);
         m_hFile = NULL;
     }
+#endif
 }
 
 bool CSram::LoadSram()
 {
+#ifdef tofix
     CPath FileName;
 
     FileName.SetDriveDirectory(g_Settings->LoadStringVal(Directory_NativeSave).c_str());
@@ -49,11 +54,13 @@ bool CSram::LoadSram()
         return false;
     }
     SetFilePointer(m_hFile, 0, NULL, FILE_BEGIN);
-    return true;
+#endif
+	return true;
 }
 
 void CSram::DmaFromSram(uint8_t * dest, int StartOffset, int len)
 {
+#ifdef tofix
     DWORD dwRead;
     uint32_t i;
     uint8_t tmp[4];
@@ -131,10 +138,12 @@ void CSram::DmaFromSram(uint8_t * dest, int StartOffset, int len)
             break;
         }
     }
+#endif
 }
 
 void CSram::DmaToSram(uint8_t * Source, int StartOffset, int len)
 {
+#ifdef tofix
     DWORD dwWritten;
     uint32_t i;
     uint8_t tmp[4];
@@ -220,4 +229,5 @@ void CSram::DmaToSram(uint8_t * Source, int StartOffset, int len)
         WriteFile(m_hFile, tmp, Offset, &dwWritten, NULL);
     }
     FlushFileBuffers(m_hFile);
+#endif
 }

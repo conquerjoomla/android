@@ -10,13 +10,16 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include <Project64-core/N64System/N64Class.h>
-#include <Project64-core\Notification.h>
+#include <Project64-core/Notification.h>
 #include <common/Util.h>
+#ifdef tofix
 #include <Windows.h>
 #include <Objbase.h>
+#endif
 
 void  CN64System::StartEmulationThead()
 {
+#ifdef tofix
     ThreadInfo * Info = new ThreadInfo;
     HANDLE  * hThread = new HANDLE;
     *hThread = NULL;
@@ -25,11 +28,13 @@ void  CN64System::StartEmulationThead()
     //for creating a thread
     Info->ThreadHandle = hThread;
 
-    *hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)StartEmulationThread, Info, 0, (LPDWORD)&Info->ThreadID);
+	*hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)StartEmulationThread, Info, 0, (LPDWORD)&Info->ThreadID);
+#endif
 }
 
 void CN64System::StartEmulationThread(ThreadInfo * Info)
 {
+#ifdef tofix
     if (g_Settings->LoadBool(Setting_CN64TimeCritical))
     {
         SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
@@ -42,10 +47,12 @@ void CN64System::StartEmulationThread(ThreadInfo * Info)
     delete Info;
 
     CoUninitialize();
+#endif
 }
 
 void CN64System::CloseCpu()
 {
+#ifdef tofix
     if (m_CPU_Handle == NULL)
     {
         return;
@@ -94,4 +101,5 @@ void CN64System::CloseCpu()
     }
     CloseHandle(hThread);
     CpuStopped();
+#endif
 }

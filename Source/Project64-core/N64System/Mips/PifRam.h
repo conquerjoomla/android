@@ -10,8 +10,8 @@
 ****************************************************************************/
 #pragma once
 
-#include <Project64-core\Logging.h>
-#include "Eeprom.h"
+#include <Project64-core/Logging.h>
+#include <Project64-core/N64System/Mips/Eeprom.h>
 
 class CPifRamSettings
 {

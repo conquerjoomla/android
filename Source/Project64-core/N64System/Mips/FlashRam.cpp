@@ -9,11 +9,10 @@
 *                                                                           *
 ****************************************************************************/
 #include "stdafx.h"
-#include "FlashRam.h"
+#include <Project64-core/N64System/Mips/FlashRam.h>
 #include <Project64-core/N64System/SystemGlobals.h>
 #include <Project64-core/N64System/Mips/MemoryVirtualMem.h>
 #include <Common/path.h>
-#include <Windows.h>
 
 CFlashram::CFlashram(bool ReadOnly) :
     m_FlashRamPointer(NULL),
@@ -27,16 +26,19 @@ CFlashram::CFlashram(bool ReadOnly) :
 
 CFlashram::~CFlashram()
 {
-    if (m_hFile)
+#ifdef tofix
+	if (m_hFile)
     {
         CloseHandle(m_hFile);
         m_hFile = NULL;
     }
+#endif
 }
 
 void CFlashram::DmaFromFlashram(uint8_t * dest, int32_t StartOffset, int32_t len)
 {
-    uint8_t FlipBuffer[0x10000];
+#ifdef tofix
+	uint8_t FlipBuffer[0x10000];
     uint32_t count;
 
     switch (m_FlashFlag)
@@ -101,6 +103,7 @@ void CFlashram::DmaFromFlashram(uint8_t * dest, int32_t StartOffset, int32_t len
             g_Notify->DisplayError(stdstr_f(__FUNCTION__": Start: %X, Offset: %X len: %X", dest - g_MMU->Rdram(), StartOffset, len).c_str());
         }
     }
+#endif
 }
 
 void CFlashram::DmaToFlashram(uint8_t * Source, int32_t StartOffset, int32_t len)
@@ -113,7 +116,7 @@ void CFlashram::DmaToFlashram(uint8_t * Source, int32_t StartOffset, int32_t len
     default:
         if (bHaveDebugger())
         {
-            g_Notify->DisplayError(stdstr_f(__FUNCTION__ ": Start: %X, Offset: %X len: %X", Source - g_MMU->Rdram(), StartOffset, len).c_str());
+            g_Notify->DisplayError(stdstr_f("%s: Start: %X, Offset: %X len: %X", __FUNCTION__, Source - g_MMU->Rdram(), StartOffset, len).c_str());
         }
     }
 }
@@ -126,7 +129,7 @@ uint32_t CFlashram::ReadFromFlashStatus(uint32_t PAddr)
     default:
         if (bHaveDebugger())
         {
-            g_Notify->DisplayError(stdstr_f(__FUNCTION__ ": PAddr (%X)", PAddr).c_str());
+            g_Notify->DisplayError(stdstr_f("%s: PAddr (%X)", __FUNCTION__, PAddr).c_str());
         }
         break;
     }
@@ -135,7 +138,8 @@ uint32_t CFlashram::ReadFromFlashStatus(uint32_t PAddr)
 
 bool CFlashram::LoadFlashram()
 {
-    CPath FileName;
+#ifdef tofix
+	CPath FileName;
 
     FileName.SetDriveDirectory(g_Settings->LoadStringVal(Directory_NativeSave).c_str());
     FileName.SetName(g_Settings->LoadStringVal(Game_GameName).c_str());
@@ -156,11 +160,15 @@ bool CFlashram::LoadFlashram()
     }
     SetFilePointer(m_hFile, 0, NULL, FILE_BEGIN);
     return true;
+#endif
+    g_Notify->DisplayError(GS(MSG_FAIL_OPEN_FLASH));
+    return false;
 }
 
 void CFlashram::WriteToFlashCommand(uint32_t FlashRAM_Command)
 {
-    uint8_t EmptyBlock[128];
+#ifdef tofix
+	uint8_t EmptyBlock[128];
     DWORD dwWritten;
 
     switch (FlashRAM_Command & 0xFF000000)
@@ -241,4 +249,5 @@ void CFlashram::WriteToFlashCommand(uint32_t FlashRAM_Command)
             g_Notify->DisplayError(stdstr_f("Writing %X to flash ram command register", FlashRAM_Command).c_str());
         }
     }
+#endif
 }

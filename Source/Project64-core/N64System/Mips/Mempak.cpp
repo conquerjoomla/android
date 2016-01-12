@@ -11,13 +11,16 @@
 #include "stdafx.h"
 #include "Mempak.H"
 #include <Common/path.h>
+#ifdef tofix
 #include <Windows.h>
+#endif
 
 static uint8_t Mempaks[4][0x8000];
 void * hMempakFile[4];
 
 void Mempak::Close()
 {
+#ifdef tofix
     for (int32_t i = 0; i < 4; i++)
     {
         if (hMempakFile[i])
@@ -26,10 +29,12 @@ void Mempak::Close()
             hMempakFile[i] = NULL;
         }
     }
+#endif
 }
 
 void LoadMempak(int32_t Control)
 {
+#ifdef tofix
     CPath FileName;
     DWORD dwRead;
     stdstr MempakName;
@@ -96,6 +101,7 @@ void LoadMempak(int32_t Control)
     {
         ReadFile(hMempakFile[Control], Mempaks[Control], 0x8000, &dwRead, NULL);
     }
+#endif
 }
 
 uint8_t Mempak::CalculateCrc(uint8_t * DataToCrc)
@@ -152,7 +158,8 @@ void Mempak::ReadFrom(int32_t Control, uint8_t * command)
 
 void Mempak::WriteTo(int32_t Control, uint8_t * command)
 {
-    DWORD dwWritten;
+#ifdef tofix
+	DWORD dwWritten;
     uint32_t address = (command[3] << 8) | (command[4] & 0xE0);
 
     if (address < 0x8000)
@@ -170,4 +177,5 @@ void Mempak::WriteTo(int32_t Control, uint8_t * command)
     {
         /* Rumble pack area */
     }
+#endif
 }

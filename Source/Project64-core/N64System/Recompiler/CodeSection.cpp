@@ -9,7 +9,7 @@
 *                                                                           *
 ****************************************************************************/
 #include "stdafx.h"
-#include "CodeSection.h"
+#include <Project64-core/N64System/Recompiler/CodeSection.h>
 #include <Project64-core/N64System/Mips/OpCode.h>
 #include <Project64-core/N64System/SystemGlobals.h>
 #include <Project64-core/N64System/Mips/MemoryVirtualMem.h>
@@ -19,7 +19,7 @@
 #include <Project64-core/N64System/Interpreter/InterpreterCPU.h>
 #include <Project64-core/N64System/Recompiler/LoopAnalysis.h>
 #include <Project64-core/N64System/Recompiler/SectionInfo.h>
-#include <Windows.h>
+#include <Project64-core/ExceptionHandler.h>
 
 void InPermLoop();
 
@@ -30,7 +30,9 @@ static bool DelaySlotEffectsJump(uint32_t JumpPC)
     OPCODE Command;
 
     if (!g_MMU->LW_VAddr(JumpPC, Command.Hex))
+	{
         return true;
+	}
 
     switch (Command.op)
     {
@@ -122,7 +124,7 @@ CCodeSection::CCodeSection(CCodeBlock * CodeBlock, uint32_t EnterPC, uint32_t ID
     m_InLoop(false),
     m_DelaySlot(false)
 {
-    CPU_Message(__FUNCTION__ ": ID %d EnterPC 0x%08X", ID, EnterPC);
+    CPU_Message("%s: ID %d EnterPC 0x%08X", __FUNCTION__, ID, EnterPC);
 }
 
 CCodeSection::~CCodeSection()
@@ -1034,14 +1036,14 @@ bool CCodeSection::GenerateX86Code(uint32_t Test)
 
     do
     {
-        __try
+        __except_try()
         {
             if (!g_MMU->LW_VAddr(m_CompilePC, m_Opcode.Hex))
             {
                 g_Notify->FatalError(GS(MSG_FAIL_LOAD_WORD));
             }
         }
-        __except (g_MMU->MemoryFilter(GetExceptionCode(), GetExceptionInformation()))
+        __except_catch()
         {
             g_Notify->FatalError(GS(MSG_UNKNOWN_MEM_ACTION));
         }
@@ -1658,7 +1660,7 @@ void CCodeSection::UnlinkParent(CCodeSection * Parent, bool ContinueSection)
         return;
     }
 
-    CPU_Message(__FUNCTION__ ": Section %d Parent: %d ContinueSection = %s", m_SectionID, Parent->m_SectionID, ContinueSection ? "Yes" : "No");
+    CPU_Message("%s: Section %d Parent: %d ContinueSection = %s", __FUNCTION__, m_SectionID, Parent->m_SectionID, ContinueSection ? "Yes" : "No");
     if (Parent->m_ContinueSection == this && Parent->m_JumpSection == this)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);

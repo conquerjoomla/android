@@ -9,11 +9,13 @@
 *                                                                           *
 ****************************************************************************/
 #include "stdafx.h"
-#include "Eeprom.h"
+#include <Project64-core/N64System/Mips/Eeprom.h>
 #include <Project64-core/N64System/SystemGlobals.h>
 #include <Project64-core/N64System/N64Class.h>
 #include <time.h>
+#ifdef tofix
 #include <Windows.h>
+#endif
 
 CEeprom::CEeprom(bool ReadOnly) :
 m_ReadOnly(ReadOnly),
@@ -24,11 +26,13 @@ m_hFile(NULL)
 
 CEeprom::~CEeprom()
 {
-    if (m_hFile)
+#ifdef tofix
+	if (m_hFile)
     {
         CloseHandle(m_hFile);
         m_hFile = NULL;
     }
+#endif
 }
 
 uint8_t byte2bcd(int32_t n)
@@ -142,6 +146,7 @@ void CEeprom::EepromCommand(uint8_t * Command)
 
 void CEeprom::LoadEeprom()
 {
+#ifdef tofix
     CPath FileName;
     DWORD dwRead;
 
@@ -166,6 +171,7 @@ void CEeprom::LoadEeprom()
     }
     SetFilePointer(m_hFile, 0, NULL, FILE_BEGIN);
     ReadFile(m_hFile, m_EEPROM, sizeof(m_EEPROM), &dwRead, NULL);
+#endif
 }
 
 void CEeprom::ReadFrom(uint8_t * Buffer, int32_t line)
@@ -185,6 +191,7 @@ void CEeprom::ReadFrom(uint8_t * Buffer, int32_t line)
 
 void CEeprom::WriteTo(uint8_t * Buffer, int32_t line)
 {
+#ifdef tofix
     DWORD dwWritten;
     int32_t i;
 
@@ -199,4 +206,5 @@ void CEeprom::WriteTo(uint8_t * Buffer, int32_t line)
     SetFilePointer(m_hFile, line * 8, NULL, FILE_BEGIN);
     WriteFile(m_hFile, Buffer, 8, &dwWritten, NULL);
     FlushFileBuffers(m_hFile);
+#endif
 }

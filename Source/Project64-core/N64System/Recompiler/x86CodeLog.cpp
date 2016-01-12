@@ -11,13 +11,16 @@
 #include "stdafx.h"
 #include "x86CodeLog.h"
 #include <Common/path.h>
+#ifdef tofix
 #include <Windows.h>
 
 static HANDLE hCPULogFile = NULL;
+#endif
 bool bX86Logging = false;
 
 void x86_Log_Message (const char * Message, ...)
 {
+#ifdef tofix
     DWORD dwWritten;
     char Msg[400];
 
@@ -29,10 +32,12 @@ void x86_Log_Message (const char * Message, ...)
     strcat(Msg,"\r\n");
 
     WriteFile( hCPULogFile,Msg,strlen(Msg),&dwWritten,NULL );
+#endif
 }
 
 void Start_x86_Log (void)
 {
+#ifdef tofix
     CPath LogFileName(CPath::MODULE_DIRECTORY);
     LogFileName.AppendDirectory("Logs");
     LogFileName.SetNameExtension("CPUoutput.log");
@@ -45,14 +50,17 @@ void Start_x86_Log (void)
         bX86Logging = true;
         SetFilePointer(hCPULogFile,0,NULL,FILE_BEGIN);
     }
+#endif
 }
 
 void Stop_x86_Log (void)
 {
+#ifdef tofix
     if (hCPULogFile)
     {
         CloseHandle(hCPULogFile);
         hCPULogFile = NULL;
         bX86Logging = false;
     }
+#endif
 }
