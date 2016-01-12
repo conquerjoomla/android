@@ -80,11 +80,11 @@ public:
     std::string GetNameExtension(void) const;
     void   GetExtension(std::string& rExtension) const;
     std::string GetExtension(void) const;
-    void   GetCurrentDirectory(std::string& rDirectory) const;
-    std::string GetCurrentDirectory(void) const;
+    void   GetLastDirectory(std::string& rDirectory) const;
+    std::string GetLastDirectory(void) const;
     void GetFullyQualified(std::string& rFullyQualified) const;
 #ifdef _WIN32
-    void GetComponents(std::string* pDrive = NULL, std::string* pDirectory = NULL, std::string* pName = NULL, std::string* pExtension = NULL) const;
+	void GetComponents(std::string* pDrive = NULL, std::string* pDirectory = NULL, std::string* pName = NULL, std::string* pExtension = NULL) const;
 #else
     void GetComponents(std::string* pDirectory = NULL, std::string* pName = NULL, std::string* pExtension = NULL) const;
 #endif
@@ -106,7 +106,7 @@ public:
     void AppendDirectory(const char * lpszSubDirectory);
     void UpDirectory(std::string* pLastDirectory = NULL);
 #ifdef _WIN32
-    void SetComponents(const char * lpszDrive, const char * lpszDirectory, const char * lpszName, const char * lpszExtension);
+	void SetComponents(const char * lpszDrive, const char * lpszDirectory, const char * lpszName, const char * lpszExtension);
 #else
     void SetComponents(const char * lpszDirectory, const char * lpszName, const char * lpszExtension);
 #endif

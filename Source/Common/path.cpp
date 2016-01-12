@@ -94,7 +94,7 @@ CPath::CPath()
 //-------------------------------------------------------------
 CPath::CPath(const CPath& rPath)
 {
-	Init();
+    Init();
     m_strPath = rPath.m_strPath;
 }
 
@@ -103,14 +103,14 @@ CPath::CPath(const CPath& rPath)
 //-------------------------------------------------------------
 CPath::CPath(const char * lpszPath)
 {
-	Init();
+    Init();
     m_strPath = lpszPath ? lpszPath : "";
     cleanPathString(m_strPath);
 }
 
 CPath::CPath(const char * lpszPath, const char * NameExten)
 {
-	Init();
+    Init();
 #ifdef _WIN32
     SetDriveDirectory(lpszPath);
 #else
@@ -124,7 +124,7 @@ CPath::CPath(const char * lpszPath, const char * NameExten)
 //-------------------------------------------------------------
 CPath::CPath(const std::string& strPath)
 {
-	Init();
+    Init();
     m_strPath = strPath;
     cleanPathString(m_strPath);
 }
@@ -134,7 +134,7 @@ CPath::CPath(const std::string& strPath)
 //-------------------------------------------------------------
 CPath::CPath(const std::string& strPath, const char * NameExten)
 {
-	Init();
+    Init();
 #ifdef _WIN32
     SetDriveDirectory(strPath.c_str());
 #else
@@ -148,7 +148,7 @@ CPath::CPath(const std::string& strPath, const char * NameExten)
 //-------------------------------------------------------------
 CPath::CPath(const std::string& strPath, const std::string& NameExten)
 {
-	Init();
+    Init();
 #ifdef _WIN32
     SetDriveDirectory(strPath.c_str());
 #else
@@ -484,7 +484,7 @@ std::string CPath::GetExtension(void) const
 //-------------------------------------------------------------
 // Task    : Get current directory
 //-------------------------------------------------------------
-void CPath::GetCurrentDirectory(std::string& rDirectory) const
+void CPath::GetLastDirectory(std::string& rDirectory) const
 {
     std::string Directory;
 
@@ -493,20 +493,19 @@ void CPath::GetCurrentDirectory(std::string& rDirectory) const
     GetDirectory(Directory);
     StripTrailingBackslash(Directory);
     if (Directory.empty())
+    {
         return;
+    }
 
     std::string::size_type nDelimiter = Directory.rfind(DIRECTORY_DELIMITER);
-
     rDirectory = Directory.substr(nDelimiter);
     StripLeadingBackslash(rDirectory);
 }
 
-std::string CPath::GetCurrentDirectory(void) const
+std::string CPath::GetLastDirectory(void) const
 {
     std::string rDirecotry;
-#ifdef _WIN32
-    GetCurrentDirectory(rDirecotry);
-#endif
+    GetLastDirectory(rDirecotry);
     return rDirecotry;
 }
 
@@ -532,12 +531,12 @@ void CPath::GetFullyQualified(std::string& rFullyQualified) const
 bool CPath::IsRelative() const
 {
 #ifdef _WIN32
-	if (m_strPath.length() > 1 && m_strPath[1] == DRIVE_DELIMITER)
+    if (m_strPath.length() > 1 && m_strPath[1] == DRIVE_DELIMITER)
     {
         return false;
     }
 #endif
-	if (m_strPath.length() > 1 && m_strPath[0] == DIRECTORY_DELIMITER && m_strPath[1] == DIRECTORY_DELIMITER)
+    if (m_strPath.length() > 1 && m_strPath[0] == DIRECTORY_DELIMITER && m_strPath[1] == DIRECTORY_DELIMITER)
     {
         return false;
     }
@@ -613,7 +612,7 @@ void CPath::SetDirectory(const char * lpszDirectory, bool bEnsureAbsolute /*= fa
     std::string	Name;
     std::string	Extension;
 
-	if (bEnsureAbsolute)
+    if (bEnsureAbsolute)
 	{
 		EnsureLeadingBackslash(Directory);
 	}
@@ -719,7 +718,7 @@ void CPath::SetExtension(int iExtension)
 {
     std::string	Directory;
     std::string	Name;
-    char	sExtension[20];
+    char sExtension[20];
 
     memset(sExtension, 0, sizeof(sExtension));
 

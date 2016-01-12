@@ -10,12 +10,15 @@
 ****************************************************************************/
 #pragma once
 
-#include <Project64-core\Debugger.h>
-
 class CDumpMemory;
 class CDebugMemoryView;
 class CDebugMemorySearch;
 class CDebugTlb;
+
+__interface CDebugger
+{
+    virtual void TLBChanged ( void ) = 0;
+};
 
 class CDebuggerUI :
 	public CDebugger

@@ -2,14 +2,14 @@
 #include <stdlib.h>
 
 CIniFileBase::CIniFileBase(CFileBase & FileObject, const char * FileName) :
-    m_lastSectionSearch(0),
-    m_CurrentSectionFilePos(0),
-    m_LineFeed("\r\n"),
-    m_ReadOnly(true),
-    m_InstantFlush(true),
-    m_File(FileObject),
-    m_FileName(FileName),
-    m_CurrentSectionDirty(false)
+m_lastSectionSearch(0),
+m_CurrentSectionFilePos(0),
+m_LineFeed("\r\n"),
+m_ReadOnly(true),
+m_InstantFlush(true),
+m_File(FileObject),
+m_FileName(FileName),
+m_CurrentSectionDirty(false)
 {
 }
 
@@ -18,36 +18,36 @@ CIniFileBase::~CIniFileBase(void)
     SaveCurrentSection();
 }
 
-void CIniFileBase::fInsertSpaces ( int Pos, int NoOfSpaces )
+void CIniFileBase::fInsertSpaces(int Pos, int NoOfSpaces)
 {
-    enum { fIS_MvSize  = 0x2000 };
+    enum { fIS_MvSize = 0x2000 };
 
     unsigned char Data[fIS_MvSize + 1];
     int SizeToRead, result;
     long end, WritePos;
 
-    m_File.Seek(0,CFileBase::end);
+    m_File.Seek(0, CFileBase::end);
     end = m_File.GetPosition();
 
     if (NoOfSpaces > 0)
     {
-        stdstr_f SpaceBuffer("%*c",NoOfSpaces,' ');
+        stdstr_f SpaceBuffer("%*c", NoOfSpaces, ' ');
 
         do {
             SizeToRead = end - Pos;
             if (SizeToRead > fIS_MvSize) { SizeToRead = fIS_MvSize; }
             if (SizeToRead > 0)
             {
-                m_File.Seek(SizeToRead * -1,CFileBase::current);
+                m_File.Seek(SizeToRead * -1, CFileBase::current);
                 WritePos = m_File.GetPosition();
-                memset(Data,0,sizeof(Data));
-                result = m_File.Read(Data,SizeToRead);
-                m_File.Seek(WritePos,CFileBase::begin);
+                memset(Data, 0, sizeof(Data));
+                result = m_File.Read(Data, SizeToRead);
+                m_File.Seek(WritePos, CFileBase::begin);
                 end = WritePos;
 
-                m_File.Write(SpaceBuffer.c_str(),(uint32_t)SpaceBuffer.length());
-                m_File.Write(Data,result);
-                m_File.Seek(WritePos,CFileBase::begin);
+                m_File.Write(SpaceBuffer.c_str(), (uint32_t)SpaceBuffer.length());
+                m_File.Write(Data, result);
+                m_File.Seek(WritePos, CFileBase::begin);
             }
         } while (SizeToRead > 0);
     }
@@ -59,25 +59,25 @@ void CIniFileBase::fInsertSpaces ( int Pos, int NoOfSpaces )
         do {
             SizeToRead = end - ReadPos;
             if (SizeToRead > fIS_MvSize) { SizeToRead = fIS_MvSize; }
-            m_File.Seek(ReadPos,CFileBase::begin);
-            m_File.Read(Data,SizeToRead);
-            m_File.Seek(WritePos,CFileBase::begin);
-            m_File.Write(Data,SizeToRead);
+            m_File.Seek(ReadPos, CFileBase::begin);
+            m_File.Read(Data, SizeToRead);
+            m_File.Seek(WritePos, CFileBase::begin);
+            m_File.Write(Data, SizeToRead);
             ReadPos += SizeToRead;
             WritePos += SizeToRead;
         } while (SizeToRead > 0);
 
-        m_File.Seek(WritePos,CFileBase::begin);
-        stdstr_f SpaceBuffer("%*c",(NoOfSpaces * -1),' ');
-        m_File.Write(SpaceBuffer.c_str(),(uint32_t)SpaceBuffer.length());
+        m_File.Seek(WritePos, CFileBase::begin);
+        stdstr_f SpaceBuffer("%*c", (NoOfSpaces * -1), ' ');
+        m_File.Write(SpaceBuffer.c_str(), (uint32_t)SpaceBuffer.length());
 
-        m_File.Seek(WritePos,CFileBase::begin);
+        m_File.Seek(WritePos, CFileBase::begin);
         m_File.SetEndOfFile();
-        m_File.Seek(0,CFileBase::begin);
+        m_File.Seek(0, CFileBase::begin);
     }
 }
 
-int CIniFileBase::GetStringFromFile ( char * & String, char * &Data, int & MaxDataSize, int & DataSize, int & ReadPos )
+int CIniFileBase::GetStringFromFile(char * & String, char * &Data, int & MaxDataSize, int & DataSize, int & ReadPos)
 {
     enum { BufferIncrease = 0x2000 };
     if (MaxDataSize == 0)
@@ -85,20 +85,20 @@ int CIniFileBase::GetStringFromFile ( char * & String, char * &Data, int & MaxDa
         ReadPos = 0;
         MaxDataSize = BufferIncrease;
         Data = new char[MaxDataSize];
-        DataSize = m_File.Read(&Data[DataSize],MaxDataSize);
+        DataSize = m_File.Read(&Data[DataSize], MaxDataSize);
     }
 
     for (;;)
     {
         int count;
 
-        for (count = ReadPos; count < DataSize; count ++)
+        for (count = ReadPos; count < DataSize; count++)
         {
             if (Data[count] == '\n')
             {
                 int len = (count - ReadPos) + 1;
                 String = &Data[ReadPos];
-                String[len-1] = 0;
+                String[len - 1] = 0;
                 ReadPos = count + 1;
                 return len;
             }
@@ -106,9 +106,9 @@ int CIniFileBase::GetStringFromFile ( char * & String, char * &Data, int & MaxDa
 
         if (ReadPos != 0)
         {
-            if ((DataSize - ReadPos) > 0 )
+            if ((DataSize - ReadPos) > 0)
             {
-                memmove(Data,&Data[ReadPos],DataSize - ReadPos);
+                memmove(Data, &Data[ReadPos], DataSize - ReadPos);
             }
             DataSize -= ReadPos;
             ReadPos = 0;
@@ -122,20 +122,20 @@ int CIniFileBase::GetStringFromFile ( char * & String, char * &Data, int & MaxDa
             {
                 return -1;
             }
-            memcpy(NewBuffer,Data,DataSize);
+            memcpy(NewBuffer, Data, DataSize);
             MaxDataSize = NewMaxDataSize;
-            delete [] Data;
+            delete[] Data;
             Data = NewBuffer;
         }
 
-        int dwRead = m_File.Read(&Data[DataSize],MaxDataSize - DataSize);
+        int dwRead = m_File.Read(&Data[DataSize], MaxDataSize - DataSize);
         if (dwRead == 0)
         {
             if (DataSize > 0)
             {
                 int len = DataSize + 1;
                 String = &Data[ReadPos];
-                String[len-1] = 0;
+                String[len - 1] = 0;
                 DataSize = 0;
                 ReadPos = 0;
                 return len;
@@ -146,7 +146,7 @@ int CIniFileBase::GetStringFromFile ( char * & String, char * &Data, int & MaxDa
     }
 }
 
-void CIniFileBase::SaveCurrentSection ( void )
+void CIniFileBase::SaveCurrentSection(void)
 {
     if (!m_CurrentSectionDirty)
     {
@@ -163,21 +163,21 @@ void CIniFileBase::SaveCurrentSection ( void )
     if (m_CurrentSectionFilePos == -1)
     {
         //Section has not been added yet
-        m_File.Seek(0,CFileBase::end);
+        m_File.Seek(0, CFileBase::end);
 
         int len = (int)m_CurrentSection.length() + (lineFeedLen * 2) + 5;
         AUTO_PTR<char> SectionName(new char[len]);
         if (m_File.GetLength() < (int)strlen(m_LineFeed))
         {
-            sprintf(SectionName.get(),"[%s]%s",m_CurrentSection.c_str(),m_LineFeed);
+            sprintf(SectionName.get(), "[%s]%s", m_CurrentSection.c_str(), m_LineFeed);
         }
         else
         {
-            sprintf(SectionName.get(),"%s[%s]%s",m_LineFeed,m_CurrentSection.c_str(),m_LineFeed);
+            sprintf(SectionName.get(), "%s[%s]%s", m_LineFeed, m_CurrentSection.c_str(), m_LineFeed);
         }
-        m_File.Write(SectionName.get(),(int)strlen(SectionName.get()));
+        m_File.Write(SectionName.get(), (int)strlen(SectionName.get()));
         m_CurrentSectionFilePos = m_File.GetPosition();
-        m_SectionsPos.insert(FILELOC::value_type(m_CurrentSection,m_CurrentSectionFilePos));
+        m_SectionsPos.insert(FILELOC::value_type(m_CurrentSection, m_CurrentSectionFilePos));
     }
     else
     {
@@ -195,7 +195,7 @@ void CIniFileBase::SaveCurrentSection ( void )
                     LineData.reset(new char[newLen]);
                     len = newLen;
                 }
-                sprintf(LineData.get(),"%s=%s%s",iter->first.c_str(),iter->second.c_str(),m_LineFeed);
+                sprintf(LineData.get(), "%s=%s%s", iter->first.c_str(), iter->second.c_str(), m_LineFeed);
                 NeededBufferLen += (int)strlen(LineData.get());
             }
         }
@@ -210,7 +210,7 @@ void CIniFileBase::SaveCurrentSection ( void )
         int StartPos = m_CurrentSectionFilePos;
         int EndPos = StartPos;
         do {
-            result = GetStringFromFile(Input,Data,MaxDataSize,DataSize,ReadPos);
+            result = GetStringFromFile(Input, Data, MaxDataSize, DataSize, ReadPos);
             if (result <= 1) { continue; }
             if (strlen(CleanLine(Input)) <= 1 || Input[0] != '[')
             {
@@ -226,11 +226,11 @@ void CIniFileBase::SaveCurrentSection ( void )
         } while (result >= 0);
         currentLen = EndPos - StartPos;
 
-        if (Data) {  delete [] Data;  Data = NULL; }
+        if (Data) { delete[] Data;  Data = NULL; }
 
         if (NeededBufferLen != currentLen)
         {
-            fInsertSpaces(StartPos,NeededBufferLen - currentLen);
+            fInsertSpaces(StartPos, NeededBufferLen - currentLen);
             m_File.Flush();
             ClearSectionPosList(StartPos);
         }
@@ -250,16 +250,16 @@ void CIniFileBase::SaveCurrentSection ( void )
                 LineData.reset(new char[newLen]);
                 len = newLen;
             }
-            sprintf(LineData.get(),"%s=%s%s",iter->first.c_str(),iter->second.c_str(),m_LineFeed);
-            m_File.Write(LineData.get(),(int)strlen(LineData.get()));
+            sprintf(LineData.get(), "%s=%s%s", iter->first.c_str(), iter->second.c_str(), m_LineFeed);
+            m_File.Write(LineData.get(), (int)strlen(LineData.get()));
         }
     }
     m_File.Flush();
 }
 
-bool CIniFileBase::MoveToSectionNameData ( const char * lpSectionName, bool ChangeCurrentSection )
+bool CIniFileBase::MoveToSectionNameData(const char * lpSectionName, bool ChangeCurrentSection)
 {
-    if (strcmp(lpSectionName,m_CurrentSection.c_str()) == 0)
+    if (strcmp(lpSectionName, m_CurrentSection.c_str()) == 0)
     {
         return true;
     }
@@ -281,7 +281,7 @@ bool CIniFileBase::MoveToSectionNameData ( const char * lpSectionName, bool Chan
             m_CurrentSection = iter->first;
             m_CurrentSectionFilePos = iter->second;
         }
-        m_File.Seek(iter->second,CFileBase::begin);
+        m_File.Seek(iter->second, CFileBase::begin);
         bFoundSection = true;
     }
     else
@@ -295,7 +295,7 @@ bool CIniFileBase::MoveToSectionNameData ( const char * lpSectionName, bool Chan
         pUTF8[2] = 0xbf;
 
         do {
-            result = GetStringFromFile(Input,Data,MaxDataSize,DataSize,ReadPos);
+            result = GetStringFromFile(Input, Data, MaxDataSize, DataSize, ReadPos);
             if (result <= 1) { continue; }
             if (strlen(CleanLine(Input)) <= 1) { continue; }
 
@@ -314,9 +314,9 @@ bool CIniFileBase::MoveToSectionNameData ( const char * lpSectionName, bool Chan
             CurrentSection[lineEndPos] = 0;
             CurrentSection += 1;
             m_lastSectionSearch = (m_File.GetPosition() - DataSize) + ReadPos;
-            m_SectionsPos.insert(FILELOC::value_type(CurrentSection,m_lastSectionSearch));
+            m_SectionsPos.insert(FILELOC::value_type(CurrentSection, m_lastSectionSearch));
 
-            if (_stricmp(lpSectionName,CurrentSection) != 0)
+            if (_stricmp(lpSectionName, CurrentSection) != 0)
             {
                 continue;
             }
@@ -328,7 +328,7 @@ bool CIniFileBase::MoveToSectionNameData ( const char * lpSectionName, bool Chan
             }
             else
             {
-                m_File.Seek(m_lastSectionSearch,CFileBase::begin);
+                m_File.Seek(m_lastSectionSearch, CFileBase::begin);
             }
             bFoundSection = true;
             break;
@@ -339,44 +339,44 @@ bool CIniFileBase::MoveToSectionNameData ( const char * lpSectionName, bool Chan
     {
         m_CurrentSectionData.clear();
         do {
-            result = GetStringFromFile(Input,Data,MaxDataSize,DataSize,ReadPos);
+            result = GetStringFromFile(Input, Data, MaxDataSize, DataSize, ReadPos);
             if (result <= 1) { continue; }
             if (strlen(CleanLine(Input)) <= 1) { continue; }
             if (Input[0] == '[') { break; }
-            char * Pos = strchr(Input,'=');
+            char * Pos = strchr(Input, '=');
             if (Pos == NULL) { continue; }
             char * Value = &Pos[1];
 
-            char * Pos1 = Pos-1;
+            char * Pos1 = Pos - 1;
             while (((*Pos1 == ' ') || (*Pos1 == '\t')) && (Pos1 > Input))
             {
                 Pos1--;
             }
             Pos1[1] = 0;
 
-            m_CurrentSectionData.insert(KeyValueList::value_type(Input,Value));
+            m_CurrentSectionData.insert(KeyValueList::value_type(Input, Value));
         } while (result >= 0);
     }
 
-    if (Data) {  delete [] Data;  Data = NULL; }
+    if (Data) { delete[] Data;  Data = NULL; }
     return bFoundSection;
 }
 
-const char * CIniFileBase::CleanLine ( char * const Line )
+const char * CIniFileBase::CleanLine(char * const Line)
 {
     char * Pos = Line;
 
     //Remove any comment from the line
     while (Pos != NULL)
     {
-        Pos = strchr(Pos,'/');
+        Pos = strchr(Pos, '/');
         if (Pos != NULL)
         {
             if (Pos[1] == '/')
             {
                 if (Pos > Line)
                 {
-                    char * Pos_1 = Pos-1;
+                    char * Pos_1 = Pos - 1;
 
                     if (Pos_1[0] != ':')
                     {
@@ -398,7 +398,7 @@ const char * CIniFileBase::CleanLine ( char * const Line )
     }
 
     //strip any spaces or line feeds from the end of the line
-    for (int count = (int)strlen(&Line[0]) - 1; count >= 0; count --)
+    for (int count = (int)strlen(&Line[0]) - 1; count >= 0; count--)
     {
         if (Line[count] != ' ' && Line[count] != '\r') { break; }
         Line[count] = 0;
@@ -408,10 +408,10 @@ const char * CIniFileBase::CleanLine ( char * const Line )
 
 void CIniFileBase::OpenIniFileReadOnly()
 {
-    if (m_File.Open(m_FileName.c_str(),CFileBase::modeRead))
+    if (m_File.Open(m_FileName.c_str(), CFileBase::modeRead))
     {
         m_ReadOnly = true;
-        m_File.Seek(0,CFileBase::begin);
+        m_File.Seek(0, CFileBase::begin);
     }
 }
 
@@ -419,13 +419,13 @@ void CIniFileBase::OpenIniFile(bool bCreate)
 {
     //Open for reading/Writing
     m_ReadOnly = false;
-    if (!m_File.Open(m_FileName.c_str(),CFileBase::modeReadWrite | CFileBase::shareDenyWrite))
+    if (!m_File.Open(m_FileName.c_str(), CFileBase::modeReadWrite | CFileBase::shareDenyWrite))
     {
-        if (!m_File.Open(m_FileName.c_str(),CFileBase::modeRead))
+        if (!m_File.Open(m_FileName.c_str(), CFileBase::modeRead))
         {
-            if(bCreate)
+            if (bCreate)
             {
-                if (!m_File.Open(m_FileName.c_str(),CFileBase::modeReadWrite | CFileBase::modeCreate | CFileBase::shareDenyWrite))
+                if (!m_File.Open(m_FileName.c_str(), CFileBase::modeReadWrite | CFileBase::modeCreate | CFileBase::shareDenyWrite))
                 {
                     return;
                 }
@@ -436,7 +436,7 @@ void CIniFileBase::OpenIniFile(bool bCreate)
             m_ReadOnly = true;
         }
     }
-    m_File.Seek(0,CFileBase::begin);
+    m_File.Seek(0, CFileBase::begin);
 }
 
 bool CIniFileBase::IsEmpty()
@@ -446,27 +446,27 @@ bool CIniFileBase::IsEmpty()
     return false;
 }
 
-bool CIniFileBase::IsFileOpen ( void )
+bool CIniFileBase::IsFileOpen(void)
 {
     return m_File.IsOpen();
 }
 
-bool CIniFileBase::DeleteSection ( const char * lpSectionName )
+bool CIniFileBase::DeleteSection(const char * lpSectionName)
 {
-    stdstr_f strSection("[%s]",lpSectionName);
+    stdstr_f strSection("[%s]", lpSectionName);
 
     /*if(m_File.IsOpen())
     {
     m_CurrentSectionFilePos = 0;
     m_File.Seek(m_CurrentSectionFilePos,CFileBase::begin);
 
-    uint32_t dwSize = m_File.GetLength();
+    ULONG dwSize = m_File.GetLength();
     if(dwSize)
     {
     char *pData = new char[dwSize+1];
     if(pData)
     {
-    uint32_t dwRet = m_File.Read(pData, dwSize);
+    ULONG dwRet = m_File.Read(pData, dwSize);
     if(dwRet != 0)
     {
     if(dwRet <= dwSize)
@@ -515,7 +515,7 @@ bool CIniFileBase::DeleteSection ( const char * lpSectionName )
     return true;
 }
 
-bool CIniFileBase::GetString ( const char * lpSectionName, const char * lpKeyName, const char * lpDefault, stdstr & Value )
+bool CIniFileBase::GetString(const char * lpSectionName, const char * lpKeyName, const char * lpDefault, stdstr & Value)
 {
     CGuard Guard(m_CS);
 
@@ -524,7 +524,7 @@ bool CIniFileBase::GetString ( const char * lpSectionName, const char * lpKeyNam
         lpSectionName = "default";
     }
 
-    if (m_File.IsOpen() && MoveToSectionNameData(lpSectionName,true))
+    if (m_File.IsOpen() && MoveToSectionNameData(lpSectionName, true))
     {
         KeyValueList::iterator iter = m_CurrentSectionData.find(lpKeyName);
         if (iter != m_CurrentSectionData.end())
@@ -537,10 +537,10 @@ bool CIniFileBase::GetString ( const char * lpSectionName, const char * lpKeyNam
     return false;
 }
 
-stdstr CIniFileBase::GetString  ( const char * lpSectionName, const char * lpKeyName, const char * lpDefault )
+stdstr CIniFileBase::GetString(const char * lpSectionName, const char * lpKeyName, const char * lpDefault)
 {
     stdstr Value;
-    GetString(lpSectionName,lpKeyName,lpDefault,Value);
+    GetString(lpSectionName, lpKeyName, lpDefault, Value);
     return Value;
 }
 
@@ -582,7 +582,7 @@ stdstr CIniFileBase::GetString  ( LPCWSTR lpSectionName, LPCWSTR lpKeyName, LPCW
 
 #endif
 
-uint32_t CIniFileBase::GetString ( const char * lpSectionName, const char * lpKeyName, const char * lpDefault, char * lpReturnedString, uint32_t nSize )
+uint32_t CIniFileBase::GetString(const char * lpSectionName, const char * lpKeyName, const char * lpDefault, char * lpReturnedString, uint32_t nSize)
 {
     CGuard Guard(m_CS);
 
@@ -597,17 +597,17 @@ uint32_t CIniFileBase::GetString ( const char * lpSectionName, const char * lpKe
         strSection = lpSectionName;
     }
 
-    if (m_File.IsOpen() && MoveToSectionNameData(strSection.c_str(),true))
+    if (m_File.IsOpen() && MoveToSectionNameData(strSection.c_str(), true))
     {
         KeyValueList::iterator iter = m_CurrentSectionData.find(lpKeyName);
         if (iter != m_CurrentSectionData.end())
         {
-            strncpy(lpReturnedString,iter->second.c_str(),nSize - 1);
+            strncpy(lpReturnedString, iter->second.c_str(), nSize - 1);
             lpReturnedString[nSize - 1] = 0;
             return (uint32_t)strlen(lpReturnedString);
         }
     }
-    strncpy(lpReturnedString,lpDefault,nSize - 1);
+    strncpy(lpReturnedString, lpDefault, nSize - 1);
     lpReturnedString[nSize - 1] = 0;
     return (uint32_t)strlen(lpReturnedString);
 }
@@ -636,14 +636,14 @@ bool CIniFileBase::GetNumber ( LPCWSTR lpSectionName, LPCWSTR lpKeyName, uint32_
 }
 #endif
 
-uint32_t CIniFileBase::GetNumber ( const char * lpSectionName, const char * lpKeyName, uint32_t nDefault )
+uint32_t CIniFileBase::GetNumber(const char * lpSectionName, const char * lpKeyName, uint32_t nDefault)
 {
     uint32_t Value;
-    GetNumber(lpSectionName,lpKeyName,nDefault,Value);
+    GetNumber(lpSectionName, lpKeyName, nDefault, Value);
     return Value;
 }
 
-bool CIniFileBase::GetNumber ( const char * lpSectionName, const char * lpKeyName, uint32_t nDefault, uint32_t & Value )
+bool CIniFileBase::GetNumber(const char * lpSectionName, const char * lpKeyName, uint32_t nDefault, uint32_t & Value)
 {
     CGuard Guard(m_CS);
 
@@ -652,7 +652,7 @@ bool CIniFileBase::GetNumber ( const char * lpSectionName, const char * lpKeyNam
         lpSectionName = "default";
     }
 
-    if (m_File.IsOpen() && MoveToSectionNameData(lpSectionName,true))
+    if (m_File.IsOpen() && MoveToSectionNameData(lpSectionName, true))
     {
         KeyValueList::iterator iter = m_CurrentSectionData.find(lpKeyName);
         if (iter != m_CurrentSectionData.end())
@@ -666,7 +666,7 @@ bool CIniFileBase::GetNumber ( const char * lpSectionName, const char * lpKeyNam
     return false;
 }
 
-void  CIniFileBase::SaveString ( const char * lpSectionName, const char * lpKeyName, const char * lpString )
+void  CIniFileBase::SaveString(const char * lpSectionName, const char * lpKeyName, const char * lpString)
 {
     CGuard Guard(m_CS);
     if (!m_File.IsOpen())
@@ -691,7 +691,7 @@ void  CIniFileBase::SaveString ( const char * lpSectionName, const char * lpKeyN
         strSection = lpSectionName;
     }
 
-    if (!MoveToSectionNameData(strSection.c_str(),true))
+    if (!MoveToSectionNameData(strSection.c_str(), true))
     {
         m_CurrentSection = strSection;
         m_CurrentSectionData.clear();
@@ -719,7 +719,7 @@ void  CIniFileBase::SaveString ( const char * lpSectionName, const char * lpKeyN
     {
         if (lpString)
         {
-            m_CurrentSectionData.insert(KeyValueList::value_type(lpKeyName,lpString));
+            m_CurrentSectionData.insert(KeyValueList::value_type(lpKeyName, lpString));
             m_CurrentSectionDirty = true;
         }
     }
@@ -730,19 +730,19 @@ void  CIniFileBase::SaveString ( const char * lpSectionName, const char * lpKeyN
     }
 }
 
-void CIniFileBase::SaveNumber ( const char * lpSectionName, const char * lpKeyName, uint32_t Value )
+void CIniFileBase::SaveNumber(const char * lpSectionName, const char * lpKeyName, uint32_t Value)
 {
     //translate the string to an ascii version and save as text
-    SaveString(lpSectionName,lpKeyName,stdstr_f("%d",Value).c_str());
+    SaveString(lpSectionName, lpKeyName, stdstr_f("%d", Value).c_str());
 }
 
-void CIniFileBase::FlushChanges (void)
+void CIniFileBase::FlushChanges(void)
 {
     CGuard Guard(m_CS);
     SaveCurrentSection();
 }
 
-void CIniFileBase::SetAutoFlush (bool AutoFlush)
+void CIniFileBase::SetAutoFlush(bool AutoFlush)
 {
     m_InstantFlush = AutoFlush;
     if (AutoFlush)
@@ -751,7 +751,7 @@ void CIniFileBase::SetAutoFlush (bool AutoFlush)
     }
 }
 
-void CIniFileBase::GetKeyList ( const char * lpSectionName, strlist &List )
+void CIniFileBase::GetKeyList(const char * lpSectionName, strlist &List)
 {
     List.clear();
 
@@ -766,7 +766,7 @@ void CIniFileBase::GetKeyList ( const char * lpSectionName, strlist &List )
         lpSectionName = "default";
     }
 
-    if (MoveToSectionNameData(lpSectionName,true))
+    if (MoveToSectionNameData(lpSectionName, true))
     {
         for (KeyValueList::iterator iter = m_CurrentSectionData.begin(); iter != m_CurrentSectionData.end(); iter++)
         {
@@ -775,7 +775,7 @@ void CIniFileBase::GetKeyList ( const char * lpSectionName, strlist &List )
     }
 }
 
-void CIniFileBase::GetKeyValueData ( const char * lpSectionName, KeyValueData & List )
+void CIniFileBase::GetKeyValueData(const char * lpSectionName, KeyValueData & List)
 {
     CGuard Guard(m_CS);
     if (!m_File.IsOpen())
@@ -794,25 +794,25 @@ void CIniFileBase::GetKeyValueData ( const char * lpSectionName, KeyValueData & 
         strSection = lpSectionName;
     }
 
-    if (!MoveToSectionNameData(strSection.c_str(),false)) { return; }
+    if (!MoveToSectionNameData(strSection.c_str(), false)) { return; }
 
     int MaxDataSize = 0, DataSize = 0, ReadPos = 0, result;
     char *Input = NULL, *Data = NULL;
     do {
-        result = GetStringFromFile(Input,Data,MaxDataSize,DataSize,ReadPos);
+        result = GetStringFromFile(Input, Data, MaxDataSize, DataSize, ReadPos);
         if (result <= 1) { continue; }
         if (strlen(CleanLine(Input)) <= 1) { continue; }
         if (Input[0] == '[') { break; }
-        char * Pos = strchr(Input,'=');
+        char * Pos = strchr(Input, '=');
         if (Pos == NULL) { continue; }
         Pos[0] = 0;
 
-        List.insert(KeyValueData::value_type(Input,&Pos[1]));
+        List.insert(KeyValueData::value_type(Input, &Pos[1]));
     } while (result >= 0);
-    if (Data) {  delete [] Data;  Data = NULL; }
+    if (Data) { delete[] Data;  Data = NULL; }
 }
 
-void CIniFileBase::ClearSectionPosList( long FilePos )
+void CIniFileBase::ClearSectionPosList(long FilePos)
 {
     if (FilePos <= 0)
     {
@@ -825,7 +825,7 @@ void CIniFileBase::ClearSectionPosList( long FilePos )
         while (iter != m_SectionsPos.end())
         {
             FILELOC::iterator CurrentIter = iter;
-            iter ++;
+            iter++;
             long TestFilePos = CurrentIter->second;
             if (TestFilePos > FilePos)
             {
@@ -836,7 +836,7 @@ void CIniFileBase::ClearSectionPosList( long FilePos )
     }
 }
 
-void CIniFileBase::GetVectorOfSections( SectionList & sections)
+void CIniFileBase::GetVectorOfSections(SectionList & sections)
 {
     sections.clear();
 
@@ -847,8 +847,8 @@ void CIniFileBase::GetVectorOfSections( SectionList & sections)
     }
 
     {
-        stdstr_f DoesNotExist("DoesNotExist%d%d%d",rand(),rand(),rand());
-        MoveToSectionNameData(DoesNotExist.c_str(),false);
+        stdstr_f DoesNotExist("DoesNotExist%d%d%d", rand(), rand(), rand());
+        MoveToSectionNameData(DoesNotExist.c_str(), false);
     }
 
     for (FILELOC::const_iterator iter = m_SectionsPos.begin(); iter != m_SectionsPos.end(); iter++)

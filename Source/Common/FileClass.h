@@ -20,17 +20,6 @@ public:
         modeNoTruncate =    0x2000,
     };
 
-    enum Attribute
-    {
-        normal =    0x00,
-        readOnly =  0x01,
-        hidden =    0x02,
-        system =    0x04,
-        volume =    0x08,
-        directory = 0x10,
-        archive =   0x20
-    };
-
     enum SeekPosition { begin = 0x0, current = 0x1, end = 0x2 };
 
     virtual bool Open(const char * lpszFileName, uint32_t nOpenFlags ) = 0;

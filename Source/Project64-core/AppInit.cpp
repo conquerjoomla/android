@@ -3,11 +3,9 @@
 #include <Common/Trace.h>
 #include <Common/Util.h>
 #include <Project64-core/N64System/Mips/MemoryVirtualMem.h>
-#ifdef tofix
 #include <Project64-core/N64System/SystemGlobals.h>
 #include <Project64-core/Plugins/PluginClass.h>
 #include <Project64-core/N64System/N64RomClass.h>
-#endif
 #include "Settings/SettingType/SettingsType-Application.h"
 
 static void FixDirectories(void);
@@ -223,7 +221,7 @@ bool AppInit(CNotification * Notify, int argc, char **argv)
 #endif
 
         SetupTrace();
-		FixDirectories();
+        FixDirectories();
 #ifdef _WIN32
         CMipsMemoryVM::ReserveMemory();
         IncreaseThreadPriority();
@@ -232,11 +230,11 @@ bool AppInit(CNotification * Notify, int argc, char **argv)
         //Create the plugin container
         WriteTrace(TraceAppInit, TraceInfo, "Create Plugins");
 #ifdef tofix
-		g_Plugins = new CPlugins(g_Settings->LoadStringVal(Directory_Plugin));
+        g_Plugins = new CPlugins(g_Settings->LoadStringVal(Directory_Plugin));
 #endif
         g_Lang = new CLanguage();
         g_Lang->LoadCurrentStrings();
-		g_Notify->AppInitDone();
+        g_Notify->AppInitDone();
 		WriteTrace(TraceAppInit, TraceDebug, "Initialized Successfully");
 		return true;
     }
@@ -245,7 +243,7 @@ bool AppInit(CNotification * Notify, int argc, char **argv)
         g_Notify->DisplayError(stdstr_f("Exception caught\nFile: %s\nLine: %d", __FILE__, __LINE__).c_str());
 		WriteTrace(TraceAppInit, TraceError, "Exception caught, Init was not successfull");
 		return false;
-	}
+    }
 }
 
 void AppCleanup(void)
@@ -253,19 +251,12 @@ void AppCleanup(void)
     WriteTrace(TraceAppCleanup, TraceDebug, "cleaning up global objects");
     CleanupTrace();
 
-
-#ifdef tofix
     if (g_Rom)      { delete g_Rom; g_Rom = NULL; }
     if (g_Plugins)  { delete g_Plugins; g_Plugins = NULL; }
-#endif
     if (g_Settings) { delete g_Settings; g_Settings = NULL; }
-#ifdef tofix
     if (g_Lang)     { delete g_Lang; g_Lang = NULL; }
-#endif
 
-#ifdef tofix
     CMipsMemoryVM::FreeReservedMemory();
-#endif
     TraceDone();
 }
 
