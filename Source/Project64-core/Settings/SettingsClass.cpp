@@ -34,12 +34,6 @@
 #include <Project64-core/N64System/N64Types.h>
 #include <Common/Trace.h>
 
-#if defined(ANDROID)
-#include <android/log.h>
-
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "UI-Console", __VA_ARGS__)
-#endif
-
 CSettings * g_Settings = NULL;
 
 CSettings::CSettings() :
@@ -49,12 +43,10 @@ m_NextAutoSettingId(0x200000)
 
 CSettings::~CSettings()
 {
-#ifdef tofix
-	CSettingTypeApplication::CleanUp();
+    CSettingTypeApplication::CleanUp();
     CSettingTypeRomDatabase::CleanUp();
     CSettingTypeGame::CleanUp();
     CSettingTypeCheats::CleanUp();
-#endif
 
     for (SETTING_MAP::iterator iter = m_SettingInfo.begin(); iter != m_SettingInfo.end(); iter++)
     {
@@ -75,7 +67,7 @@ CSettings::~CSettings()
 
 void CSettings::AddHandler(SettingID TypeID, CSettingType * Handler)
 {
-	std::pair<SETTING_MAP::iterator, bool> res = m_SettingInfo.insert(SETTING_MAP::value_type(TypeID, Handler));
+    std::pair<SETTING_MAP::iterator, bool> res = m_SettingInfo.insert(SETTING_MAP::value_type(TypeID, Handler));
     if (!res.second)
     {
         delete res.first->second;
@@ -90,11 +82,9 @@ void CSettings::AddHandler(SettingID TypeID, CSettingType * Handler)
 
 void CSettings::AddHowToHandleSetting()
 {
-#ifdef tofix
-	//information - temp keys
+    //information - temp keys
     AddHandler(Info_ShortCutsChanged, new CSettingTypeTempBool(false));
 
-#endif
     //Command Settings
 #ifdef _WIN32
     AddHandler(Cmd_BaseDirectory, new CSettingTypeTempString(CPath(CPath::MODULE_DIRECTORY)));
@@ -105,16 +95,14 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(Cmd_RomFile, new CSettingTypeTempString(""));
 
     //Support Files
-	AddHandler(SupportFile_Settings, new CSettingTypeApplicationPath("", "ConfigFile", SupportFile_SettingsDefault));
+    AddHandler(SupportFile_Settings, new CSettingTypeApplicationPath("", "ConfigFile", SupportFile_SettingsDefault));
     AddHandler(SupportFile_SettingsDefault, new CSettingTypeRelativePath("Config", "Project64.cfg"));
-    
-	AddHandler(SupportFile_RomDatabase, new CSettingTypeApplicationPath("", "RomDatabase", SupportFile_RomDatabaseDefault));
+    AddHandler(SupportFile_RomDatabase, new CSettingTypeApplicationPath("", "RomDatabase", SupportFile_RomDatabaseDefault));
     AddHandler(SupportFile_RomDatabaseDefault, new CSettingTypeRelativePath("Config", "Project64.rdb"));
     AddHandler(SupportFile_Glide64RDB, new CSettingTypeApplicationPath("", "Glide64RDB", SupportFile_Glide64RDBDefault));
     AddHandler(SupportFile_Glide64RDBDefault, new CSettingTypeRelativePath("Config", "Glide64.rdb"));
     AddHandler(SupportFile_Cheats, new CSettingTypeApplicationPath("", "Cheats", SupportFile_CheatsDefault));
     AddHandler(SupportFile_CheatsDefault, new CSettingTypeRelativePath("Config", "Project64.cht"));
-#ifdef tofix
     AddHandler(SupportFile_Notes, new CSettingTypeApplicationPath("", "Notes", SupportFile_NotesDefault));
     AddHandler(SupportFile_NotesDefault, new CSettingTypeRelativePath("Config", "Project64.rdn"));
     AddHandler(SupportFile_ExtInfo, new CSettingTypeApplicationPath("", "ExtInfo", SupportFile_ExtInfoDefault));
@@ -127,28 +115,26 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(SupportFile_7zipCacheDefault, new CSettingTypeRelativePath("Config", "Project64.zcache"));
 
     //AddHandler(SyncPluginDir,   new CSettingTypeRelativePath("SyncPlugin",""));
-#endif
 
     //Settings location
     AddHandler(Setting_ApplicationName, new CSettingTypeTempString(""));
-	AddHandler(Setting_UseFromRegistry, new CSettingTypeApplication("Settings", "Use Registry", (uint32_t)false));
+    AddHandler(Setting_UseFromRegistry, new CSettingTypeApplication("Settings", "Use Registry", (uint32_t)false));
     AddHandler(Setting_RdbEditor, new CSettingTypeApplication("", "Rdb Editor", false));
-    AddHandler(Setting_CN64TimeCritical,new CSettingTypeApplication("","CN64TimeCritical",false));
+    AddHandler(Setting_CN64TimeCritical, new CSettingTypeApplication("", "CN64TimeCritical", false));
     AddHandler(Setting_PluginPageFirst, new CSettingTypeApplication("", "Plugin Page First", false));
     AddHandler(Setting_DisableScrSaver, new CSettingTypeApplication("", "Disable Screen Saver", (uint32_t)true));
     AddHandler(Setting_AutoSleep, new CSettingTypeApplication("", "Auto Sleep", (uint32_t)true));
-	AddHandler(Setting_AutoStart, new CSettingTypeApplication("", "Auto Start", (uint32_t)true));
+    AddHandler(Setting_AutoStart, new CSettingTypeApplication("", "Auto Start", (uint32_t)true));
     AddHandler(Setting_AutoFullscreen, new CSettingTypeApplication("", "Auto Full Screen", (uint32_t)false));
     AddHandler(Setting_AutoZipInstantSave, new CSettingTypeApplication("", "Auto Zip Saves", (uint32_t)true));
     AddHandler(Setting_EraseGameDefaults, new CSettingTypeApplication("", "Erase on default", (uint32_t)true));
-	AddHandler(Setting_CheckEmuRunning, new CSettingTypeApplication("", "Check Running", (uint32_t)true));
-#ifdef tofix
+    AddHandler(Setting_CheckEmuRunning, new CSettingTypeApplication("", "Check Running", (uint32_t)true));
 
     AddHandler(Setting_RememberCheats, new CSettingTypeApplication("", "Remember Cheats", (uint32_t)false));
     AddHandler(Setting_CurrentLanguage, new CSettingTypeApplication("", "Current Language", ""));
     AddHandler(Setting_LanguageDirDefault, new CSettingTypeRelativePath("Lang", ""));
     AddHandler(Setting_LanguageDir, new CSettingTypeApplicationPath("Directory", "Lang", Setting_LanguageDirDefault));
-#endif
+
     AddHandler(Rdb_GoodName, new CSettingTypeRomDatabase("Good Name", Game_GameName));
     AddHandler(Rdb_SaveChip, new CSettingTypeRDBSaveChip("Save Type", SaveChip_Auto));
 #ifdef _DEBUG
@@ -199,9 +185,9 @@ void CSettings::AddHowToHandleSetting()
 
     AddHandler(Game_IniKey, new CSettingTypeTempString(""));
     AddHandler(Game_File, new CSettingTypeTempString(""));
-	AddHandler(Game_GameName, new CSettingTypeTempString(""));
+    AddHandler(Game_GameName, new CSettingTypeTempString(""));
     AddHandler(Game_GoodName, new CSettingTypeGame("Good Name", Rdb_GoodName));
-	AddHandler(Game_TempLoaded, new CSettingTypeTempBool(false));
+    AddHandler(Game_TempLoaded, new CSettingTypeTempBool(false));
     AddHandler(Game_SystemType, new CSettingTypeTempNumber(SYSTEM_NTSC));
     AddHandler(Game_EditPlugin_Gfx, new CSettingTypeGame("Plugin-Gfx", Default_None));
     AddHandler(Game_EditPlugin_Audio, new CSettingTypeGame("Plugin-Audio", Default_None));
@@ -242,10 +228,9 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(Game_AiCountPerBytes, new CSettingTypeGame("AiCountPerBytes", Rdb_AiCountPerBytes));
     AddHandler(Game_AudioResetOnLoad, new CSettingTypeGame("AudioResetOnLoad", Rdb_AudioResetOnLoad));
     AddHandler(Game_AllowROMWrites, new CSettingTypeGame("AllowROMWrites", Rdb_AllowROMWrites));
-	AddHandler(Game_CRC_Recalc, new CSettingTypeGame("CRC-Recalc", Rdb_CRC_Recalc));
+    AddHandler(Game_CRC_Recalc, new CSettingTypeGame("CRC-Recalc", Rdb_CRC_Recalc));
 
-#ifdef tofix
-	//User Interface
+    //User Interface
     AddHandler(UserInterface_BasicMode, new CSettingTypeApplication("", "Basic Mode", (uint32_t)true));
     AddHandler(UserInterface_ShowCPUPer, new CSettingTypeApplication("", "Display CPU Usage", (uint32_t)false));
     AddHandler(UserInterface_DisplayFrameRate, new CSettingTypeApplication("", "Display Frame Rate", (uint32_t)true));
@@ -311,11 +296,10 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(Directory_TextureUseSelected, new CSettingTypeApplication("Directory", "Texture Dir - Use Selected", false));
 
     AddHandler(Directory_LastSave, new CSettingTypeApplication("Directory", "Last Save Directory", Directory_InstantSave));
-#endif
+
     AddHandler(GameRunning_LoadingInProgress, new CSettingTypeTempBool(false));
-	AddHandler(GameRunning_CPU_Running, new CSettingTypeTempBool(false));
+    AddHandler(GameRunning_CPU_Running, new CSettingTypeTempBool(false));
     AddHandler(GameRunning_CPU_Paused, new CSettingTypeTempBool(false));
-#ifdef tofix
     AddHandler(GameRunning_CPU_PausedType, new CSettingTypeTempNumber(Default_None));
     AddHandler(GameRunning_InstantSaveFile, new CSettingTypeTempString(""));
     AddHandler(GameRunning_LimitFPS, new CSettingTypeTempBool(true));
@@ -325,8 +309,7 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(File_RecentGameFileCount, new CSettingTypeApplication("", "Remembered Rom Files", (uint32_t)10));
     AddHandler(File_RecentGameFileIndex, new CSettingTypeApplicationIndex("Recent File", "Recent Rom", Default_None));
 
-#endif
-	AddHandler(Debugger_Enabled, new CSettingTypeApplication("Debugger", "Debugger", false));
+    AddHandler(Debugger_Enabled, new CSettingTypeApplication("Debugger", "Debugger", false));
     AddHandler(Debugger_ShowTLBMisses, new CSettingTypeApplication("Debugger", "Show TLB Misses", false));
     AddHandler(Debugger_ShowUnhandledMemory, new CSettingTypeApplication("Debugger", "Show Unhandled Memory", false));
     AddHandler(Debugger_ShowPifErrors, new CSettingTypeApplication("Debugger", "Show Pif Errors", false));
@@ -335,10 +318,10 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(Debugger_ShowRecompMemSize, new CSettingTypeApplication("Debugger", "Show Recompiler Memory size", false));
     AddHandler(Debugger_ShowDivByZero, new CSettingTypeApplication("Debugger", "Show Div by zero", false));
     AddHandler(Debugger_ProfileCode, new CSettingTypeApplication("Debugger", "Profile Code", (uint32_t)false));
-	AddHandler(Debugger_AppLogFlush, new CSettingTypeApplication("Logging", "Log Auto Flush", (uint32_t)false));
+    AddHandler(Debugger_AppLogFlush, new CSettingTypeApplication("Logging", "Log Auto Flush", (uint32_t)false));
     AddHandler(Debugger_GenerateLogFiles, new CSettingTypeApplication("Debugger", "Generate Log Files", false));
 
-	//Logging
+    //Logging
     AddHandler(Debugger_TraceMD5, new CSettingTypeApplication("Logging", "MD5", (uint32_t)g_ModuleLogLevel[TraceMD5]));
     AddHandler(Debugger_TraceSettings, new CSettingTypeApplication("Logging", "Settings", (uint32_t)g_ModuleLogLevel[TraceSettings]));
     AddHandler(Debugger_TraceUnknown, new CSettingTypeApplication("Logging", "Unknown", (uint32_t)g_ModuleLogLevel[TraceUnknown]));
@@ -358,7 +341,6 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(Debugger_TraceProtectedMEM, new CSettingTypeApplication("Logging", "Protected MEM", (uint32_t)g_ModuleLogLevel[TraceProtectedMem]));
     AddHandler(Debugger_TraceUserInterface, new CSettingTypeApplication("Logging", "User Interface", (uint32_t)g_ModuleLogLevel[TraceUserInterface]));
 
-#ifdef tofix
     //Plugin
     AddHandler(Plugin_RSP_Current, new CSettingTypeApplication("Plugin", "RSP Dll", "RSP\\RSP 1.7.dll"));
     AddHandler(Plugin_GFX_Current, new CSettingTypeApplication("Plugin", "Graphics Dll", "GFX\\Jabo_Direct3D8.dll"));
@@ -408,7 +390,6 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(Cheat_Options, new CSettingTypeCheats("_O"));
     AddHandler(Cheat_Range, new CSettingTypeCheats("_R"));
     AddHandler(Cheat_RangeNotes, new CSettingTypeCheats("_RN"));
-#endif
 }
 
 uint32_t CSettings::FindSetting(CSettings * _this, const char * Name)
@@ -449,10 +430,8 @@ uint32_t CSettings::FindSetting(CSettings * _this, const char * Name)
 
 void CSettings::FlushSettings(CSettings * /*_this*/)
 {
-#ifdef tofix
-	CSettingTypeCheats::FlushChanges();
+    CSettingTypeCheats::FlushChanges();
     CSettingTypeApplication::Flush();
-#endif
 }
 
 uint32_t CSettings::GetSetting(CSettings * _this, SettingID Type)
@@ -484,8 +463,7 @@ void CSettings::RegisterSetting(CSettings * _this, SettingID ID, SettingID Defau
     SettingType Type, const char * Category, const char * DefaultStr,
     uint32_t Value)
 {
-#ifdef tofix
-	switch (Type)
+    switch (Type)
     {
     case SettingType_ConstValue:
         if (DataType != Data_DWORD)
@@ -614,16 +592,16 @@ void CSettings::RegisterSetting(CSettings * _this, SettingID ID, SettingID Defau
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
-#endif
 }
 
 bool CSettings::Initialize(const char * AppName)
 {
     AddHowToHandleSetting();
-	CSettingTypeApplication::Initialize(AppName);
+    CSettingTypeApplication::Initialize(AppName);
     CSettingTypeRomDatabase::Initialize();
     CSettingTypeGame::Initialize();
     CSettingTypeCheats::Initialize();
+
     g_Settings->SaveString(Setting_ApplicationName, AppName);
     return true;
 }
@@ -694,19 +672,16 @@ bool CSettings::LoadDword(SettingID Type, uint32_t & Value)
     SETTING_HANDLER FindInfo = m_SettingInfo.find(Type);
     if (FindInfo == m_SettingInfo.end())
     {
-		printf("failed to find %d\n",Type);
         //if not found do nothing
         UnknownSetting(Type);
         return false;
     }
     if (FindInfo->second->IndexBasedSetting())
     {
-		printf("is IndexBasedSetting (type: %d)\n",Type);
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
     else
     {
-		printf("Looking up value for (type: %d)\n",Type);
         return FindInfo->second->Load(0, Value);
     }
     return false;
@@ -1057,36 +1032,19 @@ void CSettings::SaveString(SettingID Type, const stdstr & Value)
 
 void CSettings::SaveString(SettingID Type, const char * Buffer)
 {
-	printf("CSettings::SaveString: Type %d\n",Type);
     SETTING_HANDLER FindInfo = m_SettingInfo.find(Type);
-	//printf("CSettings::SaveString: FindInfo = %p m_SettingInfo.end() = %p\n",(void *)(&(*FindInfo)), (void *)(&(*m_SettingInfo.end())));
-    if (FindInfo != m_SettingInfo.end())
-    {
-		printf("CSettings::SaveString: Found\n");
-		printf("CSettings::SaveString: FindInfo->second = %p\n",FindInfo->second);
-		printf("CSettings::SaveString: FindInfo->second->IndexBasedSetting() = %s\n",FindInfo->second->IndexBasedSetting() ? "yes" : "no");
-	}
-	else 
-	{
-		printf("CSettings::SaveString: Not Found\n");
-	}
-
     if (FindInfo == m_SettingInfo.end())
     {
-		printf("UnknownSetting %d\n",Type);
         //if not found do nothing
         UnknownSetting(Type);
     }
     else if (FindInfo->second->IndexBasedSetting())
     {
-		printf("CSettings::SaveString: index based???\n");
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
     else
     {
-		printf("Save value %s\n",Buffer ? Buffer : "null");
         FindInfo->second->Save(0, Buffer);
-		printf("value saved\n");
     }
     NotifyCallBacks(Type);
 }
