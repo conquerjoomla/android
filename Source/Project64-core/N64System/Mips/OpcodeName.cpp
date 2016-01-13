@@ -9,6 +9,7 @@
 *                                                                           *
 ****************************************************************************/
 #include "stdafx.h"
+#include <stdio.h>
 #include "OpCode.h"
 #include <Project64-core/N64System/Mips/RegisterClass.h>
 
