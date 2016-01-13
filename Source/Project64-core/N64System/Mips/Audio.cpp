@@ -92,12 +92,10 @@ void CAudio::LenChanged()
         m_Status = 0;
     }
 
-#ifdef tofix
     if (g_Plugins->Audio()->AiLenChanged != NULL)
     {
         g_Plugins->Audio()->AiLenChanged();
     }
-#endif
     WriteTrace(TraceAudio, TraceDebug, "Done");
 }
 

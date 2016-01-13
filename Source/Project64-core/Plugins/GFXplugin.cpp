@@ -13,10 +13,9 @@
 #include <Project64-core/N64System/N64RomClass.h>
 #include <Project64-core/N64System/Mips/MemoryVirtualMem.h>
 #include <Project64-core/N64System/Mips/RegisterClass.h>
-#include "GFXplugin.h"
+#include "GFXPlugin.h"
 #include <Windows.h>
 
-#ifdef tofix
 CGfxPlugin::CGfxPlugin() :
     CaptureScreen(NULL),
     ChangeWindow(NULL),
@@ -268,4 +267,3 @@ void CGfxPlugin::ProcessMenuItem(int32_t id)
         m_GFXDebug.ProcessMenuItem(id);
     }
 }
-#endif

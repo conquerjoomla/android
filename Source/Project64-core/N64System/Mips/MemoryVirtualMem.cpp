@@ -832,7 +832,6 @@ void  CMipsMemoryVM::Compile_LW(x86Reg Reg, uint32_t VAddr)
                 }
                 else
                 {
-#ifdef tofix
                     if (g_Plugins->Audio()->AiReadLength != NULL)
                     {
                         BeforeCallDirect(m_RegWorkingSet);
@@ -845,7 +844,6 @@ void  CMipsMemoryVM::Compile_LW(x86Reg Reg, uint32_t VAddr)
                     {
                         MoveConstToX86reg(0, Reg);
                     }
-#endif
                 }
                 break;
             case 0x0450000C:
@@ -1384,7 +1382,6 @@ void CMipsMemoryVM::Compile_SW_Const(uint32_t Value, uint32_t VAddr)
         switch (PAddr)
         {
         case 0x04400000:
-#ifdef tofix
             if (g_Plugins->Gfx()->ViStatusChanged != NULL)
             {
                 CompConstToVariable(Value, &g_Reg->VI_STATUS_REG, "VI_STATUS_REG");
@@ -1398,11 +1395,9 @@ void CMipsMemoryVM::Compile_SW_Const(uint32_t Value, uint32_t VAddr)
                 CPU_Message("      Continue:");
                 SetJump8(Jump, m_RecompPos);
             }
-#endif
             break;
         case 0x04400004: MoveConstToVariable((Value & 0xFFFFFF), &g_Reg->VI_ORIGIN_REG, "VI_ORIGIN_REG"); break;
         case 0x04400008:
-#ifdef tofix
             if (g_Plugins->Gfx()->ViWidthChanged != NULL)
             {
                 CompConstToVariable(Value, &g_Reg->VI_WIDTH_REG, "VI_WIDTH_REG");
@@ -1416,7 +1411,6 @@ void CMipsMemoryVM::Compile_SW_Const(uint32_t Value, uint32_t VAddr)
                 CPU_Message("      Continue:");
                 SetJump8(Jump, m_RecompPos);
             }
-#endif
             break;
         case 0x0440000C: MoveConstToVariable(Value, &g_Reg->VI_INTR_REG, "VI_INTR_REG"); break;
         case 0x04400010:
@@ -1457,9 +1451,7 @@ void CMipsMemoryVM::Compile_SW_Const(uint32_t Value, uint32_t VAddr)
             }
             else
             {
-#ifdef tofix
                 Call_Direct(g_Plugins->Audio()->AiLenChanged, "AiLenChanged");
-#endif
             }
             AfterCallDirect(m_RegWorkingSet);
             break;
@@ -1745,7 +1737,6 @@ void CMipsMemoryVM::Compile_SW_Register(x86Reg Reg, uint32_t VAddr)
     case 0x04400000:
         switch (PAddr) {
         case 0x04400000:
-#ifdef tofix
             if (g_Plugins->Gfx()->ViStatusChanged != NULL)
             {
                 CompX86regToVariable(Reg, &g_Reg->VI_STATUS_REG, "VI_STATUS_REG");
@@ -1759,14 +1750,12 @@ void CMipsMemoryVM::Compile_SW_Register(x86Reg Reg, uint32_t VAddr)
                 CPU_Message("      Continue:");
                 SetJump8(Jump, m_RecompPos);
             }
-#endif
             break;
         case 0x04400004:
             MoveX86regToVariable(Reg, &g_Reg->VI_ORIGIN_REG, "VI_ORIGIN_REG");
             AndConstToVariable(0xFFFFFF, &g_Reg->VI_ORIGIN_REG, "VI_ORIGIN_REG");
             break;
         case 0x04400008:
-#ifdef tofix
             if (g_Plugins->Gfx()->ViWidthChanged != NULL)
             {
                 CompX86regToVariable(Reg, &g_Reg->VI_WIDTH_REG, "VI_WIDTH_REG");
@@ -1780,7 +1769,6 @@ void CMipsMemoryVM::Compile_SW_Register(x86Reg Reg, uint32_t VAddr)
                 CPU_Message("      Continue:");
                 SetJump8(Jump, m_RecompPos);
             }
-#endif
             break;
         case 0x0440000C: MoveX86regToVariable(Reg, &g_Reg->VI_INTR_REG, "VI_INTR_REG"); break;
         case 0x04400010:
@@ -1823,9 +1811,7 @@ void CMipsMemoryVM::Compile_SW_Register(x86Reg Reg, uint32_t VAddr)
             }
             else
             {
-#ifdef tofix
                 Call_Direct(g_Plugins->Audio()->AiLenChanged, "g_Plugins->Audio()->LenChanged");
-#endif
             }
             AfterCallDirect(m_RegWorkingSet);
             break;
@@ -4603,18 +4589,14 @@ void CMipsMemoryVM::Load32AudioInterface(void)
         }
         else
         {
-#ifdef tofix
             if (g_Plugins->Audio()->AiReadLength != NULL)
             {
                 m_MemLookupValue.UW[0] = g_Plugins->Audio()->AiReadLength();
             }
             else
             {
-#endif
                 m_MemLookupValue.UW[0] = 0;
-#ifdef tofix
             }
-#endif
         }
         break;
     case 0x0450000C:
@@ -4973,12 +4955,10 @@ void CMipsMemoryVM::Write32DPCommandRegisters(void)
         break;
     case 0x04100004:
         g_Reg->DPC_END_REG = m_MemLookupValue.UW[0];
-#ifdef tofix
         if (g_Plugins->Gfx()->ProcessRDPList)
         {
             g_Plugins->Gfx()->ProcessRDPList();
         }
-#endif
         break;
         //case 0x04100008: g_Reg->DPC_CURRENT_REG = Value; break;
     case 0x0410000C:
@@ -5157,12 +5137,10 @@ void CMipsMemoryVM::Write32VideoInterface(void)
         if (g_Reg->VI_STATUS_REG != m_MemLookupValue.UW[0])
         {
             g_Reg->VI_STATUS_REG = m_MemLookupValue.UW[0];
-#ifdef tofix
             if (g_Plugins->Gfx()->ViStatusChanged != NULL)
             {
                 g_Plugins->Gfx()->ViStatusChanged();
             }
-#endif
         }
         break;
     case 0x04400004:
@@ -5182,12 +5160,10 @@ void CMipsMemoryVM::Write32VideoInterface(void)
         if (g_Reg->VI_WIDTH_REG != m_MemLookupValue.UW[0])
         {
             g_Reg->VI_WIDTH_REG = m_MemLookupValue.UW[0];
-#ifdef tofix
             if (g_Plugins->Gfx()->ViWidthChanged != NULL)
             {
                 g_Plugins->Gfx()->ViWidthChanged();
             }
-#endif
         }
         break;
     case 0x0440000C: g_Reg->VI_INTR_REG = m_MemLookupValue.UW[0]; break;
@@ -5225,12 +5201,10 @@ void CMipsMemoryVM::Write32AudioInterface(void)
         }
         else
         {
-#ifdef tofix
             if (g_Plugins->Audio()->AiLenChanged != NULL)
             {
                 g_Plugins->Audio()->AiLenChanged();
             }
-#endif
         }
         break;
     case 0x04500008: g_Reg->AI_CONTROL_REG = (m_MemLookupValue.UW[0] & 1); break;
@@ -5242,13 +5216,11 @@ void CMipsMemoryVM::Write32AudioInterface(void)
         break;
     case 0x04500010:
         g_Reg->AI_DACRATE_REG = m_MemLookupValue.UW[0];
-#ifdef tofix
         g_Plugins->Audio()->DacrateChanged(g_System->SystemType());
         if (g_System->bFixedAudio())
         {
             g_Audio->SetFrequency(m_MemLookupValue.UW[0], g_System->SystemType());
         }
-#endif
         break;
     case 0x04500014:  g_Reg->AI_BITRATE_REG = m_MemLookupValue.UW[0]; break;
     default:

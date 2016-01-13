@@ -15,7 +15,6 @@
 #include "ControllerPlugin.h"
 #include <Windows.h>
 
-#ifdef tofix
 CControl_Plugin::CControl_Plugin(void) :
     WM_KeyDown(NULL),
     WM_KeyUp(NULL),
@@ -184,4 +183,3 @@ CCONTROL::CCONTROL(int32_t &Present, int32_t &RawData, int32_t &PlugType) :
 {
     m_Buttons.Value = 0;
 }
-#endif

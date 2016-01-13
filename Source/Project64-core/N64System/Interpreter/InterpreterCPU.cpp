@@ -250,12 +250,10 @@ void CInterpreterCPU::InPermLoop()
         (g_Reg->STATUS_REGISTER & STATUS_ERL) != 0 ||
         (g_Reg->STATUS_REGISTER & 0xFF00) == 0)
     {
-#ifdef tofix
         if (g_Plugins->Gfx()->UpdateScreen != NULL)
         {
             g_Plugins->Gfx()->UpdateScreen();
         }
-#endif
         //CurrentFrame = 0;
         //CurrentPercent = 0;
         //DisplayFPS();

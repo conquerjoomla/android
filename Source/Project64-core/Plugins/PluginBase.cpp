@@ -12,7 +12,6 @@
 #include "PluginBase.h"
 #include <Windows.h>
 
-#ifdef tofix
 CPlugin::CPlugin() :
     DllAbout(NULL),
     DllConfig(NULL),
@@ -35,7 +34,7 @@ CPlugin::~CPlugin()
     UnloadPlugin();
 }
 
-bool CPlugin::Load (const char * FileName)
+bool CPlugin::Load(const char * FileName)
 {
     // Already loaded, so unload first.
     if (m_hDll != NULL)
@@ -70,30 +69,30 @@ bool CPlugin::Load (const char * FileName)
     if (!ValidPluginVersion(m_PluginInfo)) { return false; }
     if (m_PluginInfo.Type != type()) { return false; }
 
-    CloseDLL       = (void (__cdecl *)(void)) GetProcAddress( (HMODULE)m_hDll, "CloseDLL" );
-    RomOpen        = (void (__cdecl *)(void)) GetProcAddress( (HMODULE)m_hDll, "RomOpen" );
-    RomClosed      = (void (__cdecl *)(void)) GetProcAddress( (HMODULE)m_hDll, "RomClosed" );
-    PluginOpened   = (void (__cdecl *)(void)) GetProcAddress( (HMODULE)m_hDll, "PluginLoaded" );
-    DllConfig      = (void (__cdecl *)(void *)) GetProcAddress( (HMODULE)m_hDll, "DllConfig" );
-    DllAbout       = (void (__cdecl *)(void *)) GetProcAddress( (HMODULE)m_hDll, "DllAbout" );
+    CloseDLL = (void(__cdecl *)(void)) GetProcAddress((HMODULE)m_hDll, "CloseDLL");
+    RomOpen = (void(__cdecl *)(void)) GetProcAddress((HMODULE)m_hDll, "RomOpen");
+    RomClosed = (void(__cdecl *)(void)) GetProcAddress((HMODULE)m_hDll, "RomClosed");
+    PluginOpened = (void(__cdecl *)(void)) GetProcAddress((HMODULE)m_hDll, "PluginLoaded");
+    DllConfig = (void(__cdecl *)(void *)) GetProcAddress((HMODULE)m_hDll, "DllConfig");
+    DllAbout = (void(__cdecl *)(void *)) GetProcAddress((HMODULE)m_hDll, "DllAbout");
 
-    SetSettingInfo3 = (void (__cdecl *)(PLUGIN_SETTINGS3 *))GetProcAddress( (HMODULE)m_hDll, "SetSettingInfo3" );
+    SetSettingInfo3 = (void(__cdecl *)(PLUGIN_SETTINGS3 *))GetProcAddress((HMODULE)m_hDll, "SetSettingInfo3");
     if (SetSettingInfo3)
     {
         PLUGIN_SETTINGS3 info;
-        info.FlushSettings = (void (*)( void * handle))CSettings::FlushSettings;
+        info.FlushSettings = (void(*)(void * handle))CSettings::FlushSettings;
         SetSettingInfo3(&info);
     }
 
-    SetSettingInfo2 = (void (__cdecl *)(PLUGIN_SETTINGS2 *))GetProcAddress( (HMODULE)m_hDll, "SetSettingInfo2" );
+    SetSettingInfo2 = (void(__cdecl *)(PLUGIN_SETTINGS2 *))GetProcAddress((HMODULE)m_hDll, "SetSettingInfo2");
     if (SetSettingInfo2)
     {
         PLUGIN_SETTINGS2 info;
-        info.FindSystemSettingId = (uint32_t (*)( void * handle, const char * ))CSettings::FindSetting;
+        info.FindSystemSettingId = (uint32_t(*)(void * handle, const char *))CSettings::FindSetting;
         SetSettingInfo2(&info);
     }
 
-    SetSettingInfo   = (void (__cdecl *)(PLUGIN_SETTINGS *))GetProcAddress( (HMODULE)m_hDll, "SetSettingInfo" );
+    SetSettingInfo = (void(__cdecl *)(PLUGIN_SETTINGS *))GetProcAddress((HMODULE)m_hDll, "SetSettingInfo");
     if (SetSettingInfo)
     {
         PLUGIN_SETTINGS info;
@@ -121,13 +120,13 @@ bool CPlugin::Load (const char * FileName)
     {
         return false;
     }
-    WriteTraceF(PluginTraceType(),__FUNCTION__ "(%s): Functions loaded",PluginType());
+    WriteTrace(PluginTraceType(), TraceDebug, "Functions loaded");
 
     if (PluginOpened)
     {
-        WriteTraceF(PluginTraceType(),__FUNCTION__ "(%s): Before Plugin Opened",PluginType());
+        WriteTrace(PluginTraceType(), TraceDebug, "Before Plugin Opened");
         PluginOpened();
-        WriteTraceF(PluginTraceType(),__FUNCTION__ "(%s): After Plugin Opened",PluginType());
+        WriteTrace(PluginTraceType(), TraceDebug, "After Plugin Opened");
     }
     return true;
 }
@@ -135,12 +134,15 @@ bool CPlugin::Load (const char * FileName)
 void CPlugin::RomOpened()
 {
     if (m_RomOpen)
+    {
         return;
+    }
 
-    if(RomOpen != NULL){
-        WriteTraceF(PluginTraceType(),__FUNCTION__ "(%s): Before Rom Open",PluginType());
+    if (RomOpen != NULL)
+    {
+        WriteTrace(PluginTraceType(), TraceDebug, "Before Rom Open");
         RomOpen();
-        WriteTraceF(PluginTraceType(),__FUNCTION__ "(%s): After Rom Open",PluginType());
+        WriteTrace(PluginTraceType(), TraceDebug, "After Rom Open");
     }
     m_RomOpen = true;
 }
@@ -150,10 +152,10 @@ void CPlugin::RomClose()
     if (!m_RomOpen)
         return;
 
-    WriteTraceF(PluginTraceType(),__FUNCTION__ "(%s): Before Rom Close",PluginType());
+    WriteTrace(PluginTraceType(), TraceDebug, "Before Rom Close");
     RomClosed();
     m_RomOpen = false;
-    WriteTraceF(PluginTraceType(),__FUNCTION__ "(%s): After Rom Close",PluginType());
+    WriteTrace(PluginTraceType(), TraceDebug, "After Rom Close");
 }
 
 void CPlugin::GameReset()
@@ -170,19 +172,19 @@ void CPlugin::GameReset()
 
 void CPlugin::Close()
 {
-    WriteTraceF(PluginTraceType(),__FUNCTION__ "(%s): Start",PluginType());
+    WriteTrace(PluginTraceType(), TraceDebug, "(%s): Start", PluginType());
     RomClose();
     if (m_Initialized)
     {
         CloseDLL();
         m_Initialized = false;
     }
-    WriteTraceF(PluginTraceType(),__FUNCTION__ "(%s): Done",PluginType());
+    WriteTrace(PluginTraceType(), TraceDebug, "(%s): Done", PluginType());
 }
 
 void CPlugin::UnloadPlugin()
 {
-    WriteTraceF(PluginTraceType(),__FUNCTION__ "(%s): unloading",PluginType());
+    WriteTrace(PluginTraceType(), TraceDebug, "(%s): unloading", PluginType());
     memset(&m_PluginInfo, 0, sizeof(m_PluginInfo));
     if (m_hDll != NULL)
     {
@@ -202,7 +204,7 @@ void CPlugin::UnloadPlugin()
     SetSettingInfo3 = NULL;
 }
 
-const char * CPlugin::PluginType () const
+const char * CPlugin::PluginType() const
 {
     switch (m_PluginInfo.Type)
     {
@@ -214,39 +216,39 @@ const char * CPlugin::PluginType () const
     return "Unknown";
 }
 
-TraceType CPlugin::PluginTraceType () const
+TraceModuleProject64 CPlugin::PluginTraceType() const
 {
     switch (m_PluginInfo.Type)
     {
-    case PLUGIN_TYPE_RSP: return TraceRSP;
-    case PLUGIN_TYPE_GFX: return TraceGfxPlugin;
-    case PLUGIN_TYPE_AUDIO: return TraceDebug;
-    case PLUGIN_TYPE_CONTROLLER: return TraceDebug;
+    case PLUGIN_TYPE_RSP: return TraceRSPPlugin;
+    case PLUGIN_TYPE_GFX: return TraceGFXPlugin;
+    case PLUGIN_TYPE_AUDIO: return TraceAudioPlugin;
+    case PLUGIN_TYPE_CONTROLLER: return TraceControllerPlugin;
     }
-    return TraceDebug;
+    return TraceUnknown;
 }
 
-bool CPlugin::ValidPluginVersion ( PLUGIN_INFO & PluginInfo )
+bool CPlugin::ValidPluginVersion(PLUGIN_INFO & PluginInfo)
 {
     switch (PluginInfo.Type)
     {
     case PLUGIN_TYPE_RSP:
         if (!PluginInfo.MemoryBswaped)	  { return false; }
-        if (PluginInfo.Version == 0x0001) { return true;  }
-        if (PluginInfo.Version == 0x0100) { return true;  }
-        if (PluginInfo.Version == 0x0101) { return true;  }
-        if (PluginInfo.Version == 0x0102) { return true;  }
+        if (PluginInfo.Version == 0x0001) { return true; }
+        if (PluginInfo.Version == 0x0100) { return true; }
+        if (PluginInfo.Version == 0x0101) { return true; }
+        if (PluginInfo.Version == 0x0102) { return true; }
         break;
     case PLUGIN_TYPE_GFX:
         if (!PluginInfo.MemoryBswaped)	  { return false; }
-        if (PluginInfo.Version == 0x0102) { return true;  }
-        if (PluginInfo.Version == 0x0103) { return true;  }
-        if (PluginInfo.Version == 0x0104) { return true;  }
+        if (PluginInfo.Version == 0x0102) { return true; }
+        if (PluginInfo.Version == 0x0103) { return true; }
+        if (PluginInfo.Version == 0x0104) { return true; }
         break;
     case PLUGIN_TYPE_AUDIO:
         if (!PluginInfo.MemoryBswaped)	  { return false; }
-        if (PluginInfo.Version == 0x0101) { return true;  }
-        if (PluginInfo.Version == 0x0102) { return true;  }
+        if (PluginInfo.Version == 0x0101) { return true; }
+        if (PluginInfo.Version == 0x0102) { return true; }
         break;
     case PLUGIN_TYPE_CONTROLLER:
         if (PluginInfo.Version == 0x0100) { return true; }
@@ -256,4 +258,3 @@ bool CPlugin::ValidPluginVersion ( PLUGIN_INFO & PluginInfo )
     }
     return FALSE;
 }
-#endif

@@ -17,9 +17,7 @@ int WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR /
         WriteTrace(TraceUserInterface, TraceDebug, "Create Main Window");
         CMainGui  MainWindow(true, stdstr_f("Project64 %s", VER_FILE_VERSION_STR).c_str()), HiddenWindow(false);
         CMainMenu MainMenu(&MainWindow);
-#ifdef tofix
         g_Plugins->SetRenderWindows(&MainWindow, &HiddenWindow);
-#endif
         Notify().SetMainWindow(&MainWindow);
 
         if (g_Settings->LoadStringVal(Cmd_RomFile).length() > 0)

@@ -477,9 +477,7 @@ WPARAM CMainGui::ProcessAllMessages(void)
         if (m_ResetPlugins)
         {
             m_ResetPlugins = false;
-#ifdef tofix
             m_ResetInfo->res = m_ResetInfo->plugins->Reset(m_ResetInfo->system);
-#endif
             SetEvent(m_ResetInfo->hEvent);
             m_ResetInfo = NULL;
         }
@@ -750,14 +748,12 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
     }
     if (CGuiSettings::bCPURunning() && g_BaseSystem)
     {
-#ifdef tofix
         if (g_Plugins->Gfx() && g_Plugins->Gfx()->MoveScreen)
         {
             WriteTrace(TraceGFXPlugin, TraceDebug, "Starting");
             g_Plugins->Gfx()->MoveScreen((int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
             WriteTrace(TraceGFXPlugin, TraceDebug, "Done");
         }
-#endif
     }
     break;
     case WM_TIMER:
@@ -836,11 +832,9 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
         {
             if (g_BaseSystem)
             {
-#ifdef tofix
                 if (g_Plugins && g_Plugins->Control()->WM_KeyUp) {
                     g_Plugins->Control()->WM_KeyUp(wParam, lParam);
                 }
-#endif
             }
         }
     }
@@ -853,12 +847,10 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
         {
             if (g_BaseSystem)
             {
-#ifdef tofix
                 if (g_Plugins && g_Plugins->Control()->WM_KeyDown)
                 {
                     g_Plugins->Control()->WM_KeyDown(wParam, lParam);
                 }
-#endif
             }
         }
     }
@@ -1029,27 +1021,22 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
             {
                 if (LOWORD(wParam) > 5000 && LOWORD(wParam) <= 5100)
                 {
-#ifdef tofix
                     if (g_Plugins->RSP())
                     {
                         g_Plugins->RSP()->ProcessMenuItem(LOWORD(wParam));
                     }
-#endif
                 }
                 else if (LOWORD(wParam) > 5100 && LOWORD(wParam) <= 5200)
                 {
-#ifdef tofix
                     if (g_Plugins->Gfx())
                     {
                         WriteTrace(TraceGFXPlugin, TraceDebug, "Starting");
                         g_Plugins->Gfx()->ProcessMenuItem(LOWORD(wParam));
                         WriteTrace(TraceGFXPlugin, TraceDebug, "Done");
                     }
-#endif
                 }
                 else if (LOWORD(wParam) > 5200 && LOWORD(wParam) <= 5300)
                 {
-#ifdef tofix
                     if (g_Plugins->Gfx() && g_Plugins->Gfx()->OnRomBrowserMenuItem != NULL)
                     {
                         CN64Rom Rom;
@@ -1072,7 +1059,6 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
                             g_Settings->SaveString(Game_IniKey, "");
                         }
                     }
-#endif
                 }
                 else if (_this->m_Menu->ProcessMessage(hWnd, HIWORD(wParam), LOWORD(wParam)))
                 {

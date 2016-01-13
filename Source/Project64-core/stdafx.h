@@ -4,6 +4,6 @@
 
 #include <Project64-core/Multilanguage.h>
 #include <Project64-core/Notification.h>
-#include "version.h"
+#include "Version.h"
 #include "Settings/SettingsClass.h"
 #include <Project64-core/TraceModulesProject64.h>

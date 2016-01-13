@@ -11,12 +11,12 @@
 #pragma once
 
 //Plugin controller
-#include "Plugins\PluginClass.h"
+#include "Plugins/PluginClass.h"
 
 //Base Plugin class, all plugin derive from this, handles core  functions
-#include "Plugins\PluginBase.h"
+#include "Plugins/PluginBase.h"
 
-#include "Plugins\GFXPlugin.h"
-#include "Plugins\AudioPlugin.h"
-#include "Plugins\ControllerPlugin.h"
-#include "Plugins\RSPPlugin.h"
+#include "Plugins/GFXPlugin.h"
+#include "Plugins/AudioPlugin.h"
+#include "Plugins/ControllerPlugin.h"
+#include "Plugins/RSPPlugin.h"

@@ -96,14 +96,12 @@ void CNotificationImp::DisplayMessage(int DisplayTime, const char * Message) con
 
     if (InFullScreen())
     {
-#ifdef tofix
         if (m_gfxPlugin && m_gfxPlugin->DrawStatus)
         {
             WriteTrace(TraceGFXPlugin, TraceDebug, "DrawStatus - Starting");
             m_gfxPlugin->DrawStatus(Message, FALSE);
             WriteTrace(TraceGFXPlugin, TraceDebug, "DrawStatus - Done");
         }
-#endif
     }
     else
     {
