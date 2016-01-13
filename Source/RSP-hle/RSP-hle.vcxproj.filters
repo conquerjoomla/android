@@ -42,6 +42,15 @@
     <ClCompile Include="alist_naudio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="alist_nead.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mp3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="musyx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

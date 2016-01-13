@@ -19,36 +19,36 @@
 static unsigned int sum_bytes(const uint8_t *bytes, uint32_t size);
 
 CHle::CHle(const RSP_INFO & Rsp_Info) :
-m_dram(Rsp_Info.RDRAM),
-m_dmem(Rsp_Info.DMEM),
-m_imem(Rsp_Info.IMEM),
-m_mi_intr(Rsp_Info.MI_INTR_REG),
-m_sp_mem_addr(Rsp_Info.SP_MEM_ADDR_REG),
-m_sp_dram_addr(Rsp_Info.SP_DRAM_ADDR_REG),
-m_sp_rd_length(Rsp_Info.SP_RD_LEN_REG),
-m_sp_wr_length(Rsp_Info.SP_WR_LEN_REG),
-m_sp_status(Rsp_Info.SP_STATUS_REG),
-m_sp_dma_full(Rsp_Info.SP_DMA_FULL_REG),
-m_sp_dma_busy(Rsp_Info.SP_DMA_BUSY_REG),
-m_sp_pc(Rsp_Info.SP_PC_REG),
-m_sp_semaphore(Rsp_Info.SP_SEMAPHORE_REG),
-m_dpc_start(Rsp_Info.DPC_START_REG),
-m_dpc_end(Rsp_Info.DPC_END_REG),
-m_dpc_current(Rsp_Info.DPC_CURRENT_REG),
-m_dpc_status(Rsp_Info.DPC_STATUS_REG),
-m_dpc_clock(Rsp_Info.DPC_CLOCK_REG),
-m_dpc_bufbusy(Rsp_Info.DPC_BUFBUSY_REG),
-m_dpc_pipebusy(Rsp_Info.DPC_PIPEBUSY_REG),
-m_dpc_tmem(Rsp_Info.DPC_TMEM_REG),
-m_CheckInterrupts(Rsp_Info.CheckInterrupts),
-m_ProcessDList(Rsp_Info.ProcessDList),
-m_ProcessAList(Rsp_Info.ProcessAList),
-m_ProcessRdpList(Rsp_Info.ProcessRdpList),
-m_ShowCFB(Rsp_Info.ShowCFB),
-m_AudioHle(false),
-m_GraphicsHle(true),
-m_ForwardAudio(false),
-m_ForwardGFX(true)
+    m_dram(Rsp_Info.RDRAM),
+    m_dmem(Rsp_Info.DMEM),
+    m_imem(Rsp_Info.IMEM),
+    m_mi_intr(Rsp_Info.MI_INTR_REG),
+    m_sp_mem_addr(Rsp_Info.SP_MEM_ADDR_REG),
+    m_sp_dram_addr(Rsp_Info.SP_DRAM_ADDR_REG),
+    m_sp_rd_length(Rsp_Info.SP_RD_LEN_REG),
+    m_sp_wr_length(Rsp_Info.SP_WR_LEN_REG),
+    m_sp_status(Rsp_Info.SP_STATUS_REG),
+    m_sp_dma_full(Rsp_Info.SP_DMA_FULL_REG),
+    m_sp_dma_busy(Rsp_Info.SP_DMA_BUSY_REG),
+    m_sp_pc(Rsp_Info.SP_PC_REG),
+    m_sp_semaphore(Rsp_Info.SP_SEMAPHORE_REG),
+    m_dpc_start(Rsp_Info.DPC_START_REG),
+    m_dpc_end(Rsp_Info.DPC_END_REG),
+    m_dpc_current(Rsp_Info.DPC_CURRENT_REG),
+    m_dpc_status(Rsp_Info.DPC_STATUS_REG),
+    m_dpc_clock(Rsp_Info.DPC_CLOCK_REG),
+    m_dpc_bufbusy(Rsp_Info.DPC_BUFBUSY_REG),
+    m_dpc_pipebusy(Rsp_Info.DPC_PIPEBUSY_REG),
+    m_dpc_tmem(Rsp_Info.DPC_TMEM_REG),
+    m_CheckInterrupts(Rsp_Info.CheckInterrupts),
+    m_ProcessDList(Rsp_Info.ProcessDList),
+    m_ProcessAList(Rsp_Info.ProcessAList),
+    m_ProcessRdpList(Rsp_Info.ProcessRdpList),
+    m_ShowCFB(Rsp_Info.ShowCFB),
+    m_AudioHle(false),
+    m_GraphicsHle(true),
+    m_ForwardAudio(false),
+    m_ForwardGFX(true)
 {
 #ifdef tofix
     m_AudioHle = ReadCfgInt("Settings", "AudioHle", FALSE);
@@ -59,6 +59,9 @@ m_ForwardGFX(true)
 #endif
     memset(&m_alist_buffer, 0, sizeof(m_alist_buffer));
     memset(&m_alist_audio, 0, sizeof(m_alist_audio));
+    memset(&m_alist_naudio, 0, sizeof(m_alist_naudio));
+    memset(&m_alist_nead, 0, sizeof(m_alist_nead));
+    memset(&m_mp3_buffer, 0, sizeof(m_mp3_buffer));
 }
 
 CHle::~CHle()

@@ -22,6 +22,14 @@ struct ramp_t
     int64_t target;
 };
 
+/* local functions */
+static void swap(int16_t **a, int16_t **b)
+{
+    int16_t* tmp = *b;
+    *b = *a;
+    *a = tmp;
+}
+
 static int16_t* sample(CHle * hle, unsigned pos)
 {
     return (int16_t*)hle->alist_buffer() + (pos ^ S);
@@ -47,7 +55,9 @@ static void alist_envmix_mix(size_t n, int16_t** dst, const int16_t* gains, int1
     size_t i;
 
     for (i = 0; i < n; ++i)
+    {
         sample_mix(dst[i], src, gains[i]);
+    }
 }
 
 static int16_t ramp_step(struct ramp_t* ramp)
@@ -56,9 +66,7 @@ static int16_t ramp_step(struct ramp_t* ramp)
 
     ramp->value += ramp->step;
 
-    target_reached = (ramp->step <= 0)
-        ? (ramp->value <= ramp->target)
-        : (ramp->value >= ramp->target);
+    target_reached = (ramp->step <= 0) ? (ramp->value <= ramp->target) : (ramp->value >= ramp->target);
 
     if (target_reached)
     {
@@ -132,6 +140,7 @@ void alist_clear(CHle * hle, uint16_t dmem, uint16_t count)
         --count;
     }
 }
+
 void alist_load(CHle * hle, uint16_t dmem, uint32_t address, uint16_t count)
 {
     /* enforce DMA alignment constraints */
@@ -158,6 +167,51 @@ void alist_move(CHle * hle, uint16_t dmemo, uint16_t dmemi, uint16_t count)
         --count;
     }
 }
+
+void alist_copy_every_other_sample(CHle * hle, uint16_t dmemo, uint16_t dmemi, uint16_t count)
+{
+    while (count != 0)
+    {
+        *alist_s16(hle, dmemo) = *alist_s16(hle, dmemi);
+        dmemo += 2;
+        dmemi += 4;
+        --count;
+    }
+}
+
+void alist_repeat64(CHle * hle, uint16_t dmemo, uint16_t dmemi, uint8_t count)
+{
+    uint16_t buffer[64];
+    memcpy(buffer, hle->alist_buffer() + dmemi, 128);
+
+    while(count != 0)
+    {
+        memcpy(hle->alist_buffer() + dmemo, buffer, 128);
+        dmemo += 128;
+        --count;
+    }
+}
+
+void alist_copy_blocks(CHle * hle, uint16_t dmemo, uint16_t dmemi, uint16_t block_size, uint8_t count)
+{
+    int block_left = count;
+
+    do
+    {
+        int bytes_left = block_size;
+        do
+        {
+            memcpy(hle->alist_buffer() + dmemo, hle->alist_buffer() + dmemi, 0x20);
+            bytes_left -= 0x20;
+
+            dmemi += 0x20;
+            dmemo += 0x20;
+        } while(bytes_left > 0);
+
+        --block_left;
+    } while(block_left > 0);
+}
+
 void alist_interleave(CHle * hle, uint16_t dmemo, uint16_t left, uint16_t right, uint16_t count)
 {
     uint16_t       *dst = (uint16_t*)(hle->alist_buffer() + dmemo);
@@ -188,18 +242,7 @@ void alist_interleave(CHle * hle, uint16_t dmemo, uint16_t left, uint16_t right,
     }
 }
 
-void alist_envmix_exp(
-    CHle * hle,
-    bool init,
-    bool aux,
-    uint16_t dmem_dl, uint16_t dmem_dr,
-    uint16_t dmem_wl, uint16_t dmem_wr,
-    uint16_t dmemi, uint16_t count,
-    int16_t dry, int16_t wet,
-    const int16_t *vol,
-    const int16_t *target,
-    const int32_t *rate,
-    uint32_t address)
+void alist_envmix_exp( CHle * hle, bool init, bool aux, uint16_t dmem_dl, uint16_t dmem_dr, uint16_t dmem_wl, uint16_t dmem_wr, uint16_t dmemi, uint16_t count, int16_t dry, int16_t wet, const int16_t *vol, const int16_t *target, const int32_t *rate, uint32_t address)
 {
     size_t n = (aux) ? 4 : 2;
 
@@ -296,18 +339,7 @@ void alist_envmix_exp(
     memcpy(hle->dram() + address, (uint8_t *)save_buffer, 80);
 }
 
-void alist_envmix_ge(
-    CHle * hle,
-    bool init,
-    bool aux,
-    uint16_t dmem_dl, uint16_t dmem_dr,
-    uint16_t dmem_wl, uint16_t dmem_wr,
-    uint16_t dmemi, uint16_t count,
-    int16_t dry, int16_t wet,
-    const int16_t *vol,
-    const int16_t *target,
-    const int32_t *rate,
-    uint32_t address)
+void alist_envmix_ge( CHle * hle, bool init, bool aux, uint16_t dmem_dl, uint16_t dmem_dr, uint16_t dmem_wl, uint16_t dmem_wr, uint16_t dmemi, uint16_t count, int16_t dry, int16_t wet, const int16_t *vol, const int16_t *target, const int32_t *rate, uint32_t address)
 {
     unsigned k;
     size_t n = (aux) ? 4 : 2;
@@ -379,6 +411,72 @@ void alist_envmix_ge(
     memcpy(hle->dram() + address, (uint8_t *)save_buffer, 80);
 }
 
+void alist_envmix_lin(CHle * hle, bool init, uint16_t dmem_dl, uint16_t dmem_dr, uint16_t dmem_wl, uint16_t dmem_wr, uint16_t dmemi, uint16_t count, int16_t dry, int16_t wet, const int16_t *vol, const int16_t *target, const int32_t *rate, uint32_t address)
+{
+    size_t k;
+    struct ramp_t ramps[2];
+    int16_t save_buffer[40];
+
+    const int16_t * const in = (int16_t*)(hle->alist_buffer() + dmemi);
+    int16_t* const dl = (int16_t*)(hle->alist_buffer() + dmem_dl);
+    int16_t* const dr = (int16_t*)(hle->alist_buffer() + dmem_dr);
+    int16_t* const wl = (int16_t*)(hle->alist_buffer() + dmem_wl);
+    int16_t* const wr = (int16_t*)(hle->alist_buffer() + dmem_wr);
+
+    if (init)
+    {
+        ramps[0].step   = rate[0] / 8;
+        ramps[0].value  = (vol[0] << 16);
+        ramps[0].target = (target[0] << 16);
+        ramps[1].step   = rate[1] / 8;
+        ramps[1].value  = (vol[1] << 16);
+        ramps[1].target = (target[1] << 16);
+    }
+    else
+    {
+        memcpy((uint8_t *)save_buffer, hle->dram() + address, 80);
+        wet             = *(int16_t *)(save_buffer +  0); /* 0-1 */
+        dry             = *(int16_t *)(save_buffer +  2); /* 2-3 */
+        ramps[0].target = *(int16_t *)(save_buffer +  4) << 16; /* 4-5 */
+        ramps[1].target = *(int16_t *)(save_buffer +  6) << 16; /* 6-7 */
+        ramps[0].step   = *(int32_t *)(save_buffer +  8); /* 8-9 (save_buffer is a 16bit pointer) */
+        ramps[1].step   = *(int32_t *)(save_buffer + 10); /* 10-11 */
+        ramps[0].value  = *(int32_t *)(save_buffer + 16); /* 16-17 */
+        ramps[1].value  = *(int32_t *)(save_buffer + 18); /* 16-17 */
+    }
+
+    count >>= 1;
+    for(k = 0; k < count; ++k)
+    {
+        int16_t  gains[4];
+        int16_t* buffers[4];
+        int16_t l_vol = ramp_step(&ramps[0]);
+        int16_t r_vol = ramp_step(&ramps[1]);
+
+        buffers[0] = dl + (k^S);
+        buffers[1] = dr + (k^S);
+        buffers[2] = wl + (k^S);
+        buffers[3] = wr + (k^S);
+
+        gains[0] = clamp_s16((l_vol * dry + 0x4000) >> 15);
+        gains[1] = clamp_s16((r_vol * dry + 0x4000) >> 15);
+        gains[2] = clamp_s16((l_vol * wet + 0x4000) >> 15);
+        gains[3] = clamp_s16((r_vol * wet + 0x4000) >> 15);
+
+        alist_envmix_mix(4, buffers, gains, in[k^S]);
+    }
+
+    *(int16_t *)(save_buffer +  0) = wet;            /* 0-1 */
+    *(int16_t *)(save_buffer +  2) = dry;            /* 2-3 */
+    *(int16_t *)(save_buffer +  4) = (int16_t)(ramps[0].target >> 16); /* 4-5 */
+    *(int16_t *)(save_buffer +  6) = (int16_t)(ramps[1].target >> 16); /* 6-7 */
+    *(int32_t *)(save_buffer +  8) = (int32_t)ramps[0].step;  /* 8-9 (save_buffer is a 16bit pointer) */
+    *(int32_t *)(save_buffer + 10) = (int32_t)ramps[1].step;  /* 10-11 */
+    *(int32_t *)(save_buffer + 16) = (int32_t)ramps[0].value; /* 16-17 */
+    *(int32_t *)(save_buffer + 18) = (int32_t)ramps[1].value; /* 18-19 */
+    memcpy(hle->dram() + address, (uint8_t *)save_buffer, 80);
+}
+
 void alist_mix(CHle * hle, uint16_t dmemo, uint16_t dmemi, uint16_t count, int16_t gain)
 {
     int16_t       *dst = (int16_t*)(hle->alist_buffer() + dmemo);
@@ -392,6 +490,83 @@ void alist_mix(CHle * hle, uint16_t dmemo, uint16_t dmemi, uint16_t count, int16
 
         ++dst;
         ++src;
+        --count;
+    }
+}
+
+void alist_envmix_nead( CHle * hle, bool swap_wet_LR, uint16_t dmem_dl, uint16_t dmem_dr, uint16_t dmem_wl, uint16_t dmem_wr, uint16_t dmemi, unsigned count, uint16_t *env_values, uint16_t *env_steps, const int16_t *xors)
+{
+    int16_t *in = (int16_t*)(hle->alist_buffer() + dmemi);
+    int16_t *dl = (int16_t*)(hle->alist_buffer() + dmem_dl);
+    int16_t *dr = (int16_t*)(hle->alist_buffer() + dmem_dr);
+    int16_t *wl = (int16_t*)(hle->alist_buffer() + dmem_wl);
+    int16_t *wr = (int16_t*)(hle->alist_buffer() + dmem_wr);
+
+    /* make sure count is a multiple of 8 */
+    count = align(count, 8);
+
+    if (swap_wet_LR)
+    {
+        swap(&wl, &wr);
+    }
+
+    while (count != 0)
+    {
+        size_t i;
+        for(i = 0; i < 8; ++i)
+        {
+            int16_t l  = (((int32_t)in[i^S] * (uint32_t)env_values[0]) >> 16) ^ xors[0];
+            int16_t r  = (((int32_t)in[i^S] * (uint32_t)env_values[1]) >> 16) ^ xors[1];
+            int16_t l2 = (((int32_t)l * (uint32_t)env_values[2]) >> 16) ^ xors[2];
+            int16_t r2 = (((int32_t)r * (uint32_t)env_values[2]) >> 16) ^ xors[3];
+
+            dl[i^S] = clamp_s16(dl[i^S] + l);
+            dr[i^S] = clamp_s16(dr[i^S] + r);
+            wl[i^S] = clamp_s16(wl[i^S] + l2);
+            wr[i^S] = clamp_s16(wr[i^S] + r2);
+        }
+
+        env_values[0] += env_steps[0];
+        env_values[1] += env_steps[1];
+        env_values[2] += env_steps[2];
+
+        dl += 8;
+        dr += 8;
+        wl += 8;
+        wr += 8;
+        in += 8;
+        count -= 8;
+    }
+}
+
+void alist_add(CHle * hle, uint16_t dmemo, uint16_t dmemi, uint16_t count)
+{
+    int16_t *dst = (int16_t*)(hle->alist_buffer() + dmemo);
+    const int16_t *src = (int16_t*)(hle->alist_buffer() + dmemi);
+
+    count >>= 1;
+
+    while(count != 0)
+    {
+        *dst = clamp_s16(*dst + *src);
+
+        ++dst;
+        ++src;
+        --count;
+    }
+}
+
+void alist_multQ44(CHle * hle, uint16_t dmem, uint16_t count, int8_t gain)
+{
+    int16_t *dst = (int16_t*)(hle->alist_buffer() + dmem);
+
+    count >>= 1;
+
+    while(count != 0)
+    {
+        *dst = clamp_s16(*dst * gain >> 4);
+
+        ++dst;
         --count;
     }
 }
@@ -427,15 +602,7 @@ static void alist_resample_save(CHle * hle, uint32_t address, uint16_t pos, uint
     *dram_u16(hle, address + 8) = pitch_accu;
 }
 
-void alist_resample(
-    CHle * hle,
-    bool init,
-    bool flag2,
-    uint16_t dmemo,
-    uint16_t dmemi,
-    uint16_t count,
-    uint32_t pitch,     /* Q16.16 */
-    uint32_t address)
+void alist_resample( CHle * hle, bool init, bool flag2, uint16_t dmemo, uint16_t dmemi, uint16_t count, uint32_t pitch /* Q16.16 */, uint32_t address)
 {
     uint32_t pitch_accu;
 
@@ -477,6 +644,23 @@ void alist_resample(
     alist_resample_save(hle, address, ipos, pitch_accu);
 }
 
+void alist_resample_zoh(CHle * hle, uint16_t dmemo, uint16_t dmemi, uint16_t count, uint32_t pitch, uint32_t pitch_accu)
+{
+    uint16_t ipos = dmemi >> 1;
+    uint16_t opos = dmemo >> 1;
+    count >>= 1;
+
+    while(count != 0)
+    {
+        *sample(hle, opos++) = *sample(hle, ipos);
+
+        pitch_accu += pitch;
+        ipos += (pitch_accu >> 16);
+        pitch_accu &= 0xffff;
+        --count;
+    }
+}
+
 typedef unsigned int(*adpcm_predict_frame_t)(CHle * hle, int16_t* dst, uint16_t dmemi, unsigned char scale);
 
 static unsigned int adpcm_predict_frame_4bits(CHle * hle, int16_t* dst, uint16_t dmemi, unsigned char scale)
@@ -513,17 +697,7 @@ static unsigned int adpcm_predict_frame_2bits(CHle * hle, int16_t* dst, uint16_t
     return 4;
 }
 
-void alist_adpcm(
-    CHle * hle,
-    bool init,
-    bool loop,
-    bool two_bit_per_sample,
-    uint16_t dmemo,
-    uint16_t dmemi,
-    uint16_t count,
-    const int16_t* codebook,
-    uint32_t loop_address,
-    uint32_t last_frame_address)
+void alist_adpcm( CHle * hle, bool init, bool loop, bool two_bit_per_sample, uint16_t dmemo, uint16_t dmemi, uint16_t count, const int16_t* codebook, uint32_t loop_address, uint32_t last_frame_address)
 {
     int16_t last_frame[16];
     size_t i;
@@ -535,14 +709,20 @@ void alist_adpcm(
     assert((count & 0x1f) == 0);
 
     if (init)
+    {
         memset(last_frame, 0, 16 * sizeof(last_frame[0]));
+    }
     else
+    {
         dram_load_u16(hle, (uint16_t*)last_frame, (loop) ? loop_address : last_frame_address, 16);
+    }
 
     for (i = 0; i < 16; ++i, dmemo += 2)
+    {
         *alist_s16(hle, dmemo) = last_frame[i];
-
-    while (count != 0) {
+    }
+    while (count != 0)
+    {
         int16_t frame[16];
         uint8_t code = *alist_u8(hle, dmemi++);
         unsigned char scale = (code & 0xf0) >> 4;
@@ -554,23 +734,127 @@ void alist_adpcm(
         adpcm_compute_residuals(last_frame + 8, frame + 8, cb_entry, last_frame + 6, 8);
 
         for (i = 0; i < 16; ++i, dmemo += 2)
+        {
             *alist_s16(hle, dmemo) = last_frame[i];
-
+        }
         count -= 32;
     }
 
     dram_store_u16(hle, (uint16_t*)last_frame, last_frame_address, 16);
 }
 
-void alist_polef(
-    CHle * hle,
-    bool init,
-    uint16_t dmemo,
-    uint16_t dmemi,
-    uint16_t count,
-    uint16_t gain,
-    int16_t* table,
-    uint32_t address)
+void alist_filter( CHle * hle, uint16_t dmem,uint16_t count, uint32_t address, const uint32_t* lut_address)
+{
+    int x;
+    int16_t outbuff[0x3c0];
+    int16_t *outp = outbuff;
+
+    int16_t* const lutt6 = (int16_t*)(hle->dram() + lut_address[0]);
+    int16_t* const lutt5 = (int16_t*)(hle->dram() + lut_address[1]);
+
+    int16_t* in1 = (int16_t*)(hle->dram() + address);
+    int16_t* in2 = (int16_t*)(hle->alist_buffer() + dmem);
+
+    for (x = 0; x < 8; ++x)
+    {
+        int32_t v = (lutt5[x] + lutt6[x]) >> 1;
+        lutt5[x] = lutt6[x] = v;
+    }
+
+    for (x = 0; x < count; x += 16)
+    {
+        int32_t v[8];
+
+        v[1] =  in1[0] * lutt6[6];
+        v[1] += in1[3] * lutt6[7];
+        v[1] += in1[2] * lutt6[4];
+        v[1] += in1[5] * lutt6[5];
+        v[1] += in1[4] * lutt6[2];
+        v[1] += in1[7] * lutt6[3];
+        v[1] += in1[6] * lutt6[0];
+        v[1] += in2[1] * lutt6[1]; /* 1 */
+
+        v[0] =  in1[3] * lutt6[6];
+        v[0] += in1[2] * lutt6[7];
+        v[0] += in1[5] * lutt6[4];
+        v[0] += in1[4] * lutt6[5];
+        v[0] += in1[7] * lutt6[2];
+        v[0] += in1[6] * lutt6[3];
+        v[0] += in2[1] * lutt6[0];
+        v[0] += in2[0] * lutt6[1];
+
+        v[3] =  in1[2] * lutt6[6];
+        v[3] += in1[5] * lutt6[7];
+        v[3] += in1[4] * lutt6[4];
+        v[3] += in1[7] * lutt6[5];
+        v[3] += in1[6] * lutt6[2];
+        v[3] += in2[1] * lutt6[3];
+        v[3] += in2[0] * lutt6[0];
+        v[3] += in2[3] * lutt6[1];
+
+        v[2] =  in1[5] * lutt6[6];
+        v[2] += in1[4] * lutt6[7];
+        v[2] += in1[7] * lutt6[4];
+        v[2] += in1[6] * lutt6[5];
+        v[2] += in2[1] * lutt6[2];
+        v[2] += in2[0] * lutt6[3];
+        v[2] += in2[3] * lutt6[0];
+        v[2] += in2[2] * lutt6[1];
+
+        v[5] =  in1[4] * lutt6[6];
+        v[5] += in1[7] * lutt6[7];
+        v[5] += in1[6] * lutt6[4];
+        v[5] += in2[1] * lutt6[5];
+        v[5] += in2[0] * lutt6[2];
+        v[5] += in2[3] * lutt6[3];
+        v[5] += in2[2] * lutt6[0];
+        v[5] += in2[5] * lutt6[1];
+
+        v[4] =  in1[7] * lutt6[6];
+        v[4] += in1[6] * lutt6[7];
+        v[4] += in2[1] * lutt6[4];
+        v[4] += in2[0] * lutt6[5];
+        v[4] += in2[3] * lutt6[2];
+        v[4] += in2[2] * lutt6[3];
+        v[4] += in2[5] * lutt6[0];
+        v[4] += in2[4] * lutt6[1];
+
+        v[7] =  in1[6] * lutt6[6];
+        v[7] += in2[1] * lutt6[7];
+        v[7] += in2[0] * lutt6[4];
+        v[7] += in2[3] * lutt6[5];
+        v[7] += in2[2] * lutt6[2];
+        v[7] += in2[5] * lutt6[3];
+        v[7] += in2[4] * lutt6[0];
+        v[7] += in2[7] * lutt6[1];
+
+        v[6] =  in2[1] * lutt6[6];
+        v[6] += in2[0] * lutt6[7];
+        v[6] += in2[3] * lutt6[4];
+        v[6] += in2[2] * lutt6[5];
+        v[6] += in2[5] * lutt6[2];
+        v[6] += in2[4] * lutt6[3];
+        v[6] += in2[7] * lutt6[0];
+        v[6] += in2[6] * lutt6[1];
+
+        outp[1] = ((v[1] + 0x4000) >> 15);
+        outp[0] = ((v[0] + 0x4000) >> 15);
+        outp[3] = ((v[3] + 0x4000) >> 15);
+        outp[2] = ((v[2] + 0x4000) >> 15);
+        outp[5] = ((v[5] + 0x4000) >> 15);
+        outp[4] = ((v[4] + 0x4000) >> 15);
+        outp[7] = ((v[7] + 0x4000) >> 15);
+        outp[6] = ((v[6] + 0x4000) >> 15);
+        in1 = in2;
+        in2 += 8;
+        outp += 8;
+    }
+
+    memcpy(hle->dram() + address, in2 - 8, 16);
+    memcpy(hle->alist_buffer() + dmem, outbuff, count);
+}
+
+void alist_polef(CHle * hle, bool init, uint16_t dmemo, uint16_t dmemi, uint16_t count, uint16_t gain, int16_t* table, uint32_t address)
 {
     int16_t *dst = (int16_t*)(hle->alist_buffer() + dmemo);
 
@@ -583,16 +867,19 @@ void alist_polef(
 
     count = align(count, 16);
 
-    if (init) {
+    if (init)
+    {
         l1 = 0;
         l2 = 0;
     }
-    else {
+    else
+    {
         l1 = *dram_u16(hle, address + 4);
         l2 = *dram_u16(hle, address + 6);
     }
 
-    for (i = 0; i < 8; ++i) {
+    for (i = 0; i < 8; ++i)
+    {
         h2_before[i] = h2[i];
         h2[i] = (((int32_t)h2[i] * gain) >> 14);
     }
@@ -602,9 +889,12 @@ void alist_polef(
         int16_t frame[8];
 
         for (i = 0; i < 8; ++i, dmemi += 2)
+        {
             frame[i] = *alist_s16(hle, dmemi);
+        }
 
-        for (i = 0; i < 8; ++i) {
+        for (i = 0; i < 8; ++i)
+        {
             int32_t accu = frame[i] * gain;
             accu += h1[i] * l1 + h2_before[i] * l2 + rdot(i, h2, frame);
             dst[i^S] = clamp_s16(accu >> 14);
@@ -618,4 +908,56 @@ void alist_polef(
     } while (count != 0);
 
     dram_store_u16(hle, (uint16_t*)(dst - 4), address, 4);
+}
+
+void alist_iirf(CHle * hle, bool init, uint16_t dmemo, uint16_t dmemi, uint16_t count, int16_t* table, uint32_t address)
+{
+    int16_t *dst = (int16_t*)(hle->alist_buffer() + dmemo);
+    int32_t i, prev;
+    int16_t frame[8];
+    int16_t ibuf[4];
+    uint16_t index = 7;
+
+    count = align(count, 16);
+
+    if(init)
+    {
+        for(i = 0; i < 8; ++i)
+        {
+            frame[i] = 0;
+        }
+        ibuf[1] = 0;
+        ibuf[2] = 0;
+    }
+    else
+    {
+        frame[6] = *dram_u16(hle, address + 4);
+        frame[7] = *dram_u16(hle, address + 6);
+        ibuf[1] = (int16_t)*dram_u16(hle, address + 8);
+        ibuf[2] = (int16_t)*dram_u16(hle, address + 10);
+    }
+
+    prev = vmulf(table[9], frame[6]) * 2;
+    do
+    {
+        for(i = 0; i < 8; ++i)
+        {
+            int32_t accu;
+            ibuf[index&3] = *alist_s16(hle, dmemi);
+
+            accu = prev + vmulf(table[0], ibuf[index&3]) + vmulf(table[1], ibuf[(index-1)&3]) + vmulf(table[0], ibuf[(index-2)&3]);
+            accu += vmulf(table[8], frame[index]) * 2;
+            prev = vmulf(table[9], frame[index]) * 2;
+            dst[i^S] = frame[i] = accu;
+
+            index=(index+1)&7;
+            dmemi += 2;
+        }
+        dst += 8;
+        count -= 0x10;
+    } while (count > 0);
+
+    dram_store_u16(hle, (uint16_t*)&frame[6], address + 4, 4);
+    dram_store_u16(hle, (uint16_t*)&ibuf[(index-2)&3], address+8, 2);
+    dram_store_u16(hle, (uint16_t*)&ibuf[(index-1)&3], address+10, 2);
 }

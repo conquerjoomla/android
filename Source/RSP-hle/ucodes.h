@@ -14,7 +14,9 @@ class CHle;
 
 /* audio list ucodes - audio */
 enum { N_SEGMENTS = 16 };
-struct alist_audio_t {
+
+struct alist_audio_t
+{
     /* segments */
     uint32_t segments[N_SEGMENTS];
 
@@ -73,6 +75,29 @@ void alist_process_naudio_dk(CHle * hle);
 void alist_process_naudio_mp3(CHle * hle);
 void alist_process_naudio_cbfd(CHle * hle);
 
+/* audio list ucodes - nead */
+struct alist_nead_t
+{
+    /* main buffers */
+    uint16_t in;
+    uint16_t out;
+    uint16_t count;
+
+    /* envmixer ramps */
+    uint16_t env_values[3];
+    uint16_t env_steps[3];
+
+    /* ADPCM loop point address */
+    uint32_t loop;
+
+    /* storage for ADPCM table and polef coefficients */
+    int16_t table[16 * 8];
+
+    /* filter audio command state */
+    uint16_t filter_count;
+    uint32_t filter_lut_address[2];
+};
+
 void alist_process_nead_mk(CHle * hle);
 void alist_process_nead_sfj(CHle * hle);
 void alist_process_nead_sf(CHle * hle);
@@ -84,6 +109,9 @@ void alist_process_nead_oot(CHle * hle);
 void alist_process_nead_mm(CHle * hle);
 void alist_process_nead_mmb(CHle * hle);
 void alist_process_nead_ac(CHle * hle);
+
+/* mp3 ucode */
+void mp3_task(CHle * hle, unsigned int index, uint32_t address);
 
 /* musyx ucodes */
 void musyx_v1_task(CHle * hle);

@@ -1,5 +1,4 @@
 /****************************************************************************
-ZigZagSubBlock
 *                                                                           *
 * Project64 - A Nintendo 64 emulator.                                       *
 * http://www.pj64-emu.com/                                                  *

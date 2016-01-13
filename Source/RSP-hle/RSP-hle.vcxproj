@@ -43,11 +43,14 @@
     <ClCompile Include="alist.cpp" />
     <ClCompile Include="alist_audio.cpp" />
     <ClCompile Include="alist_naudio.cpp" />
+    <ClCompile Include="alist_nead.cpp" />
     <ClCompile Include="audio.cpp" />
     <ClCompile Include="hle.cpp" />
     <ClCompile Include="jpeg.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mem.cpp" />
+    <ClCompile Include="mp3.cpp" />
+    <ClCompile Include="musyx.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

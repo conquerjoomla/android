@@ -9,6 +9,7 @@
 *                                                                           *
 ****************************************************************************/
 #pragma once
+#include <Common/stdtypes.h>
 #include "Rsp.h"
 #include "ucodes.h"
 
@@ -82,6 +83,8 @@ public:
     bool GraphicsHle() { return m_GraphicsHle; }
     struct alist_audio_t & alist_audio() { return m_alist_audio; }
     struct alist_naudio_t & alist_naudio() { return m_alist_naudio; }
+    struct alist_nead_t & alist_nead() { return m_alist_nead; }
+    uint8_t * mp3_buffer() { return &m_mp3_buffer[0]; }
 
     uint8_t * alist_buffer() { return &m_alist_buffer[0]; }
 
@@ -138,22 +141,20 @@ private:
     void* user_defined;
 #endif
 
-    /* alist.c */
+    /* alist.cpp */
     uint8_t m_alist_buffer[0x1000];
 
-    /* alist_audio.c */
+    /* alist_audio.cpp */
     struct alist_audio_t m_alist_audio;
 
-    /* alist_naudio.c */
+    /* alist_naudio.cpp */
     struct alist_naudio_t m_alist_naudio;
 
-#ifdef tofix
-    /* alist_nead.c */
-    struct alist_nead_t alist_nead;
+    /* alist_nead.cpp */
+    struct alist_nead_t m_alist_nead;
 
-    /* mp3.c */
-    uint8_t  mp3_buffer[0x1000];
-#endif
+    /* mp3.cpp */
+    uint8_t m_mp3_buffer[0x1000];
 
     bool m_AudioHle;
     bool m_GraphicsHle;
