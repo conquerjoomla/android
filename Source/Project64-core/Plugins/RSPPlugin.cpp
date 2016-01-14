@@ -13,19 +13,18 @@
 #include <Project64-core/N64System/Mips/MemoryVirtualMem.h>
 #include <Project64-core/N64System/Mips/RegisterClass.h>
 #include "RSPPlugin.h"
-#include "GFXplugin.h"
+#include "GFXPlugin.h"
 #include "AudioPlugin.h"
 #include <Windows.h>
 
-void DummyFunc1(int a) { a += 1;}
+void DummyFunc1(int a) { a += 1; }
 
-#ifdef tofix
 CRSP_Plugin::CRSP_Plugin(void) :
-    DoRspCycles(NULL),
-    EnableDebugging(NULL),
-    m_CycleCount(0),
-    GetDebugInfo(NULL),
-    InitiateDebugger(NULL)
+DoRspCycles(NULL),
+EnableDebugging(NULL),
+m_CycleCount(0),
+GetDebugInfo(NULL),
+InitiateDebugger(NULL)
 {
     memset(&m_RSPDebug, 0, sizeof(m_RSPDebug));
 }
@@ -217,5 +216,3 @@ void CRSP_Plugin::ProcessMenuItem(int id)
         m_RSPDebug.ProcessMenuItem(id);
     }
 }
-
-#endif

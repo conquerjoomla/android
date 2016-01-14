@@ -16,13 +16,13 @@
 #include <Windows.h>
 
 CControl_Plugin::CControl_Plugin(void) :
-    WM_KeyDown(NULL),
-    WM_KeyUp(NULL),
-    RumbleCommand(NULL),
-    GetKeys(NULL),
-    ReadController(NULL),
-    ControllerCommand(NULL),
-    m_AllocatedControllers(false)
+WM_KeyDown(NULL),
+WM_KeyUp(NULL),
+RumbleCommand(NULL),
+GetKeys(NULL),
+ReadController(NULL),
+ControllerCommand(NULL),
+m_AllocatedControllers(false)
 {
     memset(&m_PluginControllers, 0, sizeof(m_PluginControllers));
     memset(&m_Controllers, 0, sizeof(m_Controllers));
@@ -65,11 +65,23 @@ bool CControl_Plugin::LoadFunctions(void)
 
 bool CControl_Plugin::Initiate(CN64System * System, RenderWindow * Window)
 {
+    CONTROL_INFO ControlInfo;
+    uint8_t Buffer[100];
+
     for (int32_t i = 0; i < 4; i++)
     {
         m_PluginControllers[i].Present = FALSE;
         m_PluginControllers[i].RawData = FALSE;
         m_PluginControllers[i].Plugin = PLUGIN_NONE;
+    }
+
+    if (m_PluginInfo.Version >= 0x0101)
+    {
+        ControlInfo.Controls = m_PluginControllers;
+        ControlInfo.HEADER = (System == NULL ? Buffer : g_Rom->GetRomAddress());
+        ControlInfo.hinst = GetModuleHandle(NULL);
+        ControlInfo.hMainWindow = Window ? (HWND)Window->GetWindowHandle() : NULL;
+        ControlInfo.MemoryBswaped = TRUE;
     }
 
     // Test Plugin version
@@ -79,40 +91,27 @@ bool CControl_Plugin::Initiate(CN64System * System, RenderWindow * Window)
         void(__cdecl *InitiateControllers_1_0)(HWND hMainWindow, CONTROL Controls[4]);
         InitiateControllers_1_0 = (void(__cdecl *)(HWND, CONTROL *))GetProcAddress((HMODULE)m_hDll, "InitiateControllers");
         if (InitiateControllers_1_0 == NULL) { return false; }
-        InitiateControllers_1_0((HWND)Window->GetWindowHandle(),m_PluginControllers);
+        InitiateControllers_1_0((HWND)Window->GetWindowHandle(), m_PluginControllers);
         m_Initialized = true;
     }
-    else if (m_PluginInfo.Version >= 0x0101)
+    else if (m_PluginInfo.Version == 0x0101)
     {
-        typedef struct
-        {
-            HWND hMainWindow;
-            HINSTANCE hinst;
-
-            int32_t MemoryBswaped;		// If this is set to TRUE, then the memory has been pre
-            //   bswap on a dword (32 bits) boundry, only effects header.
-            //	eg. the first 8 bytes are stored like this:
-            //        4 3 2 1   8 7 6 5
-            uint8_t * HEADER;			// This is the rom header (first 40h bytes of the rom)
-            CONTROL *Controls;		// A pointer to an array of 4 controllers .. eg:
-            // CONTROL Controls[4];
-        } CONTROL_INFO;
-
         //Get Function from DLL
-        void(__cdecl *InitiateControllers_1_1)(CONTROL_INFO * ControlInfo);
-        InitiateControllers_1_1 = (void(__cdecl *)(CONTROL_INFO *))GetProcAddress((HMODULE)m_hDll, "InitiateControllers");
+        void(__cdecl *InitiateControllers_1_1)(CONTROL_INFO ControlInfo);
+        InitiateControllers_1_1 = (void(__cdecl *)(CONTROL_INFO))GetProcAddress((HMODULE)m_hDll, "InitiateControllers");
         if (InitiateControllers_1_1 == NULL) { return false; }
 
-        CONTROL_INFO ControlInfo;
-        uint8_t Buffer[100];
+        InitiateControllers_1_1(ControlInfo);
+        m_Initialized = true;
+    }
+    else if (m_PluginInfo.Version >= 0x0102)
+    {
+        //Get Function from DLL
+        void(__cdecl *InitiateControllers_1_2)(CONTROL_INFO * ControlInfo);
+        InitiateControllers_1_2 = (void(__cdecl *)(CONTROL_INFO *))GetProcAddress((HMODULE)m_hDll, "InitiateControllers");
+        if (InitiateControllers_1_2 == NULL) { return false; }
 
-        ControlInfo.Controls = m_PluginControllers;
-        ControlInfo.HEADER = (System == NULL ? Buffer : g_Rom->GetRomAddress());
-        ControlInfo.hinst = GetModuleHandle(NULL);
-        ControlInfo.hMainWindow = (HWND)Window->GetWindowHandle();
-        ControlInfo.MemoryBswaped = TRUE;
-
-        InitiateControllers_1_1(&ControlInfo);
+        InitiateControllers_1_2(&ControlInfo);
         m_Initialized = true;
     }
 
@@ -179,7 +178,7 @@ void CControl_Plugin::SetControl(CControl_Plugin const * const Plugin)
 }
 
 CCONTROL::CCONTROL(int32_t &Present, int32_t &RawData, int32_t &PlugType) :
-    m_Present(Present), m_RawData(RawData), m_PlugType(PlugType)
+m_Present(Present), m_RawData(RawData), m_PlugType(PlugType)
 {
     m_Buttons.Value = 0;
 }

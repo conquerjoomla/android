@@ -18,12 +18,12 @@
 #include <Windows.h>
 
 CAudioPlugin::CAudioPlugin() :
-    AiLenChanged(NULL),
-    AiReadLength(NULL),
-    ProcessAList(NULL),
-    m_hAudioThread(NULL),
-    AiUpdate(NULL),
-    AiDacrateChanged(NULL)
+AiLenChanged(NULL),
+AiReadLength(NULL),
+ProcessAList(NULL),
+m_hAudioThread(NULL),
+AiUpdate(NULL),
+AiDacrateChanged(NULL)
 {
 }
 

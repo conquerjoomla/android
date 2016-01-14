@@ -92,7 +92,6 @@ __interface RenderWindow
     virtual void * GetStatusBar(void) const = 0;
 };
 
-#ifdef tofix
 class CPlugins :
     private CDebugSettings
 {
@@ -148,7 +147,6 @@ private:
     stdstr m_RSPFile;
     stdstr m_ControlFile;
 };
-#endif
 
 //Dummy Functions
 void DummyCheckInterrupts(void);
