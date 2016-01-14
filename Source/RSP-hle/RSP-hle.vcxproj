@@ -45,6 +45,7 @@
     <ClCompile Include="alist_naudio.cpp" />
     <ClCompile Include="alist_nead.cpp" />
     <ClCompile Include="audio.cpp" />
+    <ClCompile Include="cicx105.cpp" />
     <ClCompile Include="hle.cpp" />
     <ClCompile Include="jpeg.cpp" />
     <ClCompile Include="main.cpp" />

@@ -12,6 +12,9 @@
 
 class CHle;
 
+/* cic_x105 ucode */
+void cicx105_ucode(CHle * hle);
+
 /* audio list ucodes - audio */
 enum { N_SEGMENTS = 16 };
 

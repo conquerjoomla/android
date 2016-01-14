@@ -78,6 +78,7 @@ public:
 
     uint8_t * dram() { return m_dram; }
     uint8_t * dmem() { return m_dmem; }
+    uint8_t * imem() { return m_imem; }
 
     bool AudioHle() { return m_AudioHle; }
     bool GraphicsHle() { return m_GraphicsHle; }
@@ -104,6 +105,7 @@ private:
     bool try_fast_audio_dispatching(void);
     bool try_fast_task_dispatching(void);
     void normal_task_dispatching(void);
+    void non_task_dispatching(void);
 
     uint8_t * m_dram;
     uint8_t * m_dmem;
@@ -135,11 +137,6 @@ private:
     void(*m_ProcessAList)(void);
     void(*m_ProcessRdpList)(void);
     void(*m_ShowCFB)(void);
-
-#ifdef tofix
-    /* for user convenience, this will be passed to "external" functions */
-    void* user_defined;
-#endif
 
     /* alist.cpp */
     uint8_t m_alist_buffer[0x1000];

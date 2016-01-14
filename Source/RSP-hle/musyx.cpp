@@ -48,7 +48,16 @@ enum
     VOICE_PITCH_Q16         = 0x20,
     VOICE_PITCH_SHIFT       = 0x22,
     VOICE_CATSRC_0          = 0x24,
+    VOICE_CATSRC_1          = 0x30,
     VOICE_ADPCM_FRAMES      = 0x3c,
+    VOICE_SKIP_SAMPLES      = 0x3e,
+
+    /* for PCM16 */
+    VOICE_U16_40            = 0x40,
+    VOICE_U16_42            = 0x42,
+
+    /* for ADPCM */
+    VOICE_ADPCM_TABLE_PTR   = 0x40,
 
     VOICE_INTERLEAVED_PTR   = 0x44,
     VOICE_END_POINT         = 0x48,
@@ -58,11 +67,16 @@ enum
     VOICE_SIZE              = 0x50
 };
 
-enum {
+enum
+{
+    CATSRC_PTR1     = 0x00,
+    CATSRC_PTR2     = 0x04,
     CATSRC_SIZE1    = 0x08,
+    CATSRC_SIZE2    = 0x0a
 };
 
-enum {
+enum
+{
     STATE_LAST_SAMPLE   = 0x0,
     STATE_BASE_VOL      = 0x100,
     STATE_CC0           = 0x110,
@@ -71,7 +85,8 @@ enum {
     STATE_740_LAST4_V2  = 0x110
 };
 
-enum {
+enum
+{
     SFX_CBUFFER_PTR     = 0x00,
     SFX_CBUFFER_LENGTH  = 0x04,
     SFX_TAP_COUNT       = 0x08,
@@ -84,7 +99,8 @@ enum {
 };
 
 /* struct definition */
-typedef struct {
+typedef struct
+{
     /* internal subframes */
     int16_t left[SUBFRAME_SIZE];
     int16_t right[SUBFRAME_SIZE];
@@ -108,10 +124,15 @@ static void init_subframes_v1(musyx_t *musyx);
 static void init_subframes_v2(musyx_t *musyx);
 
 static uint32_t voice_stage(CHle * hle, musyx_t *musyx, uint32_t voice_ptr, uint32_t last_sample_ptr);
+static void dma_cat8(CHle * hle, uint8_t *dst, uint32_t catsrc_ptr);
+static void dma_cat16(CHle * hle, uint16_t *dst, uint32_t catsrc_ptr);
 static void sfx_stage(CHle * hle, mix_sfx_with_main_subframes_t mix_sfx_with_main_subframes, musyx_t *musyx, uint32_t sfx_ptr, uint16_t idx);
 static void load_samples_PCM16(CHle * hle, uint32_t voice_ptr, int16_t *samples, unsigned *segbase, unsigned *offset);
 static void load_samples_ADPCM(CHle * hle, uint32_t voice_ptr, int16_t *samples, unsigned *segbase, unsigned *offset);
 static void mix_voice_samples(CHle * hle, musyx_t *musyx, uint32_t voice_ptr, const int16_t *samples, unsigned segbase, unsigned offset, uint32_t last_sample_ptr);
+static void adpcm_decode_frames(CHle * hle, int16_t *dst, const uint8_t *src, const int16_t *table, uint8_t count, uint8_t skip_samples);
+static void adpcm_predict_frame(int16_t *dst, const uint8_t *src, const uint8_t *nibbles, unsigned int rshift);
+
 static void mix_sfx_with_main_subframes_v1(musyx_t *musyx, const int16_t *subframe, const uint16_t* gains);
 static void mix_sfx_with_main_subframes_v2(musyx_t *musyx, const int16_t *subframe, const uint16_t* gains);
 
@@ -267,6 +288,14 @@ void musyx_v2_task(CHle * hle)
     }
 }
 
+static void load_base_vol(CHle * hle, int32_t *base_vol, uint32_t address)
+{
+    base_vol[0] = ((uint32_t)(*dram_u16(hle, address))     << 16) | (*dram_u16(hle, address +  8));
+    base_vol[1] = ((uint32_t)(*dram_u16(hle, address + 2)) << 16) | (*dram_u16(hle, address + 10));
+    base_vol[2] = ((uint32_t)(*dram_u16(hle, address + 4)) << 16) | (*dram_u16(hle, address + 12));
+    base_vol[3] = ((uint32_t)(*dram_u16(hle, address + 6)) << 16) | (*dram_u16(hle, address + 14));
+}
+
 static void save_base_vol(CHle * hle, const int32_t *base_vol, uint32_t address)
 {
     unsigned k;
@@ -281,6 +310,79 @@ static void save_base_vol(CHle * hle, const int32_t *base_vol, uint32_t address)
     {
         *dram_u16(hle, address) = (uint16_t)(base_vol[k]);
         address += 2;
+    }
+}
+
+static void update_base_vol(CHle * hle, int32_t *base_vol,
+                            uint32_t voice_mask, uint32_t last_sample_ptr,
+                            uint8_t mask_15, uint32_t ptr_24)
+{
+    unsigned i, k;
+    uint32_t mask;
+
+    hle->VerboseMessage("base_vol voice_mask = %08x", voice_mask);
+    hle->VerboseMessage("BEFORE: base_vol = %08x %08x %08x %08x", base_vol[0], base_vol[1], base_vol[2], base_vol[3]);
+
+    /* optim: skip voices contributions entirely if voice_mask is empty */
+    if (voice_mask != 0)
+    {
+        for (i = 0, mask = 1; i < MAX_VOICES; ++i, mask <<= 1, last_sample_ptr += 8)
+        {
+            if ((voice_mask & mask) == 0)
+            {
+                continue;
+            }
+
+            for (k = 0; k < 4; ++k)
+            {
+                base_vol[k] += (int16_t)*dram_u16(hle, last_sample_ptr + k * 2);
+            }
+        }
+    }
+
+    /* optim: skip contributions entirely if mask_15 is empty */
+    if (mask_15 != 0)
+    {
+        for(i = 0, mask = 1; i < 4; ++i, mask <<= 1, ptr_24 += 8)
+        {
+            if ((mask_15 & mask) == 0)
+            {
+                continue;
+            }
+
+            for(k = 0; k < 4; ++k)
+            {
+                base_vol[k] += (int16_t)*dram_u16(hle, ptr_24 + k * 2);
+            }
+        }
+    }
+
+    /* apply 3% decay */
+    for (k = 0; k < 4; ++k)
+    {
+        base_vol[k] = (base_vol[k] * 0x0000f850) >> 16;
+    }
+    hle->VerboseMessage("AFTER: base_vol = %08x %08x %08x %08x", base_vol[0], base_vol[1], base_vol[2], base_vol[3]);
+}
+
+static void init_subframes_v1(musyx_t *musyx)
+{
+    unsigned i;
+
+    int16_t base_cc0 = clamp_s16(musyx->base_vol[2]);
+    int16_t base_e50 = clamp_s16(musyx->base_vol[3]);
+
+    int16_t *left  = musyx->left;
+    int16_t *right = musyx->right;
+    int16_t *cc0   = musyx->cc0;
+    int16_t *e50   = musyx->e50;
+
+    for (i = 0; i < SUBFRAME_SIZE; ++i)
+    {
+        *(e50++)    = base_e50;
+        *(left++)   = clamp_s16(*cc0 + base_cc0);
+        *(right++)  = clamp_s16(-*cc0 - base_cc0);
+        *(cc0++)    = 0;
     }
 }
 
@@ -359,6 +461,164 @@ static uint32_t voice_stage(CHle * hle, musyx_t *musyx, uint32_t voice_ptr, uint
     }
 
     return output_ptr;
+}
+
+static void dma_cat8(CHle * hle, uint8_t *dst, uint32_t catsrc_ptr)
+{
+    uint32_t ptr1  = *dram_u32(hle, catsrc_ptr + CATSRC_PTR1);
+    uint32_t ptr2  = *dram_u32(hle, catsrc_ptr + CATSRC_PTR2);
+    uint16_t size1 = *dram_u16(hle, catsrc_ptr + CATSRC_SIZE1);
+    uint16_t size2 = *dram_u16(hle, catsrc_ptr + CATSRC_SIZE2);
+
+    size_t count1 = size1;
+    size_t count2 = size2;
+
+    hle->VerboseMessage("dma_cat: %08x %08x %04x %04x", ptr1, ptr2, size1, size2);
+
+    dram_load_u8(hle, dst, ptr1, count1);
+
+    if (size2 == 0)
+    {
+        return;
+    }
+
+    dram_load_u8(hle, dst + count1, ptr2, count2);
+}
+
+static void dma_cat16(CHle * hle, uint16_t *dst, uint32_t catsrc_ptr)
+{
+    uint32_t ptr1  = *dram_u32(hle, catsrc_ptr + CATSRC_PTR1);
+    uint32_t ptr2  = *dram_u32(hle, catsrc_ptr + CATSRC_PTR2);
+    uint16_t size1 = *dram_u16(hle, catsrc_ptr + CATSRC_SIZE1);
+    uint16_t size2 = *dram_u16(hle, catsrc_ptr + CATSRC_SIZE2);
+
+    size_t count1 = size1 >> 1;
+    size_t count2 = size2 >> 1;
+
+    hle->VerboseMessage("dma_cat: %08x %08x %04x %04x", ptr1, ptr2, size1, size2);
+
+    dram_load_u16(hle, dst, ptr1, count1);
+
+    if (size2 == 0)
+    {
+        return;
+    }
+    dram_load_u16(hle, dst + count1, ptr2, count2);
+}
+
+static void load_samples_PCM16(CHle * hle, uint32_t voice_ptr, int16_t *samples, unsigned *segbase, unsigned *offset)
+{
+    uint8_t  u8_3e  = *dram_u8(hle, voice_ptr + VOICE_SKIP_SAMPLES);
+    uint16_t u16_40 = *dram_u16(hle, voice_ptr + VOICE_U16_40);
+    uint16_t u16_42 = *dram_u16(hle, voice_ptr + VOICE_U16_42);
+
+    unsigned count = align(u16_40 + u8_3e, 4);
+
+    hle->VerboseMessage("Format: PCM16");
+
+    *segbase = SAMPLE_BUFFER_SIZE - count;
+    *offset  = u8_3e;
+
+    dma_cat16(hle, (uint16_t *)samples + *segbase, voice_ptr + VOICE_CATSRC_0);
+
+    if (u16_42 != 0)
+    {
+        dma_cat16(hle, (uint16_t *)samples, voice_ptr + VOICE_CATSRC_1);
+    }
+}
+
+static void load_samples_ADPCM(CHle * hle, uint32_t voice_ptr, int16_t *samples, unsigned *segbase, unsigned *offset)
+{
+    /* decompressed samples cannot exceed 0x400 bytes;
+    * ADPCM has a compression ratio of 5/16 */
+    uint8_t buffer[SAMPLE_BUFFER_SIZE * 2 * 5 / 16];
+    int16_t adpcm_table[128];
+
+    uint8_t u8_3c = *dram_u8(hle, voice_ptr + VOICE_ADPCM_FRAMES    );
+    uint8_t u8_3d = *dram_u8(hle, voice_ptr + VOICE_ADPCM_FRAMES + 1);
+    uint8_t u8_3e = *dram_u8(hle, voice_ptr + VOICE_SKIP_SAMPLES    );
+    uint8_t u8_3f = *dram_u8(hle, voice_ptr + VOICE_SKIP_SAMPLES + 1);
+    uint32_t adpcm_table_ptr = *dram_u32(hle, voice_ptr + VOICE_ADPCM_TABLE_PTR);
+    unsigned count;
+
+    hle->VerboseMessage("Format: ADPCM");
+
+    hle->VerboseMessage("Loading ADPCM table: %08x", adpcm_table_ptr);
+    dram_load_u16(hle, (uint16_t *)adpcm_table, adpcm_table_ptr, 128);
+
+    count = u8_3c << 5;
+
+    *segbase = SAMPLE_BUFFER_SIZE - count;
+    *offset  = u8_3e & 0x1f;
+
+    dma_cat8(hle, buffer, voice_ptr + VOICE_CATSRC_0);
+    adpcm_decode_frames(hle, samples + *segbase, buffer, adpcm_table, u8_3c, u8_3e);
+
+    if (u8_3d != 0)
+    {
+        dma_cat8(hle, buffer, voice_ptr + VOICE_CATSRC_1);
+        adpcm_decode_frames(hle, samples, buffer, adpcm_table, u8_3d, u8_3f);
+    }
+}
+
+static void adpcm_decode_frames(CHle * hle, int16_t *dst, const uint8_t *src, const int16_t *table, uint8_t count, uint8_t skip_samples)
+{
+    int16_t frame[32];
+    const uint8_t *nibbles = src + 8;
+    unsigned i;
+    bool jump_gap = false;
+
+    hle->VerboseMessage("ADPCM decode: count=%d, skip=%d", count, skip_samples);
+
+    if (skip_samples >= 32)
+    {
+        jump_gap = true;
+        nibbles += 16;
+        src += 4;
+    }
+
+    for (i = 0; i < count; ++i)
+    {
+        uint8_t c2 = nibbles[0];
+
+        const int16_t *book = (c2 & 0xf0) + table;
+        unsigned int rshift = (c2 & 0x0f);
+
+        adpcm_predict_frame(frame, src, nibbles, rshift);
+
+        memcpy(dst, frame, 2 * sizeof(frame[0]));
+        adpcm_compute_residuals(dst +  2, frame +  2, book, dst     , 6);
+        adpcm_compute_residuals(dst +  8, frame +  8, book, dst +  6, 8);
+        adpcm_compute_residuals(dst + 16, frame + 16, book, dst + 14, 8);
+        adpcm_compute_residuals(dst + 24, frame + 24, book, dst + 22, 8);
+
+        if (jump_gap)
+        {
+            nibbles += 8;
+            src += 32;
+        }
+
+        jump_gap = !jump_gap;
+        nibbles += 16;
+        src += 4;
+        dst += 32;
+    }
+}
+
+static void adpcm_predict_frame(int16_t *dst, const uint8_t *src, const uint8_t *nibbles, unsigned int rshift)
+{
+    unsigned int i;
+
+    *(dst++) = (src[0] << 8) | src[1];
+    *(dst++) = (src[2] << 8) | src[3];
+
+    for (i = 1; i < 16; ++i)
+    {
+        uint8_t byte = nibbles[i];
+
+        *(dst++) = adpcm_predict_sample(byte, 0xf0,  8, rshift);
+        *(dst++) = adpcm_predict_sample(byte, 0x0f, 12, rshift);
+    }
 }
 
 static void mix_voice_samples(CHle * hle, musyx_t *musyx, uint32_t voice_ptr, const int16_t *samples, unsigned segbase, unsigned offset, uint32_t last_sample_ptr)

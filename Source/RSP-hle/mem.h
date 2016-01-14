@@ -58,6 +58,7 @@ static inline uint32_t* u32(const unsigned char* buffer, unsigned address)
     return (uint32_t*)(buffer + address);
 }
 
+void load_u8 (uint8_t*  dst, const unsigned char* buffer, unsigned address, size_t count);
 void load_u16(uint16_t* dst, const unsigned char* buffer, unsigned address, size_t count);
 void load_u32(uint32_t* dst, const unsigned char* buffer, unsigned address, size_t count);
 void store_u16(unsigned char* buffer, unsigned address, const uint16_t* src, size_t count);
@@ -87,6 +88,11 @@ static inline uint16_t* dram_u16(CHle * hle, uint32_t address)
 static inline uint32_t* dram_u32(CHle * hle, uint32_t address)
 {
     return u32(hle->dram(), address & 0xffffff);
+}
+
+static inline void dram_load_u8(CHle * hle, uint8_t* dst, uint32_t address, size_t count)
+{
+    load_u8(dst, hle->dram(), address & 0xffffff, count);
 }
 
 static inline void dram_load_u16(CHle * hle, uint16_t* dst, uint32_t address, size_t count)

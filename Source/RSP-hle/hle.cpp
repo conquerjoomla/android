@@ -50,13 +50,8 @@ CHle::CHle(const RSP_INFO & Rsp_Info) :
     m_ForwardAudio(false),
     m_ForwardGFX(true)
 {
-#ifdef tofix
-    m_AudioHle = ReadCfgInt("Settings", "AudioHle", FALSE);
-    m_GraphicsHle = ReadCfgInt("Settings", "GraphicsHle", TRUE);
-#endif
-#ifdef tofix
-    hle->user_defined = user_defined;
-#endif
+    //m_AudioHle = ReadCfgInt("Settings", "AudioHle", false);
+    //m_GraphicsHle = ReadCfgInt("Settings", "GraphicsHle", true);
     memset(&m_alist_buffer, 0, sizeof(m_alist_buffer));
     memset(&m_alist_audio, 0, sizeof(m_alist_audio));
     memset(&m_alist_naudio, 0, sizeof(m_alist_naudio));
@@ -91,9 +86,7 @@ void CHle::hle_execute(void)
     }
     else
     {
-#ifdef tofix
-        non_task_dispatching(hle);
-#endif
+        non_task_dispatching();
         rsp_break(0);
     }
 }
@@ -304,7 +297,26 @@ void CHle::normal_task_dispatching(void)
 #endif
 }
 
+void CHle::non_task_dispatching(void)
+{
+    const unsigned int sum = sum_bytes(m_imem, 44);
+
+    if (sum == 0x9e2)
+    {
+        /* CIC x105 ucode (used during boot of CIC x105 games) */
+        cicx105_ucode(this);
+        return;
+    }
+
+    WarnMessage("unknown RSP code: sum: %x PC:%x", sum, *m_sp_pc);
+#ifdef ENABLE_TASK_DUMP
+    dump_unknown_non_task(hle, sum);
+#endif
+}
+
+#if defined(_WIN32) && defined(_DEBUG)
 #include <Windows.h>
+#endif
 
 void CHle::VerboseMessage(const char *message, ...)
 {

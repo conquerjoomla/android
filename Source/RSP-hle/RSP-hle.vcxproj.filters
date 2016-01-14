@@ -51,6 +51,9 @@
     <ClCompile Include="musyx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cicx105.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
