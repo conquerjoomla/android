@@ -55,10 +55,15 @@ LOCAL_SRC_FILES :=                                                     \
     $(SRCDIR)/N64System/SpeedLimiterClass.cpp                          \
     $(SRCDIR)/N64System/SystemGlobals.cpp                              \
     $(SRCDIR)/N64System/EmulationThread.cpp                            \
+    $(SRCDIR)/Plugins/GFXplugin.cpp                                    \
+    $(SRCDIR)/Plugins/PluginBase.cpp                                   \
+    $(SRCDIR)/Plugins/PluginClass.cpp                                  \
     $(SRCDIR)/Settings/SettingType/SettingsType-Application.cpp        \
+    $(SRCDIR)/Settings/SettingType/SettingsType-ApplicationIndex.cpp   \
     $(SRCDIR)/Settings/SettingType/SettingsType-ApplicationPath.cpp    \
     $(SRCDIR)/Settings/SettingType/SettingsType-Cheats.cpp             \
     $(SRCDIR)/Settings/SettingType/SettingsType-GameSetting.cpp        \
+    $(SRCDIR)/Settings/SettingType/SettingsType-GameSettingIndex.cpp   \
     $(SRCDIR)/Settings/SettingType/SettingsType-RelativePath.cpp       \
     $(SRCDIR)/Settings/SettingType/SettingsType-RDBCpuType.cpp         \
     $(SRCDIR)/Settings/SettingType/SettingsType-RDBOnOff.cpp           \
@@ -67,6 +72,8 @@ LOCAL_SRC_FILES :=                                                     \
     $(SRCDIR)/Settings/SettingType/SettingsType-RDBYesNo.cpp           \
     $(SRCDIR)/Settings/SettingType/SettingsType-RomDatabase.cpp        \
     $(SRCDIR)/Settings/SettingType/SettingsType-RomDatabaseIndex.cpp   \
+    $(SRCDIR)/Settings/SettingType/SettingsType-RomDatabaseSetting.cpp \
+    $(SRCDIR)/Settings/SettingType/SettingsType-SelectedDirectory.cpp  \
     $(SRCDIR)/Settings/SettingType/SettingsType-TempBool.cpp           \
     $(SRCDIR)/Settings/SettingType/SettingsType-TempNumber.cpp         \
     $(SRCDIR)/Settings/SettingType/SettingsType-TempString.cpp         \

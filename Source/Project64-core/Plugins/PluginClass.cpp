@@ -11,8 +11,8 @@
 #include "stdafx.h"
 #include <Project64-core/N64System/SystemGlobals.h>
 #include <Project64-core/N64System/N64Class.h>
+#include <Project64-core/Plugins/PluginClass.h>
 #include <Common/path.h>
-#include "PluginClass.h"
 
 CPlugins::CPlugins(const stdstr & PluginDir) :
     m_MainWindow(NULL),

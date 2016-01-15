@@ -11,7 +11,7 @@
 #pragma once
 
 //Plugin controller
-#include "Plugins/PluginClass.h"
+#include <Project64-core/Plugins/PluginClass.h>
 
 //Base Plugin class, all plugin derive from this, handles core  functions
 #include "Plugins/PluginBase.h"

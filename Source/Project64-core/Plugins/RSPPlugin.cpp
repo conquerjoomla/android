@@ -193,8 +193,10 @@ bool CRSP_Plugin::Initiate(CPlugins * Plugins, CN64System * System)
     InitiateRSP(Info, &m_CycleCount);
     m_Initialized = true;
 
-    //jabo had a bug so I call CreateThread so his dllmain gets called again
+#ifdef _WIN32
+	//jabo had a bug so I call CreateThread so his dllmain gets called again
     pjutil::DynLibCallDllMain();
+#endif
     return m_Initialized;
 }
 

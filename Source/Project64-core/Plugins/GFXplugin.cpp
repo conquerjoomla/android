@@ -153,7 +153,7 @@ bool CGfxPlugin::Initiate(CN64System * System, RenderWindow * Window)
 
     //Get Function from DLL
     int32_t(CALL *InitiateGFX)(GFX_INFO Gfx_Info);
-    LoadFunction(InitiateGFX);
+    _LoadFunction("InitiateGFX",InitiateGFX);
     if (InitiateGFX == NULL) { return false; }
 
     GFX_INFO Info = { 0 };
@@ -224,8 +224,10 @@ bool CGfxPlugin::Initiate(CN64System * System, RenderWindow * Window)
 
     m_Initialized = InitiateGFX(Info) != 0;
 
-    //jabo had a bug so I call CreateThread so his dllmain gets called again
+#ifdef _WIN32
+	//jabo had a bug so I call CreateThread so his dllmain gets called again
     pjutil::DynLibCallDllMain();
+#endif
 
     return m_Initialized;
 }

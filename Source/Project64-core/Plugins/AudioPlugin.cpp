@@ -137,7 +137,8 @@ bool CAudioPlugin::Initiate(CN64System * System, RenderWindow * Window)
 
     m_Initialized = InitiateAudio(Info) != 0;
 
-    //jabo had a bug so I call CreateThread so his dllmain gets called again
+#ifdef _WIN32
+	//jabo had a bug so I call CreateThread so his dllmain gets called again
     pjutil::DynLibCallDllMain();
 
     if (System != NULL)
@@ -149,6 +150,7 @@ bool CAudioPlugin::Initiate(CN64System * System, RenderWindow * Window)
                 WriteTrace(TraceAudioPlugin, TraceDebug, "Terminate Audio Thread");
                 TerminateThread(m_hAudioThread, 0);
             }
+			DWORD ThreadID;
             m_hAudioThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)AudioThread, (LPVOID)this, 0, &ThreadID);
         }
 
@@ -157,6 +159,7 @@ bool CAudioPlugin::Initiate(CN64System * System, RenderWindow * Window)
             DacrateChanged(System->SystemType());
         }
     }
+#endif
     return m_Initialized;
 }
 
