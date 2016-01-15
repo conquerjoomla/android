@@ -18,12 +18,12 @@
 #include <Windows.h>
 
 CAudioPlugin::CAudioPlugin() :
-AiLenChanged(NULL),
-AiReadLength(NULL),
-ProcessAList(NULL),
-m_hAudioThread(NULL),
-AiUpdate(NULL),
-AiDacrateChanged(NULL)
+    AiLenChanged(NULL),
+    AiReadLength(NULL),
+    ProcessAList(NULL),
+    m_hAudioThread(NULL),
+    AiUpdate(NULL),
+    AiDacrateChanged(NULL)
 {
 }
 
@@ -36,7 +36,7 @@ CAudioPlugin::~CAudioPlugin()
 bool CAudioPlugin::LoadFunctions(void)
 {
     // Find entries for functions in DLL
-    void(__cdecl *InitiateAudio)     (void);
+    void(CALL *InitiateAudio)(void);
     LoadFunction(InitiateAudio);
     LoadFunction(AiDacrateChanged);
     LoadFunction(AiLenChanged);
@@ -85,11 +85,11 @@ bool CAudioPlugin::Initiate(CN64System * System, RenderWindow * Window)
         uint32_t * AI__DACRATE_REG;
         uint32_t * AI__BITRATE_REG;
 
-        void(__cdecl *CheckInterrupts)(void);
+        void(CALL *CheckInterrupts)(void);
     };
 
     //Get Function from DLL
-    int32_t(__cdecl *InitiateAudio)(AUDIO_INFO Audio_Info);
+    int32_t(CALL *InitiateAudio)(AUDIO_INFO Audio_Info);
     LoadFunction(InitiateAudio);
     if (InitiateAudio == NULL) { return false; }
 
@@ -138,9 +138,7 @@ bool CAudioPlugin::Initiate(CN64System * System, RenderWindow * Window)
     m_Initialized = InitiateAudio(Info) != 0;
 
     //jabo had a bug so I call CreateThread so his dllmain gets called again
-    DWORD ThreadID;
-    HANDLE hthread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)DummyFunction, NULL, 0, &ThreadID);
-    CloseHandle(hthread);
+    pjutil::DynLibCallDllMain();
 
     if (System != NULL)
     {

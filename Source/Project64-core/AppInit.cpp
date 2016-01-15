@@ -229,9 +229,8 @@ bool AppInit(CNotification * Notify, int argc, char **argv)
 
         //Create the plugin container
         WriteTrace(TraceAppInit, TraceInfo, "Create Plugins");
-#ifdef tofix
         g_Plugins = new CPlugins(g_Settings->LoadStringVal(Directory_Plugin));
-#endif
+
         g_Lang = new CLanguage();
         g_Lang->LoadCurrentStrings();
         g_Notify->AppInitDone();

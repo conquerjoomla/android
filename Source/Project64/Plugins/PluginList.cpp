@@ -14,7 +14,7 @@
 #include <Project64-core/Plugins/PluginBase.h>
 
 CPluginList::CPluginList(bool bAutoFill /* = true */) :
-m_PluginDir(g_Settings->LoadStringVal(Directory_Plugin), "")
+    m_PluginDir(g_Settings->LoadStringVal(Directory_Plugin), "")
 {
     if (bAutoFill)
     {
@@ -83,8 +83,8 @@ void CPluginList::AddPluginFromDir(CPath Dir)
                 continue;
             }
 
-            void(__cdecl *GetDllInfo) (PLUGIN_INFO * PluginInfo);
-            GetDllInfo = (void(__cdecl *)(PLUGIN_INFO *))GetProcAddress(hLib, "GetDllInfo");
+            void(CALL *GetDllInfo) (PLUGIN_INFO * PluginInfo);
+            GetDllInfo = (void(CALL *)(PLUGIN_INFO *))GetProcAddress(hLib, "GetDllInfo");
             if (GetDllInfo == NULL)
             {
                 continue;
