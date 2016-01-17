@@ -22,6 +22,7 @@ LOCAL_SRC_FILES := \
     $(SRCDIR)/StdString.cpp              \
     $(SRCDIR)/SyncEvent.cpp              \
     $(SRCDIR)/Trace.cpp                  \
+    $(SRCDIR)/Util.cpp                   \
 
 LOCAL_CFLAGS := $(COMMON_CFLAGS)
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)

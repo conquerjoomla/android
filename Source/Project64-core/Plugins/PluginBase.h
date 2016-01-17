@@ -66,13 +66,13 @@ protected:
     PLUGIN_INFO m_PluginInfo;
 
     // Loads a function pointer from the currently loaded DLL
-    template <typename T>
-    void _LoadFunction(const char * szFunctionName, T & functionPointer)
+    void _LoadFunctionVoid(const char * szFunctionName, void ** functionPointer)
     {
-        functionPointer = (T)pjutil::DynLibGetProc(m_LibHandle, szFunctionName);
+        *functionPointer = pjutil::DynLibGetProc(m_LibHandle, szFunctionName);
     }
 
     // Simple wrapper around _LoadFunction() to avoid having to specify the same two arguments
     // i.e. _LoadFunction("CloseDLL", CloseDLL);
-#define LoadFunction(functionName) _LoadFunction(#functionName, functionName)
+#define LoadFunction(functionName) _LoadFunctionVoid(#functionName, (void **)&functionName)
+#define _LoadFunction(functionName,function) _LoadFunctionVoid(#functionName, (void **)&function)
 };
