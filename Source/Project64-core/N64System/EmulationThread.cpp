@@ -42,7 +42,7 @@ void CN64System::StartEmulationThread(ThreadInfo * Info)
 
     CoInitialize(NULL);
 
-    EmulationStarting(Info->ThreadHandle, Info->ThreadID);
+    EmulationStarting(*Info->ThreadHandle, Info->ThreadID);
     delete ((HANDLE  *)Info->ThreadHandle);
     delete Info;
 

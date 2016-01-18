@@ -13,15 +13,15 @@
 class CFramePerSecond
 {
 public:
-    CFramePerSecond ( void );
-    ~CFramePerSecond ( void );
+    CFramePerSecond(void);
+    ~CFramePerSecond(void);
 
-    void Reset           ( bool ClearDisplay );
+    void Reset(bool ClearDisplay);
 
-    void UpdateDlCounter  ( void );
-    void UpdateViCounter  ( void );
-    void DisplayDlCounter ( uint32_t FrameRate );
-    void DisplayViCounter ( uint32_t FrameRate );
+    void UpdateDlCounter(void);
+    void UpdateViCounter(void);
+    void DisplayDlCounter(uint32_t FrameRate);
+    void DisplayViCounter(uint32_t FrameRate);
 
 private:
     CFramePerSecond(const CFramePerSecond&);            // Disable copy constructor

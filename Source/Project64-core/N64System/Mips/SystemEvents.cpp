@@ -131,10 +131,7 @@ void CSystemEvents::ExecuteEvents()
 				m_System->SetCheatsSlectionChanged(false);
 				m_System->m_Cheats.LoadCheats(false, m_Plugins);
 			}
-			g_Notify->BreakPoint(__FILE__, __LINE__);
-#ifdef tofix
 			m_System->m_Cheats.ApplyGSButton(g_MMU);
-#endif
 			break;
 		case SysEvent_PauseCPU_FromMenu:
 			if (!g_Settings->LoadBool(GameRunning_CPU_Paused))

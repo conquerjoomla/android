@@ -14,7 +14,7 @@
 #include <Project64-core/Plugins/PluginBase.h>
 
 CPluginList::CPluginList(bool bAutoFill /* = true */) :
-    m_PluginDir(g_Settings->LoadStringVal(Directory_Plugin), "")
+m_PluginDir(g_Settings->LoadStringVal(Directory_Plugin), "")
 {
     if (bAutoFill)
     {
@@ -54,7 +54,8 @@ void CPluginList::AddPluginFromDir(CPath Dir)
     Dir.SetNameExtension("*.*");
     if (Dir.FindFirst(_A_SUBDIR))
     {
-        do {
+        do
+        {
             AddPluginFromDir(Dir);
         } while (Dir.FindNext());
         Dir.UpDirectory();
@@ -64,7 +65,8 @@ void CPluginList::AddPluginFromDir(CPath Dir)
     if (Dir.FindFirst())
     {
         HMODULE hLib = NULL;
-        do {
+        do
+        {
             if (hLib)
             {
                 FreeLibrary(hLib);

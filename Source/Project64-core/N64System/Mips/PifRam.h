@@ -29,7 +29,7 @@ private:
 
     static bool m_bShowPifRamErrors;
 
-    static int32_t  m_RefCount;
+    static int32_t m_RefCount;
 };
 
 class CPifRam :

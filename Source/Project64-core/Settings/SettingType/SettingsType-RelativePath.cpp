@@ -11,12 +11,6 @@
 #include "stdafx.h"
 #include "SettingsType-RelativePath.h"
 
-#if defined(ANDROID)
-#include <android/log.h>
-
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "UI-Console", __VA_ARGS__)
-#endif
-
 CSettingTypeRelativePath::CSettingTypeRelativePath(const char * Directory, const char * FileName) :
 m_Directory(Directory),
 m_FileName(FileName)

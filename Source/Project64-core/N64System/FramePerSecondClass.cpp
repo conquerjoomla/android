@@ -32,7 +32,7 @@ CFramePerSecond::CFramePerSecond()
     QueryPerformanceFrequency(&Freq);
     m_Frequency = Freq.QuadPart;
 #endif
-	Reset(true);
+    Reset(true);
 }
 
 CFramePerSecond::~CFramePerSecond()
@@ -55,7 +55,7 @@ void CFramePerSecond::Reset(bool ClearDisplay)
 #ifdef _WIN32
         g_Notify->DisplayMessage2("");
 #endif
-		return;
+        return;
     }
 
     if (m_iFrameRateType == FR_VIs)
