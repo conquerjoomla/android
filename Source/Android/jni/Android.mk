@@ -20,6 +20,7 @@ COMMON_CPPFLAGS :=                  \
     -fexceptions                    \
 
 include $(JNI_LOCAL_PATH)/Common/common.mk
+include $(JNI_LOCAL_PATH)/RSP-hle/rsp-hle.mk
 include $(JNI_LOCAL_PATH)/Project64-core/Project64-core.mk
 include $(JNI_LOCAL_PATH)/Project64-console/Project64-console.mk
 include $(JNI_LOCAL_PATH)/ae-bridge/Android.mk

@@ -160,7 +160,15 @@ const char * AppName ( void )
 
 static bool ParseCommand(int32_t argc, char **argv)
 {
-    if (argc == 1)
+	WriteTrace(TraceAppInit, TraceDebug, "argc = %d",argc);
+	if (g_ModuleLogLevel[TraceAppInit] >= TraceDebug)
+	{
+		for (int32_t i = 1; i < argc; i++)
+		{
+			WriteTrace(TraceAppInit, TraceDebug, "%d: %s", i, argv[i]);
+		}
+	}
+	if (argc == 1)
     {
         return true;
     }
@@ -185,7 +193,7 @@ static bool ParseCommand(int32_t argc, char **argv)
         }
         else
         {
-            //WriteTraceF(TraceError, __FUNCTION__ ": unrecognized command-line parameter '%s'", argv[i]);
+            WriteTrace(TraceAppInit, TraceError, "unrecognized command-line parameter '%d: %s'", i, argv[i]);
         }
     }
     return false;

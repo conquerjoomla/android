@@ -74,6 +74,8 @@ public class CoreInterface
                     arglist.add("projet64");
                     arglist.add("--basedir");
                     arglist.add(sAppData.coreSharedDataDir);
+                    arglist.add("--rspplugin");
+                    arglist.add(sAppData.rspLib);
                     arglist.add(sRomPath);
                     int result = NativeExports.emuStart( sGlobalPrefs.coreUserDataDir, sGlobalPrefs.coreUserCacheDir, arglist.toArray() );
                 }

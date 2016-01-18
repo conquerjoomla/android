@@ -1,12 +1,12 @@
 #########################
-# project64-console
+# Project64-console
 #########################
 include $(CLEAR_VARS)
 LOCAL_PATH := $(JNI_LOCAL_PATH)
 SRCDIR := ./Project64-console
 
-LOCAL_MODULE := project64-console
-LOCAL_STATIC_LIBRARIES := project64-core common
+LOCAL_MODULE := Project64-console
+LOCAL_STATIC_LIBRARIES := Project64-core common
 
 LOCAL_C_INCLUDES := ../     \
     $(SDL_INCLUDES)         \

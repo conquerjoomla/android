@@ -66,6 +66,12 @@ public class AppData
     
     /** The directory containing the native Mupen64Plus libraries. Contents deleted on uninstall, not accessible without root. */
     public final String libsDir;
+    
+    /** The path of the RSP library. Deleted on uninstall, not accessible without root. */
+    public final String rspLib;
+    /** Whether the installation is valid. */
+    public final boolean isValidInstallation;
+    
     /** True if this is android TV hardware */
     public final boolean isAndroidTv;
     
@@ -103,6 +109,17 @@ public class AppData
         if( !( new File( _libsDir ) ).exists() && IS_GINGERBREAD )
             _libsDir = context.getApplicationInfo().nativeLibraryDir;
         libsDir = _libsDir;
+        
+        // Files
+        rspLib = libsDir + "libProject64-rsp-hle.so";
+        // Installation validity
+        // @formatter:off
+        isValidInstallation =
+                libraryExists( "ae-exports" )                           &&
+                libraryExists( "Project64-console" )                    &&
+                libraryExists( "Project64-rsp-hle" );
+        // @formatter:on
+        
         // Preference object for persisting app data
         String appDataFilename = packageName + "_appdata";
         mPreferences = context.getSharedPreferences( appDataFilename, Context.MODE_PRIVATE );
@@ -157,6 +174,13 @@ public class AppData
     {
         mPreferences.edit().putInt( key, value ).commit();
     }
+    
+    private boolean libraryExists( String undecoratedName )
+    {
+        File library = new File( libsDir + "lib" + undecoratedName + ".so" );
+        return library.exists();
+    }
+    
     /**
      * Small class that summarizes the info provided by /proc/cpuinfo.
      * <p>

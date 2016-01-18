@@ -16,5 +16,8 @@
 		<copy todir="./jni/Project64-core/">
 		    <fileset dir="../Project64-core"/>
 		</copy>
+		<copy todir="./jni/RSP-hle/">
+		    <fileset dir="../RSP-hle"/>
+		</copy>
 	</target>
 </project>

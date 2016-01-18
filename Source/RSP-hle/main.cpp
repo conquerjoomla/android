@@ -10,16 +10,20 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "Rsp.h"
+
+CHle * g_hle = NULL;
+
+#ifdef _WIN32
 #include <Windows.h>
 
 void * g_hinstDLL;
-CHle * g_hle = NULL;
 
 BOOL WINAPI DllMain(void * hinst, DWORD /*fdwReason*/, LPVOID /*lpvReserved*/)
 {
     g_hinstDLL = hinst;
     return true;
 }
+#endif
 
 /******************************************************************
   Function: CloseDLL
@@ -44,9 +48,11 @@ void CloseDLL(void)
   input:    a handle to the window that calls this function
   output:   none
   *******************************************************************/
-void DllAbout(HWND hParent)
+void DllAbout(void * hParent)
 {
-    MessageBox(hParent, "need to do", "About", MB_OK | MB_ICONINFORMATION);
+#ifdef _WIN32
+	MessageBox((HWND)hParent, "need to do", "About", MB_OK | MB_ICONINFORMATION);
+#endif
 }
 
 /******************************************************************
@@ -86,8 +92,8 @@ void GetDllInfo(PLUGIN_INFO * PluginInfo)
 #else
     sprintf(PluginInfo->Name, "RSP HLE Plugin %s", VER_FILE_VERSION_STR);
 #endif
-    PluginInfo->NormalMemory = FALSE;
-    PluginInfo->MemoryBswaped = TRUE;
+    PluginInfo->NormalMemory = false;
+    PluginInfo->MemoryBswaped = true;
 }
 
 /******************************************************************

@@ -5,6 +5,7 @@
 #include <Tlhelp32.h>
 #else
 #include <unistd.h>
+#include <dlfcn.h>
 #endif
 
 pjutil::DynLibHandle pjutil::DynLibOpen(const char *pccLibraryPath, bool ShowErrors)
@@ -17,25 +18,10 @@ pjutil::DynLibHandle pjutil::DynLibOpen(const char *pccLibraryPath, bool ShowErr
     UINT LastErrorMode = SetErrorMode(ShowErrors ? 0 : SEM_FAILCRITICALERRORS);
     pjutil::DynLibHandle lib = (pjutil::DynLibHandle)LoadLibrary(pccLibraryPath);
     SetErrorMode(LastErrorMode);
-    return lib;
 #else
-    if (pLibHandle == NULL || pccLibraryPath == NULL)
-        return M64ERR_INPUT_ASSERT;
-
-    *pLibHandle = dlopen(pccLibraryPath, RTLD_NOW);
-
-    if (*pLibHandle == NULL)
-    {
-        /* only print an error message if there is a directory separator (/) in the pathname */
-        /* this prevents us from throwing an error for the use case where Mupen64Plus is not installed */
-        if (strchr(pccLibraryPath, '/') != NULL)
-            DebugMessage(M64MSG_ERROR, "dlopen('%s') failed: %s", pccLibraryPath, dlerror());
-        return M64ERR_INPUT_NOT_FOUND;
-    }
-
-    return M64ERR_SUCCESS;
-	return NULL;
+    pjutil::DynLibHandle lib = (pjutil::DynLibHandle)dlopen(pccLibraryPath, RTLD_NOW);
 #endif
+    return lib;
 }
 
 void * pjutil::DynLibGetProc(pjutil::DynLibHandle LibHandle, const char * ProcedureName)
@@ -43,12 +29,20 @@ void * pjutil::DynLibGetProc(pjutil::DynLibHandle LibHandle, const char * Proced
     if (ProcedureName == NULL)
         return NULL;
 
+#ifdef _WIN32
     return GetProcAddress((HMODULE)LibHandle, ProcedureName);
+#else
+    return dlsym(LibHandle, ProcedureName);
+#endif
 }
 
 void pjutil::DynLibClose(pjutil::DynLibHandle LibHandle)
 {
+#ifdef _WIN32
     FreeLibrary((HMODULE)LibHandle);
+#else
+    dlclose(LibHandle);
+#endif
 }
 
 #ifdef _WIN32

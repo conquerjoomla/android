@@ -5,7 +5,7 @@ include $(CLEAR_VARS)
 LOCAL_PATH := $(JNI_LOCAL_PATH)
 SRCDIR := ./Project64-core
 
-LOCAL_MODULE := project64-core
+LOCAL_MODULE := Project64-core
 LOCAL_STATIC_LIBRARIES := common
 
 LOCAL_C_INCLUDES := ../     \
@@ -55,7 +55,10 @@ LOCAL_SRC_FILES :=                                                     \
     $(SRCDIR)/N64System/SpeedLimiterClass.cpp                          \
     $(SRCDIR)/N64System/SystemGlobals.cpp                              \
     $(SRCDIR)/N64System/EmulationThread.cpp                            \
+    $(SRCDIR)/Plugins/AudioPlugin.cpp                                  \
     $(SRCDIR)/Plugins/GFXplugin.cpp                                    \
+    $(SRCDIR)/Plugins/ControllerPlugin.cpp                             \
+    $(SRCDIR)/Plugins/RSPPlugin.cpp                                    \
     $(SRCDIR)/Plugins/PluginBase.cpp                                   \
     $(SRCDIR)/Plugins/PluginClass.cpp                                  \
     $(SRCDIR)/Settings/SettingType/SettingsType-Application.cpp        \
