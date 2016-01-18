@@ -14,9 +14,9 @@
 #include <Project64-core/N64System/N64Class.h>
 
 CSystemEvents::CSystemEvents(CN64System * System, CPlugins * Plugins) :
-m_System(System),
-m_Plugins(Plugins),
-m_bDoSomething(false)
+	m_System(System),
+	m_Plugins(Plugins),
+	m_bDoSomething(false)
 {
 }
 

@@ -43,21 +43,21 @@ class AndroidLogger : public CTraceModule
 */
 __attribute__((visibility("default")))
 #endif
-    int main(int argc, char * argv[])
+int main(int argc, char * argv[])
 {
 #ifdef ANDROID
     AndroidLogger Logger;
     TraceAddModule(&Logger);
 #endif
-    Notify().DisplayMessage(10,"    ____               _           __  _____ __ __");
-    Notify().DisplayMessage(10,"   / __ \\_________    (_)__  _____/ /_/ ___// // /");
-    Notify().DisplayMessage(10,"  / /_/ / ___/ __ \\  / / _ \\/ ___/ __/ __ \\/ // /_");
-    Notify().DisplayMessage(10," / ____/ /  / /_/ / / /  __/ /__/ /_/ /_/ /__  __/");
-    Notify().DisplayMessage(10,"/_/   /_/   \\____/_/ /\\___/\\___/\\__/\\____/  /_/");
-    Notify().DisplayMessage(10,"                /___/");
-    Notify().DisplayMessage(10,"http://www.pj64-emu.com/");
-    Notify().DisplayMessage(10,stdstr_f("%s Version %s", VER_FILE_DESCRIPTION_STR, VER_FILE_VERSION_STR).c_str());
-    Notify().DisplayMessage(10,"");
+    Notify().DisplayMessage(10, "    ____               _           __  _____ __ __");
+    Notify().DisplayMessage(10, "   / __ \\_________    (_)__  _____/ /_/ ___// // /");
+    Notify().DisplayMessage(10, "  / /_/ / ___/ __ \\  / / _ \\/ ___/ __/ __ \\/ // /_");
+    Notify().DisplayMessage(10, " / ____/ /  / /_/ / / /  __/ /__/ /_/ /_/ /__  __/");
+    Notify().DisplayMessage(10, "/_/   /_/   \\____/_/ /\\___/\\___/\\__/\\____/  /_/");
+    Notify().DisplayMessage(10, "                /___/");
+    Notify().DisplayMessage(10, "http://www.pj64-emu.com/");
+    Notify().DisplayMessage(10, stdstr_f("%s Version %s", VER_FILE_DESCRIPTION_STR, VER_FILE_VERSION_STR).c_str());
+    Notify().DisplayMessage(10, "");
 
     if (!AppInit(&Notify(), argc, &argv[0]))
     {
@@ -77,14 +77,12 @@ __attribute__((visibility("default")))
 
     if (g_Settings->LoadStringVal(Cmd_RomFile).length() > 0)
     {
-#ifdef _WIN32
-        CN64System::RunFileImage(g_Settings->LoadStringVal(Cmd_RomFile).c_str(), true);
-#else
-        CN64System::RunFileImage(g_Settings->LoadStringVal(Cmd_RomFile).c_str(), false);
-#endif
+        CN64System::RunFileImage(g_Settings->LoadStringVal(Cmd_RomFile).c_str());
     }
 #ifdef _WIN32
     //run message loop
+#else
+    //wait on event
 #endif
     AppCleanup();
     return 0;

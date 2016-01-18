@@ -78,13 +78,11 @@ CN64System::~CN64System()
         delete m_Recomp;
         m_Recomp = NULL;
     }
-#ifdef tofix
     if (m_SyncPlugins)
     {
         delete m_SyncPlugins;
         m_SyncPlugins = NULL;
     }
-#endif
 }
 
 void CN64System::ExternalEvent(SystemEvent action)
@@ -184,7 +182,7 @@ void CN64System::ExternalEvent(SystemEvent action)
     }
 }
 
-bool CN64System::RunFileImage(const char * FileLoc, bool InNewThread)
+bool CN64System::RunFileImage(const char * FileLoc)
 {
     WriteTrace(TraceN64System, TraceDebug, "FileLoc: %s", FileLoc);
     CloseSystem();
@@ -223,10 +221,10 @@ bool CN64System::RunFileImage(const char * FileLoc, bool InNewThread)
         if (g_Settings->LoadBool(Setting_AutoStart) != 0)
         {
             WriteTrace(TraceN64System, TraceDebug, "Automattically starting rom");
-            g_BaseSystem = new CN64System(/*g_Plugins*/ NULL, false);
+            g_BaseSystem = new CN64System(g_Plugins, false);
             if (g_BaseSystem)
             {
-                g_BaseSystem->StartEmulation(InNewThread);
+                g_BaseSystem->StartEmulation(true);
             }
         }
     }
@@ -256,7 +254,6 @@ bool CN64System::EmulationStarting(void * hThread, uint32_t ThreadId)
 {
     bool bRes = true;
 
-#ifdef tofix
     WriteTrace(TraceN64System, TraceDebug, "Setting N64 system as active");
     if (g_BaseSystem->SetActiveSystem(true))
     {
@@ -267,103 +264,90 @@ bool CN64System::EmulationStarting(void * hThread, uint32_t ThreadId)
         try
         {
             WriteTrace(TraceN64System, TraceDebug, "Game starting");
-            //mark the emulation as starting and fix up menus
-			g_Notify->DisplayMessage(5, MSG_EMULATION_STARTED);
-			ExecuteCPU();
+            g_BaseSystem->StartEmulation2(false);
             WriteTrace(TraceN64System, TraceDebug, "Game Done");
         }
         catch (...)
         {
-#ifdef tofix
-            g_Notify->DisplayError(stdstr_f(__FUNCTION__ ": Exception caught\nFile: %s\nLine: %d", __FILE__, __LINE__).ToUTF16().c_str());
-#endif
+            g_Notify->DisplayError(stdstr_f(__FUNCTION__ ": Exception caught\nFile: %s\nLine: %d", __FILE__, __LINE__).c_str());
         }
     }
     else
     {
         WriteTrace(TraceN64System, TraceError, "SetActiveSystem failed");
-#ifdef tofix
-        g_Notify->DisplayError(__FUNCTIONW__ L": Failed to Initialize N64 System");
-#endif
+        g_Notify->DisplayError(__FUNCTION__ ": Failed to Initialize N64 System");
         g_Settings->SaveBool(GameRunning_LoadingInProgress, false);
         bRes = false;
     }
-#endif
     return bRes;
-}
-
-bool CN64System::SetupSystem(void)
-{
-    WriteTrace(TraceN64System, TraceDebug, "Starting");
-    if (bHaveDebugger())
-    {
-        StartLog();
-    }
-
-    CInterpreterCPU::BuildCPU();
-
-    uint32_t CpuType = g_Settings->LoadDword(Game_CpuType);
-
-    if (CpuType == CPU_SyncCores && !g_Settings->LoadBool(Debugger_Enabled))
-    {
-        g_Settings->SaveDword(Game_CpuType, CPU_Recompiler);
-        CpuType = CPU_Recompiler;
-    }
-
-    if (CpuType == CPU_SyncCores)
-    {
-#ifdef tofix
-        if (g_Plugins->SyncWindow() == NULL)
-        {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
-        }
-        g_Notify->DisplayMessage(5, L"Copy Plugins");
-        g_Plugins->CopyPlugins(g_Settings->LoadStringVal(Directory_PluginSync));
-        m_SyncPlugins = new CPlugins(g_Settings->LoadStringVal(Directory_PluginSync));
-        m_SyncPlugins->SetRenderWindows(g_Plugins->SyncWindow(), NULL);
-        m_SyncCPU = new CN64System(m_SyncPlugins, true);
-#endif
-    }
-
-    if (CpuType == CPU_Recompiler || CpuType == CPU_SyncCores)
-    {
-        m_Recomp = new CRecompiler(m_Reg, m_Profile, m_EndEmulation);
-    }
-
-    bool bSetActive = true;
-    if (m_SyncCPU)
-    {
-        bSetActive = m_SyncCPU->SetActiveSystem();
-    }
-
-    if (bSetActive)
-    {
-        bSetActive = SetActiveSystem();
-    }
-
-    if (!bSetActive)
-    {
-        g_Settings->SaveBool(GameRunning_LoadingInProgress, false);
-        g_Notify->DisplayError(MSG_PLUGIN_NOT_INIT);
-		return false;
-    }
-	return true;
 }
 
 void CN64System::StartEmulation2(bool NewThread)
 {
-    WriteTrace(TraceN64System, TraceDebug, "Start (NewThread: %s)",NewThread ? "true" : "false");
-#ifdef tofix
     if (NewThread)
     {
-		StartEmulationThead();
+        WriteTrace(TraceN64System, TraceDebug, "Starting");
+        if (bHaveDebugger())
+        {
+            StartLog();
+        }
+
+        CInterpreterCPU::BuildCPU();
+
+        uint32_t CpuType = g_Settings->LoadDword(Game_CpuType);
+
+        if (CpuType == CPU_SyncCores && !g_Settings->LoadBool(Debugger_Enabled))
+        {
+            g_Settings->SaveDword(Game_CpuType, CPU_Recompiler);
+            CpuType = CPU_Recompiler;
+        }
+
+        if (CpuType == CPU_SyncCores)
+        {
+            if (g_Plugins->SyncWindow() == NULL)
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+            g_Notify->DisplayMessage(5, "Copy Plugins");
+            g_Plugins->CopyPlugins(g_Settings->LoadStringVal(Directory_PluginSync));
+            m_SyncPlugins = new CPlugins(g_Settings->LoadStringVal(Directory_PluginSync));
+            m_SyncPlugins->SetRenderWindows(g_Plugins->SyncWindow(), NULL);
+            m_SyncCPU = new CN64System(m_SyncPlugins, true);
+        }
+
+        if (CpuType == CPU_Recompiler || CpuType == CPU_SyncCores)
+        {
+            m_Recomp = new CRecompiler(m_Reg, m_Profile, m_EndEmulation);
+        }
+
+        bool bSetActive = true;
+        if (m_SyncCPU)
+        {
+            bSetActive = m_SyncCPU->SetActiveSystem();
+        }
+
+        if (bSetActive)
+        {
+            bSetActive = SetActiveSystem();
+        }
+
+        if (!bSetActive)
+        {
+            g_Settings->SaveBool(GameRunning_LoadingInProgress, false);
+            g_Notify->DisplayError(MSG_PLUGIN_NOT_INIT);
+        }
+        else
+        {
+            StartEmulationThead();
+        }
     }
     else
     {
+        //mark the emulation as starting and fix up menus
+        g_Notify->DisplayMessage(5, MSG_EMULATION_STARTED);
+
         ExecuteCPU();
     }
-#endif
-    WriteTrace(TraceN64System, TraceDebug, "Done");
 }
 
 void  CN64System::StartEmulation(bool NewThread)
@@ -371,25 +355,19 @@ void  CN64System::StartEmulation(bool NewThread)
     WriteTrace(TraceN64System, TraceDebug, "Start");
     __except_try()
     {
-		if (SetupSystem())
-		{
-	        StartEmulation2(NewThread);
-		}
+        StartEmulation2(NewThread);
     }
     __except_catch()
     {
-#ifdef tofix
-        wchar_t message[400];
-        swprintf(message, sizeof(message), L"Exception caught\nFile: %s\nLine: %d", __FILEW__, __LINE__);
+        char message[400];
+        sprintf(message, "Exception caught\nFile: %s\nLine: %d", __FILE__, __LINE__);
         g_Notify->DisplayError(message);
-#endif
     }
     WriteTrace(TraceN64System, TraceDebug, "Done");
 }
 
 void CN64System::Pause()
 {
-#ifdef tofix
     if (m_EndEmulation)
     {
         return;
@@ -401,12 +379,10 @@ void CN64System::Pause()
     m_hPauseEvent.Reset();
     g_Settings->SaveBool(GameRunning_CPU_Paused, (uint32_t)false);
     g_Notify->DisplayMessage(5, MSG_CPU_RESUMED);
-#endif
 }
 
 void CN64System::GameReset()
 {
-#ifdef tofix
     m_SystemTimer.SetTimer(CSystemTimer::SoftResetTimer, 0x3000000, false);
     m_Plugins->Gfx()->ShowCFB();
     m_Reg.FAKE_CAUSE_REGISTER |= CAUSE_IP4;
@@ -415,12 +391,10 @@ void CN64System::GameReset()
     {
         m_SyncCPU->GameReset();
     }
-#endif
 }
 
 void CN64System::PluginReset()
 {
-#ifdef tofix
     if (!m_Plugins->ResetInUiThread(this))
     {
         g_Notify->DisplayMessage(5, MSG_PLUGIN_NOT_INIT);
@@ -449,7 +423,6 @@ void CN64System::PluginReset()
     {
         m_SyncCPU->m_Plugins->RomOpened();
     }
-#endif
 #ifdef _WIN32
     _controlfp(_PC_53, _MCW_PC);
 #endif
@@ -457,7 +430,6 @@ void CN64System::PluginReset()
 
 void CN64System::Reset(bool bInitReg, bool ClearMenory)
 {
-#ifdef tofix
     g_Settings->SaveBool(GameRunning_InReset, true);
     RefreshGameSettings();
     m_Audio.Reset();
@@ -499,20 +471,16 @@ void CN64System::Reset(bool bInitReg, bool ClearMenory)
     {
         m_Recomp->Reset();
     }
-#ifdef tofix
     if (m_Plugins) { m_Plugins->GameReset(); }
-#endif
     if (m_SyncCPU)
     {
         m_SyncCPU->Reset(bInitReg, ClearMenory);
     }
     g_Settings->SaveBool(GameRunning_InReset, true);
-#endif
 }
 
 bool CN64System::SetActiveSystem(bool bActive)
 {
-#ifdef tofix
     bool bInitPlugin = false;
     bool bReset = false;
     bool bRes = true;
@@ -547,9 +515,7 @@ bool CN64System::SetActiveSystem(bool bActive)
         g_TransVaddr = &m_MMU_VM;
         g_SystemEvents = this;
         g_NextTimer = &m_NextTimer;
-#ifdef tofix
         g_Plugins = m_Plugins;
-#endif
         g_TLBLoadAddress = &m_TLBLoadAddress;
         g_TLBStoreAddress = &m_TLBStoreAddress;
         R4300iOp::m_TestTimer = m_TestTimer;
@@ -582,9 +548,7 @@ bool CN64System::SetActiveSystem(bool bActive)
             g_TransVaddr = NULL;
             g_SystemEvents = NULL;
             g_NextTimer = NULL;
-#ifdef tofix
             g_Plugins = m_Plugins;
-#endif
             g_TLBLoadAddress = NULL;
             g_TLBStoreAddress = NULL;
         }
@@ -594,14 +558,12 @@ bool CN64System::SetActiveSystem(bool bActive)
     {
         WriteTrace(TraceN64System, TraceDebug, "Reseting Plugins");
         g_Notify->DisplayMessage(5, MSG_PLUGIN_INIT);
-#ifdef tofix
         m_Plugins->CreatePlugins();
         bRes = m_Plugins->Initiate(this);
         if (!bRes)
         {
             WriteTrace(TraceN64System, TraceError, "g_Plugins->Initiate Failed");
         }
-#endif
     }
 
     if (bReset)
@@ -609,8 +571,6 @@ bool CN64System::SetActiveSystem(bool bActive)
         Reset(true, true);
     }
     return bRes;
-#endif
-    return false;
 }
 
 void CN64System::InitRegisters(bool bPostPif, CMipsMemoryVM & MMU)
@@ -798,7 +758,6 @@ void CN64System::InitRegisters(bool bPostPif, CMipsMemoryVM & MMU)
 
 void CN64System::ExecuteCPU()
 {
-#ifdef tofix
     //reset code
     g_Settings->SaveBool(GameRunning_CPU_Paused, false);
     g_Settings->SaveBool(GameRunning_CPU_Running, true);
@@ -830,34 +789,26 @@ void CN64System::ExecuteCPU()
     {
         m_SyncCPU->m_Plugins->RomClosed();
     }
-#endif
 }
 
 void CN64System::ExecuteInterpret()
 {
-#ifdef tofix
     SetActiveSystem();
     CInterpreterCPU::ExecuteCPU();
-#endif
 }
 
 void CN64System::ExecuteRecompiler()
 {
-#ifdef tofix
     m_Recomp->Run();
-#endif
 }
 
 void CN64System::ExecuteSyncCPU()
 {
-#ifdef tofix
     m_Recomp->Run();
-#endif
 }
 
 void CN64System::CpuStopped()
 {
-#ifdef tofix
     if (!m_InReset)
     {
         g_Settings->SaveBool(GameRunning_CPU_Running, (uint32_t)false);
@@ -868,12 +819,10 @@ void CN64System::CpuStopped()
         m_SyncCPU->CpuStopped();
     }
     m_CPU_Handle = NULL;
-#endif
 }
 
 void CN64System::UpdateSyncCPU(CN64System * const SecondCPU, uint32_t const Cycles)
 {
-#ifdef tofix
     int CyclesToExecute = Cycles - m_CyclesToSkip;
 
     //Update the number of cycles to skip
@@ -888,12 +837,10 @@ void CN64System::UpdateSyncCPU(CN64System * const SecondCPU, uint32_t const Cycl
     CInterpreterCPU::ExecuteOps(Cycles);
 
     SetActiveSystem(true);
-#endif
 }
 
 void CN64System::SyncCPUPC(CN64System * const SecondCPU)
 {
-#ifdef tofix
     bool ErrorFound = false;
 
     g_SystemTimer->UpdateTimers();
@@ -913,12 +860,10 @@ void CN64System::SyncCPUPC(CN64System * const SecondCPU)
         m_LastSuccessSyncPC[i] = m_LastSuccessSyncPC[i - 1];
     }
     m_LastSuccessSyncPC[0] = m_Reg.m_PROGRAM_COUNTER;
-#endif
 }
 
 void CN64System::SyncCPU(CN64System * const SecondCPU)
 {
-#ifdef tofix
     bool ErrorFound = false;
 
     m_SyncCount += 1;
@@ -1047,26 +992,20 @@ void CN64System::SyncCPU(CN64System * const SecondCPU)
     //	if (PROGRAM_COUNTER == 0x8009BBD8) {
     //		g_Notify->BreakPoint(__FILE__, __LINE__);
     //	}
-#endif
 }
 
 void CN64System::SyncSystem()
 {
-#ifdef tofix
     SyncCPU(g_SyncSystem);
-#endif
 }
 
 void CN64System::SyncSystemPC()
 {
-#ifdef tofix
     SyncCPUPC(g_SyncSystem);
-#endif
 }
 
 void CN64System::DumpSyncErrors(CN64System * SecondCPU)
 {
-#ifdef tofix
     int count;
 
     {
@@ -1298,9 +1237,8 @@ void CN64System::DumpSyncErrors(CN64System * SecondCPU)
         }
     }
 
-    g_Notify->DisplayError(L"Sync Error");
+    g_Notify->DisplayError("Sync Error");
     g_Notify->BreakPoint(__FILE__, __LINE__);
-#endif
 }
 
 bool CN64System::SaveState()
@@ -1455,11 +1393,11 @@ bool CN64System::SaveState()
     }
     m_Reg.MI_INTR_REG = MiInterReg;
     g_Settings->SaveString(GameRunning_InstantSaveFile, "");
-    std::wstring SaveMessage = g_Lang->GetString(MSG_SAVED_STATE);
+    std::string SaveMessage = g_Lang->GetString(MSG_SAVED_STATE);
 
     CPath SavedFileName(FileName);
 
-    g_Notify->DisplayMessage(5, stdwstr_f(L"%ws %ws", SaveMessage.c_str(), stdstr(SavedFileName.GetNameExtension()).ToUTF16().c_str()).c_str());
+    g_Notify->DisplayMessage(5, stdstr_f("%s %s", SaveMessage.c_str(), stdstr(SavedFileName.GetNameExtension()).c_str()).c_str());
     //Notify().RefreshMenu();
     WriteTrace(TraceN64System, TraceDebug, "Done");
 #endif
@@ -1574,11 +1512,12 @@ bool CN64System::LoadState(const char * FileName)
                 if (memcmp(LoadHeader, g_Rom->GetRomAddress(), 0x40) != 0)
                 {
                     //if (inFullScreen) { return false; }
-                    int result = MessageBoxW(NULL, GS(MSG_SAVE_STATE_HEADER), GS(MSG_MSGBOX_TITLE),
-                        MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2);
+                    int result = MessageBoxW(NULL, wGS(MSG_SAVE_STATE_HEADER).c_str(), wGS(MSG_MSGBOX_TITLE).c_str(), MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2);
 
                     if (result == IDNO)
+                    {
                         return false;
+                    }
                 }
                 Reset(false, true);
 
@@ -1629,7 +1568,7 @@ bool CN64System::LoadState(const char * FileName)
             OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS, NULL);
         if (hSaveFile == INVALID_HANDLE_VALUE)
         {
-            g_Notify->DisplayMessage(5, stdwstr_f(L"%ws %ws", GS(MSG_UNABLED_LOAD_STATE), FileNameStr.ToUTF16().c_str()).c_str());
+            g_Notify->DisplayMessage(5, stdstr_f("%s %s", GS(MSG_UNABLED_LOAD_STATE), FileNameStr.c_str()).c_str());
             return false;
         }
 
@@ -1637,7 +1576,9 @@ bool CN64System::LoadState(const char * FileName)
         DWORD dwRead;
         ReadFile(hSaveFile, &Value, sizeof(Value), &dwRead, NULL);
         if (Value != 0x23D8A6C8)
+        {
             return false;
+        }
 
         ReadFile(hSaveFile, &SaveRDRAMSize, sizeof(SaveRDRAMSize), &dwRead, NULL);
         //Check header
@@ -1646,7 +1587,7 @@ bool CN64System::LoadState(const char * FileName)
         if (memcmp(LoadHeader, g_Rom->GetRomAddress(), 0x40) != 0)
         {
             //if (inFullScreen) { return false; }
-            int result = MessageBoxW(NULL, GS(MSG_SAVE_STATE_HEADER), GS(MSG_MSGBOX_TITLE), MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2);
+            int result = MessageBoxW(NULL, wGS(MSG_SAVE_STATE_HEADER).c_str(), wGS(MSG_MSGBOX_TITLE).c_str(), MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2);
 
             if (result == IDNO)
             {
@@ -1759,8 +1700,8 @@ bool CN64System::LoadState(const char * FileName)
         }
     }
     WriteTrace(TraceN64System, TraceDebug, "13");
-    std::wstring LoadMsg = g_Lang->GetString(MSG_LOADED_STATE);
-    g_Notify->DisplayMessage(5, stdwstr_f(L"%ws %ws", LoadMsg.c_str(), stdstr(CPath(FileNameStr).GetNameExtension()).ToUTF16().c_str()).c_str());
+    std::string LoadMsg = g_Lang->GetString(MSG_LOADED_STATE);
+    g_Notify->DisplayMessage(5, stdstr_f("%s %s", LoadMsg.c_str(), stdstr(CPath(FileNameStr).GetNameExtension()).c_str()).c_str());
     WriteTrace(TraceN64System, TraceDebug, "Done");
 #endif
     return true;
@@ -1768,14 +1709,11 @@ bool CN64System::LoadState(const char * FileName)
 
 void CN64System::DisplayRSPListCount()
 {
-#ifdef tofix
-    g_Notify->DisplayMessage(0, stdstr_f("Dlist: %d   Alist: %d   Unknown: %d", m_DlistCount, m_AlistCount, m_UnknownCount).ToUTF16().c_str());
-#endif
+    g_Notify->DisplayMessage(0, stdstr_f("Dlist: %d   Alist: %d   Unknown: %d", m_DlistCount, m_AlistCount, m_UnknownCount).c_str());
 }
 
 void CN64System::RunRSP()
 {
-#ifdef tofix
     WriteTrace(TraceRSP, TraceDebug, "Start (SP Status %X)", m_Reg.SP_STATUS_REG);
     if ((m_Reg.SP_STATUS_REG & SP_STATUS_HALT) == 0)
     {
@@ -1825,7 +1763,6 @@ void CN64System::RunRSP()
                 }
             }
 
-#ifdef tofix
             __except_try()
             {
                 WriteTrace(TraceRSP, TraceDebug, "do cycles - starting");
@@ -1835,9 +1772,9 @@ void CN64System::RunRSP()
             __except_catch()
             {
                 WriteTrace(TraceRSP, TraceError, "exception generated");
-                g_Notify->FatalError(__FUNCTIONW__ L"\nUnknown memory action\n\nEmulation stop");
+                g_Notify->FatalError(__FUNCTION__ "\nUnknown memory action\n\nEmulation stop");
             }
-#endif
+
             if (Task == 1 && bDelayDP() && ((m_Reg.m_GfxIntrReg & MI_INTR_DP) != 0))
             {
                 g_SystemTimer->SetTimer(CSystemTimer::RSPTimerDlist, 0x1000, false);
@@ -1862,12 +1799,10 @@ void CN64System::RunRSP()
         }
     }
     WriteTrace(TraceRSP, TraceDebug, "Done (SP Status %X)", m_Reg.SP_STATUS_REG);
-#endif
 }
 
 void CN64System::SyncToAudio()
 {
-#ifdef tofix
     if (!bSyncToAudio() || !bLimitFPS())
     {
         return;
@@ -1889,12 +1824,10 @@ void CN64System::SyncToAudio()
     {
         m_CPU_Usage.StartTimer(CPU_UsageAddr != Timer_None ? CPU_UsageAddr : Timer_R4300);
     }
-#endif
 }
 
 void CN64System::RefreshScreen()
 {
-#ifdef tofix
     SPECIAL_TIMERS CPU_UsageAddr = Timer_None/*, ProfilingAddr = Timer_None*/;
     uint32_t VI_INTR_TIME = 500000;
 
@@ -1950,7 +1883,7 @@ void CN64System::RefreshScreen()
     {
         if (bShowCPUPer()) { m_CPU_Usage.StartTimer(Timer_Idel); }
         uint32_t FrameRate;
-        if (m_Limitor.Timer_Process(&FrameRate) && bDisplayFrameRate())
+        if (m_Limiter.Timer_Process(&FrameRate) && bDisplayFrameRate())
         {
             m_FPS.DisplayViCounter(FrameRate);
             m_bCleanFrameBox = true;
@@ -1984,45 +1917,25 @@ void CN64System::RefreshScreen()
                 g_SyncSystem->SetCheatsSlectionChanged(true);
             }
             SetCheatsSlectionChanged(false);
-#ifdef tofix
             m_Cheats.LoadCheats(false, g_BaseSystem->m_Plugins);
-#endif
         }
         m_Cheats.ApplyCheats(g_MMU);
     }
     //	if (bProfiling)    { m_Profile.StartTimer(ProfilingAddr != Timer_None ? ProfilingAddr : Timer_R4300); }
-#endif
-}
-
-bool CN64System::WriteToProtectedMemory(uint32_t Address, int length)
-{
-#ifdef tofix
-    WriteTrace(TraceN64System, TraceDebug, "Address: %X Len: %d", Address, length);
-    if (m_Recomp)
-    {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
-        return m_Recomp->ClearRecompCode_Phys(Address, length, CRecompiler::Remove_ProtectedMem);
-    }
-#endif
-    return false;
 }
 
 void CN64System::TLB_Mapped(uint32_t VAddr, uint32_t Len, uint32_t PAddr, bool bReadOnly)
 {
-#ifdef tofix
     m_MMU_VM.TLB_Mapped(VAddr, Len, PAddr, bReadOnly);
-#endif
 }
 
 void CN64System::TLB_Unmaped(uint32_t VAddr, uint32_t Len)
 {
-#ifdef tofix
     m_MMU_VM.TLB_Unmaped(VAddr, Len);
     if (m_Recomp && bSMM_TLB())
     {
         m_Recomp->ClearRecompCode_Virt(VAddr, Len, CRecompiler::Remove_TLB);
     }
-#endif
 }
 
 void CN64System::TLB_Changed()

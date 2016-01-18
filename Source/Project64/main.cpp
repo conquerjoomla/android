@@ -23,7 +23,7 @@ int WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR /
         if (g_Settings->LoadStringVal(Cmd_RomFile).length() > 0)
         {
             MainWindow.Show(true);	//Show the main window
-            CN64System::RunFileImage(g_Settings->LoadStringVal(Cmd_RomFile).c_str(), true);
+            CN64System::RunFileImage(g_Settings->LoadStringVal(Cmd_RomFile).c_str());
         }
         else
         {

@@ -335,10 +335,12 @@
 #define ID_POPUPMENU_EDITSETTINGS       40153
 #define ID_POPUPMENU_EDITCHEATS         40154
 #define ID_POPUPMENU_ROMINFORMATION     40155
+#define ID_POPUP_ADDNEWCHEAT            40161
+#define ID_POPUP_EDIT                   40162
 #define ID_POPUP_DELETE                 40163
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        150

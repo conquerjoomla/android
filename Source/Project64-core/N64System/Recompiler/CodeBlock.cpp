@@ -9,6 +9,7 @@
 *                                                                           *
 ****************************************************************************/
 #include "stdafx.h"
+#include <string.h>
 #include <Project64-core/N64System/Recompiler/CodeBlock.h>
 #include "x86CodeLog.h"
 #include <Project64-core/N64System/SystemGlobals.h>
@@ -29,7 +30,7 @@ CCodeBlock::CCodeBlock(uint32_t VAddrEnter, uint8_t * RecompPos) :
     CCodeSection * baseSection = new CCodeSection(this, VAddrEnter, 0, false);
     if (baseSection == NULL)
     {
-        g_Notify->BreakPoint(__FILE__,__LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
     m_Sections.push_back(baseSection);
     baseSection->AddParent(NULL);
@@ -41,7 +42,7 @@ CCodeBlock::CCodeBlock(uint32_t VAddrEnter, uint8_t * RecompPos) :
     m_EnterSection = new CCodeSection(this, VAddrEnter, 1, true);
     if (m_EnterSection == NULL)
     {
-        g_Notify->BreakPoint(__FILE__,__LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
     baseSection->m_ContinueSection = m_EnterSection;
 
@@ -77,7 +78,7 @@ bool CCodeBlock::SetSection ( CCodeSection * & Section, CCodeSection * CurrentSe
 {
     if (Section != NULL)
     {
-        g_Notify->BreakPoint(__FILE__,__LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 
     if (TargetPC >= ((CurrentPC + 0x1000) & 0xFFFFF000))
@@ -94,7 +95,7 @@ bool CCodeBlock::SetSection ( CCodeSection * & Section, CCodeSection * CurrentSe
     {
         if (Section != NULL)
         {
-            g_Notify->BreakPoint(__FILE__,__LINE__);
+            g_Notify->BreakPoint(__FILE__, __LINE__);
         }
         SectionMap::const_iterator itr = m_SectionMap.find(TargetPC);
         if (itr != m_SectionMap.end())
@@ -109,7 +110,7 @@ bool CCodeBlock::SetSection ( CCodeSection * & Section, CCodeSection * CurrentSe
         Section = new CCodeSection(this,TargetPC,m_Sections.size(),LinkAllowed);
         if (Section == NULL)
         {
-            g_Notify->BreakPoint(__FILE__,__LINE__);
+            g_Notify->BreakPoint(__FILE__, __LINE__);
             return false;
         }
         m_Sections.push_back(Section);
@@ -131,15 +132,15 @@ bool CCodeBlock::SetSection ( CCodeSection * & Section, CCodeSection * CurrentSe
             }
             if (SplitSection == NULL)
             {
-                g_Notify->BreakPoint(__FILE__,__LINE__);
+                g_Notify->BreakPoint(__FILE__, __LINE__);
             }
             if (SplitSection->m_EndPC == (uint32_t)-1)
             {
-                g_Notify->BreakPoint(__FILE__,__LINE__);
+                g_Notify->BreakPoint(__FILE__, __LINE__);
             }
             if (SplitSection->m_EndPC >= TargetPC)
             {
-                CPU_Message("%s: Split Section: %d with section: %d",__FUNCTION__,SplitSection->m_SectionID, Section->m_SectionID);
+                CPU_Message("%s: Split Section: %d with section: %d", __FUNCTION__, SplitSection->m_SectionID, Section->m_SectionID);
                 CCodeSection * BaseSection = Section;
                 BaseSection->m_EndPC = SplitSection->m_EndPC;
                 BaseSection->SetJumpAddress(SplitSection->m_Jump.JumpPC, SplitSection->m_Jump.TargetPC,SplitSection->m_Jump.PermLoop);
@@ -176,7 +177,7 @@ bool CCodeBlock::CreateBlockLinkage ( CCodeSection * EnterSection )
                 if (CurrentSection->m_ContinueSection != NULL &&
                     CurrentSection->m_ContinueSection != itr->second)
                 {
-                    g_Notify->BreakPoint(__FILE__,__LINE__);
+                    g_Notify->BreakPoint(__FILE__, __LINE__);
                 }
                 if (CurrentSection->m_ContinueSection == NULL)
                 {
@@ -210,7 +211,7 @@ bool CCodeBlock::CreateBlockLinkage ( CCodeSection * EnterSection )
         CurrentSection->m_EndPC = TestPC;
         if (!AnalyzeInstruction(TestPC, TargetPC, ContinuePC, LikelyBranch, IncludeDelaySlot, EndBlock, PermLoop))
         {
-            g_Notify->BreakPoint(__FILE__,__LINE__);
+            g_Notify->BreakPoint(__FILE__, __LINE__);
             return false;
         }
 
@@ -224,7 +225,7 @@ bool CCodeBlock::CreateBlockLinkage ( CCodeSection * EnterSection )
         {
             if (ContinuePC != (uint32_t)-1)
             {
-                g_Notify->BreakPoint(__FILE__,__LINE__);
+                g_Notify->BreakPoint(__FILE__, __LINE__);
             }
             continue;
         }
@@ -239,7 +240,7 @@ bool CCodeBlock::CreateBlockLinkage ( CCodeSection * EnterSection )
 
         if (ContinuePC != (uint32_t)-1)
         {
-            CPU_Message("%s: SetContinueAddress TestPC = %X ContinuePC = %X",__FUNCTION__ , TestPC,ContinuePC);
+            CPU_Message("%s: SetContinueAddress TestPC = %X ContinuePC = %X", __FUNCTION__,TestPC,ContinuePC);
             CurrentSection->SetContinueAddress(TestPC, ContinuePC);
             if (!SetSection(CurrentSection->m_ContinueSection, CurrentSection, ContinuePC,true,TestPC))
             {
@@ -249,7 +250,7 @@ bool CCodeBlock::CreateBlockLinkage ( CCodeSection * EnterSection )
 
         if (LikelyBranch)
         {
-            CPU_Message("%s: SetJumpAddress TestPC = %X Target = %X",__FUNCTION__, TestPC,TestPC + 4);
+            CPU_Message("%s: SetJumpAddress TestPC = %X Target = %X", __FUNCTION__,TestPC,TestPC + 4);
             CurrentSection->SetJumpAddress(TestPC, TestPC + 4,false);
             if (SetSection(CurrentSection->m_JumpSection, CurrentSection, TestPC + 4,false,TestPC))
             {
@@ -259,20 +260,20 @@ bool CCodeBlock::CreateBlockLinkage ( CCodeSection * EnterSection )
                 CCodeSection * JumpSection = CurrentSection->m_JumpSection;
                 if (!AnalyzeInstruction(JumpSection->m_EnterPC, BranchTargetPC, BranchContinuePC, BranchLikelyBranch, BranchIncludeDelaySlot, BranchEndBlock, BranchPermLoop))
                 {
-                    g_Notify->BreakPoint(__FILE__,__LINE__);
+                    g_Notify->BreakPoint(__FILE__, __LINE__);
                     return false;
                 }
 
                 if (BranchLikelyBranch || BranchIncludeDelaySlot || BranchPermLoop)
                 {
-                    g_Notify->BreakPoint(__FILE__,__LINE__);
+                    g_Notify->BreakPoint(__FILE__, __LINE__);
                     return false;
                 }
 
                 JumpSection->m_EndPC = TestPC + 4;
                 if (BranchEndBlock)
                 {
-                    CPU_Message("%s: Jump End Block", __FUNCTION__ );
+                    CPU_Message("%s: Jump End Block", __FUNCTION__);
                     JumpSection->m_EndSection = true;
                     TargetPC = (uint32_t)-1;
                 }
@@ -285,12 +286,12 @@ bool CCodeBlock::CreateBlockLinkage ( CCodeSection * EnterSection )
             }
             else
             {
-                g_Notify->BreakPoint(__FILE__,__LINE__);
+                g_Notify->BreakPoint(__FILE__, __LINE__);
             }
         }
         else if (TargetPC != ((uint32_t)-1))
         {
-            CPU_Message("%s: SetJumpAddress TestPC = %X Target = %X",__FUNCTION__,TestPC,TargetPC);
+            CPU_Message("%s: SetJumpAddress TestPC = %X Target = %X", __FUNCTION__,TestPC,TargetPC);
             CurrentSection->SetJumpAddress(TestPC, TargetPC,PermLoop);
             if (PermLoop || !SetSection(CurrentSection->m_JumpSection, CurrentSection, TargetPC,true,TestPC))
             {
@@ -322,7 +323,7 @@ bool CCodeBlock::CreateBlockLinkage ( CCodeSection * EnterSection )
         }
         if (CurrentSection == NewSection)
         {
-            g_Notify->BreakPoint(__FILE__,__LINE__);
+            g_Notify->BreakPoint(__FILE__, __LINE__);
         }
         CurrentSection = NewSection;
         if (CurrentSection->m_JumpSection != NULL ||
@@ -353,7 +354,7 @@ bool CCodeBlock::CreateBlockLinkage ( CCodeSection * EnterSection )
     }
     if (CurrentSection->m_EndPC == (uint32_t)-1)
     {
-        g_Notify->BreakPoint(__FILE__,__LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
     return true;
 }
@@ -405,7 +406,7 @@ bool CCodeBlock::AnalyzeInstruction ( uint32_t PC, uint32_t & TargetPC, uint32_t
     OPCODE Command;
     if (!g_MMU->LW_VAddr(PC, Command.Hex))
     {
-        g_Notify->BreakPoint(__FILE__,__LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
         return false;
     }
 
@@ -443,7 +444,7 @@ bool CCodeBlock::AnalyzeInstruction ( uint32_t PC, uint32_t & TargetPC, uint32_t
             EndBlock = true;
             break;
         default:
-            g_Notify->BreakPoint(__FILE__,__LINE__);
+            g_Notify->BreakPoint(__FILE__, __LINE__);
             return false;
         }
         break;
@@ -518,7 +519,7 @@ bool CCodeBlock::AnalyzeInstruction ( uint32_t PC, uint32_t & TargetPC, uint32_t
                 EndBlock = true;
                 break;
             }
-            g_Notify->BreakPoint(__FILE__,__LINE__);
+            g_Notify->BreakPoint(__FILE__, __LINE__);
             return false;
         }
         break;
@@ -592,13 +593,13 @@ bool CCodeBlock::AnalyzeInstruction ( uint32_t PC, uint32_t & TargetPC, uint32_t
                     EndBlock = true;
                     break;
                 default:
-                    g_Notify->BreakPoint(__FILE__,__LINE__);
+                    g_Notify->BreakPoint(__FILE__, __LINE__);
                     return false;
                 }
             }
             else
             {
-                g_Notify->BreakPoint(__FILE__,__LINE__);
+                g_Notify->BreakPoint(__FILE__, __LINE__);
                 return false;
             }
             break;
@@ -624,7 +625,7 @@ bool CCodeBlock::AnalyzeInstruction ( uint32_t PC, uint32_t & TargetPC, uint32_t
                 {
                     if (TargetPC == PC)
                     {
-                        g_Notify->BreakPoint(__FILE__,__LINE__);
+                        g_Notify->BreakPoint(__FILE__, __LINE__);
                     }
                     ContinuePC = PC + 8;
                     IncludeDelaySlot = true;
@@ -635,18 +636,18 @@ bool CCodeBlock::AnalyzeInstruction ( uint32_t PC, uint32_t & TargetPC, uint32_t
                 TargetPC = PC + ((int16_t)Command.offset << 2) + 4;
                 if (TargetPC == PC)
                 {
-                    g_Notify->BreakPoint(__FILE__,__LINE__);
+                    g_Notify->BreakPoint(__FILE__, __LINE__);
                 }
                 ContinuePC = PC + 8;
                 LikelyBranch = true;
                 IncludeDelaySlot = true;
                 break;
             default:
-                g_Notify->BreakPoint(__FILE__,__LINE__);
+                g_Notify->BreakPoint(__FILE__, __LINE__);
             }
             break;
         default:
-            g_Notify->BreakPoint(__FILE__,__LINE__);
+            g_Notify->BreakPoint(__FILE__, __LINE__);
             return false;
         }
         break;
@@ -698,7 +699,7 @@ bool CCodeBlock::AnalyzeInstruction ( uint32_t PC, uint32_t & TargetPC, uint32_t
             EndBlock = true;
             break;
         }
-        g_Notify->BreakPoint(__FILE__,__LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
         return false;
     }
     return true;

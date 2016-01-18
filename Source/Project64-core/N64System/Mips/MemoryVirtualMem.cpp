@@ -9,6 +9,7 @@
 *                                                                           *
 ****************************************************************************/
 #include "stdafx.h"
+
 #include <Project64-core/N64System/Mips/MemoryVirtualMem.h>
 #include <Project64-core/N64System/SystemGlobals.h>
 #include <Project64-core/N64System/N64RomClass.h>
@@ -16,6 +17,8 @@
 #include <Project64-core/N64System/Recompiler/x86CodeLog.h>
 #include <Project64-core/N64System/Mips/OpcodeName.h>
 #include <Project64-core/ExceptionHandler.h>
+
+#include <stdio.h>
 #include <Common/MemoryManagement.h>
 
 uint32_t RegModValue;
@@ -2103,8 +2106,10 @@ bool CMipsMemoryVM::LW_NonMemory(uint32_t PAddr, uint32_t* Value)
         case 0x04700000: Load32RDRAMInterface(); break;
         case 0x04800000: Load32SerialInterface(); break;
         case 0x05000000: Load32CartridgeDomain2Address1(); break;
+        case 0x06000000: Load32CartridgeDomain1Address1(); break;
         case 0x08000000: Load32CartridgeDomain2Address2(); break;
         case 0x1FC00000: Load32PifRam(); break;
+        case 0x1FF00000: Load32CartridgeDomain1Address3(); break;
         default:
             if (bHaveDebugger())
             {
@@ -4675,6 +4680,18 @@ void CMipsMemoryVM::Load32SerialInterface(void)
     }
 }
 
+void CMipsMemoryVM::Load32CartridgeDomain1Address1(void)
+{
+    m_MemLookupValue.UW[0] = m_MemLookupAddress & 0xFFFF;
+    m_MemLookupValue.UW[0] = (m_MemLookupValue.UW[0] << 16) | m_MemLookupValue.UW[0];
+}
+
+void CMipsMemoryVM::Load32CartridgeDomain1Address3(void)
+{
+    m_MemLookupValue.UW[0] = m_MemLookupAddress & 0xFFFF;
+    m_MemLookupValue.UW[0] = (m_MemLookupValue.UW[0] << 16) | m_MemLookupValue.UW[0];
+}
+
 void CMipsMemoryVM::Load32CartridgeDomain2Address1(void)
 {
     m_MemLookupValue.UW[0] = m_MemLookupAddress & 0xFFFF;
@@ -4762,10 +4779,6 @@ void CMipsMemoryVM::Load32Rom(void)
     {
         m_MemLookupValue.UW[0] = m_MemLookupAddress & 0xFFFF;
         m_MemLookupValue.UW[0] = (m_MemLookupValue.UW[0] << 16) | m_MemLookupValue.UW[0];
-        if (bHaveDebugger())
-        {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
-        }
     }
 }
 

@@ -299,7 +299,7 @@ bool CSystemTimer::SaveAllowed(void)
 void CSystemTimer::SaveData(void * file) const
 {
 #ifdef _WIN32
-	uint32_t TimerDetailsSize = sizeof(TIMER_DETAILS);
+    uint32_t TimerDetailsSize = sizeof(TIMER_DETAILS);
     uint32_t Entries = sizeof(m_TimerDetatils) / sizeof(m_TimerDetatils[0]);
     zipWriteInFileInZip(file, &TimerDetailsSize, sizeof(TimerDetailsSize));
     zipWriteInFileInZip(file, &Entries, sizeof(Entries));
@@ -313,7 +313,7 @@ void CSystemTimer::SaveData(void * file) const
 void CSystemTimer::LoadData(void * file)
 {
 #ifdef _WIN32
-	uint32_t TimerDetailsSize, Entries;
+    uint32_t TimerDetailsSize, Entries;
 
     unzReadCurrentFile(file, &TimerDetailsSize, sizeof(TimerDetailsSize));
     unzReadCurrentFile(file, &Entries, sizeof(Entries));

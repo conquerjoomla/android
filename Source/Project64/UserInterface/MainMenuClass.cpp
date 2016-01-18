@@ -119,7 +119,7 @@ bool CMainMenu::ProcessMessage(HWND hWnd, DWORD /*FromAccelerator*/, DWORD MenuI
         stdstr File = ChooseFileToOpen(hWnd);
         if (File.length() > 0)
         {
-            g_BaseSystem->RunFileImage(File.c_str(),true);
+            g_BaseSystem->RunFileImage(File.c_str());
         }
     }
     break;
@@ -481,7 +481,7 @@ bool CMainMenu::ProcessMessage(HWND hWnd, DWORD /*FromAccelerator*/, DWORD MenuI
             if (g_Settings->LoadStringIndex(File_RecentGameFileIndex, MenuID - ID_RECENT_ROM_START, FileName) &&
                 FileName.length() > 0)
             {
-                g_BaseSystem->RunFileImage(FileName.c_str(), true);
+                g_BaseSystem->RunFileImage(FileName.c_str());
             }
         }
         if (MenuID >= ID_RECENT_DIR_START && MenuID < ID_RECENT_DIR_END)

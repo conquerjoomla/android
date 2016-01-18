@@ -24,7 +24,7 @@ public:
     virtual ~CSettingTypeApplication();
 
     virtual bool        IndexBasedSetting(void) const { return false; }
-    virtual SettingType GetSettingType(void) const { return m_UseRegistry ? SettingType_Registry : SettingType_CfgFile; }
+    virtual SettingType GetSettingType(void) const { return SettingType_CfgFile; }
 
     //return the values
     virtual bool Load(int32_t Index, bool & Value) const;
@@ -50,7 +50,7 @@ public:
     static void CleanUp(void);
     static void Flush(void);
 
-    const char * GetKeyName(void) const { return "abc"/*m_KeyName.c_str()*/; }
+    const char * GetKeyName(void) const { return m_KeyName.c_str(); }
 
 protected:
     const char * m_DefaultStr;
@@ -60,7 +60,6 @@ protected:
     stdstr FixSectionName(const char * Section);
 
     static CIniFile * m_SettingsIniFile;
-    static bool       m_UseRegistry;
     const stdstr      m_Section;
     const stdstr      m_KeyName;
     mutable stdstr    m_KeyNameIdex;

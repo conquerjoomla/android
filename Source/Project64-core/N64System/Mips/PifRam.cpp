@@ -9,6 +9,8 @@
 *                                                                           *
 ****************************************************************************/
 #include "stdafx.h"
+#include <stdio.h>
+
 #include <Project64-core/N64System/Mips/PifRam.h>
 #include <Project64-core/N64System/SystemGlobals.h>
 #include <Project64-core/Plugins/ControllerPlugin.h>
@@ -19,8 +21,8 @@
 #include <Project64-core/N64System/Mips/Mempak.H>
 #include <Project64-core/Logging.h>
 
-int32_t   CPifRamSettings::m_RefCount = 0;
-bool  CPifRamSettings::m_bShowPifRamErrors = false;
+int32_t CPifRamSettings::m_RefCount = 0;
+bool CPifRamSettings::m_bShowPifRamErrors = false;
 
 CPifRamSettings::CPifRamSettings()
 {
@@ -47,7 +49,7 @@ void CPifRamSettings::RefreshSettings(void *)
 }
 
 CPifRam::CPifRam(bool SavesReadOnly) :
-    CEeprom(SavesReadOnly)
+CEeprom(SavesReadOnly)
 {
     Reset();
 }
@@ -183,13 +185,13 @@ void CPifRam::PifRamWrite()
                 {
                     ResponseValue = (ResponseValue << 8) | ((Response[(z - 1) * 2] << 4) + Response[(z - 1) * 2 + 1]);
                 }
-                std::memcpy(&m_PifRam[48], &ResponseValue, sizeof(uint64_t));
+                memcpy(&m_PifRam[48], &ResponseValue, sizeof(uint64_t));
                 ResponseValue = 0;
                 for (int32_t z = 7; z > 0; z--)
                 {
                     ResponseValue = (ResponseValue << 8) | ((Response[((z + 8) - 1) * 2] << 4) + Response[((z + 8) - 1) * 2 + 1]);
                 }
-                std::memcpy(&m_PifRam[56], &ResponseValue, sizeof(uint64_t));
+                memcpy(&m_PifRam[56], &ResponseValue, sizeof(uint64_t));
             }
             break;
         case 0x08:
@@ -285,12 +287,12 @@ void CPifRam::SI_DMA_READ()
     uint8_t * PifRamPos = m_PifRam;
     uint8_t * RDRAM = g_MMU->Rdram();
 
-    uint32_t & SI_DRAM_ADDR_REG = g_Reg->SI_DRAM_ADDR_REG;
+    uint32_t & SI_DRAM_ADDR_REG = (uint32_t &)g_Reg->SI_DRAM_ADDR_REG;
     if ((int32_t)SI_DRAM_ADDR_REG > (int32_t)g_System->RdramSize())
     {
         if (bShowPifRamErrors())
         {
-			g_Notify->DisplayError(stdstr_f("%s\nSI_DRAM_ADDR_REG not in RDRam space",__FUNCTION__ ).c_str());
+            g_Notify->DisplayError(stdstr_f("%s\nSI_DRAM_ADDR_REG not in RDRam space", __FUNCTION__).c_str());
         }
         return;
     }
@@ -371,7 +373,7 @@ void CPifRam::SI_DMA_WRITE()
 {
     uint8_t * PifRamPos = m_PifRam;
 
-    uint32_t & SI_DRAM_ADDR_REG = g_Reg->SI_DRAM_ADDR_REG;
+    uint32_t & SI_DRAM_ADDR_REG = (uint32_t &)g_Reg->SI_DRAM_ADDR_REG;
     if ((int32_t)SI_DRAM_ADDR_REG > (int32_t)g_System->RdramSize())
     {
         if (bShowPifRamErrors())
@@ -624,7 +626,7 @@ void CPifRam::ReadControllerCommand(int32_t Control, uint8_t * Command)
             }
 
             const uint32_t buttons = g_BaseSystem->GetButtons(Control);
-            std::memcpy(&Command[3], &buttons, sizeof(uint32_t));
+            memcpy(&Command[3], &buttons, sizeof(uint32_t));
         }
         break;
     case 0x02: //read from controller pack

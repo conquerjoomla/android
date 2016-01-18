@@ -11,33 +11,34 @@
 #include "stdafx.h"
 #include "SettingsType-Application.h"
 #include "SettingsType-ApplicationPath.h"
-#include <common/path.h>
+#include <Common/path.h>
 
-CSettingTypeApplicationPath::CSettingTypeApplicationPath(const char * Section, const char * Name, SettingID DefaultSetting) :
-CSettingTypeApplication(Section, Name, DefaultSetting)
+CSettingTypeApplicationPath::CSettingTypeApplicationPath(const char * Section, const char * Name, SettingID DefaultSetting ) :
+	CSettingTypeApplication(Section,Name,DefaultSetting)
 {
+
 }
 
 CSettingTypeApplicationPath::~CSettingTypeApplicationPath()
 {
 }
 
-bool CSettingTypeApplicationPath::Load(int Index, stdstr & Value) const
+bool CSettingTypeApplicationPath::Load ( int Index, stdstr & Value ) const
 {
-    bool bRes = CSettingTypeApplication::Load(Index, Value);
+	bool bRes = CSettingTypeApplication::Load(Index,Value);
 #ifdef WIN32
-    if (bRes)
-    {
-        if (Value.substr(0, 2) == ".\\" || Value.substr(0, 2) == "./" ||
-            Value.substr(0, 3) == "..\\" || Value.substr(0, 3) == "../")
-        {
-            CPath FullFilePath(CPath::MODULE_DIRECTORY), RelativePath(Value);
-            FullFilePath.SetNameExtension(RelativePath.GetNameExtension().c_str());
-            FullFilePath.AppendDirectory(RelativePath.GetDirectory().c_str());
+	if (bRes)
+	{
+		if (Value.substr(0,2) == ".\\" || Value.substr(0,2) == "./" ||
+			Value.substr(0,3) == "..\\" || Value.substr(0,3) == "../")
+		{
+			CPath FullFilePath(CPath::MODULE_DIRECTORY), RelativePath(Value);
+			FullFilePath.SetNameExtension(RelativePath.GetNameExtension().c_str());
+			FullFilePath.AppendDirectory(RelativePath.GetDirectory().c_str());
 
             Value = (const std::string &)FullFilePath;
-        }
-    }
+		}
+	}
 #endif
-    return bRes;
+	return bRes;
 }

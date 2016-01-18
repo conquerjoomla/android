@@ -55,7 +55,7 @@ public:
     SAVE_CHIP_TYPE m_SaveUsing;
 
     //Methods
-    static bool RunFileImage(const char * FileLoc, bool InNewThread);
+    static bool RunFileImage(const char * FileLoc);
     static void CloseSystem(void);
 
     void   CloseCpu();
@@ -114,7 +114,6 @@ private:
     void   ExecuteCPU();
     void   RefreshScreen();
     void   DumpSyncErrors(CN64System * SecondCPU);
-	bool   SetupSystem(void);
     void   StartEmulation2(bool NewThread);
     bool   SetActiveSystem(bool bActive = true);
     void   InitRegisters(bool bPostPif, CMipsMemoryVM & MMU);
@@ -127,9 +126,6 @@ private:
 
     //Mark information saying that the CPU has stopped
     void   CpuStopped();
-
-    //Function in CMipsMemory_CallBack
-    virtual bool WriteToProtectedMemory(uint32_t Address, int32_t length);
 
     //Functions in CTLB_CB
     void TLB_Mapped(uint32_t VAddr, uint32_t Len, uint32_t PAddr, bool bReadOnly);

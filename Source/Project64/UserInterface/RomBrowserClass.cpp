@@ -6,16 +6,16 @@
 std::wstring CRomBrowser::m_UnknownGoodName;
 
 CRomBrowser::CRomBrowser(HWND & MainWindow, HWND & StatusWindow) :
-    m_MainWindow(MainWindow),
-    m_StatusWindow(StatusWindow),
-    m_ShowingRomBrowser(false),
-    m_RefreshThread(NULL),
-    m_RomIniFile(NULL),
-    m_NotesIniFile(NULL),
-    m_ExtIniFile(NULL),
-    m_ZipIniFile(NULL),
-    m_AllowSelectionLastRom(true),
-    m_WatchThreadID(0)
+m_MainWindow(MainWindow),
+m_StatusWindow(StatusWindow),
+m_ShowingRomBrowser(false),
+m_RefreshThread(NULL),
+m_RomIniFile(NULL),
+m_NotesIniFile(NULL),
+m_ExtIniFile(NULL),
+m_ZipIniFile(NULL),
+m_AllowSelectionLastRom(true),
+m_WatchThreadID(0)
 {
     if (g_Settings)
     {
@@ -459,8 +459,7 @@ bool CRomBrowser::FillRomInfo(ROM_INFO * pRomInfo)
         }
         else
         {
-            char drive[_MAX_DRIVE], dir[_MAX_DIR], ext[_MAX_EXT];
-            _splitpath(pRomInfo->szFullFileName, drive, dir, pRomInfo->FileName, ext);
+            strncpy(pRomInfo->FileName, CPath(pRomInfo->szFullFileName).GetNameExtension().c_str(), sizeof(pRomInfo->FileName) / sizeof(pRomInfo->FileName[0]));
         }
         if (m_Fields[RB_InternalName].Pos() >= 0)
         {
@@ -1266,14 +1265,14 @@ bool CRomBrowser::RomListNotify(int32_t idCtrl, uint32_t pnmh)
     case LVN_GETDISPINFOW: RomList_GetDispInfo(pnmh); break;
     case NM_RCLICK:       RomList_PopupMenu(pnmh); break;
     case NM_CLICK:
+    {
+        LONG iItem = ListView_GetNextItem(m_hRomList, -1, LVNI_SELECTED);
+        if (iItem != -1)
         {
-            LONG iItem = ListView_GetNextItem(m_hRomList, -1, LVNI_SELECTED);
-            if (iItem != -1)
-            {
-                m_AllowSelectionLastRom = false;
-            }
+            m_AllowSelectionLastRom = false;
         }
-        break;
+    }
+    break;
     default:
         return false;
     }
@@ -1473,7 +1472,7 @@ void CRomBrowser::RomList_OpenRom(uint32_t /*pnmh*/)
 
     if (!pRomInfo) { return; }
     m_StopRefresh = true;
-    CN64System::RunFileImage(pRomInfo->szFullFileName, true);
+    CN64System::RunFileImage(pRomInfo->szFullFileName);
 }
 
 void CRomBrowser::RomList_PopupMenu(uint32_t /*pnmh*/)

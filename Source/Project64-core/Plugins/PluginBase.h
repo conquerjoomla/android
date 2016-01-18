@@ -74,5 +74,5 @@ protected:
     // Simple wrapper around _LoadFunction() to avoid having to specify the same two arguments
     // i.e. _LoadFunction("CloseDLL", CloseDLL);
 #define LoadFunction(functionName) _LoadFunctionVoid(#functionName, (void **)&functionName)
-#define _LoadFunction(functionName,function) _LoadFunctionVoid(#functionName, (void **)&function)
+#define _LoadFunction(functionName,function) _LoadFunctionVoid(functionName, (void **)&function)
 };

@@ -5573,7 +5573,8 @@ void CRecompilerOps::COP0_CO_ERET(void)
 /************************** FPU Options **************************/
 void CRecompilerOps::ChangeDefaultRoundingModel()
 {
-    switch ((_FPCR[31] & 3)) {
+    switch ((_FPCR[31] & 3))
+    {
     case 0: *_RoundingModel = FE_TONEAREST; break;
     case 1: *_RoundingModel = FE_TOWARDZERO; break;
     case 2: *_RoundingModel = FE_UPWARD;   break;

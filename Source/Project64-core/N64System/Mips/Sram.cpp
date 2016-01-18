@@ -55,10 +55,10 @@ bool CSram::LoadSram()
     }
     SetFilePointer(m_hFile, 0, NULL, FILE_BEGIN);
 #endif
-	return true;
+    return true;
 }
 
-void CSram::DmaFromSram(uint8_t * dest, int StartOffset, int len)
+void CSram::DmaFromSram(uint8_t * dest, int32_t StartOffset, int32_t len)
 {
 #ifdef tofix
     DWORD dwRead;
@@ -141,7 +141,7 @@ void CSram::DmaFromSram(uint8_t * dest, int StartOffset, int len)
 #endif
 }
 
-void CSram::DmaToSram(uint8_t * Source, int StartOffset, int len)
+void CSram::DmaToSram(uint8_t * Source, int32_t StartOffset, int32_t len)
 {
 #ifdef tofix
     DWORD dwWritten;

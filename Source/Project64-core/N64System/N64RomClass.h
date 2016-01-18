@@ -37,6 +37,7 @@ public:
     LanguageStringID GetError() const { return m_ErrorMsg; }
 
 private:
+    bool   AllocateRomImage(uint32_t RomFileSize);
     bool   AllocateAndLoadN64Image(const char * FileLoc, bool LoadBootCodeOnly);
     bool   AllocateAndLoadZipImage(const char * FileLoc, bool LoadBootCodeOnly);
     void   ByteSwapRom();
@@ -44,17 +45,18 @@ private:
     static void NotificationCB(const char * Status, CN64Rom * _this);
     void   CalculateCicChip();
     void   CalculateRomCrc();
+
     //constant values
     enum { ReadFromRomSection = 0x400000 };
 
     //class variables
-	CFile m_RomFile;
+    CFile m_RomFile;
     void *m_hRomFileMapping;
     uint8_t * m_ROMImage;
+    uint8_t * m_ROMImageBase;
     uint32_t m_RomFileSize;
     Country m_Country;
     CICChip m_CicChip;
     LanguageStringID m_ErrorMsg;
     stdstr m_RomName, m_FileName, m_MD5, m_RomIdent;
-
 };
