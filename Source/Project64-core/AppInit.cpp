@@ -181,11 +181,25 @@ static bool ParseCommand(int32_t argc, char **argv)
 			CSettingTypeApplication::Initialize(AppName());
 			i++;
         }
+        else if (strcmp(argv[i], "--gfxplugin") == 0 && ArgsLeft >= 1)
+        {
+            g_Settings->SaveString(Cmd_Plugin_Gfx, argv[i + 1]);
+            i++;
+        }
+        else if (strcmp(argv[i], "--audioplugin") == 0 && ArgsLeft >= 1)
+        {
+            g_Settings->SaveString(Cmd_Plugin_Audio, argv[i + 1]);
+            i++;
+        }
         else if (strcmp(argv[i], "--rspplugin") == 0 && ArgsLeft >= 1)
         {
-            g_Settings->SaveString(Cmd_BaseDirectory, argv[i + 1]);
-			CSettingTypeApplication::Initialize(AppName());
-			i++;
+            g_Settings->SaveString(Cmd_Plugin_RSP, argv[i + 1]);
+            i++;
+        }
+        else if (strcmp(argv[i], "--contplugin") == 0 && ArgsLeft >= 1)
+        {
+            g_Settings->SaveString(Cmd_Plugin_Controller, argv[i + 1]);
+            i++;
         }
         else if (strcmp(argv[i], "--help") == 0)
         {

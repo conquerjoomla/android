@@ -25,33 +25,33 @@
 #pragma warning(disable:4355) // Disable 'this' : used in base member initializer list
 
 CN64System::CN64System(CPlugins * Plugins, bool SavesReadOnly) :
-    CSystemEvents(this, Plugins),
-    m_EndEmulation(false),
-    m_SaveUsing((SAVE_CHIP_TYPE)g_Settings->LoadDword(Game_SaveChip)),
-    m_Plugins(Plugins),
-    m_SyncPlugins(NULL),
-    m_SyncCPU(NULL),
-    m_MMU_VM(SavesReadOnly),
-    m_TLB(this),
-    m_Reg(this, this),
-    m_Recomp(NULL),
-    m_InReset(false),
-    m_NextTimer(0),
-    m_SystemTimer(m_NextTimer),
-    m_bCleanFrameBox(true),
-    m_bInitialized(false),
-    m_RspBroke(true),
-    m_DMAUsed(false),
-    m_TestTimer(false),
-    m_NextInstruction(0),
-    m_JumpToLocation(0),
-    m_TLBLoadAddress(0),
-    m_TLBStoreAddress(0),
-    m_SyncCount(0),
-    m_CPU_Handle(NULL),
-    m_CPU_ThreadID(0),
-    m_hPauseEvent(true),
-    m_CheatsSlectionChanged(false)
+CSystemEvents(this, Plugins),
+m_EndEmulation(false),
+m_SaveUsing((SAVE_CHIP_TYPE)g_Settings->LoadDword(Game_SaveChip)),
+m_Plugins(Plugins),
+m_SyncPlugins(NULL),
+m_SyncCPU(NULL),
+m_MMU_VM(SavesReadOnly),
+m_TLB(this),
+m_Reg(this, this),
+m_Recomp(NULL),
+m_InReset(false),
+m_NextTimer(0),
+m_SystemTimer(m_NextTimer),
+m_bCleanFrameBox(true),
+m_bInitialized(false),
+m_RspBroke(true),
+m_DMAUsed(false),
+m_TestTimer(false),
+m_NextInstruction(0),
+m_JumpToLocation(0),
+m_TLBLoadAddress(0),
+m_TLBStoreAddress(0),
+m_SyncCount(0),
+m_CPU_Handle(NULL),
+m_CPU_ThreadID(0),
+m_hPauseEvent(true),
+m_CheatsSlectionChanged(false)
 {
     uint32_t gameHertz = g_Settings->LoadDword(Game_ScreenHertz);
     if (gameHertz == 0)
@@ -187,7 +187,7 @@ bool CN64System::RunFileImage(const char * FileLoc)
     WriteTrace(TraceN64System, TraceDebug, "FileLoc: %s", FileLoc);
     CloseSystem();
 
-	if (g_Settings->LoadBool(GameRunning_LoadingInProgress))
+    if (g_Settings->LoadBool(GameRunning_LoadingInProgress))
     {
         WriteTrace(TraceN64System, TraceError, "game loading is in progress, can not load new file");
         return false;
@@ -261,13 +261,13 @@ bool CN64System::EmulationStarting(void * hThread, uint32_t ThreadId)
         g_BaseSystem->m_CPU_ThreadID = ThreadId;
         WriteTrace(TraceN64System, TraceDebug, "Setting up N64 system done");
         g_Settings->SaveBool(GameRunning_LoadingInProgress, false);
-		__except_try()
+        try
         {
             WriteTrace(TraceN64System, TraceDebug, "Game starting");
             g_BaseSystem->StartEmulation2(false);
             WriteTrace(TraceN64System, TraceDebug, "Game Done");
         }
-		__except_catch()
+        catch (...)
         {
             g_Notify->DisplayError(stdstr_f("%s: Exception caught\nFile: %s\nLine: %d", __FUNCTION__, __FILE__, __LINE__).c_str());
         }
@@ -275,7 +275,7 @@ bool CN64System::EmulationStarting(void * hThread, uint32_t ThreadId)
     else
     {
         WriteTrace(TraceN64System, TraceError, "SetActiveSystem failed");
-        g_Notify->DisplayError(stdstr_f("%s: Failed to Initialize N64 System",__FUNCTION__).c_str());
+        g_Notify->DisplayError(stdstr_f("%s: Failed to Initialize N64 System", __FUNCTION__).c_str());
         g_Settings->SaveBool(GameRunning_LoadingInProgress, false);
         bRes = false;
     }
@@ -1009,7 +1009,7 @@ void CN64System::DumpSyncErrors(CN64System * SecondCPU)
     int count;
 
     {
-        CPath ErrorFile(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str(),"Sync Errors.txt");
+        CPath ErrorFile(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str(), "Sync Errors.txt");
         ErrorFile.AppendDirectory("Logs");
 
         CLog Error;
@@ -1772,7 +1772,7 @@ void CN64System::RunRSP()
             __except_catch()
             {
                 WriteTrace(TraceRSP, TraceError, "exception generated");
-                g_Notify->FatalError(stdstr_f("%s\nUnknown memory action\n\nEmulation stop",__FUNCTION__).c_str());
+                g_Notify->FatalError("CN64System::RunRSP()\nUnknown memory action\n\nEmulation stop");
             }
 
             if (Task == 1 && bDelayDP() && ((m_Reg.m_GfxIntrReg & MI_INTR_DP) != 0))
@@ -1867,7 +1867,7 @@ void CN64System::RefreshScreen()
     if (bShowCPUPer()) { m_CPU_Usage.StartTimer(Timer_UpdateScreen); }
     //	if (bProfiling)    { m_Profile.StartTimer(Timer_UpdateScreen); }
 
-	__except_try()
+    __except_try()
     {
         WriteTrace(TraceGFXPlugin, TraceDebug, "Starting");
         g_Plugins->Gfx()->UpdateScreen();

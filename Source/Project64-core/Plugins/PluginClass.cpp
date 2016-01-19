@@ -15,13 +15,13 @@
 #include <Common/path.h>
 
 CPlugins::CPlugins(const stdstr & PluginDir) :
-    m_MainWindow(NULL),
-    m_SyncWindow(NULL),
-    m_PluginDir(PluginDir),
-    m_Gfx(NULL),
-    m_Audio(NULL),
-    m_RSP(NULL),
-    m_Control(NULL)
+m_MainWindow(NULL),
+m_SyncWindow(NULL),
+m_PluginDir(PluginDir),
+m_Gfx(NULL),
+m_Audio(NULL),
+m_RSP(NULL),
+m_Control(NULL)
 {
     CreatePlugins();
     g_Settings->RegisterChangeCB(Plugin_RSP_Current, this, (CSettings::SettingChangedFunc)PluginChanged);
@@ -61,10 +61,10 @@ void CPlugins::PluginChanged(CPlugins * _this)
     {
         return;
     }
-    bool bGfxChange = _stricmp(_this->m_GfxFile.c_str(), g_Settings->LoadStringVal(Game_Plugin_Gfx).c_str()) != 0;
-    bool bAudioChange = _stricmp(_this->m_AudioFile.c_str(), g_Settings->LoadStringVal(Game_Plugin_Audio).c_str()) != 0;
-    bool bRspChange = _stricmp(_this->m_RSPFile.c_str(), g_Settings->LoadStringVal(Game_Plugin_RSP).c_str()) != 0;
-    bool bContChange = _stricmp(_this->m_ControlFile.c_str(), g_Settings->LoadStringVal(Game_Plugin_Controller).c_str()) != 0;
+    bool bGfxChange = _stricmp(_this->m_GfxFile.c_str(), g_Settings->LoadStringVal(Cmd_Plugin_Gfx).c_str()) != 0;
+    bool bAudioChange = _stricmp(_this->m_AudioFile.c_str(), g_Settings->LoadStringVal(Cmd_Plugin_Audio).c_str()) != 0;
+    bool bRspChange = _stricmp(_this->m_RSPFile.c_str(), g_Settings->LoadStringVal(Cmd_Plugin_RSP).c_str()) != 0;
+    bool bContChange = _stricmp(_this->m_ControlFile.c_str(), g_Settings->LoadStringVal(Cmd_Plugin_Controller).c_str()) != 0;
 
     if (bGfxChange || bAudioChange || bRspChange || bContChange)
     {
@@ -269,10 +269,10 @@ bool CPlugins::Reset(CN64System * System)
 {
     WriteTrace(TracePlugins, TraceDebug, "Start");
 
-    bool bGfxChange = _stricmp(m_GfxFile.c_str(), g_Settings->LoadStringVal(Game_Plugin_Gfx).c_str()) != 0;
-    bool bAudioChange = _stricmp(m_AudioFile.c_str(), g_Settings->LoadStringVal(Game_Plugin_Audio).c_str()) != 0;
-    bool bRspChange = _stricmp(m_RSPFile.c_str(), g_Settings->LoadStringVal(Game_Plugin_RSP).c_str()) != 0;
-    bool bContChange = _stricmp(m_ControlFile.c_str(), g_Settings->LoadStringVal(Game_Plugin_Controller).c_str()) != 0;
+    bool bGfxChange = _stricmp(m_GfxFile.c_str(), g_Settings->LoadStringVal(Cmd_Plugin_Gfx).c_str()) != 0;
+    bool bAudioChange = _stricmp(m_AudioFile.c_str(), g_Settings->LoadStringVal(Cmd_Plugin_Audio).c_str()) != 0;
+    bool bRspChange = _stricmp(m_RSPFile.c_str(), g_Settings->LoadStringVal(Cmd_Plugin_RSP).c_str()) != 0;
+    bool bContChange = _stricmp(m_ControlFile.c_str(), g_Settings->LoadStringVal(Cmd_Plugin_Controller).c_str()) != 0;
 
     //if GFX and Audio has changed we also need to force reset of RSP
     if (bGfxChange || bAudioChange)
@@ -375,8 +375,8 @@ void DummyFunction(void)
 bool CPlugins::CopyPlugins(const stdstr & DstDir) const
 {
     //Copy GFX Plugin
-    CPath srcGfxPlugin(m_PluginDir.c_str(), g_Settings->LoadStringVal(Game_Plugin_Gfx).c_str());
-    CPath dstGfxPlugin(DstDir.c_str(), g_Settings->LoadStringVal(Game_Plugin_Gfx).c_str());
+    CPath srcGfxPlugin(m_PluginDir.c_str(), g_Settings->LoadStringVal(Cmd_Plugin_Gfx).c_str());
+    CPath dstGfxPlugin(DstDir.c_str(), g_Settings->LoadStringVal(Cmd_Plugin_Gfx).c_str());
 
     if (!dstGfxPlugin.DirectoryExists())
     {
@@ -388,8 +388,8 @@ bool CPlugins::CopyPlugins(const stdstr & DstDir) const
     }
 
     //Copy m_Audio Plugin
-    CPath srcAudioPlugin(m_PluginDir.c_str(), g_Settings->LoadStringVal(Game_Plugin_Audio).c_str());
-    CPath dstAudioPlugin(DstDir.c_str(), g_Settings->LoadStringVal(Game_Plugin_Audio).c_str());
+    CPath srcAudioPlugin(m_PluginDir.c_str(), g_Settings->LoadStringVal(Cmd_Plugin_Audio).c_str());
+    CPath dstAudioPlugin(DstDir.c_str(), g_Settings->LoadStringVal(Cmd_Plugin_Audio).c_str());
     if (!dstAudioPlugin.DirectoryExists())
     {
         dstAudioPlugin.DirectoryCreate();
@@ -400,8 +400,8 @@ bool CPlugins::CopyPlugins(const stdstr & DstDir) const
     }
 
     //Copy RSP Plugin
-    CPath srcRSPPlugin(m_PluginDir.c_str(), g_Settings->LoadStringVal(Game_Plugin_RSP).c_str());
-    CPath dstRSPPlugin(DstDir.c_str(), g_Settings->LoadStringVal(Game_Plugin_RSP).c_str());
+    CPath srcRSPPlugin(m_PluginDir.c_str(), g_Settings->LoadStringVal(Cmd_Plugin_RSP).c_str());
+    CPath dstRSPPlugin(DstDir.c_str(), g_Settings->LoadStringVal(Cmd_Plugin_RSP).c_str());
     if (!dstRSPPlugin.DirectoryExists())
     {
         dstRSPPlugin.DirectoryCreate();
@@ -412,8 +412,8 @@ bool CPlugins::CopyPlugins(const stdstr & DstDir) const
     }
 
     //Copy Controller Plugin
-    CPath srcContPlugin(m_PluginDir.c_str(), g_Settings->LoadStringVal(Game_Plugin_Controller).c_str());
-    CPath dstContPlugin(DstDir.c_str(), g_Settings->LoadStringVal(Game_Plugin_Controller).c_str());
+    CPath srcContPlugin(m_PluginDir.c_str(), g_Settings->LoadStringVal(Cmd_Plugin_Controller).c_str());
+    CPath dstContPlugin(DstDir.c_str(), g_Settings->LoadStringVal(Cmd_Plugin_Controller).c_str());
     if (!dstContPlugin.DirectoryExists())
     {
         dstContPlugin.DirectoryCreate();

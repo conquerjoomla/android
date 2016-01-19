@@ -93,6 +93,10 @@ void CSettings::AddHowToHandleSetting()
 #endif
     AddHandler(Cmd_ShowHelp, new CSettingTypeTempBool(false));
     AddHandler(Cmd_RomFile, new CSettingTypeTempString(""));
+    AddHandler(Cmd_Plugin_Gfx, new CSettingTypeTempString(Game_Plugin_Gfx));
+    AddHandler(Cmd_Plugin_Audio, new CSettingTypeTempString(Game_Plugin_Audio));
+    AddHandler(Cmd_Plugin_Controller, new CSettingTypeTempString(Game_Plugin_Controller));
+    AddHandler(Cmd_Plugin_RSP, new CSettingTypeTempString(Game_Plugin_RSP));
 
     //Support Files
     AddHandler(SupportFile_Settings, new CSettingTypeApplicationPath("", "ConfigFile", SupportFile_SettingsDefault));

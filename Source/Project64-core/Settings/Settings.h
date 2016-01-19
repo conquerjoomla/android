@@ -26,6 +26,10 @@ enum SettingID
 
     //Command Settings
     Cmd_BaseDirectory,
+    Cmd_Plugin_Gfx,
+    Cmd_Plugin_Audio,
+    Cmd_Plugin_Controller,
+    Cmd_Plugin_RSP,
     Cmd_RomFile,
     Cmd_ShowHelp,
 
