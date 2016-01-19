@@ -19,5 +19,11 @@
 		<copy todir="./jni/RSP-hle/">
 		    <fileset dir="../RSP-hle"/>
 		</copy>
-	</target>
+		<copy todir="./jni/Glitch64/">
+		    <fileset dir="../Glitch64"/>
+		</copy>
+		<copy todir="./jni/Glide64/">
+		    <fileset dir="../Glide64"/>
+		</copy>
+			</target>
 </project>

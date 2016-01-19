@@ -20,7 +20,6 @@ static bool TranslateFromMemProtect(MEM_PROTECTION memProtection, int & OsMemPro
     }
     return true;
 }
-#endif
 
 static bool TranslateToMemProtect(int OsMemProtection, MEM_PROTECTION & memProtection)
 {
@@ -35,6 +34,7 @@ static bool TranslateToMemProtect(int OsMemProtection, MEM_PROTECTION & memProte
     }
     return true;
 }
+#endif
 
 void* AllocateAddressSpace(size_t size)
 {

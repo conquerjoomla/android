@@ -261,21 +261,21 @@ bool CN64System::EmulationStarting(void * hThread, uint32_t ThreadId)
         g_BaseSystem->m_CPU_ThreadID = ThreadId;
         WriteTrace(TraceN64System, TraceDebug, "Setting up N64 system done");
         g_Settings->SaveBool(GameRunning_LoadingInProgress, false);
-        try
+		__except_try()
         {
             WriteTrace(TraceN64System, TraceDebug, "Game starting");
             g_BaseSystem->StartEmulation2(false);
             WriteTrace(TraceN64System, TraceDebug, "Game Done");
         }
-        catch (...)
+		__except_catch()
         {
-            g_Notify->DisplayError(stdstr_f(__FUNCTION__ ": Exception caught\nFile: %s\nLine: %d", __FILE__, __LINE__).c_str());
+            g_Notify->DisplayError(stdstr_f("%s: Exception caught\nFile: %s\nLine: %d", __FUNCTION__, __FILE__, __LINE__).c_str());
         }
     }
     else
     {
         WriteTrace(TraceN64System, TraceError, "SetActiveSystem failed");
-        g_Notify->DisplayError(__FUNCTION__ ": Failed to Initialize N64 System");
+        g_Notify->DisplayError(stdstr_f("%s: Failed to Initialize N64 System",__FUNCTION__).c_str());
         g_Settings->SaveBool(GameRunning_LoadingInProgress, false);
         bRes = false;
     }
@@ -1772,7 +1772,7 @@ void CN64System::RunRSP()
             __except_catch()
             {
                 WriteTrace(TraceRSP, TraceError, "exception generated");
-                g_Notify->FatalError(__FUNCTION__ "\nUnknown memory action\n\nEmulation stop");
+                g_Notify->FatalError(stdstr_f("%s\nUnknown memory action\n\nEmulation stop",__FUNCTION__).c_str());
             }
 
             if (Task == 1 && bDelayDP() && ((m_Reg.m_GfxIntrReg & MI_INTR_DP) != 0))
@@ -1867,13 +1867,13 @@ void CN64System::RefreshScreen()
     if (bShowCPUPer()) { m_CPU_Usage.StartTimer(Timer_UpdateScreen); }
     //	if (bProfiling)    { m_Profile.StartTimer(Timer_UpdateScreen); }
 
-    __try
+	__except_try()
     {
         WriteTrace(TraceGFXPlugin, TraceDebug, "Starting");
         g_Plugins->Gfx()->UpdateScreen();
         WriteTrace(TraceGFXPlugin, TraceDebug, "Done");
     }
-    __except (g_MMU->MemoryFilter(GetExceptionCode(), GetExceptionInformation()))
+    __except_catch()
     {
         WriteTrace(TraceGFXPlugin, TraceError, "Exception caught");
     }
