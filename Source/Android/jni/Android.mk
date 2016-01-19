@@ -2,6 +2,7 @@ JNI_LOCAL_PATH := $(call my-dir)
 
 AE_BRIDGE_INCLUDES := $(JNI_LOCAL_PATH)/ae-bridge/
 SDL_INCLUDES := $(JNI_LOCAL_PATH)/SDL2/include/
+PNG_INCLUDES := $(JNI_LOCAL_PATH)/png/include/
 PJ64_SRC := $(JNI_LOCAL_PATH)/
 
 COMMON_CFLAGS :=                    \
@@ -19,8 +20,10 @@ COMMON_CPPFLAGS :=                  \
     -fvisibility-inlines-hidden     \
     -fexceptions                    \
 
+include $(JNI_LOCAL_PATH)/SDL2/Android.mk
 include $(JNI_LOCAL_PATH)/Common/common.mk
 include $(JNI_LOCAL_PATH)/RSP-hle/rsp-hle.mk
 include $(JNI_LOCAL_PATH)/Project64-core/Project64-core.mk
 include $(JNI_LOCAL_PATH)/Project64-console/Project64-console.mk
 include $(JNI_LOCAL_PATH)/ae-bridge/Android.mk
+include $(JNI_LOCAL_PATH)/mupen64plus-video-glide64mk2.mk

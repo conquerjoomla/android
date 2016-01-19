@@ -55,7 +55,7 @@ void CFlashram::DmaFromFlashram(uint8_t * dest, int32_t StartOffset, int32_t len
         {
             if (bHaveDebugger())
             {
-                g_Notify->DisplayError(stdstr_f(__FUNCTION__ ": DmaFromFlashram FlipBuffer to small (len: %d)", len).c_str());
+                g_Notify->DisplayError(stdstr_f("%s: DmaFromFlashram FlipBuffer to small (len: %d)", __FUNCTION__, len).c_str());
             }
             len = 0x10000;
         }
@@ -63,7 +63,7 @@ void CFlashram::DmaFromFlashram(uint8_t * dest, int32_t StartOffset, int32_t len
         {
             if (bHaveDebugger())
             {
-                g_Notify->DisplayError(__FUNCTION__ ": Unaligned flash ram read ???");
+                g_Notify->DisplayError(stdstr_f("%s: Unaligned flash ram read ???", __FUNCTION__).c_str());
             }
             return;
         }
@@ -91,7 +91,7 @@ void CFlashram::DmaFromFlashram(uint8_t * dest, int32_t StartOffset, int32_t len
         {
             if (bHaveDebugger())
             {
-                g_Notify->DisplayError(stdstr_f(__FUNCTION__ ": Reading m_FlashStatus not being handled correctly\nStart: %X len: %X", StartOffset, len).c_str());
+                g_Notify->DisplayError(stdstr_f("%s: Reading m_FlashStatus not being handled correctly\nStart: %X len: %X", __FUNCTION__, StartOffset, len).c_str());
             }
         }
         *((uint32_t *)(dest)) = (uint32_t)((m_FlashStatus >> 32) & 0xFFFFFFFF);
@@ -100,7 +100,7 @@ void CFlashram::DmaFromFlashram(uint8_t * dest, int32_t StartOffset, int32_t len
     default:
         if (bHaveDebugger())
         {
-            g_Notify->DisplayError(stdstr_f(__FUNCTION__": Start: %X, Offset: %X len: %X", dest - g_MMU->Rdram(), StartOffset, len).c_str());
+            g_Notify->DisplayError(stdstr_f("%s: Start: %X, Offset: %X len: %X", __FUNCTION__, dest - g_MMU->Rdram(), StartOffset, len).c_str());
         }
     }
 #endif
