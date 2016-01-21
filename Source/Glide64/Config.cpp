@@ -47,13 +47,11 @@
 #include "Gfx_1.3.h"
 #include "DepthBufferRender.h"
 #include "Config.h"
-#include <wx/file.h>
-#include <wx/dir.h>
 // begin wxGlade: ::extracode
 // end wxGlade
 
 short Set_basic_mode = 0, Set_texture_dir = 0;
-
+#ifdef tofix
 ConfigNotebook::ConfigNotebook(wxWindow* parent, int id, const wxPoint& pos, const wxSize& size, long /*style*/):
     wxNotebook(parent, id, pos, size, 0)
 {
@@ -1019,6 +1017,7 @@ void Glide64ConfigDialog::do_layout()
 #endif
     // end wxGlade
 }
+#endif
 
 #ifdef TEXTURE_FILTER
 uint32_t texfltr[] = {
@@ -1058,7 +1057,9 @@ uint32_t texhirs[] = {
 };
 #endif
 
+#ifdef tofix
 wxWindow * hostWindow = NULL;
+#endif
 
 /******************************************************************
 Function: DllConfig
@@ -1070,6 +1071,11 @@ output:   none
 void CALL DllConfig ( HWND hParent )
 {
     LOG ("DllConfig ()\n");
+
+#ifdef tofix
+    CPropertySheetWindow ConfigWindow;
+
+#ifdef tofix
     csProcessDList->enter();
     ReadSettings();
 
@@ -1109,8 +1115,11 @@ void CALL DllConfig ( HWND hParent )
     Glide64Config->ShowModal();
     delete hostWindow;
     hostWindow = NULL;
+#endif
+#endif
 }
 
+#ifdef tofix
 /*#ifndef _DEBUG
 //#if 1
 #ifndef  __GNUG__
@@ -1262,28 +1271,14 @@ void CALL DllAbout ( HWND hParent )
     hostWindow = NULL;
 #endif
 }
+#endif
 
 void general_setting(short setting_ID, const char * name, unsigned int value)
 {
-    RegisterSetting(
-        setting_ID,
-        Data_DWORD_General,
-        name,
-        NULL,
-        value,
-        NULL
-        );
-    return;
+    RegisterSetting( setting_ID, Data_DWORD_General, name, NULL, value, NULL );
 }
+
 void game_setting(short setting_ID, const char * name, unsigned int value)
 {
-    RegisterSetting(
-        setting_ID,
-        Data_DWORD_Game,
-        name,
-        NULL,
-        value,
-        NULL
-        );
-    return;
+    RegisterSetting( setting_ID, Data_DWORD_Game, name, NULL, value, NULL );
 }
