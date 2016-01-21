@@ -37,7 +37,6 @@
 //
 //****************************************************************
 
-#include <Common/StdString.h>
 #include "Gfx_1.3.h"
 #include "Version.h"
 #include <Settings/Settings.h>
@@ -51,6 +50,7 @@
 #include "CRC.h"
 #include "FBtoScreen.h"
 #include "DepthBufferRender.h"
+#include <Common/StdString.h>
 
 #ifdef TEXTURE_FILTER // Hiroshi Morii <koolsmoky@users.sourceforge.net>
 #include <stdarg.h>
@@ -87,7 +87,7 @@ int exception = FALSE;
 int evoodoo = 0;
 int ev_fullscreen = 0;
 
-#ifdef __WINDOWS__
+#ifdef _WIN32
 #define WINPROC_OVERRIDE
 HINSTANCE hinstDLL = NULL;
 #endif
@@ -101,7 +101,7 @@ WNDPROC myWndProc = NULL;
 #ifdef ALTTAB_FIX
 HHOOK hhkLowLevelKybd = NULL;
 LRESULT CALLBACK LowLevelKeyboardProc(int nCode,
-    WPARAM wParam, LPARAM lParam);
+                                      WPARAM wParam, LPARAM lParam);
 #endif
 
 #ifdef PERFORMANCE
@@ -169,8 +169,8 @@ SETTINGS settings = { FALSE, 640, 480, GR_RESOLUTION_640x480, 0 };
 HOTKEY_INFO hotkey_info;
 
 VOODOO voodoo = { 0, 0, 0, 0,
-0, 0, 0, 0,
-0, 0, 0, 0
+    0, 0, 0, 0,
+    0, 0, 0, 0
 };
 
 GrTexInfo fontTex;
@@ -1166,13 +1166,14 @@ int DllUnload(void)
     wxEntryCleanup();
     return TRUE;
 }
+#endif
 
-#ifdef __WINDOWS__
+#ifdef _WIN32
+#ifdef tofix
 void wxSetInstance(HINSTANCE hInstance);
+#endif
 
-extern "C" int WINAPI DllMain(HINSTANCE hinst,
-    DWORD fdwReason,
-    LPVOID /*lpReserved*/)
+extern "C" int WINAPI DllMain(HINSTANCE hinst, DWORD fdwReason, LPVOID /*lpReserved*/)
 {
     sprintf(out_buf, "DllMain (%0p - %d)\n", hinst, fdwReason);
     LOG(out_buf);
@@ -1180,16 +1181,21 @@ extern "C" int WINAPI DllMain(HINSTANCE hinst,
     if (fdwReason == DLL_PROCESS_ATTACH)
     {
         hinstDLL = hinst;
+        ConfigInit(hinst);
+#ifdef tofix
         wxSetInstance(hinstDLL);
         return DllLoad();
+#endif
     }
     else if (fdwReason == DLL_PROCESS_DETACH)
     {
+        ConfigCleanup();
+#ifdef tofix
         return DllUnload();
+#endif
     }
     return TRUE;
 }
-#endif
 #endif
 
 void CALL ReadScreen(void **dest, int *width, int *height)
@@ -1647,14 +1653,14 @@ static void CheckDRAMSize()
     {
         test = gfx.RDRAM[0x007FFFFF] + 1;
     }
-        GLIDE64_CATCH
+    GLIDE64_CATCH
     {
         test = 0;
     }
-        if (test)
-            BMASK = 0x7FFFFF;
-        else
-            BMASK = WMASK;
+    if (test)
+        BMASK = 0x7FFFFF;
+    else
+        BMASK = WMASK;
 #ifdef LOGGING
     sprintf(out_buf, "Detected RDRAM size: %08lx\n", BMASK);
     LOG(out_buf);
@@ -2343,7 +2349,7 @@ int CheckKeyPressed(int key, int mask)
 int k_ctl = 0, k_alt = 0, k_del = 0;
 
 LRESULT CALLBACK LowLevelKeyboardProc(int nCode,
-    WPARAM wParam, LPARAM lParam)
+                                      WPARAM wParam, LPARAM lParam)
 {
     if (!fullscreen) return CallNextHookEx(NULL, nCode, wParam, lParam);
 
@@ -2368,7 +2374,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode,
             if (p->vkCode == 46) k_del = 1;
             goto do_it;
 
-        do_it:
+do_it:
             TabKey =
                 ((p->vkCode == VK_TAB) && ((p->flags & LLKHF_ALTDOWN) != 0)) ||
                 ((p->vkCode == VK_ESCAPE) && ((p->flags & LLKHF_ALTDOWN) != 0)) ||

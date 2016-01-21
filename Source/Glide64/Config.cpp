@@ -50,6 +50,51 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
+#ifdef _WIN32
+#define _ATL_DISABLE_NOTHROW_NEW
+#include <atlbase.h>
+#pragma warning(push)
+#pragma warning(disable : 4996) // warning C4996: 'GetVersionExA': was declared deprecated
+#include <wtl/atlapp.h>
+#pragma warning(pop)
+
+#include <atlwin.h>
+#include <wtl/atldlgs.h>
+
+extern HINSTANCE hinstDLL;
+
+class CGlide64WtlModule :
+    public CAppModule
+{
+public:
+    CGlide64WtlModule(HINSTANCE hinst)
+    {
+        Init(NULL, hinst);
+    }
+    virtual ~CGlide64WtlModule(void)
+    {
+        Term();
+    }
+};
+
+CGlide64WtlModule * WtlModule = NULL;
+
+void ConfigInit ( HINSTANCE hinst )
+{
+    WtlModule = new CGlide64WtlModule(hinst);
+}
+
+void ConfigCleanup ( void )
+{
+    if (WtlModule)
+    {
+        delete WtlModule;
+        WtlModule = NULL;
+    }
+}
+
+#endif
+
 short Set_basic_mode = 0, Set_texture_dir = 0;
 #ifdef tofix
 ConfigNotebook::ConfigNotebook(wxWindow* parent, int id, const wxPoint& pos, const wxSize& size, long /*style*/):
@@ -1071,9 +1116,8 @@ output:   none
 void CALL DllConfig ( HWND hParent )
 {
     LOG ("DllConfig ()\n");
-
-#ifdef tofix
     CPropertySheetWindow ConfigWindow;
+#ifdef tofix
 
 #ifdef tofix
     csProcessDList->enter();

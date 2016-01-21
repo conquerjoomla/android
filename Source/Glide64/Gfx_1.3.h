@@ -296,11 +296,11 @@ extern "C" {
     /* Plugin types */
 #define PLUGIN_TYPE_GFX				2
 
-#ifdef __WINDOWS__
-#define EXPORT					__declspec(dllexport)
-#define CALL						_cdecl
+#ifdef _WIN32
+#define EXPORT      extern "C" __declspec(dllexport)
+#define CALL        __cdecl
 #else
-#define EXPORT					extern
+#define EXPORT      __attribute__((visibility("default")))
 #define CALL
 #endif
 
@@ -311,7 +311,7 @@ extern "C" {
         char Name[100];      /* Name of the DLL */
 
         /* If DLL supports memory these memory options then set them to TRUE or FALSE
-           if it does not support it */
+        if it does not support it */
         int NormalMemory;    /* a normal uint8_t array */
         int MemoryBswaped;  /* a normal uint8_t array where the memory has been pre
                             bswap on a dword (32 bits) boundry */
@@ -410,193 +410,193 @@ extern "C" {
     void WriteSettings(bool saveEmulationSettings = false);
 
     /******************************************************************
-      Function: CaptureScreen
-      Purpose:  This function dumps the current frame to a file
-      input:    pointer to the directory to save the file to
-      output:   none
-      *******************************************************************/
+    Function: CaptureScreen
+    Purpose:  This function dumps the current frame to a file
+    input:    pointer to the directory to save the file to
+    output:   none
+    *******************************************************************/
     EXPORT void CALL CaptureScreen(char * Directory);
 
     /******************************************************************
-      Function: ChangeWindow
-      Purpose:  to change the window between fullscreen and window
-      mode. If the window was in fullscreen this should
-      change the screen to window mode and vice vesa.
-      input:    none
-      output:   none
-      *******************************************************************/
+    Function: ChangeWindow
+    Purpose:  to change the window between fullscreen and window
+    mode. If the window was in fullscreen this should
+    change the screen to window mode and vice vesa.
+    input:    none
+    output:   none
+    *******************************************************************/
     EXPORT void CALL ChangeWindow(void);
 
     /******************************************************************
-      Function: CloseDLL
-      Purpose:  This function is called when the emulator is closing
-      down allowing the dll to de-initialise.
-      input:    none
-      output:   none
-      *******************************************************************/
+    Function: CloseDLL
+    Purpose:  This function is called when the emulator is closing
+    down allowing the dll to de-initialise.
+    input:    none
+    output:   none
+    *******************************************************************/
     EXPORT void CALL CloseDLL(void);
 
     /******************************************************************
-      Function: DllAbout
-      Purpose:  This function is optional function that is provided
-      to give further information about the DLL.
-      input:    a handle to the window that calls this function
-      output:   none
-      *******************************************************************/
+    Function: DllAbout
+    Purpose:  This function is optional function that is provided
+    to give further information about the DLL.
+    input:    a handle to the window that calls this function
+    output:   none
+    *******************************************************************/
     EXPORT void CALL DllAbout(HWND hParent);
 
     /******************************************************************
-      Function: DllConfig
-      Purpose:  This function is optional function that is provided
-      to allow the user to configure the dll
-      input:    a handle to the window that calls this function
-      output:   none
-      *******************************************************************/
+    Function: DllConfig
+    Purpose:  This function is optional function that is provided
+    to allow the user to configure the dll
+    input:    a handle to the window that calls this function
+    output:   none
+    *******************************************************************/
     EXPORT void CALL DllConfig(HWND hParent);
 
     /******************************************************************
-      Function: DllTest
-      Purpose:  This function is optional function that is provided
-      to allow the user to test the dll
-      input:    a handle to the window that calls this function
-      output:   none
-      *******************************************************************/
+    Function: DllTest
+    Purpose:  This function is optional function that is provided
+    to allow the user to test the dll
+    input:    a handle to the window that calls this function
+    output:   none
+    *******************************************************************/
     EXPORT void CALL DllTest(HWND hParent);
 
     EXPORT void CALL ReadScreen(void **dest, int *width, int *height);
 
     /******************************************************************
-      Function: DrawScreen
-      Purpose:  This function is called when the emulator receives a
-      WM_PAINT message. This allows the gfx to fit in when
-      it is being used in the desktop.
-      input:    none
-      output:   none
-      *******************************************************************/
+    Function: DrawScreen
+    Purpose:  This function is called when the emulator receives a
+    WM_PAINT message. This allows the gfx to fit in when
+    it is being used in the desktop.
+    input:    none
+    output:   none
+    *******************************************************************/
     EXPORT void CALL DrawScreen(void);
 
     /******************************************************************
-      Function: GetDllInfo
-      Purpose:  This function allows the emulator to gather information
-      about the dll by filling in the PluginInfo structure.
-      input:    a pointer to a PLUGIN_INFO stucture that needs to be
-      filled by the function. (see def above)
-      output:   none
-      *******************************************************************/
+    Function: GetDllInfo
+    Purpose:  This function allows the emulator to gather information
+    about the dll by filling in the PluginInfo structure.
+    input:    a pointer to a PLUGIN_INFO stucture that needs to be
+    filled by the function. (see def above)
+    output:   none
+    *******************************************************************/
     EXPORT void CALL GetDllInfo(PLUGIN_INFO * PluginInfo);
 
     /******************************************************************
-      Function: InitiateGFX
-      Purpose:  This function is called when the DLL is started to give
-      information from the emulator that the n64 graphics
-      uses. This is not called from the emulation thread.
-      Input:    Gfx_Info is passed to this function which is defined
-      above.
-      Output:   TRUE on success
-      FALSE on failure to initialise
+    Function: InitiateGFX
+    Purpose:  This function is called when the DLL is started to give
+    information from the emulator that the n64 graphics
+    uses. This is not called from the emulation thread.
+    Input:    Gfx_Info is passed to this function which is defined
+    above.
+    Output:   TRUE on success
+    FALSE on failure to initialise
 
-      ** note on interrupts **:
-      To generate an interrupt set the appropriate bit in MI_INTR_REG
-      and then call the function CheckInterrupts to tell the emulator
-      that there is a waiting interrupt.
-      *******************************************************************/
+    ** note on interrupts **:
+    To generate an interrupt set the appropriate bit in MI_INTR_REG
+    and then call the function CheckInterrupts to tell the emulator
+    that there is a waiting interrupt.
+    *******************************************************************/
     EXPORT int CALL InitiateGFX(GFX_INFO Gfx_Info);
 
     /******************************************************************
-      Function: MoveScreen
-      Purpose:  This function is called in response to the emulator
-      receiving a WM_MOVE passing the xpos and ypos passed
-      from that message.
-      input:    xpos - the x-coordinate of the upper-left corner of the
-      client area of the window.
-      ypos - y-coordinate of the upper-left corner of the
-      client area of the window.
-      output:   none
-      *******************************************************************/
+    Function: MoveScreen
+    Purpose:  This function is called in response to the emulator
+    receiving a WM_MOVE passing the xpos and ypos passed
+    from that message.
+    input:    xpos - the x-coordinate of the upper-left corner of the
+    client area of the window.
+    ypos - y-coordinate of the upper-left corner of the
+    client area of the window.
+    output:   none
+    *******************************************************************/
     EXPORT void CALL MoveScreen(int xpos, int ypos);
 
     /******************************************************************
-      Function: ProcessDList
-      Purpose:  This function is called when there is a Dlist to be
-      processed. (High level GFX list)
-      input:    none
-      output:   none
-      *******************************************************************/
+    Function: ProcessDList
+    Purpose:  This function is called when there is a Dlist to be
+    processed. (High level GFX list)
+    input:    none
+    output:   none
+    *******************************************************************/
     EXPORT void CALL ProcessDList(void);
 
     /******************************************************************
-      Function: ProcessRDPList
-      Purpose:  This function is called when there is a Dlist to be
-      processed. (Low level GFX list)
-      input:    none
-      output:   none
-      *******************************************************************/
+    Function: ProcessRDPList
+    Purpose:  This function is called when there is a Dlist to be
+    processed. (Low level GFX list)
+    input:    none
+    output:   none
+    *******************************************************************/
     EXPORT void CALL ProcessRDPList(void);
 
     /******************************************************************
-      Function: RomClosed
-      Purpose:  This function is called when a rom is closed.
-      input:    none
-      output:   none
-      *******************************************************************/
+    Function: RomClosed
+    Purpose:  This function is called when a rom is closed.
+    input:    none
+    output:   none
+    *******************************************************************/
     EXPORT void CALL RomClosed(void);
 
     /******************************************************************
-      Function: RomOpen
-      Purpose:  This function is called when a rom is open. (from the
-      emulation thread)
-      input:    none
-      output:   none
-      *******************************************************************/
+    Function: RomOpen
+    Purpose:  This function is called when a rom is open. (from the
+    emulation thread)
+    input:    none
+    output:   none
+    *******************************************************************/
     EXPORT void CALL RomOpen(void);
 
     /******************************************************************
-      Function: ShowCFB
-      Purpose:  Useally once Dlists are started being displayed, cfb is
-      ignored. This function tells the dll to start displaying
-      them again.
-      input:    none
-      output:   none
-      *******************************************************************/
+    Function: ShowCFB
+    Purpose:  Useally once Dlists are started being displayed, cfb is
+    ignored. This function tells the dll to start displaying
+    them again.
+    input:    none
+    output:   none
+    *******************************************************************/
     EXPORT void CALL ShowCFB(void);
 
     /******************************************************************
-      Function: UpdateScreen
-      Purpose:  This function is called in response to a vsync of the
-      screen were the VI bit in MI_INTR_REG has already been
-      set
-      input:    none
-      output:   none
-      *******************************************************************/
+    Function: UpdateScreen
+    Purpose:  This function is called in response to a vsync of the
+    screen were the VI bit in MI_INTR_REG has already been
+    set
+    input:    none
+    output:   none
+    *******************************************************************/
     EXPORT void CALL UpdateScreen(void);
 
     /******************************************************************
-      Function: ViStatusChanged
-      Purpose:  This function is called to notify the dll that the
-      ViStatus registers value has been changed.
-      input:    none
-      output:   none
-      *******************************************************************/
+    Function: ViStatusChanged
+    Purpose:  This function is called to notify the dll that the
+    ViStatus registers value has been changed.
+    input:    none
+    output:   none
+    *******************************************************************/
     EXPORT void CALL ViStatusChanged(void);
 
     /******************************************************************
-      Function: ViWidthChanged
-      Purpose:  This function is called to notify the dll that the
-      ViWidth registers value has been changed.
-      input:    none
-      output:   none
-      *******************************************************************/
+    Function: ViWidthChanged
+    Purpose:  This function is called to notify the dll that the
+    ViWidth registers value has been changed.
+    input:    none
+    output:   none
+    *******************************************************************/
     EXPORT void CALL ViWidthChanged(void);
 
     /******************************************************************
-      Function: FrameBufferWrite
-      Purpose:  This function is called to notify the dll that the
-      frame buffer has been modified by CPU at the given address.
-      input:    addr		rdram address
-      val			val
-      size		1 = wxUint8, 2 = wxUint16, 4 = uint32_t
-      output:   none
-      *******************************************************************/
+    Function: FrameBufferWrite
+    Purpose:  This function is called to notify the dll that the
+    frame buffer has been modified by CPU at the given address.
+    input:    addr		rdram address
+    val			val
+    size		1 = wxUint8, 2 = wxUint16, 4 = uint32_t
+    output:   none
+    *******************************************************************/
     EXPORT void CALL FBWrite(uint32_t, uint32_t);
 
     typedef struct
@@ -607,30 +607,30 @@ extern "C" {
     } FrameBufferModifyEntry;
 
     /******************************************************************
-      Function: FrameBufferWriteList
-      Purpose:  This function is called to notify the dll that the
-      frame buffer has been modified by CPU at the given address.
-      input:    FrameBufferModifyEntry *plist
-      size = size of the plist, max = 1024
-      output:   none
-      *******************************************************************/
+    Function: FrameBufferWriteList
+    Purpose:  This function is called to notify the dll that the
+    frame buffer has been modified by CPU at the given address.
+    input:    FrameBufferModifyEntry *plist
+    size = size of the plist, max = 1024
+    output:   none
+    *******************************************************************/
     EXPORT void CALL FBWList(FrameBufferModifyEntry *plist, uint32_t size);
 
     /******************************************************************
-      Function: FrameBufferRead
-      Purpose:  This function is called to notify the dll that the
-      frame buffer memory is beening read at the given address.
-      DLL should copy content from its render buffer to the frame buffer
-      in N64 RDRAM
-      DLL is responsible to maintain its own frame buffer memory addr list
-      DLL should copy 4KB block content back to RDRAM frame buffer.
-      Emulator should not call this function again if other memory
-      is read within the same 4KB range
-      input:    addr		rdram address
-      val			val
-      size		1 = wxUint8, 2 = wxUint16, 4 = uint32_t
-      output:   none
-      *******************************************************************/
+    Function: FrameBufferRead
+    Purpose:  This function is called to notify the dll that the
+    frame buffer memory is beening read at the given address.
+    DLL should copy content from its render buffer to the frame buffer
+    in N64 RDRAM
+    DLL is responsible to maintain its own frame buffer memory addr list
+    DLL should copy 4KB block content back to RDRAM frame buffer.
+    Emulator should not call this function again if other memory
+    is read within the same 4KB range
+    input:    addr		rdram address
+    val			val
+    size		1 = wxUint8, 2 = wxUint16, 4 = uint32_t
+    output:   none
+    *******************************************************************/
     EXPORT void CALL FBRead(uint32_t addr);
 
     /************************************************************************
