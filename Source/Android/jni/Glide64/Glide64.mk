@@ -18,7 +18,7 @@ LOCAL_C_INCLUDES :=                             \
 LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/Glitch64/OGLEScombiner.cpp        \
     $(SRCDIR)/Glitch64/OGLESgeometry.cpp        \
-    $(SRCDIR)/Glitch64/OGLESglitchmain.cpp      \
+#    $(SRCDIR)/Glitch64/OGLESglitchmain.cpp      \
     $(SRCDIR)/Glitch64/OGLEStextures.cpp        \
     $(SRCDIR)/Glide64/osal_dynamiclib_unix.c    \
     $(SRCDIR)/Glide64/3dmath.cpp                \
@@ -66,8 +66,6 @@ LOCAL_CFLAGS :=         \
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
     
 LOCAL_CPP_FEATURES := exceptions
-
-LOCAL_LDFLAGS := -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/video_api_export.ver
 
 LOCAL_LDLIBS :=         \
     -ldl                \
