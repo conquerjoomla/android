@@ -39,9 +39,6 @@
 #include "glitchmain.h"
 #include "m64p.h"
 
-#include <SDL_opengles.h>
-//#include <GL/glext.h>
-
 #define OPENGL_CHECK_ERRORS { const GLenum errcode = glGetError(); if (errcode != GL_NO_ERROR) LOG("OpenGL Error code %i in '%s' line %i\n", errcode, __FILE__, __LINE__-1); }
 
 #ifdef VPDEBUG
@@ -206,8 +203,8 @@ struct texbuf_t {
 static texbuf_t texbufs[NB_TEXBUFS];
 static int texbuf_i;
 
-unsigned short frameBuffer[2048*2048];
-unsigned short depthBuffer[2048*2048];
+unsigned short frameBuffer[2048*2048*2]; // Support 2048x2048 screen resolution at 32 bits (RGBA) per pixel
+unsigned short depthBuffer[2048*2048];   // Support 2048x2048 screen resolution at 16 bits (depth) per pixel
 
 //#define VOODOO1
 
@@ -257,7 +254,7 @@ void display_error()
 #endif // _WIN32
 
 #ifdef LOGGING
-char out_buf[256];
+char log_buf[256];
 bool log_open = false;
 std::ofstream log_file;
 
@@ -288,8 +285,8 @@ void LOG(const char *text, ...)
     return;
 	va_list ap;
 	va_start(ap, text);
-	vsprintf(out_buf, text, ap);
-  log_file << out_buf;
+	vsprintf(log_buf, text, ap);
+  log_file << log_buf;
   log_file.flush();
 	va_end(ap);
 }
@@ -309,7 +306,7 @@ LogManager logManager;
 #else // LOGGING
 #define OPEN_LOG()
 #define CLOSE_LOG()
-//#define LOG
+#define LOG(...)
 #endif // LOGGING
 
 FX_ENTRY void FX_CALL
@@ -456,7 +453,7 @@ grSstWinOpenExt(
     origin_location, nColBuffers, nAuxBuffers);
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 # include <fcntl.h>
 # ifndef ATTACH_PARENT_PROCESS
 #  define ATTACH_PARENT_PROCESS ((FxU32)-1)
@@ -491,6 +488,7 @@ grSstWinOpen(
 #endif // _WIN32
   width = height = 0;
 
+#ifdef tofix
   m64p_handle video_general_section;
   printf("&ConfigOpenSection is %p\n", &ConfigOpenSection);
   if (ConfigOpenSection("Video-General", &video_general_section) != M64ERR_SUCCESS)
@@ -502,10 +500,12 @@ grSstWinOpen(
   height = ConfigGetParamInt(video_general_section, "ScreenHeight");
   fullscreen = ConfigGetParamBool(video_general_section, "Fullscreen");
   int vsync = ConfigGetParamBool(video_general_section, "VerticalSync");
+#endif
   //viewport_offset = ((screen_resolution>>2) > 20) ? screen_resolution >> 2 : 20;
   // ZIGGY viewport_offset is WIN32 specific, with SDL just set it to zero
   viewport_offset = 0; //-10 //-20;
 
+#ifdef tofix
   CoreVideo_Init();
   CoreVideo_GL_SetAttribute(M64P_GL_DOUBLEBUFFER, 1);
   CoreVideo_GL_SetAttribute(M64P_GL_SWAP_CONTROL, vsync);
@@ -516,13 +516,16 @@ grSstWinOpen(
   //   SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
   //   SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
   CoreVideo_GL_SetAttribute(M64P_GL_DEPTH_SIZE, 16);
+#endif
 
   printf("(II) Setting video mode %dx%d...\n", width, height);
+#ifdef tofix
   if(CoreVideo_SetVideoMode(width, height, 0, fullscreen ? M64VIDEO_FULLSCREEN : M64VIDEO_WINDOWED, (m64p_video_flags) 0) != M64ERR_SUCCESS)
   {
     printf("(EE) Error setting videomode %dx%d\n", width, height);
     return false;
   }
+#endif
 
   char caption[500];
 # ifdef _DEBUG
@@ -530,7 +533,9 @@ grSstWinOpen(
 # else // _DEBUG
   sprintf(caption, "Glide64mk2");
 # endif // _DEBUG
+#ifdef tofix
   CoreVideo_SetCaption(caption);
+#endif
 
   glViewport(0, viewport_offset, width, height);
   lfb_color_fmt = color_format;
@@ -758,7 +763,7 @@ grSstWinClose( GrContext_t context )
   }
 
   free_combiners();
-#ifndef WIN32
+#ifndef _WIN32
   try // I don't know why, but opengl can be killed before this function call when emulator is closed (Gonetz).
     // ZIGGY : I found the problem : it is a function pointer, when the extension isn't supported , it is then zero, so just need to check the pointer prior to do the call.
   {
@@ -783,7 +788,7 @@ grSstWinClose( GrContext_t context )
   nb_fb = 0;
 
   free_textures();
-#ifndef WIN32
+#ifndef _WIN32
   // ZIGGY for some reasons, Pj64 doesn't like remove_tex on exit
   remove_tex(0, 0xfffffff);
 #endif
@@ -813,8 +818,9 @@ grSstWinClose( GrContext_t context )
   //sleep(2);
 #endif
 
+#ifdef tofix
   CoreVideo_Quit();
-
+#endif
   return FXTRUE;
 }
 
@@ -1685,7 +1691,7 @@ grAuxBufferExt( GrBuffer_t buffer )
     need_to_compile = 1;
   }
 }
-void vbo_draw();
+
 FX_ENTRY void FX_CALL
 grBufferClear( GrColor_t color, GrAlpha_t alpha, FxU32 depth )
 {
@@ -1729,6 +1735,7 @@ grBufferSwap( FxU32 swap_interval )
   vbo_draw();
 //	glFinish();
 //  printf("rendercallback is %p\n", renderCallback);
+#ifdef tofix
   if(renderCallback) {
 //      glGetIntegerv(GL_CURRENT_PROGRAM, (GLint*) &program);
 //      glUseProgramObjectARB(0);
@@ -1736,6 +1743,7 @@ grBufferSwap( FxU32 swap_interval )
 //      if (program)
 //         glUseProgramObjectARB(program);
   }
+#endif
   int i;
   LOG("grBufferSwap(%d)\r\n", swap_interval);
   //printf("swap\n");
@@ -1744,7 +1752,9 @@ grBufferSwap( FxU32 swap_interval )
     return;
   }
 
+#ifdef tofix
   CoreVideo_GL_SwapBuffers();
+#endif
   for (i = 0; i < nb_fb; i++)
     fbs[i].buff_clear = 1;
 
@@ -1810,7 +1820,7 @@ grLfbLock( GrLock_t type, GrBuffer_t buffer, GrLfbWriteMode_t writeMode,
         info->strideInBytes = width*4;
         info->writeMode = GR_LFBWRITEMODE_888;
         info->origin = origin;
-        //glReadPixels(0, viewport_offset, width, height, GL_BGRA, GL_UNSIGNED_BYTE, frameBuffer);
+        glReadPixels(0, viewport_offset, width, height, GL_RGBA, GL_UNSIGNED_BYTE, frameBuffer);
       } else {
         buf = (unsigned char*)malloc(width*height*4);
 
@@ -2382,40 +2392,11 @@ grTexMultibaseAddress( GrChipID_t       tmu,
   display_warning("grTexMultibaseAddress");
 }
 
-/*
-inline void MySleep(FxU32 ms)
-{
-#ifdef _WIN32
-  Sleep(ms);
-#else
-  SDL_Delay(ms);
-#endif
-}
-*/
-
-#ifdef _WIN32
-static void CorrectGamma(LPVOID apGammaRamp)
-{
-  HDC hdc = GetDC(NULL);
-  if (hdc != NULL)
-  {
-    SetDeviceGammaRamp(hdc, apGammaRamp);
-    ReleaseDC(NULL, hdc);
-  }
-}
-#else
-static void CorrectGamma(const FxU16 aGammaRamp[3][256])
-{
-  //TODO?
-  //int res = SDL_SetGammaRamp(aGammaRamp[0], aGammaRamp[1], aGammaRamp[2]);
-  //LOG("SDL_SetGammaRamp returned %d\r\n", res);
-}
-#endif
-
 FX_ENTRY void FX_CALL
 grLoadGammaTable( FxU32 nentries, FxU32 *red, FxU32 *green, FxU32 *blue)
 {
-  LOG("grLoadGammaTable\r\n");
+  //TODO?
+  /*LOG("grLoadGammaTable\r\n");
   if (!fullscreen)
     return;
   FxU16 aGammaRamp[3][256];
@@ -2425,8 +2406,7 @@ grLoadGammaTable( FxU32 nentries, FxU32 *red, FxU32 *green, FxU32 *blue)
     aGammaRamp[1][i] = (FxU16)((green[i] << 8) & 0xFFFF);
     aGammaRamp[2][i] = (FxU16)((blue[i] << 8) & 0xFFFF);
   }
-  CorrectGamma(aGammaRamp);
-  //MySleep(1000); //workaround for Mupen64
+  CorrectGamma(aGammaRamp);*/
 }
 
 FX_ENTRY void FX_CALL
@@ -2461,6 +2441,8 @@ grGetGammaTableExt(FxU32 nentries, FxU32 *red, FxU32 *green, FxU32 *blue)
 FX_ENTRY void FX_CALL
 guGammaCorrectionRGB( FxFloat gammaR, FxFloat gammaG, FxFloat gammaB )
 {
+  //TODO?
+  /*
   LOG("guGammaCorrectionRGB()\r\n");
   if (!fullscreen)
     return;
@@ -2471,7 +2453,7 @@ guGammaCorrectionRGB( FxFloat gammaR, FxFloat gammaG, FxFloat gammaB )
     aGammaRamp[1][i] = (((FxU16)((pow(i/255.0F, 1.0F/gammaG)) * 255.0F + 0.5F)) << 8) & 0xFFFF;
     aGammaRamp[2][i] = (((FxU16)((pow(i/255.0F, 1.0F/gammaB)) * 255.0F + 0.5F)) << 8) & 0xFFFF;
   }
-  CorrectGamma(aGammaRamp);
+  CorrectGamma(aGammaRamp);*/
 }
 
 FX_ENTRY void FX_CALL

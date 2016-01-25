@@ -49,13 +49,18 @@
 #include "Config.h"
 
 #ifdef _WIN32
+#ifdef tofix
 #include <wx/file.h>
 #include <wx/dir.h>
 // begin wxGlade: ::extracode
 // end wxGlade
+#endif
+#endif
 
 short Set_basic_mode = 0, Set_texture_dir = 0;
 
+#ifdef _WIN32
+#ifdef tofix
 ConfigNotebook::ConfigNotebook(wxWindow* parent, int id, const wxPoint& pos, const wxSize& size, long /*style*/) :
 wxNotebook(parent, id, pos, size, 0)
 {
@@ -1021,6 +1026,8 @@ void Glide64ConfigDialog::do_layout()
 #endif
     // end wxGlade
 }
+#endif
+#endif
 
 #ifdef TEXTURE_FILTER
 uint32_t texfltr[] = {
@@ -1060,7 +1067,11 @@ uint32_t texhirs[] = {
 };
 #endif
 
+#ifdef _WIN32
+#ifdef tofix
 wxWindow * hostWindow = NULL;
+#endif
+#endif
 
 /******************************************************************
 Function: DllConfig
@@ -1071,6 +1082,8 @@ output:   none
 *******************************************************************/
 void CALL DllConfig(HWND hParent)
 {
+#ifdef _WIN32
+#ifdef tofix
     LOG("DllConfig ()\n");
     ReadSettings();
 
@@ -1110,6 +1123,8 @@ void CALL DllConfig(HWND hParent)
     Glide64Config->ShowModal();
     delete hostWindow;
     hostWindow = NULL;
+#endif
+#endif
 }
 
 /*#ifndef _DEBUG
@@ -1122,6 +1137,8 @@ free(this);
 #endif
 #endif
 */
+#ifdef _WIN32
+#ifdef tofix
 void CloseConfig()
 {
     if (romopen)
@@ -1230,6 +1247,8 @@ void AboutDialog::do_layout()
 #endif
     // end wxGlade
 }
+#endif
+#endif
 
 /******************************************************************
 Function: DllAbout
@@ -1240,6 +1259,8 @@ output:   none
 *******************************************************************/
 void CALL DllAbout(HWND hParent)
 {
+#ifdef _WIN32
+#ifdef tofix
 #ifdef __WINDOWS__
     if (hostWindow == NULL)
         hostWindow = new wxWindow();
@@ -1261,8 +1282,9 @@ void CALL DllAbout(HWND hParent)
     delete hostWindow;
     hostWindow = NULL;
 #endif
-}
 #endif
+#endif
+}
 
 void general_setting(short setting_ID, const char * name, unsigned int value)
 {

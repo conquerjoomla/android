@@ -304,7 +304,9 @@ void ConfigWrapper()
 
 void UseUnregisteredSetting(int /*SettingID*/)
 {
-    DebugBreak();
+#ifdef _WIN32
+	DebugBreak();
+#endif
 }
 
 void ReadSettings()
@@ -782,7 +784,7 @@ void DisplayLoadProgress(const wchar_t *format, ...)
     float x;
     set_message_combiner();
     output(382, 380, 1, "LOADING TEXTURES. PLEASE WAIT...");
-    int len = min((int)strlen(buf) * 8, 1024);
+    int len = minval((int)strlen(buf) * 8, 1024);
     x = (1024 - len) / 2.0f;
     output(x, 360, 1, buf);
     grBufferSwap(0);
@@ -902,8 +904,10 @@ int InitGfx()
 
     if (!gfx_context)
     {
-        MessageBox(gfx.hWnd,"Error setting display mode","Error", MB_OK|MB_ICONEXCLAMATION);
-        //    grSstWinClose (gfx_context);
+#ifdef _WIN32
+    	MessageBox(gfx.hWnd,"Error setting display mode","Error", MB_OK|MB_ICONEXCLAMATION);
+#endif
+    	//    grSstWinClose (gfx_context);
         grGlideShutdown();
         return FALSE;
     }
@@ -1181,7 +1185,7 @@ extern "C" int WINAPI DllMain(HINSTANCE hinst, DWORD fdwReason, LPVOID /*lpReser
     if (fdwReason == DLL_PROCESS_ATTACH)
     {
         hinstDLL = hinst;
-        ConfigInit(hinst);
+        //ConfigInit(hinst);
 #ifdef tofix
         wxSetInstance(hinstDLL);
         return DllLoad();
@@ -1189,7 +1193,7 @@ extern "C" int WINAPI DllMain(HINSTANCE hinst, DWORD fdwReason, LPVOID /*lpReser
     }
     else if (fdwReason == DLL_PROCESS_DETACH)
     {
-        ConfigCleanup();
+        //ConfigCleanup();
 #ifdef tofix
         return DllUnload();
 #endif
@@ -1835,7 +1839,7 @@ void CALL UpdateScreen(void)
     }
 #endif
     char out_buf[128];
-    sprintf(out_buf, "UpdateScreen (). Origin: %08lx, Old origin: %08lx, width: %d\n", *gfx.VI_ORIGIN_REG, rdp.vi_org_reg, *gfx.VI_WIDTH_REG);
+    sprintf(out_buf, "UpdateScreen (). Origin: %08x, Old origin: %08x, width: %d\n", *gfx.VI_ORIGIN_REG, rdp.vi_org_reg, *gfx.VI_WIDTH_REG);
     LOG(out_buf);
     LRDP(out_buf);
 

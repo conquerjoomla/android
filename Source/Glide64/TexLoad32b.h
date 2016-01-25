@@ -48,7 +48,7 @@ uint32_t Load32bRGBA (uintptr_t dst, uintptr_t src, int wid_64, int height, int 
   if (height < 1) height = 1;
   const uint16_t *tmem16 = (uint16_t*)rdp.tmem;
   const uint32_t tbase = (src - (uintptr_t)rdp.tmem) >> 1;
-  const uint32_t width = max(1, wid_64 << 1);
+  const uint32_t width = maxval(1, wid_64 << 1);
   const int ext = real_width - width;
   line = width + (line>>2);
   uint32_t s, t, c;

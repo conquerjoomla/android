@@ -7,10 +7,22 @@
 		<copy todir="./jni/3rdParty/zlib/">
 		    <fileset dir="../3rdParty/zlib"/>
 		</copy>
+		<copy todir="./jni/3rdParty/png/">
+		    <fileset dir="../3rdParty/png"/>
+		</copy>
 		<copy todir="./jni/Common/">
 		    <fileset dir="../Common"/>
 		</copy>
-		<copy todir="./jni/Project64-console/">
+		<copy todir="./jni/Glitch64/">
+		    <fileset dir="../Glitch64"/>
+		</copy>
+		<copy todir="./jni/Glide64/">
+		    <fileset dir="../Glide64"/>
+		</copy>
+		<copy todir="./jni/GlideHQ/">
+		    <fileset dir="../GlideHQ"/>
+		</copy>
+				<copy todir="./jni/Project64-console/">
 		    <fileset dir="../Project64-console"/>
 		</copy>
 		<copy todir="./jni/Project64-core/">
@@ -19,11 +31,8 @@
 		<copy todir="./jni/RSP-hle/">
 		    <fileset dir="../RSP-hle"/>
 		</copy>
-		<copy todir="./jni/Glitch64/">
-		    <fileset dir="../Glitch64"/>
+		<copy todir="./jni/Settings/">
+		    <fileset dir="../Settings"/>
 		</copy>
-		<copy todir="./jni/Glide64/">
-		    <fileset dir="../Glide64"/>
-		</copy>
-			</target>
+	</target>
 </project>

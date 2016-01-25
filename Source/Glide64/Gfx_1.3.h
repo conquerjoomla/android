@@ -66,6 +66,7 @@ the plugin
 
 #include <stdio.h>
 #include <fstream>
+#include <stdlib.h>
 #include <stddef.h>		// offsetof
 #include <glide.h>
 #include <Common/MemTest.h>
@@ -82,10 +83,6 @@ typedef unsigned char boolean;
 #else
 #define GLIDE64_TRY try
 #define GLIDE64_CATCH catch (...)
-#endif
-
-#ifndef _WIN32
-typedef void* HWND;
 #endif
 
 #ifndef TEXTURE_FILTER
@@ -194,12 +191,10 @@ extern "C" {
     extern int64 perf_next;
 #endif
 
-#ifdef LOGGING
-    extern std::ofstream loga;
-#define LOG(x) loga.open("glide64_log.txt",std::ios::app); loga << x; loga.flush(); loga.close();
-#else
-#define LOG(x)
-#endif
+#define LOG(...) 
+#define VLOG(...)
+#define WARNLOG(...) 
+#define ERRLOG(...) 
 
 #ifdef RDP_LOGGING
     extern int log_open;

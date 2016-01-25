@@ -37,6 +37,7 @@
 
 TxTexCache::~TxTexCache()
 {
+#ifdef _WIN32
 #if DUMP_CACHE
   if (_options & DUMP_TEXCACHE) {
     /* dump cache to disk */
@@ -49,13 +50,15 @@ TxTexCache::~TxTexCache()
 	TxCache::save(stdstr((std::string &)cachepath).ToUTF16().c_str(), filename.c_str(), config);
   }
 #endif
+#endif
 }
 
 TxTexCache::TxTexCache(int options, int cachesize, const wchar_t *path, const wchar_t *ident,
                        dispInfoFuncExt callback
                        ) : TxCache((options & ~GZ_HIRESTEXCACHE), cachesize, path, ident, callback)
 {
-  /* assert local options */
+#ifdef _WIN32
+	/* assert local options */
   if (_path.empty() || _ident.empty() || !_cacheSize)
     _options &= ~DUMP_TEXCACHE;
 
@@ -69,6 +72,7 @@ TxTexCache::TxTexCache(int options, int cachesize, const wchar_t *path, const wc
 
 	TxCache::load(stdstr((std::string &)cachepath).ToUTF16().c_str(), filename.c_str(), config);
   }
+#endif
 #endif
 }
 

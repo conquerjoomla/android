@@ -229,7 +229,8 @@ TxCache::get(uint64 checksum, GHQTexInfo *info)
 boolean
 TxCache::save(const wchar_t *path, const wchar_t *filename, int config)
 {
-  if (!_cache.empty()) {
+#ifdef _WIN32
+	if (!_cache.empty()) {
     /* dump cache to disk */
     char cbuf[MAX_PATH];
 
@@ -314,6 +315,8 @@ TxCache::save(const wchar_t *path, const wchar_t *filename, int config)
     CHDIR(curpath);
   }
   return _cache.empty();
+#endif
+return true;
 }
 
 boolean

@@ -1,8 +1,19 @@
-#include <windows.h>
-#include <stdio.h>
 #include <Settings/Settings.h>
+#include <Common/Platform.h>
+#include <Common/stdtypes.h>
+#include <stdio.h>
+#include <string.h>
 
-enum SettingLocation {
+#if defined(_WIN32)
+#define EXPORT      extern "C" __declspec(dllexport)
+#define CALL        __cdecl
+#else
+#define EXPORT      __attribute__((visibility("default")))
+#define CALL
+#endif
+
+enum SettingLocation 
+{
     SettingType_ConstString       = 0,
     SettingType_ConstValue        = 1,
     SettingType_CfgFile           = 2,
@@ -26,19 +37,20 @@ enum SettingDataType
 
 typedef struct
 {
-    DWORD  dwSize;
-    int    DefaultStartRange;
-    int    SettingStartRange;
-    int    MaximumSettings;
-    int    NoDefault;
-    int    DefaultLocation;
+    uint32_t dwSize;
+    int DefaultStartRange;
+    int SettingStartRange;
+    int MaximumSettings;
+    int NoDefault;
+    int DefaultLocation;
     void * handle;
-    unsigned int (*GetSetting)      ( void * handle, int ID );
+    
+	unsigned int (*GetSetting)      ( void * handle, int ID );
     const char * (*GetSettingSz)    ( void * handle, int ID, char * Buffer, int BufferLen );
     void         (*SetSetting)      ( void * handle, int ID, unsigned int Value );
     void         (*SetSettingSz)    ( void * handle, int ID, const char * Value );
     void         (*RegisterSetting) ( void * handle, int ID, int DefaultID, SettingDataType Type,
-        SettingLocation Location, const char * Category, const char * DefaultStr, DWORD Value );
+        SettingLocation Location, const char * Category, const char * DefaultStr, uint32_t Value );
     void         (*UseUnregisteredSetting) (int ID);
 } PLUGIN_SETTINGS;
 
@@ -58,41 +70,38 @@ static PLUGIN_SETTINGS3 g_PluginSettings3;
 static bool             g_PluginInitilized = false;
 static char             g_PluginSettingName[300];
 
-extern "C"
-{
-    __declspec(dllexport) void SetSettingInfo (PLUGIN_SETTINGS * info);
-    __declspec(dllexport) void SetSettingInfo2 (PLUGIN_SETTINGS2 * info);
-    __declspec(dllexport) void SetSettingInfo3 (PLUGIN_SETTINGS3 * info);
-}
+EXPORT void SetSettingInfo (PLUGIN_SETTINGS * info);
+EXPORT void SetSettingInfo2 (PLUGIN_SETTINGS2 * info);
+EXPORT void SetSettingInfo3 (PLUGIN_SETTINGS3 * info);
 
-__declspec(dllexport) void SetSettingInfo (PLUGIN_SETTINGS * info)
+EXPORT void SetSettingInfo (PLUGIN_SETTINGS * info)
 {
     g_PluginSettings   = *info;
     g_PluginInitilized = true;
     info->UseUnregisteredSetting = UseUnregisteredSetting;
 }
 
-__declspec(dllexport) void SetSettingInfo2 (PLUGIN_SETTINGS2 * info)
+EXPORT void SetSettingInfo2 (PLUGIN_SETTINGS2 * info)
 {
     g_PluginSettings2 = *info;
 }
 
-__declspec(dllexport) void SetSettingInfo3 (PLUGIN_SETTINGS3 * info)
+EXPORT void SetSettingInfo3 (PLUGIN_SETTINGS3 * info)
 {
     g_PluginSettings3 = *info;
 }
 
-BOOL SettingsInitilized ( void )
+int32_t SettingsInitilized ( void )
 {
     return g_PluginInitilized;
 }
 
-void SetModuleName      ( const char * Name )
+void SetModuleName ( const char * Name )
 {
     _snprintf(g_PluginSettingName,sizeof(g_PluginSettingName),"%s",Name);
 }
 
-void RegisterSetting    ( short SettingID, SETTING_DATA_TYPE Type, const char * Name, const char * Category,
+void RegisterSetting ( short SettingID, SETTING_DATA_TYPE Type, const char * Name, const char * Category,
                          unsigned int DefaultDW, const char * DefaultStr )
 {
     int DefaultID  = g_PluginSettings.NoDefault;

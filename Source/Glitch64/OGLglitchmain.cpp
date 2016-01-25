@@ -778,7 +778,7 @@ grSstWinOpenExt(
     hWnd, screen_resolution, refresh_rate, color_format, origin_location, nColBuffers, nAuxBuffers);
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 # include <fcntl.h>
 # ifndef ATTACH_PARENT_PROCESS
 #  define ATTACH_PARENT_PROCESS ((FxU32)-1)

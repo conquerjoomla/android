@@ -30,7 +30,7 @@ enum SETTING_DATA_TYPE
 };
 
 // set other information about different settings
-BOOL SettingsInitilized ( void );
+int SettingsInitilized ( void );
 void SetModuleName      ( const char * Name );
 void RegisterSetting    ( short SettingID, SETTING_DATA_TYPE Type, const char * Name, const char * Category,
 					        unsigned int DefaultDW, const char * DefaultStr );

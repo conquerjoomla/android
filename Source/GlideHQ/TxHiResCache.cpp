@@ -62,10 +62,13 @@
 #include <string>
 #include <common/path.h>
 #include <Common/StdString.h>
+#ifdef _WIN32
 #include <io.h>
+#endif
 
 TxHiResCache::~TxHiResCache()
 {
+#ifdef _WIN32
 #if DUMP_CACHE
   if ((_options & DUMP_HIRESTEXCACHE) && !_haveCache && !_abortLoad) {
     /* dump cache to disk */
@@ -77,6 +80,7 @@ TxHiResCache::~TxHiResCache()
 
 	TxCache::save(stdstr((std::string &)cachepath).ToUTF16().c_str(), filename.c_str(), config);
   }
+#endif
 #endif
 
   delete _txImage;
@@ -108,6 +112,7 @@ TxHiResCache::TxHiResCache(int maxwidth, int maxheight, int maxbpp, int options,
     return;
   }
 
+#ifdef _WIN32
 #if DUMP_CACHE
   /* read in hires texture cache */
   if (_options & DUMP_HIRESTEXCACHE) {
@@ -119,6 +124,7 @@ TxHiResCache::TxHiResCache(int maxwidth, int maxheight, int maxbpp, int options,
 
 	_haveCache = TxCache::load(stdstr((std::string &)cachepath).ToUTF16().c_str(), filename.c_str(), config);
   }
+#endif
 #endif
 
   /* read in hires textures */
@@ -138,6 +144,7 @@ TxHiResCache::load(boolean replace) /* 0 : reload, 1 : replace partial */
 
     if (!replace) TxCache::clear();
 
+#ifdef _WIN32
 	CPath dir_path(stdstr().FromUTF16(_path.c_str()).c_str(),"");
 
     switch (_options & HIRESTEXTURES_MASK) {
@@ -161,6 +168,7 @@ TxHiResCache::load(boolean replace) /* 0 : reload, 1 : replace partial */
     case JABO_HIRESTEXTURES:
       ;
     }
+#endif
 
     return 1;
   }

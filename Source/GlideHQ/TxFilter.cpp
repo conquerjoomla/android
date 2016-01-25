@@ -606,6 +606,7 @@ TxFilter::dmptx(uint8 *src, int width, int height, int rowStridePixel, uint16 gf
 
   src = _tex1;
 
+#ifdef _WIN32
   if (!_path.empty() && !_ident.empty()) {
     /* dump it to disk */
     FILE *fp = NULL;
@@ -642,6 +643,7 @@ TxFilter::dmptx(uint8 *src, int width, int height, int rowStridePixel, uint16 gf
       return 1;
     }
   }
+#endif
 
   return 0;
 }

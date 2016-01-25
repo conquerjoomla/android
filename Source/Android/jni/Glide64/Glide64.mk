@@ -7,20 +7,21 @@ SRCDIR := ./
 
 LOCAL_MODULE := glide64
 LOCAL_SHARED_LIBRARIES := SDL2
-LOCAL_STATIC_LIBRARIES := png
+LOCAL_STATIC_LIBRARIES := common \
+    Settings                     \
+
 LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES :=                             \
     $(LOCAL_PATH)/$(SRCDIR)/Glitch64/inc        \
-    $(PNG_INCLUDES)                             \
+    $(LOCAL_PATH)/$(SRCDIR)/3rdParty            \
     $(SDL_INCLUDES)                             \
 
 LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/Glitch64/OGLEScombiner.cpp        \
     $(SRCDIR)/Glitch64/OGLESgeometry.cpp        \
-#    $(SRCDIR)/Glitch64/OGLESglitchmain.cpp      \
+    $(SRCDIR)/Glitch64/OGLESglitchmain.cpp      \
     $(SRCDIR)/Glitch64/OGLEStextures.cpp        \
-    $(SRCDIR)/Glide64/osal_dynamiclib_unix.c    \
     $(SRCDIR)/Glide64/3dmath.cpp                \
     $(SRCDIR)/Glide64/Combine.cpp               \
     $(SRCDIR)/Glide64/Config.cpp                \
@@ -29,21 +30,20 @@ LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/Glide64/DepthBufferRender.cpp     \
     $(SRCDIR)/Glide64/FBtoScreen.cpp            \
     $(SRCDIR)/Glide64/FrameSkipper.cpp          \
-    $(SRCDIR)/Glide64/Ini.cpp                   \
     $(SRCDIR)/Glide64/Keys.cpp                  \
     $(SRCDIR)/Glide64/Main.cpp                  \
     $(SRCDIR)/Glide64/rdp.cpp                   \
     $(SRCDIR)/Glide64/TexBuffer.cpp             \
     $(SRCDIR)/Glide64/TexCache.cpp              \
     $(SRCDIR)/Glide64/Util.cpp                  \
-#    $(SRCDIR)/GlideHQ/Ext_TxFilter.cpp          \
-#    $(SRCDIR)/GlideHQ/TxFilterExport.cpp        \
-#    $(SRCDIR)/GlideHQ/TxFilter.cpp              \
-#    $(SRCDIR)/GlideHQ/TxCache.cpp               \
-#    $(SRCDIR)/GlideHQ/TxTexCache.cpp            \
-#    $(SRCDIR)/GlideHQ/TxHiResCache.cpp          \
-#    $(SRCDIR)/GlideHQ/TxQuantize.cpp            \
-#    $(SRCDIR)/GlideHQ/TxUtil.cpp                \
+    $(SRCDIR)/Glide64/Ext_TxFilter.cpp          \
+    $(SRCDIR)/GlideHQ/TxFilterExport.cpp        \
+    $(SRCDIR)/GlideHQ/TxFilter.cpp              \
+    $(SRCDIR)/GlideHQ/TxCache.cpp               \
+    $(SRCDIR)/GlideHQ/TxTexCache.cpp            \
+    $(SRCDIR)/GlideHQ/TxHiResCache.cpp          \
+    $(SRCDIR)/GlideHQ/TxQuantize.cpp            \
+    $(SRCDIR)/GlideHQ/TxUtil.cpp                \
 #    $(SRCDIR)/GlideHQ/TextureFilters.cpp        \
 #    $(SRCDIR)/GlideHQ/TextureFilters_2xsai.cpp  \
 #    $(SRCDIR)/GlideHQ/TextureFilters_hq2x.cpp   \
