@@ -9,6 +9,7 @@
 #include "Settings/SettingType/SettingsType-Application.h"
 
 static void FixDirectories(void);
+void SetTraceModuleNames(void);
 
 #ifdef _WIN32
 static void IncreaseThreadPriority(void);
@@ -32,11 +33,12 @@ void InitializeLog(void)
     TraceSetMaxModule(MaxTraceModuleProject64, TraceError);
 #endif
 #endif
+    SetTraceModuleNames();
 }
 
 void AddLogModule(void)
 {
-	CPath LogFilePath(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str(),"");
+    CPath LogFilePath(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str(), "");
     LogFilePath.AppendDirectory("Logs");
     if (!LogFilePath.DirectoryExists())
     {
@@ -94,7 +96,6 @@ void UpdateTraceLevel(void * /*NotUsed*/)
 
 void SetupTrace(void)
 {
-    SetTraceModuleNames();
     AddLogModule();
 
     g_Settings->RegisterChangeCB(Debugger_TraceMD5, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
@@ -152,23 +153,23 @@ void TraceDone(void)
     if (g_LogFile) { delete g_LogFile; g_LogFile = NULL; }
 }
 
-const char * AppName ( void )
+const char * AppName(void)
 {
-	static stdstr_f ApplicationName("Project64 %s", VER_FILE_VERSION_STR);
-	return ApplicationName.c_str();
+    static stdstr_f ApplicationName("Project64 %s", VER_FILE_VERSION_STR);
+    return ApplicationName.c_str();
 }
 
 static bool ParseCommand(int32_t argc, char **argv)
 {
-	WriteTrace(TraceAppInit, TraceDebug, "argc = %d",argc);
-	if (g_ModuleLogLevel[TraceAppInit] >= TraceDebug)
-	{
-		for (int32_t i = 1; i < argc; i++)
-		{
-			WriteTrace(TraceAppInit, TraceDebug, "%d: %s", i, argv[i]);
-		}
-	}
-	if (argc == 1)
+    WriteTrace(TraceAppInit, TraceDebug, "argc = %d", argc);
+    if (g_ModuleLogLevel[TraceAppInit] >= TraceDebug)
+    {
+        for (int32_t i = 1; i < argc; i++)
+        {
+            WriteTrace(TraceAppInit, TraceDebug, "%d: %s", i, argv[i]);
+        }
+    }
+    if (argc == 1)
     {
         return true;
     }
@@ -178,8 +179,8 @@ static bool ParseCommand(int32_t argc, char **argv)
         if (strcmp(argv[i], "--basedir") == 0 && ArgsLeft >= 1)
         {
             g_Settings->SaveString(Cmd_BaseDirectory, argv[i + 1]);
-			CSettingTypeApplication::Initialize(AppName());
-			i++;
+            CSettingTypeApplication::Initialize(AppName());
+            i++;
         }
         else if (strcmp(argv[i], "--gfxplugin") == 0 && ArgsLeft >= 1)
         {
@@ -225,14 +226,17 @@ bool AppInit(CNotification * Notify, int argc, char **argv)
     {
         g_Notify = Notify;
         InitializeLog();
-		if (Notify == NULL)
-		{
-			WriteTrace(TraceAppInit, TraceError, "No Notification class passed");
-			return false;
-		}
+        WriteTrace(TraceAppInit, TraceDebug, "Starting");
+        if (Notify == NULL)
+        {
+            WriteTrace(TraceAppInit, TraceError, "No Notification class passed");
+            return false;
+        }
+        WriteTrace(TraceAppInit, TraceDebug, "Settings up settings");
         g_Settings = new CSettings;
         g_Settings->Initialize(AppName());
 
+        WriteTrace(TraceAppInit, TraceDebug, "Parse Commands");
         if (!ParseCommand(argc, argv))
         {
             return false;
@@ -262,14 +266,14 @@ bool AppInit(CNotification * Notify, int argc, char **argv)
         g_Lang = new CLanguage();
         g_Lang->LoadCurrentStrings();
         g_Notify->AppInitDone();
-		WriteTrace(TraceAppInit, TraceDebug, "Initialized Successfully");
-		return true;
+        WriteTrace(TraceAppInit, TraceDebug, "Initialized Successfully");
+        return true;
     }
     catch (...)
     {
         g_Notify->DisplayError(stdstr_f("Exception caught\nFile: %s\nLine: %d", __FILE__, __LINE__).c_str());
-		WriteTrace(TraceAppInit, TraceError, "Exception caught, Init was not successfull");
-		return false;
+        WriteTrace(TraceAppInit, TraceError, "Exception caught, Init was not successfull");
+        return false;
     }
 }
 
@@ -289,7 +293,7 @@ void AppCleanup(void)
 
 void FixDirectories(void)
 {
-	CPath Directory(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str(),"");
+    CPath Directory(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str(), "");
     Directory.AppendDirectory("Save");
     if (!Directory.DirectoryExists()) Directory.DirectoryCreate();
 

@@ -37,7 +37,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(Root)Source/3rdParty/sdl/include;"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -89,7 +88,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(Root)Source/3rdParty/sdl/include;"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -320,6 +318,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\MemoryExceptionFilter.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\N64System\N64Class.cpp"
 					>
 				</File>
@@ -360,6 +362,10 @@
 					>
 					<File
 						RelativePath=".\N64System\Mips\Audio.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\N64System\Mips\Disk.cpp"
 						>
 					</File>
 					<File
@@ -531,6 +537,10 @@
 				>
 				<File
 					RelativePath=".\N64System\CheatClass.h"
+					>
+				</File>
+				<File
+					RelativePath=".\N64System\Mips\Disk.h"
 					>
 				</File>
 				<File

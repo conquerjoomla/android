@@ -24,6 +24,7 @@ LOCAL_SRC_FILES :=                                                     \
     $(SRCDIR)/N64System/Interpreter/InterpreterOps32.cpp               \
     $(SRCDIR)/N64System/Mips/Audio.cpp                                 \
     $(SRCDIR)/N64System/Mips/Dma.cpp                                   \
+    $(SRCDIR)/N64System/Mips/Disk.cpp                                  \
     $(SRCDIR)/N64System/Mips/Eeprom.cpp                                \
     $(SRCDIR)/N64System/Mips/FlashRam.cpp                              \
     $(SRCDIR)/N64System/Mips/MemoryVirtualMem.cpp                      \

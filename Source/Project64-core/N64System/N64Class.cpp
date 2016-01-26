@@ -29,8 +29,8 @@ CSystemEvents(this, Plugins),
 m_EndEmulation(false),
 m_SaveUsing((SAVE_CHIP_TYPE)g_Settings->LoadDword(Game_SaveChip)),
 m_Plugins(Plugins),
-m_SyncPlugins(NULL),
 m_SyncCPU(NULL),
+m_SyncPlugins(NULL),
 m_MMU_VM(SavesReadOnly),
 m_TLB(this),
 m_Reg(this, this),
@@ -212,7 +212,14 @@ bool CN64System::RunFileImage(const char * FileLoc)
     WriteTrace(TraceN64System, TraceDebug, "Loading \"%s\"", FileLoc);
     if (g_Rom->LoadN64Image(FileLoc))
     {
+        if (g_Rom->CicChipID() == CIC_NUS_8303)
+        {
+            //64DD IPL
+            g_DDRom = g_Rom;
+        }
+
         g_System->RefreshGameSettings();
+
         g_Settings->SaveString(Game_File, FileLoc);
         g_Settings->SaveBool(GameRunning_LoadingInProgress, false);
 
@@ -589,6 +596,10 @@ void CN64System::InitRegisters(bool bPostPif, CMipsMemoryVM & MMU)
     m_Reg.ERROREPC_REGISTER = 0xFFFFFFFF;
     m_Reg.CONFIG_REGISTER = 0x0006E463;
     m_Reg.STATUS_REGISTER = 0x34000000;
+
+    //64DD Registers
+    m_Reg.ASIC_STATUS = DD_STATUS_RST_STATE;
+    m_Reg.ASIC_ID_REG = 0x00030000;
 
     //m_Reg.REVISION_REGISTER   = 0x00000511;
     m_Reg.FixFpuLocations();

@@ -70,9 +70,9 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
         uint32_t count, OldProtect;
         if (Start >= CFBStart && End < CFBEnd)
         {
-            for ( count = Start; count < End; count += 0x1000 )
+            for (count = Start; count < End; count += 0x1000)
             {
-                VirtualProtect(m_RDRAM+count,4,PAGE_READONLY, &OldProtect);
+                VirtualProtect(m_RDRAM + count, 4, PAGE_READONLY, &OldProtect);
                 if (FrameBufferRead)
                 {
                     FrameBufferRead(count & ~0xFFF);
@@ -401,5 +401,4 @@ int32_t CMipsMemoryVM::MemoryFilter(uint32_t dwExptCode, void * lpExceptionPoint
 #endif
     return EXCEPTION_EXECUTE_HANDLER;
 }
-
 #endif

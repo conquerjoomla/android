@@ -15,19 +15,19 @@
 #include <Common/path.h>
 
 CFlashram::CFlashram(bool ReadOnly) :
-    m_FlashRamPointer(NULL),
-    m_FlashFlag(FLASHRAM_MODE_NOPES),
-    m_FlashStatus(0),
-    m_FlashRAM_Offset(0),
-    m_ReadOnly(ReadOnly),
-    m_hFile(NULL)
+m_FlashRamPointer(NULL),
+m_FlashFlag(FLASHRAM_MODE_NOPES),
+m_FlashStatus(0),
+m_FlashRAM_Offset(0),
+m_ReadOnly(ReadOnly),
+m_hFile(NULL)
 {
 }
 
 CFlashram::~CFlashram()
 {
 #ifdef tofix
-	if (m_hFile)
+    if (m_hFile)
     {
         CloseHandle(m_hFile);
         m_hFile = NULL;
@@ -38,7 +38,7 @@ CFlashram::~CFlashram()
 void CFlashram::DmaFromFlashram(uint8_t * dest, int32_t StartOffset, int32_t len)
 {
 #ifdef tofix
-	uint8_t FlipBuffer[0x10000];
+    uint8_t FlipBuffer[0x10000];
     uint32_t count;
 
     switch (m_FlashFlag)
@@ -168,7 +168,7 @@ bool CFlashram::LoadFlashram()
 void CFlashram::WriteToFlashCommand(uint32_t FlashRAM_Command)
 {
 #ifdef tofix
-	uint8_t EmptyBlock[128];
+    uint8_t EmptyBlock[128];
     DWORD dwWritten;
 
     switch (FlashRAM_Command & 0xFF000000)

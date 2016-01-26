@@ -30,7 +30,7 @@
 #include "SettingType/SettingsType-TempString.h"
 #include "SettingType/SettingsType-TempNumber.h"
 #include "SettingType/SettingsType-TempBool.h"
-#include "SettingsClass.h"
+#include <Project64-core/Settings/SettingsClass.h>
 #include <Project64-core/N64System/N64Types.h>
 #include <Common/Trace.h>
 
@@ -82,6 +82,8 @@ void CSettings::AddHandler(SettingID TypeID, CSettingType * Handler)
 
 void CSettings::AddHowToHandleSetting()
 {
+    WriteTrace(TraceAppInit, TraceDebug, "Start");
+
     //information - temp keys
     AddHandler(Info_ShortCutsChanged, new CSettingTypeTempBool(false));
 
@@ -136,6 +138,7 @@ void CSettings::AddHowToHandleSetting()
 
     AddHandler(Setting_RememberCheats, new CSettingTypeApplication("", "Remember Cheats", (uint32_t)false));
     AddHandler(Setting_CurrentLanguage, new CSettingTypeApplication("", "Current Language", ""));
+    AddHandler(Setting_EnableDisk, new CSettingTypeApplication("", "Enable Disk", (uint32_t)false));
     AddHandler(Setting_LanguageDirDefault, new CSettingTypeRelativePath("Lang", ""));
     AddHandler(Setting_LanguageDir, new CSettingTypeApplicationPath("Directory", "Lang", Setting_LanguageDirDefault));
 
@@ -156,12 +159,8 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(Rdb_Status, new CSettingTypeRomDatabase("Status", "Unknown"));
     AddHandler(Rdb_NotesCore, new CSettingTypeRomDatabase("Core Note", ""));
     AddHandler(Rdb_NotesPlugin, new CSettingTypeRomDatabase("Plugin Note", ""));
-#ifdef _DEBUG
     AddHandler(Rdb_FixedAudio, new CSettingTypeRomDatabase("Fixed Audio", true));
-#else
-    AddHandler(Rdb_FixedAudio, new CSettingTypeRomDatabase("Fixed Audio", false));
-#endif
-    AddHandler(Rdb_SyncViaAudio, new CSettingTypeRomDatabase("Sync Audio", true));
+    AddHandler(Rdb_SyncViaAudio, new CSettingTypeRomDatabase("Sync Audio", false));
     AddHandler(Rdb_RspAudioSignal, new CSettingTypeRDBYesNo("Audio Signal", false));
     AddHandler(Rdb_TLB_VAddrStart, new CSettingTypeRomDatabase("TLB: Vaddr Start", 0));
     AddHandler(Rdb_TLB_VAddrLen, new CSettingTypeRomDatabase("TLB: Vaddr Len", 0));
@@ -182,7 +181,7 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(Rdb_GameCheatFix, new CSettingTypeRomDatabaseIndex("Cheat", "", ""));
     AddHandler(Rdb_GameCheatFixPlugin, new CSettingTypeRomDatabaseIndex("CheatPlugin", "", ""));
     AddHandler(Rdb_ViRefreshRate, new CSettingTypeRomDatabase("ViRefresh", 1500));
-    AddHandler(Rdb_AiCountPerBytes, new CSettingTypeRomDatabase("AiCountPerBytes", 400));
+    AddHandler(Rdb_AiCountPerBytes, new CSettingTypeRomDatabase("AiCountPerBytes", 0));
     AddHandler(Rdb_AudioResetOnLoad, new CSettingTypeRDBYesNo("AudioResetOnLoad", false));
     AddHandler(Rdb_AllowROMWrites, new CSettingTypeRDBYesNo("AllowROMWrites", false));
     AddHandler(Rdb_CRC_Recalc, new CSettingTypeRDBYesNo("CRC-Recalc", false));
@@ -394,6 +393,8 @@ void CSettings::AddHowToHandleSetting()
     AddHandler(Cheat_Options, new CSettingTypeCheats("_O"));
     AddHandler(Cheat_Range, new CSettingTypeCheats("_R"));
     AddHandler(Cheat_RangeNotes, new CSettingTypeCheats("_RN"));
+
+    WriteTrace(TraceAppInit, TraceDebug, "Done");
 }
 
 uint32_t CSettings::FindSetting(CSettings * _this, const char * Name)
@@ -600,6 +601,7 @@ void CSettings::RegisterSetting(CSettings * _this, SettingID ID, SettingID Defau
 
 bool CSettings::Initialize(const char * AppName)
 {
+    WriteTrace(TraceAppInit, TraceDebug, "Start");
     AddHowToHandleSetting();
     CSettingTypeApplication::Initialize(AppName);
     CSettingTypeRomDatabase::Initialize();
@@ -607,6 +609,7 @@ bool CSettings::Initialize(const char * AppName)
     CSettingTypeCheats::Initialize();
 
     g_Settings->SaveString(Setting_ApplicationName, AppName);
+    WriteTrace(TraceAppInit, TraceDebug, "Done");
     return true;
 }
 
