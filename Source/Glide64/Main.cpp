@@ -37,9 +37,12 @@
 //
 //****************************************************************
 
+#include <Common/StdString.h>
 #include "Gfx_1.3.h"
 #include "Version.h"
 #include <Settings/Settings.h>
+#include <Common/CriticalSection.h>
+#include <Common/path.h>
 
 #include "Config.h"
 #include "Util.h"
@@ -50,7 +53,6 @@
 #include "CRC.h"
 #include "FBtoScreen.h"
 #include "DepthBufferRender.h"
-#include <Common/StdString.h>
 
 #ifdef TEXTURE_FILTER // Hiroshi Morii <koolsmoky@users.sourceforge.net>
 #include <stdarg.h>
@@ -101,7 +103,7 @@ WNDPROC myWndProc = NULL;
 #ifdef ALTTAB_FIX
 HHOOK hhkLowLevelKybd = NULL;
 LRESULT CALLBACK LowLevelKeyboardProc(int nCode,
-                                      WPARAM wParam, LPARAM lParam);
+    WPARAM wParam, LPARAM lParam);
 #endif
 
 #ifdef PERFORMANCE
@@ -169,8 +171,8 @@ SETTINGS settings = { FALSE, 640, 480, GR_RESOLUTION_640x480, 0 };
 HOTKEY_INFO hotkey_info;
 
 VOODOO voodoo = { 0, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0
+0, 0, 0, 0,
+0, 0, 0, 0
 };
 
 GrTexInfo fontTex;
@@ -305,7 +307,7 @@ void ConfigWrapper()
 void UseUnregisteredSetting(int /*SettingID*/)
 {
 #ifdef _WIN32
-	DebugBreak();
+    DebugBreak();
 #endif
 }
 
@@ -884,7 +886,7 @@ int InitGfx()
 
     /*if (fb_hwfbe_enabled)
     {
-    gfx_context = grSstWinOpenExt (wxPtrToUInt(gfx.hWnd),
+    gfx_context = grSstWinOpenExt (uintptr_t(gfx.hWnd),
     res_data,
     GR_REFRESH_60Hz,
     GR_COLORFORMAT_RGBA,
@@ -905,9 +907,9 @@ int InitGfx()
     if (!gfx_context)
     {
 #ifdef _WIN32
-    	MessageBox(gfx.hWnd,"Error setting display mode","Error", MB_OK|MB_ICONEXCLAMATION);
+        MessageBox(gfx.hWnd, "Error setting display mode", "Error", MB_OK | MB_ICONEXCLAMATION);
 #endif
-    	//    grSstWinClose (gfx_context);
+        //    grSstWinClose (gfx_context);
         grGlideShutdown();
         return FALSE;
     }
@@ -1078,16 +1080,14 @@ int InitGfx()
 
             ghq_dmptex_toggle_key = 0;
 
-#ifdef tofix
             settings.ghq_use = (int)ext_ghq_init(voodoo.max_tex_size, // max texture width supported by hardware
                 voodoo.max_tex_size, // max texture height supported by hardware
                 voodoo.sup_32bit_tex ? 32 : 16, // max texture bpp supported by hardware
                 options,
                 settings.ghq_cache_size * 1024 * 1024, // cache texture to system memory
-                stdstr(settings.texture_dir).ToUTF16().c_str(),
-                rdp.RomName.wchar_str(), // name of ROM. must be no longer than 256 characters
+                settings.texture_dir.c_str(),
+                rdp.RomName, // name of ROM. must be no longer than 256 characters
                 DisplayLoadProgress);
-#endif
         }
     }
     if (settings.ghq_use && strstr(extensions, "TEXMIRROR"))
@@ -1176,6 +1176,7 @@ int DllUnload(void)
 #ifdef tofix
 void wxSetInstance(HINSTANCE hInstance);
 #endif
+CriticalSection * g_ProcessDListCS = NULL;
 
 extern "C" int WINAPI DllMain(HINSTANCE hinst, DWORD fdwReason, LPVOID /*lpReserved*/)
 {
@@ -1185,7 +1186,10 @@ extern "C" int WINAPI DllMain(HINSTANCE hinst, DWORD fdwReason, LPVOID /*lpReser
     if (fdwReason == DLL_PROCESS_ATTACH)
     {
         hinstDLL = hinst;
-        //ConfigInit(hinst);
+        if (g_ProcessDListCS == NULL)
+        {
+            g_ProcessDListCS = new CriticalSection();
+        }
 #ifdef tofix
         wxSetInstance(hinstDLL);
         return DllLoad();
@@ -1193,7 +1197,10 @@ extern "C" int WINAPI DllMain(HINSTANCE hinst, DWORD fdwReason, LPVOID /*lpReser
     }
     else if (fdwReason == DLL_PROCESS_DETACH)
     {
-        //ConfigCleanup();
+        if (g_ProcessDListCS)
+        {
+            delete g_ProcessDListCS;
+        }
 #ifdef tofix
         return DllUnload();
 #endif
@@ -1717,17 +1724,16 @@ void CALL RomOpen(void)
 
     // remove all trailing spaces
     while (name[strlen(name) - 1] == ' ')
+    {
         name[strlen(name) - 1] = 0;
+    }
 
-#ifdef tofix
-    wxString strRomName = wxString::FromAscii(name);
-    if (settings.ghq_use && strRomName != rdp.RomName)
+    if (settings.ghq_use && strcmp(rdp.RomName, name) != 0)
     {
         ext_ghq_shutdown();
         settings.ghq_use = 0;
     }
-    rdp.RomName = strRomName;
-#endif
+    strcpy(rdp.RomName, name);
     ReadSpecialSettings(name);
     ClearCache();
 
@@ -1984,11 +1990,11 @@ void newSwapBuffers()
 #ifdef tofix
         if (settings.clock_24_hr)
         {
-            output(956.0f, 0, 1, (char*)wxDateTime::Now().Format(wxT("%H:%M:%S")).char_str(), 0);
+            output(956.0f, 0, 1, (char*)wxDateTime::Now().Format("%H:%M:%S").char_str(), 0);
         }
         else
         {
-            output(930.0f, 0, 1, (char*)wxDateTime::Now().Format(wxT("%I:%M:%S %p")).char_str(), 0);
+            output(930.0f, 0, 1, (char*)wxDateTime::Now().Format("%I:%M:%S %p").char_str(), 0);
         }
 #endif
     }
@@ -2059,29 +2065,29 @@ void newSwapBuffers()
         output(120.0f, 0.0f, 1, message, 0);
     }
 
-#ifdef tofix
     if (capture_screen)
     {
-        //char path[256];
-        // Make the directory if it doesn't exist
-        if (!wxDirExists(capture_path))
-            wxMkdir(capture_path);
-        wxString path;
-        wxString romName = rdp.RomName;
-        romName.Replace(wxT(" "), wxT("_"), true);
-        romName.Replace(wxT(":"), wxT(";"), true);
+        CPath path(capture_path);
+        if (!path.DirectoryExists())
+        {
+            path.DirectoryCreate();
+        }
+        stdstr romName = rdp.RomName;
+        romName.Replace(" ", "_");
+        romName.Replace(":", ";");
 
+        if (settings.ssformat > NumOfFormats)
+        {
+            settings.ssformat = 0;
+        }
         for (int i = 1;; i++)
         {
-            path = capture_path;
-            path += wxT("Glide64_");
-            path += romName;
-            path += wxT("_");
-            if (i < 10)
-                path += wxT("0");
-            path << i << wxT(".") << ScreenShotFormats[settings.ssformat].extension;
-            if (!wxFileName::FileExists(path))
+            stdstr_f filename("Glide64_%s_%s%d.%s", romName.c_str(), i < 10 ? "0" : "", i, ScreenShotFormats[settings.ssformat].extension);
+            path.SetNameExtension(filename.c_str());
+            if (!path.Exists())
+            {
                 break;
+            }
         }
 
         const uint32_t offset_x = (uint32_t)rdp.offset_x;
@@ -2091,12 +2097,7 @@ void newSwapBuffers()
 
         GrLfbInfo_t info;
         info.size = sizeof(GrLfbInfo_t);
-        if (grLfbLock(GR_LFB_READ_ONLY,
-            GR_BUFFER_BACKBUFFER,
-            GR_LFBWRITEMODE_565,
-            GR_ORIGIN_UPPER_LEFT,
-            FXFALSE,
-            &info))
+        if (grLfbLock(GR_LFB_READ_ONLY, GR_BUFFER_BACKBUFFER, GR_LFBWRITEMODE_565, GR_ORIGIN_UPPER_LEFT, FXFALSE, &info))
         {
             uint8_t *ssimg = (uint8_t*)malloc(image_width * image_height * 3); // will be free in wxImage destructor
             int sspos = 0;
@@ -2139,12 +2140,13 @@ void newSwapBuffers()
             }
             // Unlock the backbuffer
             grLfbUnlock(GR_LFB_READ_ONLY, GR_BUFFER_BACKBUFFER);
+#ifdef tofix
             wxImage screenshot(image_width, image_height, ssimg);
             screenshot.SaveFile(path, ScreenShotFormats[settings.ssformat].type);
+#endif
             capture_screen = 0;
         }
     }
-#endif
 
     // Capture the screen if debug capture is set
     if (_debugger.capture)
@@ -2353,7 +2355,7 @@ int CheckKeyPressed(int key, int mask)
 int k_ctl = 0, k_alt = 0, k_del = 0;
 
 LRESULT CALLBACK LowLevelKeyboardProc(int nCode,
-                                      WPARAM wParam, LPARAM lParam)
+    WPARAM wParam, LPARAM lParam)
 {
     if (!fullscreen) return CallNextHookEx(NULL, nCode, wParam, lParam);
 
@@ -2378,7 +2380,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode,
             if (p->vkCode == 46) k_del = 1;
             goto do_it;
 
-do_it:
+        do_it:
             TabKey =
                 ((p->vkCode == VK_TAB) && ((p->flags & LLKHF_ALTDOWN) != 0)) ||
                 ((p->vkCode == VK_ESCAPE) && ((p->flags & LLKHF_ALTDOWN) != 0)) ||

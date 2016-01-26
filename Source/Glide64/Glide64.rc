@@ -2,11 +2,10 @@
 //
 #include "resource.h"
 
+#include "Version.h"
+
 #define APSTUDIO_READONLY_SYMBOLS
-/////////////////////////////////////////////////////////////////////////////
-//
-// Generated from the TEXTINCLUDE 2 resource.
-//
+
 #include "WinResrc.h"
 
 #ifdef IDC_STATIC
@@ -18,11 +17,13 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (United States) resources
+// English (U.S.) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
+#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -37,13 +38,13 @@ END
 
 2 TEXTINCLUDE 
 BEGIN
-    "#include ""WinResrc.h""\r\n"
-    "\r\n"
-    "#ifdef IDC_STATIC\r\n"
-    "#undef IDC_STATIC\r\n"
-    "#endif\r\n"
-    "#define IDC_STATIC              (-1)\r\n"
-    "\0"
+	"#include ""WinResrc.h""\r\n"
+	"\r\n"
+	"#ifdef IDC_STATIC\r\n"
+	"#undef IDC_STATIC\r\n"
+	"#endif\r\n"
+	"#define IDC_STATIC              (-1)\r\n"
+	"\0"
 END
 
 3 TEXTINCLUDE 
@@ -54,7 +55,7 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
-#endif    // English (United States) resources
+#endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -62,8 +63,10 @@ END
 // English (Australia) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENA)
+#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_AUS
 #pragma code_page(1252)
+#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -71,29 +74,25 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_AUS
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,0,0,9999
- PRODUCTVERSION 2,0,0,9999
- FILEFLAGSMASK 0x1fL
-#ifdef _DEBUG
- FILEFLAGS 0x1L
-#else
- FILEFLAGS 0x0L
-#endif
- FILEOS 0x40004L
- FILETYPE 0x2L
- FILESUBTYPE 0x0L
+ FILEVERSION        VER_FILE_VERSION
+ PRODUCTVERSION     VER_PRODUCT_VERSION
+ FILEFLAGSMASK      0x1fL
+ FILEFLAGS          VER_FILEFLAGS
+ FILEOS             VER_FILEOS
+ FILETYPE           VER_FILETYPE
+ FILESUBTYPE        0x0L
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "FileDescription", "Glide 64 for Project64"
-            VALUE "FileVersion", "2.0.0.9999"
-            VALUE "InternalName", "Glide64"
-            VALUE "LegalCopyright", "Copyright (C) 2013"
-            VALUE "OriginalFilename", "Glide64.dll"
-            VALUE "ProductName", "Glide64"
-            VALUE "ProductVersion", "2.0.0.9999"
+            VALUE "FileDescription",  VER_FILE_DESCRIPTION_STR "\0"
+            VALUE "FileVersion",      VER_FILE_VERSION_STR "\0"
+            VALUE "InternalName",     VER_INTERNAL_NAME_STR "\0"
+            VALUE "LegalCopyright",   VER_COPYRIGHT_STR "\0"
+            VALUE "OriginalFilename", VER_ORIGINAL_FILENAME_STR "\0"
+            VALUE "ProductName",      VER_PRODUCTNAME_STR
+            VALUE "ProductVersion",   VER_PRODUCT_VERSION_STR "\0"
         END
     END
     BLOCK "VarFileInfo"
@@ -101,64 +100,6 @@ BEGIN
         VALUE "Translation", 0x409, 1200
     END
 END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog
-//
-
-IDD_CONFIG_BASIC DIALOGEX 0, 0, 314, 177
-STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CAPTION
-CAPTION "Basic Settings"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    GROUPBOX        "Rendering",IDC_STATIC,6,2,161,128
-    LTEXT           "Windowed Resultion",IDC_STATIC,11,17,67,8
-    COMBOBOX        IDC_CMB_WINDOW_RES,80,16,84,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "Vertical Sync",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,30,120,10
-    GROUPBOX        "OpenGL settings",IDC_STATIC,11,47,153,82
-    LTEXT           "Full screen resolution:",IDC_STATIC,15,59,45,17
-    COMBOBOX        IDC_COMBO1,64,61,97,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "Anisotropic filtering",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,78,143,10
-    CONTROL         "Autodetect VRAM size",IDC_CHECK3,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,91,80,10
-    EDITTEXT        IDC_EDIT1,101,90,18,12,ES_AUTOHSCROLL
-    CONTROL         "",IDC_SPIN1,"msctls_updown32",UDS_AUTOBUDDY | UDS_ARROWKEYS,121,90,11,14
-    LTEXT           "Mb",IDC_STATIC,137,92,10,8
-    GROUPBOX        "Frame buffer emulation",IDC_STATIC,14,103,146,23
-    CONTROL         "Use frame buffer objects",IDC_CHECK4,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,20,113,133,10
-    GROUPBOX        "On screen display",IDC_STATIC,174,2,135,128
-    CONTROL         "FPS counter",IDC_CHECK5,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,186,25,54,10
-    CONTROL         "VI/s counter",IDC_CHECK6,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,186,36,55,10
-    CONTROL         "% speed",IDC_CHECK7,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,186,48,44,10
-    GROUPBOX        "Speed",IDC_STATIC,179,13,124,49
-    GROUPBOX        "Time",IDC_STATIC,180,64,124,36
-    CONTROL         "Clock enabled",IDC_CHECK8,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,186,75,59,10
-    CONTROL         "Clock is 24-hour",IDC_CHECK9,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,186,84,52,16
-    CONTROL         "Transparent text background",IDC_CHECK10,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,184,103,102,14
-    GROUPBOX        "Other",IDC_STATIC,7,132,303,36
-    CONTROL         "Show texture enhancement options",IDC_CHECK11,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,140,123,11
-    LTEXT           "Screenshot format:",IDC_STATIC,14,153,65,11
-    COMBOBOX        IDC_COMBO3,79,151,29,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO
-BEGIN
-    IDD_CONFIG_BASIC, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 310
-        BOTTOMMARGIN, 168
-    END
-END
-#endif    // APSTUDIO_INVOKED
 
 #endif    // English (Australia) resources
 /////////////////////////////////////////////////////////////////////////////

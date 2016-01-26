@@ -9,6 +9,8 @@ LOCAL_MODULE := glide64
 LOCAL_SHARED_LIBRARIES := SDL2
 LOCAL_STATIC_LIBRARIES := common \
     Settings                     \
+    png                          \
+    zlib                         \
 
 LOCAL_ARM_MODE := arm
 
@@ -44,17 +46,17 @@ LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/GlideHQ/TxHiResCache.cpp          \
     $(SRCDIR)/GlideHQ/TxQuantize.cpp            \
     $(SRCDIR)/GlideHQ/TxUtil.cpp                \
-#    $(SRCDIR)/GlideHQ/TextureFilters.cpp        \
-#    $(SRCDIR)/GlideHQ/TextureFilters_2xsai.cpp  \
-#    $(SRCDIR)/GlideHQ/TextureFilters_hq2x.cpp   \
-#    $(SRCDIR)/GlideHQ/TextureFilters_hq4x.cpp   \
-#    $(SRCDIR)/GlideHQ/TxImage.cpp               \
-#    $(SRCDIR)/GlideHQ/TxReSample.cpp            \
-#    $(SRCDIR)/GlideHQ/TxDbg.cpp                 \
-#    $(SRCDIR)/GlideHQ/tc-1.1+/fxt1.c            \
-#    $(SRCDIR)/GlideHQ/tc-1.1+/dxtn.c            \
-#    $(SRCDIR)/GlideHQ/tc-1.1+/wrapper.c         \
-#    $(SRCDIR)/GlideHQ/tc-1.1+/texstore.c        \
+    $(SRCDIR)/GlideHQ/TextureFilters.cpp        \
+    $(SRCDIR)/GlideHQ/TextureFilters_2xsai.cpp  \
+    $(SRCDIR)/GlideHQ/TextureFilters_hq2x.cpp   \
+    $(SRCDIR)/GlideHQ/TextureFilters_hq4x.cpp   \
+    $(SRCDIR)/GlideHQ/TxImage.cpp               \
+    $(SRCDIR)/GlideHQ/TxReSample.cpp            \
+    $(SRCDIR)/GlideHQ/TxDbg.cpp                 \
+    $(SRCDIR)/GlideHQ/tc-1.1+/fxt1.c            \
+    $(SRCDIR)/GlideHQ/tc-1.1+/dxtn.c            \
+    $(SRCDIR)/GlideHQ/tc-1.1+/wrapper.c         \
+    $(SRCDIR)/GlideHQ/tc-1.1+/texstore.c        \
 
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \

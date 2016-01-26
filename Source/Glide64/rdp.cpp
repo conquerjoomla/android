@@ -49,6 +49,12 @@
 #include "CRC.h"
 #include <Common/StdString.h>
 
+#ifdef _WIN32
+#include <Common/CriticalSection.h>
+
+extern CriticalSection * g_ProcessDListCS;
+#endif
+
 const int NumOfFormats = 1;
 SCREEN_SHOT_FORMAT ScreenShotFormats[NumOfFormats] =
 {
@@ -321,7 +327,7 @@ void microcheck()
 
     FRDP("ucode = %08lx\n", uc_crc);
 
-    RegisterSetting(Set_ucodeLookup,Data_DWORD_RDB_Setting,stdstr_f("%08lx", uc_crc).c_str(),"ucode",(unsigned int)-2,NULL);
+    RegisterSetting(Set_ucodeLookup, Data_DWORD_RDB_Setting, stdstr_f("%08lx", uc_crc).c_str(), "ucode", (unsigned int)-2, NULL);
     int uc = GetSetting(Set_ucodeLookup);
 
     if (uc == -2 && ucode_error_report)
@@ -330,7 +336,7 @@ void microcheck()
 
         ReleaseGfx();
 #ifdef _WIN32
-		MessageBox(gfx.hWnd, stdstr_f("Error: uCode crc not found in INI, using currently selected uCode\n\n%08lx", uc_crc).c_str(), "Error", MB_OK | MB_ICONEXCLAMATION);
+        MessageBox(gfx.hWnd, stdstr_f("Error: uCode crc not found in INI, using currently selected uCode\n\n%08lx", uc_crc).c_str(), "Error", MB_OK | MB_ICONEXCLAMATION);
 #else
 		ERRLOG("Error: uCode crc not found in INI, using currently selected uCode\n\n%08lx", (unsigned long)uc_crc);
 #endif
@@ -342,7 +348,7 @@ void microcheck()
 
         ReleaseGfx();
 #ifdef _WIN32
-		MessageBox(gfx.hWnd, stdstr_f("Error: Unsupported uCode!\n\ncrc: %08lx", uc_crc).c_str(), "Error", MB_OK | MB_ICONEXCLAMATION);
+        MessageBox(gfx.hWnd, stdstr_f("Error: Unsupported uCode!\n\ncrc: %08lx", uc_crc).c_str(), "Error", MB_OK | MB_ICONEXCLAMATION);
 #else
 		ERRLOG("Error: Unsupported uCode!\n\ncrc: %08lx", (unsigned long)uc_crc);
 #endif
@@ -574,6 +580,9 @@ int depth_buffer_fog;
 
 EXPORT void CALL ProcessDList(void)
 {
+#ifdef _WIN32
+    CGuard guard(*g_ProcessDListCS);
+#endif
     no_dlist = false;
     update_screen_count = 0;
     ChangeSize();
@@ -583,7 +592,7 @@ EXPORT void CALL ProcessDList(void)
     {
         hhkLowLevelKybd = SetWindowsHookEx(WH_KEYBOARD_LL,
             LowLevelKeyboardProc, hInstance, 0);
-}
+    }
 #endif
 
     LOG("ProcessDList ()\n");
@@ -785,7 +794,7 @@ EXPORT void CALL ProcessDList(void)
             to_fullscreen = TRUE;
         }
         return;
-        }
+    }
 #endif
 
     if (fb_emulation_enabled)
@@ -808,7 +817,7 @@ EXPORT void CALL ProcessDList(void)
         CI_SET = FALSE;
     }
     LRDP("ProcessDList end\n");
-    }
+}
 
 // undef - undefined instruction, always ignore
 static void undef()
@@ -3330,7 +3339,7 @@ void DetectFrameBufferUsage()
         // Go to the next instruction
         rdp.pc[rdp.pc_i] = (a + 8) & BMASK;
 
-        if ((uintptr_t)(reinterpret_cast<void*>(gfx_instruction_lite[settings.ucode][rdp.cmd0>>24])))
+        if (uintptr_t(reinterpret_cast<void*>(gfx_instruction_lite[settings.ucode][rdp.cmd0 >> 24])))
             gfx_instruction_lite[settings.ucode][rdp.cmd0 >> 24]();
 
         // check DL counter
@@ -4112,6 +4121,9 @@ output:   none
 *******************************************************************/
 void CALL ProcessRDPList(void)
 {
+#ifdef _WIN32
+    CGuard guard(*g_ProcessDListCS);
+#endif
     LOG("ProcessRDPList ()\n");
     LRDP("ProcessRDPList ()\n");
 

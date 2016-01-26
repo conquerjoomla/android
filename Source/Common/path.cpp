@@ -8,6 +8,7 @@
 #else
 #include <sys/stat.h>
 #include <dirent.h>
+#include <unistd.h>
 #endif
 #include "Platform.h"
 
@@ -197,9 +198,9 @@ bool CPath::operator !=(const CPath& rPath) const
 CPath& CPath::operator =(const CPath& rPath)
 {
     if (this != &rPath)
-	{
+    {
         m_strPath = rPath.m_strPath;
-	}
+    }
     return *this;
 }
 
@@ -336,26 +337,26 @@ void CPath::GetComponents(std::string* pDirectory, std::string* pName, std::stri
     memset(buff_name, 0, sizeof(buff_name));
     memset(buff_ext, 0, sizeof(buff_ext));
 
-	const char * BasePath = m_strPath.c_str();
-	const char * last = strrchr(BasePath,DIRECTORY_DELIMITER);
-	if (last != NULL)
-	{
-		int len = sizeof(buff_dir) < (last - BasePath) ? sizeof(buff_dir) : last - BasePath;
-		strncpy(buff_dir,BasePath,len);
-		strncpy(buff_name,last + 1,sizeof(buff_name));
-	}
-	else
-	{
-		strncpy(buff_dir,BasePath,sizeof(buff_dir));
-	}
-	char * ext = strrchr(buff_name,'.');
-	if (ext != NULL)
-	{
-		strncpy(buff_ext,ext + 1,sizeof(buff_ext));
-		*ext = '\0';
-	}
+    const char * BasePath = m_strPath.c_str();
+    const char * last = strrchr(BasePath,DIRECTORY_DELIMITER);
+    if (last != NULL)
+    {
+        int len = sizeof(buff_dir) < (last - BasePath) ? sizeof(buff_dir) : last - BasePath;
+        strncpy(buff_dir,BasePath,len);
+        strncpy(buff_name,last + 1,sizeof(buff_name));
+    }
+    else
+    {
+        strncpy(buff_dir,BasePath,sizeof(buff_dir));
+    }
+    char * ext = strrchr(buff_name,'.');
+    if (ext != NULL)
+    {
+        strncpy(buff_ext,ext + 1,sizeof(buff_ext));
+        *ext = '\0';
+    }
 
-	if (pDirectory)
+    if (pDirectory)
     {
         *pDirectory = buff_dir;
     }
@@ -563,25 +564,25 @@ void CPath::SetComponents(const char * lpszDirectory, const char * lpszName, con
     char buff_fullname[260];
 
     memset(buff_fullname, 0, sizeof(buff_fullname));
-	if (lpszDirectory != NULL && lpszDirectory[0] != '\0')
-	{
-		if (lpszDirectory[0] != DIRECTORY_DELIMITER)  { buff_fullname[0] = DIRECTORY_DELIMITER; }
-		strncat(buff_fullname,lpszDirectory,sizeof(buff_fullname));
-		std::string::size_type nLength = strlen(buff_fullname);
-		if (buff_fullname[nLength - 1] != DIRECTORY_DELIMITER &&  nLength < sizeof(buff_fullname))
-		{
-			buff_fullname[nLength] = DIRECTORY_DELIMITER;
-		}
-	}
-	if (lpszName != NULL)
-	{
-		strncat(buff_fullname,lpszName,sizeof(buff_fullname));
-	}
-	if (lpszExtension != NULL)
-	{
-		strncat(buff_fullname,lpszExtension,sizeof(buff_fullname));
-	}
-	buff_fullname[sizeof(buff_fullname) - 1] = 0; //Make sure it is null terminated
+    if (lpszDirectory != NULL && lpszDirectory[0] != '\0')
+    {
+        if (lpszDirectory[0] != DIRECTORY_DELIMITER)  { buff_fullname[0] = DIRECTORY_DELIMITER; }
+        strncat(buff_fullname,lpszDirectory,sizeof(buff_fullname));
+        std::string::size_type nLength = strlen(buff_fullname);
+        if (buff_fullname[nLength - 1] != DIRECTORY_DELIMITER &&  nLength < sizeof(buff_fullname))
+        {
+            buff_fullname[nLength] = DIRECTORY_DELIMITER;
+        }
+    }
+    if (lpszName != NULL)
+    {
+        strncat(buff_fullname,lpszName,sizeof(buff_fullname));
+    }
+    if (lpszExtension != NULL)
+    {
+        strncat(buff_fullname,lpszExtension,sizeof(buff_fullname));
+    }
+    buff_fullname[sizeof(buff_fullname) - 1] = 0; //Make sure it is null terminated
     m_strPath.erase();
     m_strPath = buff_fullname;
 }
@@ -613,13 +614,13 @@ void CPath::SetDirectory(const char * lpszDirectory, bool bEnsureAbsolute /*= fa
     std::string	Extension;
 
     if (bEnsureAbsolute)
-	{
-		EnsureLeadingBackslash(Directory);
-	}
-	if (Directory.length() > 0)
-	{
-		EnsureTrailingBackslash(Directory);
-	}
+    {
+        EnsureLeadingBackslash(Directory);
+    }
+    if (Directory.length() > 0)
+    {
+        EnsureTrailingBackslash(Directory);
+    }
 
 #ifdef _WIN32
     std::string	Drive;
@@ -641,11 +642,11 @@ void CPath::SetDriveDirectory(const char * lpszDriveDirectory)
     std::string	Name;
     std::string	Extension;
 
-	if (DriveDirectory.length() > 0)
-	{
-		EnsureTrailingBackslash(DriveDirectory);
-		cleanPathString(DriveDirectory);
-	}
+    if (DriveDirectory.length() > 0)
+    {
+        EnsureTrailingBackslash(DriveDirectory);
+        cleanPathString(DriveDirectory);
+    }
 
     GetComponents(NULL, NULL, &Name, &Extension);
     SetComponents(NULL, DriveDirectory.c_str(), Name.c_str(), Extension.c_str());
@@ -821,15 +822,17 @@ void CPath::UpDirectory(std::string *pLastDirectory /*= NULL*/)
 //-------------------------------------------------------------
 void CPath::CurrentDirectory()
 {
-#ifdef _WIN32
-    char buff_path[MAX_PATH];
-
+    char buff_path[260];
     memset(buff_path, 0, sizeof(buff_path));
 
-    ::GetCurrentDirectory(MAX_PATH, buff_path);
-
     Empty();
+
+#ifdef _WIN32
+    ::GetCurrentDirectory(sizeof(buff_path), buff_path);
     SetDriveDirectory(buff_path);
+#else
+    getcwd(buff_path, sizeof(buff_path));
+    SetDirectory(buff_path);
 #endif
 }
 
@@ -916,13 +919,13 @@ bool CPath::DirectoryExists() const
 
     return bGotFile;
 #else
-	DIR * dir = opendir(m_strPath.c_str());
-	if (dir)
-	{
-		closedir(dir);
-		return true;
-	}
-	return false;
+    DIR * dir = opendir(m_strPath.c_str());
+    if (dir)
+    {
+        closedir(dir);
+        return true;
+    }
+    return false;
 #endif
 }
 
@@ -944,8 +947,8 @@ bool CPath::Exists() const
 
     return bSuccess;
 #else
-	struct stat statbuf;
-	return stat(m_strPath.c_str(), &statbuf) == 0; 
+    struct stat statbuf;
+    return stat(m_strPath.c_str(), &statbuf) == 0;
 #endif
 }
 
@@ -1196,7 +1199,10 @@ bool CPath::ChangeDirectory()
 
     return SetCurrentDirectory(DriveDirectory.c_str()) != 0;
 #else
-    return false;
+    std::string Dir;
+    GetDirectory(Dir);
+
+    return chdir(Dir.c_str()) == 0;
 #endif
 }
 
@@ -1264,7 +1270,7 @@ void CPath::cleanPathString(std::string& rDirectory) const
     }
     if (AppendEnd)
     {
-		rDirectory.insert(0, stdstr_f("%c",DIRECTORY_DELIMITER).c_str());
+        rDirectory.insert(0, stdstr_f("%c", DIRECTORY_DELIMITER).c_str());
     }
 }
 

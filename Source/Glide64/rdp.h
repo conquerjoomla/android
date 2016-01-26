@@ -244,71 +244,72 @@ typedef struct {
     enum FBCRCMODE {
         fbcrcNone = 0,
         fbcrcFast = 1,
-        fbcrcSafe = 2} fb_crc_mode;
+        fbcrcSafe = 2
+    } fb_crc_mode;
 
 #ifdef TEXTURE_FILTER
-        //Texture filtering options
-        std::string texture_dir;
-        int ghq_fltr;
-        int ghq_enht;
-        int ghq_cmpr;
-        int ghq_hirs;
-        int ghq_use;
-        int ghq_enht_cmpr;
-        int ghq_enht_tile;
-        int ghq_enht_f16bpp;
-        int ghq_enht_gz;
-        int ghq_enht_nobg;
-        int ghq_hirs_cmpr;
-        int ghq_hirs_tile;
-        int ghq_hirs_f16bpp;
-        int ghq_hirs_gz;
-        int ghq_hirs_altcrc;
-        int ghq_cache_save;
-        int ghq_cache_size;
-        int ghq_hirs_let_texartists_fly;
-        int ghq_hirs_dump;
+    //Texture filtering options
+    std::string texture_dir;
+    int ghq_fltr;
+    int ghq_enht;
+    int ghq_cmpr;
+    int ghq_hirs;
+    int ghq_use;
+    int ghq_enht_cmpr;
+    int ghq_enht_tile;
+    int ghq_enht_f16bpp;
+    int ghq_enht_gz;
+    int ghq_enht_nobg;
+    int ghq_hirs_cmpr;
+    int ghq_hirs_tile;
+    int ghq_hirs_f16bpp;
+    int ghq_hirs_gz;
+    int ghq_hirs_altcrc;
+    int ghq_cache_save;
+    int ghq_cache_size;
+    int ghq_hirs_let_texartists_fly;
+    int ghq_hirs_dump;
 #endif
 
-        //Debug
-        int autodetect_ucode;
-        int ucode;
-        int logging;
-        int elogging;
-        int log_clear;
-        int run_in_window;
-        int filter_cache;
-        int unk_as_red;
-        int log_unk;
-        int unk_clear;
-        int wireframe;
-        int wfmode;
+    //Debug
+    int autodetect_ucode;
+    int ucode;
+    int logging;
+    int elogging;
+    int log_clear;
+    int run_in_window;
+    int filter_cache;
+    int unk_as_red;
+    int log_unk;
+    int unk_clear;
+    int wireframe;
+    int wfmode;
 
-        // Special fixes
-        int offset_x, offset_y;
-        int scale_x, scale_y;
-        int fast_crc;
-        int alt_tex_size;
-        int use_sts1_only;
-        int flame_corona; //hack for zeldas flame's corona
-        int increase_texrect_edge; // add 1 to lower right corner coordinates of texrect
-        int decrease_fillrect_edge; // sub 1 from lower right corner coordinates of fillrect
-        int texture_correction; // enable perspective texture correction emulation. is on by default
-        int stipple_mode;  //used for dithered alpha emulation
-        uint32_t stipple_pattern; //used for dithered alpha emulation
-        int force_microcheck; //check microcode each frame, for mixed F3DEX-S2DEX games
-        int force_quad3d; //force 0xb5 command to be quad, not line 3d
-        int clip_zmin; //enable near z clipping
-        int clip_zmax; //enable far plane clipping;
-        int adjust_aspect; //adjust screen aspect for wide screen mode
-        int force_calc_sphere; //use spheric mapping only, Ridge Racer 64
-        int pal230;    //set special scale for PAL games
-        int correct_viewport; //correct viewport values
-        int zmode_compare_less; //force GR_CMP_LESS for zmode=0 (opaque)and zmode=1 (interpenetrating)
-        int old_style_adither; //apply alpha dither regardless of alpha_dither_mode
-        int n64_z_scale; //scale vertex z value before writing to depth buffer, as N64 does.
+    // Special fixes
+    int offset_x, offset_y;
+    int scale_x, scale_y;
+    int fast_crc;
+    int alt_tex_size;
+    int use_sts1_only;
+    int flame_corona; //hack for zeldas flame's corona
+    int increase_texrect_edge; // add 1 to lower right corner coordinates of texrect
+    int decrease_fillrect_edge; // sub 1 from lower right corner coordinates of fillrect
+    int texture_correction; // enable perspective texture correction emulation. is on by default
+    int stipple_mode;  //used for dithered alpha emulation
+    uint32_t stipple_pattern; //used for dithered alpha emulation
+    int force_microcheck; //check microcode each frame, for mixed F3DEX-S2DEX games
+    int force_quad3d; //force 0xb5 command to be quad, not line 3d
+    int clip_zmin; //enable near z clipping
+    int clip_zmax; //enable far plane clipping;
+    int adjust_aspect; //adjust screen aspect for wide screen mode
+    int force_calc_sphere; //use spheric mapping only, Ridge Racer 64
+    int pal230;    //set special scale for PAL games
+    int correct_viewport; //correct viewport values
+    int zmode_compare_less; //force GR_CMP_LESS for zmode=0 (opaque)and zmode=1 (interpenetrating)
+    int old_style_adither; //apply alpha dither regardless of alpha_dither_mode
+    int n64_z_scale; //scale vertex z value before writing to depth buffer, as N64 does.
 
-        //Special game hacks
+    //Special game hacks
 #define  hack_ASB         (1<<0)   //All-Star Baseball games
 #define  hack_Banjo2      (1<<1)   //Banjo Tooie
 #define  hack_BAR         (1<<2)   //Beetle Adventure Racing
@@ -339,13 +340,13 @@ typedef struct {
 #define  hack_Yoshi       (1<<27)  //Yoshi Story
 #define  hack_Zelda       (1<<28)  //zeldas hacks
 #define  hack_OoT         (1<<29)  //zelda OoT hacks
-        uint32_t hacks;
+    uint32_t hacks;
 
-        //wrapper settings
-        int wrpResolution;
-        int wrpVRAM;
-        int wrpFBO;
-        int wrpAnisotropic;
+    //wrapper settings
+    int wrpResolution;
+    int wrpVRAM;
+    int wrpFBO;
+    int wrpAnisotropic;
 } SETTINGS;
 
 typedef struct
@@ -782,8 +783,8 @@ struct RDP : public RDP_Base
     void Reset();
 };
 
-void SetWireframeCol ();
-void ChangeSize ();
+void SetWireframeCol();
+void ChangeSize();
 void GoToFullScreen();
 
 extern RDP rdp;
@@ -801,7 +802,7 @@ extern uint32_t   offset_texbuf1;
 extern int	ucode_error_report;
 
 // RDP functions
-void rdp_reset ();
+void rdp_reset();
 
 extern const char *ACmp[];
 extern const char *Mode0[];
@@ -854,9 +855,9 @@ extern const char *CIStatus[];
 #endif
 
 // Convert from u0/v0/u1/v1 to the real coordinates without regard to tmu
-__inline void ConvertCoordsKeep (VERTEX *v, int n)
+__inline void ConvertCoordsKeep(VERTEX *v, int n)
 {
-    for (int i=0; i<n; i++)
+    for (int i = 0; i < n; i++)
     {
         v[i].uc(0) = v[i].u0;
         v[i].vc(0) = v[i].v0;
@@ -866,9 +867,9 @@ __inline void ConvertCoordsKeep (VERTEX *v, int n)
 }
 
 // Convert from u0/v0/u1/v1 to the real coordinates based on the tmu they are on
-__inline void ConvertCoordsConvert (VERTEX *v, int n)
+__inline void ConvertCoordsConvert(VERTEX *v, int n)
 {
-    for (int i=0; i<n; i++)
+    for (int i = 0; i < n; i++)
     {
         v[i].uc(rdp.t0) = v[i].u0;
         v[i].vc(rdp.t0) = v[i].v0;
@@ -877,24 +878,24 @@ __inline void ConvertCoordsConvert (VERTEX *v, int n)
     }
 }
 
-__inline void AllowShadeMods (VERTEX *v, int n)
+__inline void AllowShadeMods(VERTEX *v, int n)
 {
-    for (int i=0; i<n; i++)
+    for (int i = 0; i < n; i++)
     {
         v[i].shade_mod = 0;
     }
 }
 
-__inline void AddOffset (VERTEX *v, int n)
+__inline void AddOffset(VERTEX *v, int n)
 {
-    for (int i=0; i<n; i++)
+    for (int i = 0; i < n; i++)
     {
         v[i].x += rdp.offset_x;
         v[i].y += rdp.offset_y;
     }
 }
 
-__inline void CalculateFog (VERTEX *v)
+__inline void CalculateFog(VERTEX *v)
 {
     if (rdp.flags & FOG_ENABLED)
     {
@@ -914,7 +915,7 @@ void newSwapBuffers();
 extern int SwapOK;
 
 // ** utility functions
-void load_palette (uint32_t addr, uint16_t start, uint16_t count);
+void load_palette(uint32_t addr, uint16_t start, uint16_t count);
 void setTBufTex(uint16_t t_mem, uint32_t cnt);
 
 #endif  // ifndef RDP_H

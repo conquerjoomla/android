@@ -20,6 +20,7 @@ COMMON_CPPFLAGS :=                  \
     -fexceptions                    \
 
 include $(JNI_LOCAL_PATH)/3rdParty/png/png.mk
+include $(JNI_LOCAL_PATH)/3rdParty/zlib/zlib.mk
 include $(JNI_LOCAL_PATH)/SDL2/Android.mk
 include $(JNI_LOCAL_PATH)/Common/common.mk
 include $(JNI_LOCAL_PATH)/Settings/Settings.mk
