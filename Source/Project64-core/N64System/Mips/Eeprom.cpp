@@ -13,7 +13,6 @@
 #include <Project64-core/N64System/SystemGlobals.h>
 #include <Project64-core/N64System/N64Class.h>
 #include <time.h>
-#include <Windows.h>
 
 CEeprom::CEeprom(bool ReadOnly) :
 m_ReadOnly(ReadOnly)
@@ -142,11 +141,9 @@ void CEeprom::EepromCommand(uint8_t * Command)
 
 void CEeprom::LoadEeprom()
 {
-    CPath FileName;
-
     memset(m_EEPROM, 0xFF, sizeof(m_EEPROM));
 
-    FileName.SetDriveDirectory(g_Settings->LoadStringVal(Directory_NativeSave).c_str());
+    CPath FileName(g_Settings->LoadStringVal(Directory_NativeSave).c_str(), "");
     FileName.SetName(g_Settings->LoadStringVal(Game_GameName).c_str());
     FileName.SetExtension("eep");
 
@@ -157,7 +154,11 @@ void CEeprom::LoadEeprom()
 
     if (!m_File.Open(FileName, (m_ReadOnly ? CFileBase::modeRead : CFileBase::modeReadWrite) | CFileBase::modeNoTruncate | CFileBase::modeCreate))
     {
-        WriteTrace(TraceN64System, TraceError, "Failed to open (%s), ReadOnly = %d, LastError = %X", (LPCTSTR)FileName, m_ReadOnly, GetLastError());
+#ifdef _WIN32
+        WriteTrace(TraceN64System, TraceError, "Failed to open (%s), ReadOnly = %d, LastError = %X", (const char *)FileName, m_ReadOnly, GetLastError());
+#else
+        WriteTrace(TraceN64System, TraceError, "Failed to open (%s), ReadOnly = %d", (const char *)FileName, m_ReadOnly);
+#endif
         g_Notify->DisplayError(GS(MSG_FAIL_OPEN_EEPROM));
         return;
     }

@@ -32,6 +32,7 @@ LOCAL_SRC_FILES :=                                                     \
     $(SRCDIR)/N64System/Mips/OpcodeName.cpp                            \
     $(SRCDIR)/N64System/Mips/PifRam.cpp                                \
     $(SRCDIR)/N64System/Mips/RegisterClass.cpp                         \
+    $(SRCDIR)/N64System/Mips/Rumblepak.cpp                             \
     $(SRCDIR)/N64System/Mips/Sram.cpp                                  \
     $(SRCDIR)/N64System/Mips/SystemEvents.cpp                          \
     $(SRCDIR)/N64System/Mips/SystemTiming.cpp                          \
@@ -56,6 +57,7 @@ LOCAL_SRC_FILES :=                                                     \
     $(SRCDIR)/N64System/SpeedLimiterClass.cpp                          \
     $(SRCDIR)/N64System/SystemGlobals.cpp                              \
     $(SRCDIR)/N64System/EmulationThread.cpp                            \
+    $(SRCDIR)/N64System/N64DiskClass.cpp                               \
     $(SRCDIR)/Plugins/AudioPlugin.cpp                                  \
     $(SRCDIR)/Plugins/GFXplugin.cpp                                    \
     $(SRCDIR)/Plugins/ControllerPlugin.cpp                             \
