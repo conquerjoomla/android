@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{B6D45C01-0067-48E6-9FC3-29329D6A5ACA}</ProjectGuid>
+    <ProjectGuid>{4BB40C71-ECD1-436F-BAA5-A5C96837EE63}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>RSPhle</RootNamespace>
+    <RootNamespace>AndroidAudio</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -36,32 +36,9 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="alist.cpp" />
-    <ClCompile Include="alist_audio.cpp" />
-    <ClCompile Include="alist_naudio.cpp" />
-    <ClCompile Include="alist_nead.cpp" />
-    <ClCompile Include="audio.cpp" />
-    <ClCompile Include="cicx105.cpp" />
-    <ClCompile Include="hle.cpp" />
-    <ClCompile Include="jpeg.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="mem.cpp" />
-    <ClCompile Include="mp3.cpp" />
-    <ClCompile Include="musyx.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader>Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="alist.h" />
-    <ClInclude Include="arithmetics.h" />
-    <ClInclude Include="audio.h" />
-    <ClInclude Include="common.h" />
-    <ClInclude Include="hle.h" />
-    <ClInclude Include="mem.h" />
-    <ClInclude Include="Rsp.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="ucodes.h" />
-    <ClInclude Include="Version.h" />
+    <ClInclude Include="Audio_1.1.h" />
   </ItemGroup>
 </Project>

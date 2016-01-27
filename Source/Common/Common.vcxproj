@@ -68,4 +68,8 @@
     <ClInclude Include="TraceModulesCommon.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\AndroidAudio\AndroidAudio.vcxproj" />
+    <None Include="..\AndroidInput\AndroidInput.vcxproj" />
+  </ItemGroup>
 </Project>
