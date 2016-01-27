@@ -5,8 +5,6 @@ Common Controller plugin spec, version #1.1
 
 #include <Common/stdtypes.h>
 
-/* Note: BOOL, BYTE, uint16_t, Duint16_t, TRUE, FALSE are defined in windows.h */
-
 enum { PLUGIN_TYPE_CONTROLLER = 4 };
 
 /*** Conteroller plugin's ****/
