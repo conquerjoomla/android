@@ -36,8 +36,8 @@ typedef struct
     uint16_t Version;        /* Should be set to 0x0101 */
     uint16_t Type;           /* Set to PLUGIN_TYPE_AUDIO */
     char Name[100];          /* Name of the DLL */
-    int32_t Reserved1;
-    int32_t Reserved2;
+    int32_t NormalMemory;
+    int32_t MemoryBswaped;
 } PLUGIN_INFO;
 
 typedef struct
@@ -78,7 +78,7 @@ SYSTEM_PAL	1
 SYSTEM_MPAL	2
 output:   none
 *******************************************************************/
-EXPORT void CALL AiDacrateChanged (int32_t SystemType);
+EXPORT void CALL AiDacrateChanged(int32_t SystemType);
 
 /******************************************************************
 Function: AiLenChanged
@@ -87,7 +87,7 @@ AiLen registers value has been changed.
 input:    none
 output:   none
 *******************************************************************/
-EXPORT void CALL AiLenChanged (void);
+EXPORT void CALL AiLenChanged(void);
 
 /******************************************************************
 Function: AiReadLength
@@ -96,7 +96,7 @@ value that AI_LEN_REG should equal
 input:    none
 output:   The amount of bytes still left to play.
 *******************************************************************/
-EXPORT uint32_t CALL AiReadLength (void);
+EXPORT uint32_t CALL AiReadLength(void);
 
 /******************************************************************
 Function: AiUpdate
@@ -110,7 +110,7 @@ input:    if Wait is set to true, then this function should wait
 till there is a messgae in the its message queue.
 output:   none
 *******************************************************************/
-EXPORT void CALL AiUpdate (int32_t Wait);
+EXPORT void CALL AiUpdate(int32_t Wait);
 
 /******************************************************************
 Function: CloseDLL
@@ -119,7 +119,7 @@ down allowing the dll to de-initialise.
 input:    none
 output:   none
 *******************************************************************/
-EXPORT void CALL CloseDLL (void);
+EXPORT void CALL CloseDLL(void);
 
 /******************************************************************
 Function: DllAbout
@@ -128,7 +128,7 @@ to give further information about the DLL.
 input:    a handle to the window that calls this function
 output:   none
 *******************************************************************/
-EXPORT void CALL DllAbout ( void * hParent );
+EXPORT void CALL DllAbout(void * hParent);
 
 /******************************************************************
 Function: DllConfig
@@ -137,7 +137,7 @@ to allow the user to configure the dll
 input:    a handle to the window that calls this function
 output:   none
 *******************************************************************/
-EXPORT void CALL DllConfig ( void * hParent );
+EXPORT void CALL DllConfig(void * hParent);
 
 /******************************************************************
 Function: DllTest
@@ -146,7 +146,7 @@ to allow the user to test the dll
 input:    a handle to the window that calls this function
 output:   none
 *******************************************************************/
-EXPORT void CALL DllTest ( void * hParent );
+EXPORT void CALL DllTest(void * hParent);
 
 /******************************************************************
 Function: GetDllInfo
@@ -156,7 +156,7 @@ input:    a pointer to a PLUGIN_INFO stucture that needs to be
 filled by the function. (see def above)
 output:   none
 *******************************************************************/
-EXPORT void CALL GetDllInfo ( PLUGIN_INFO * PluginInfo );
+EXPORT void CALL GetDllInfo(PLUGIN_INFO * PluginInfo);
 
 /******************************************************************
 Function: InitiateSound
@@ -173,7 +173,7 @@ To generate an interrupt set the appropriate bit in MI_INTR_REG
 and then call the function CheckInterrupts to tell the emulator
 that there is a waiting interrupt.
 *******************************************************************/
-EXPORT int32_t CALL InitiateAudio (AUDIO_INFO Audio_Info);
+EXPORT int32_t CALL InitiateAudio(AUDIO_INFO Audio_Info);
 
 /******************************************************************
 Function: ProcessAList
@@ -191,4 +191,4 @@ Purpose:  This function is called when a rom is closed.
 input:    none
 output:   none
 *******************************************************************/
-EXPORT void CALL RomClosed (void);
+EXPORT void CALL RomClosed(void);

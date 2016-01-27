@@ -42,6 +42,8 @@ EXPORT void CALL GetDllInfo(PLUGIN_INFO * PluginInfo)
     PluginInfo->Version = 0x0101;
     PluginInfo->Type = PLUGIN_TYPE_AUDIO;
     strcpy(PluginInfo->Name, "Android Audio");
+    PluginInfo->MemoryBswaped = true;
+    PluginInfo->NormalMemory = false;
 }
 
 EXPORT int32_t CALL InitiateAudio(AUDIO_INFO Audio_Info)
