@@ -25,10 +25,10 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <PropertyGroup>
-    <TargetName>RSP-HLE</TargetName>
-    <TargetName Condition="'$(Configuration)'=='Debug'">RSP-HLE_d</TargetName>
-    <OutDir>$(SolutionDir)Plugin\RSP\</OutDir>
-    <OutDir Condition="'$(Platform)'=='x64'">$(SolutionDir)Plugin64\RSP\</OutDir>
+    <TargetName>AndroidAudio</TargetName>
+    <TargetName Condition="'$(Configuration)'=='Debug'">AndroidAudio_d</TargetName>
+    <OutDir>$(SolutionDir)Plugin\Audio\</OutDir>
+    <OutDir Condition="'$(Platform)'=='x64'">$(SolutionDir)Plugin64\AndroidAudio\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
