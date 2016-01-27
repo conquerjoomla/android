@@ -13,26 +13,16 @@
 #include <Project64-core/N64System/SystemGlobals.h>
 #include <Project64-core/N64System/N64Class.h>
 #include <time.h>
-#ifdef tofix
 #include <Windows.h>
-#endif
 
 CEeprom::CEeprom(bool ReadOnly) :
-m_ReadOnly(ReadOnly),
-m_hFile(NULL)
+m_ReadOnly(ReadOnly)
 {
     memset(m_EEPROM, 0xFF, sizeof(m_EEPROM));
 }
 
 CEeprom::~CEeprom()
 {
-#ifdef tofix
-	if (m_hFile)
-    {
-        CloseHandle(m_hFile);
-        m_hFile = NULL;
-    }
-#endif
 }
 
 uint8_t byte2bcd(int32_t n)
@@ -63,11 +53,17 @@ void CEeprom::EepromCommand(uint8_t * Command)
         {
             Command[1] |= 0x40;
             if ((Command[1] & 3) > 0)
+            {
                 Command[3] = 0x00;
+            }
             if ((Command[1] & 3) > 1)
+            {
                 Command[4] = (g_System->m_SaveUsing == SaveChip_Eeprom_4K) ? 0x80 : 0xC0;
+            }
             if ((Command[1] & 3) > 2)
+            {
                 Command[5] = 0x00;
+            }
         }
         else
         {
@@ -146,9 +142,7 @@ void CEeprom::EepromCommand(uint8_t * Command)
 
 void CEeprom::LoadEeprom()
 {
-#ifdef tofix
     CPath FileName;
-    DWORD dwRead;
 
     memset(m_EEPROM, 0xFF, sizeof(m_EEPROM));
 
@@ -161,24 +155,21 @@ void CEeprom::LoadEeprom()
         FileName.DirectoryCreate();
     }
 
-    m_hFile = CreateFile(FileName, m_ReadOnly ? GENERIC_READ : GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS,
-        FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS, NULL);
-    if (m_hFile == INVALID_HANDLE_VALUE)
+    if (!m_File.Open(FileName, (m_ReadOnly ? CFileBase::modeRead : CFileBase::modeReadWrite) | CFileBase::modeNoTruncate | CFileBase::modeCreate))
     {
         WriteTrace(TraceN64System, TraceError, "Failed to open (%s), ReadOnly = %d, LastError = %X", (LPCTSTR)FileName, m_ReadOnly, GetLastError());
         g_Notify->DisplayError(GS(MSG_FAIL_OPEN_EEPROM));
         return;
     }
-    SetFilePointer(m_hFile, 0, NULL, FILE_BEGIN);
-    ReadFile(m_hFile, m_EEPROM, sizeof(m_EEPROM), &dwRead, NULL);
-#endif
+    m_File.SeekToBegin();
+    m_File.Read(m_EEPROM, sizeof(m_EEPROM));
 }
 
 void CEeprom::ReadFrom(uint8_t * Buffer, int32_t line)
 {
     int32_t i;
 
-    if (m_hFile == NULL)
+    if (!m_File.IsOpen())
     {
         LoadEeprom();
     }
@@ -191,11 +182,9 @@ void CEeprom::ReadFrom(uint8_t * Buffer, int32_t line)
 
 void CEeprom::WriteTo(uint8_t * Buffer, int32_t line)
 {
-#ifdef tofix
-    DWORD dwWritten;
     int32_t i;
 
-    if (m_hFile == NULL)
+    if (!m_File.IsOpen())
     {
         LoadEeprom();
     }
@@ -203,8 +192,7 @@ void CEeprom::WriteTo(uint8_t * Buffer, int32_t line)
     {
         m_EEPROM[line * 8 + i] = Buffer[i];
     }
-    SetFilePointer(m_hFile, line * 8, NULL, FILE_BEGIN);
-    WriteFile(m_hFile, Buffer, 8, &dwWritten, NULL);
-    FlushFileBuffers(m_hFile);
-#endif
+    m_File.Seek(line * 8, CFile::begin);
+    m_File.Write(Buffer, 8);
+    m_File.Flush();
 }
