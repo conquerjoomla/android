@@ -1,5 +1,7 @@
 #include "audio_1.1.h"
-#include <string>
+#include "Version.h"
+#include <stdio.h>
+#include <string.h>
 
 AUDIO_INFO g_AudioInfo;
 
@@ -41,7 +43,11 @@ EXPORT void CALL GetDllInfo(PLUGIN_INFO * PluginInfo)
 {
     PluginInfo->Version = 0x0101;
     PluginInfo->Type = PLUGIN_TYPE_AUDIO;
-    strcpy(PluginInfo->Name, "Android Audio");
+#ifdef _DEBUG
+    sprintf(PluginInfo->Name, "Android Audio Debug Plugin %s", VER_FILE_VERSION_STR);
+#else
+    sprintf(PluginInfo->Name, "Android Audio Plugin %s", VER_FILE_VERSION_STR);
+#endif
     PluginInfo->MemoryBswaped = true;
     PluginInfo->NormalMemory = false;
 }

@@ -1,4 +1,6 @@
 #include "Controller_1.1.h"
+#include "Version.h"
+#include <stdio.h>
 #include <string.h>
 
 static CONTROL_INFO g_control_info;
@@ -44,7 +46,9 @@ output:   none
 *******************************************************************/
 EXPORT void CALL DllAbout ( void * hParent )
 {
-    ShowAboutWindow(hParent);
+#ifdef _WIN32
+	ShowAboutWindow(hParent);
+#endif
 }
 
 /******************************************************************
@@ -81,7 +85,11 @@ EXPORT void CALL GetDllInfo ( PLUGIN_INFO * PluginInfo )
 {
     PluginInfo->Version = 0x0101;
     PluginInfo->Type = PLUGIN_TYPE_CONTROLLER;
-    strcpy(PluginInfo->Name, "Android Input Plugin");
+#ifdef _DEBUG
+    sprintf(PluginInfo->Name, "Android Input Debug Plugin %s", VER_FILE_VERSION_STR);
+#else
+    sprintf(PluginInfo->Name, "Android Input Plugin %s", VER_FILE_VERSION_STR);
+#endif
 }
 
 /******************************************************************

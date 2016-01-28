@@ -10,6 +10,12 @@
 		<copy todir="./jni/3rdParty/png/">
 		    <fileset dir="../3rdParty/png"/>
 		</copy>
+		<copy todir="./jni/AndroidAudio/">
+		    <fileset dir="../AndroidAudio"/>
+		</copy>
+		<copy todir="./jni/AndroidInput/">
+		    <fileset dir="../AndroidInput"/>
+		</copy>
 		<copy todir="./jni/Common/">
 		    <fileset dir="../Common"/>
 		</copy>
@@ -22,7 +28,7 @@
 		<copy todir="./jni/GlideHQ/">
 		    <fileset dir="../GlideHQ"/>
 		</copy>
-				<copy todir="./jni/Project64-console/">
+		<copy todir="./jni/Project64-console/">
 		    <fileset dir="../Project64-console"/>
 		</copy>
 		<copy todir="./jni/Project64-core/">

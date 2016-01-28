@@ -22,6 +22,8 @@ COMMON_CPPFLAGS :=                  \
 include $(JNI_LOCAL_PATH)/3rdParty/png/png.mk
 include $(JNI_LOCAL_PATH)/3rdParty/zlib/zlib.mk
 include $(JNI_LOCAL_PATH)/SDL2/Android.mk
+include $(JNI_LOCAL_PATH)/AndroidAudio/AndroidAudio.mk
+include $(JNI_LOCAL_PATH)/AndroidInput/AndroidInput.mk
 include $(JNI_LOCAL_PATH)/Common/common.mk
 include $(JNI_LOCAL_PATH)/Settings/Settings.mk
 include $(JNI_LOCAL_PATH)/RSP-hle/rsp-hle.mk

@@ -40,5 +40,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Audio_1.1.h" />
+    <ClInclude Include="Version.h" />
   </ItemGroup>
 </Project>
