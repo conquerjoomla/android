@@ -2,43 +2,40 @@
 <project name="Copy C++ Source" default="Copy C++ Source" basedir="."> 
 	<target name="Copy C++ Source">
 		<copy todir="./jni/3rdParty/7zip/">
-		    <fileset dir="../3rdParty/7zip"/>
-		</copy>
-		<copy todir="./jni/3rdParty/zlib/">
-		    <fileset dir="../3rdParty/zlib"/>
+		    <fileset dir="../Source/3rdParty/7zip"/>
 		</copy>
 		<copy todir="./jni/3rdParty/png/">
-		    <fileset dir="../3rdParty/png"/>
+		    <fileset dir="../Source/3rdParty/png"/>
 		</copy>
-		<copy todir="./jni/AndroidAudio/">
-		    <fileset dir="../AndroidAudio"/>
-		</copy>
-		<copy todir="./jni/AndroidInput/">
-		    <fileset dir="../AndroidInput"/>
+		<copy todir="./jni/3rdParty/zlib/">
+		    <fileset dir="../Source/3rdParty/zlib"/>
 		</copy>
 		<copy todir="./jni/Common/">
-		    <fileset dir="../Common"/>
-		</copy>
-		<copy todir="./jni/Glitch64/">
-		    <fileset dir="../Glitch64"/>
+		    <fileset dir="../Source/Common"/>
 		</copy>
 		<copy todir="./jni/Glide64/">
-		    <fileset dir="../Glide64"/>
+		    <fileset dir="../Source/Glide64"/>
 		</copy>
 		<copy todir="./jni/GlideHQ/">
-		    <fileset dir="../GlideHQ"/>
+		    <fileset dir="../Source/GlideHQ"/>
 		</copy>
-		<copy todir="./jni/Project64-console/">
-		    <fileset dir="../Project64-console"/>
+		<copy todir="./jni/Glitch64/">
+		    <fileset dir="../Source/Glitch64"/>
+		</copy>
+		<copy todir="./jni/PluginAudio/">
+		    <fileset dir="../Source/Android/PluginAudio"/>
+		</copy>
+		<copy todir="./jni/PluginInput/">
+		    <fileset dir="../Source/Android/PluginInput"/>
+		</copy>
+		<copy todir="./jni/PluginRSP/">
+		    <fileset dir="../Source/Android/PluginRSP"/>
 		</copy>
 		<copy todir="./jni/Project64-core/">
-		    <fileset dir="../Project64-core"/>
-		</copy>
-		<copy todir="./jni/RSP-hle/">
-		    <fileset dir="../RSP-hle"/>
+		    <fileset dir="../Source/Project64-core"/>
 		</copy>
 		<copy todir="./jni/Settings/">
-		    <fileset dir="../Settings"/>
+		    <fileset dir="../Source/Settings"/>
 		</copy>
 	</target>
 </project>

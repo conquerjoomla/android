@@ -21,13 +21,12 @@ COMMON_CPPFLAGS :=                  \
 
 include $(JNI_LOCAL_PATH)/3rdParty/png/png.mk
 include $(JNI_LOCAL_PATH)/3rdParty/zlib/zlib.mk
-include $(JNI_LOCAL_PATH)/SDL2/Android.mk
-include $(JNI_LOCAL_PATH)/AndroidAudio/AndroidAudio.mk
-include $(JNI_LOCAL_PATH)/AndroidInput/AndroidInput.mk
 include $(JNI_LOCAL_PATH)/Common/common.mk
-include $(JNI_LOCAL_PATH)/Settings/Settings.mk
-include $(JNI_LOCAL_PATH)/RSP-hle/rsp-hle.mk
-include $(JNI_LOCAL_PATH)/Project64-core/Project64-core.mk
-include $(JNI_LOCAL_PATH)/Project64-console/Project64-console.mk
-include $(JNI_LOCAL_PATH)/ae-bridge/Android.mk
 include $(JNI_LOCAL_PATH)/Glide64/Glide64.mk
+include $(JNI_LOCAL_PATH)/PluginAudio/PluginAudio.mk
+include $(JNI_LOCAL_PATH)/PluginInput/PluginInput.mk
+include $(JNI_LOCAL_PATH)/PluginRSP/PluginRSP.mk
+include $(JNI_LOCAL_PATH)/Project64-bridge/Project64-bridge.mk
+include $(JNI_LOCAL_PATH)/Project64-core/Project64-core.mk
+include $(JNI_LOCAL_PATH)/SDL2/Android.mk
+include $(JNI_LOCAL_PATH)/Settings/Settings.mk
