@@ -115,8 +115,8 @@ public class AppData
         // Installation validity
         // @formatter:off
         isValidInstallation =
-                libraryExists( "ae-exports" )                           &&
-                libraryExists( "Project64-console" )                    &&
+                libraryExists( "Project64-bridge" )                  &&
+                libraryExists( "Project64-console" )                 &&
                 libraryExists( "Project64-rsp-hle" );
         // @formatter:on
         

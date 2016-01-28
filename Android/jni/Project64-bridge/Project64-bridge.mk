@@ -1,14 +1,16 @@
-LOCAL_PATH := $(call my-dir)
-
-########## AE-EXPORTS ##########
-
+######################
+# Project64-bridge
+######################
 include $(CLEAR_VARS)
+LOCAL_PATH := $(JNI_LOCAL_PATH)
+SRCDIR := ./Project64-bridge
 
-LOCAL_MODULE := ae-exports
+LOCAL_MODULE := Project64-bridge
 
 LOCAL_C_INCLUDES := $(SDL_INCLUDES)
 
-LOCAL_SRC_FILES := ae_exports.cpp
+LOCAL_SRC_FILES :=            \
+    $(SRCDIR)/jniBridge.cpp   \
 
 LOCAL_CFLAGS := $(COMMON_CFLAGS)
 

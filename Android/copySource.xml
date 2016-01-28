@@ -31,6 +31,9 @@
 		<copy todir="./jni/PluginRSP/">
 		    <fileset dir="../Source/Android/PluginRSP"/>
 		</copy>
+		<copy todir="./jni/Project64-bridge/">
+		    <fileset dir="../Source/Android/Bridge"/>
+		</copy>
 		<copy todir="./jni/Project64-core/">
 		    <fileset dir="../Source/Project64-core"/>
 		</copy>

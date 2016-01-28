@@ -3,7 +3,7 @@
 ######################
 include $(CLEAR_VARS)
 LOCAL_PATH := $(JNI_LOCAL_PATH)
-SRCDIR := ./rsp-hle
+SRCDIR := ./PluginRSP
 
 LOCAL_MODULE := Project64-rsp-hle
 LOCAL_ARM_MODE := arm

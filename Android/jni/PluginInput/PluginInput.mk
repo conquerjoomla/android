@@ -3,7 +3,7 @@
 ######################
 include $(CLEAR_VARS)
 LOCAL_PATH := $(JNI_LOCAL_PATH)
-SRCDIR := ./AndroidInput
+SRCDIR := ./PluginInput
 
 LOCAL_MODULE := Project64-input-android
 LOCAL_ARM_MODE := arm

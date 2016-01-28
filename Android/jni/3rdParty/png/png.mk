@@ -7,8 +7,8 @@ SRCDIR := ./3rdParty/png
 
 LOCAL_MODULE := png
 
-LOCAL_C_INCLUDES :=         \
-    ../3rdParty/            \
+LOCAL_C_INCLUDES :=               \
+    ./jni/3rdParty/               \
                 
 LOCAL_SRC_FILES := \
     $(SRCDIR)/png.c               \

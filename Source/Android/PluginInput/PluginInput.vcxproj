@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{E3DFC59A-FA7A-4A17-84D7-4C79D2DD37C9}</ProjectGuid>
+    <ProjectGuid>{1133A1CC-A9E5-4026-B20D-6A2987130D4E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>AndroidInput</RootNamespace>
   </PropertyGroup>

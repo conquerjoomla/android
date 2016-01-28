@@ -11,12 +11,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{4BB40C71-ECD1-436F-BAA5-A5C96837EE63}</ProjectGuid>
-    <Keyword>Win32Proj</Keyword>
-    <RootNamespace>AndroidAudio</RootNamespace>
+    <ProjectGuid>{593B00E6-1987-415D-A62C-26533FC3E95C}</ProjectGuid>
+    <RootNamespace>Bridge</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <ImportGroup Label="PropertySheets">
@@ -24,22 +23,12 @@
   </ImportGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <PropertyGroup>
-    <TargetName>AndroidAudio</TargetName>
-    <TargetName Condition="'$(Configuration)'=='Debug'">AndroidAudio_d</TargetName>
-    <OutDir>$(SolutionDir)Plugin\Audio\</OutDir>
-    <OutDir Condition="'$(Platform)'=='x64'">$(SolutionDir)Plugin64\AndroidAudio\</OutDir>
-  </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Audio_1.1.h" />
-    <ClInclude Include="Version.h" />
+    <ClCompile Include="jniBridge.cpp" />
   </ItemGroup>
 </Project>

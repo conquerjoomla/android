@@ -3,14 +3,14 @@
 ######################
 include $(CLEAR_VARS)
 LOCAL_PATH := $(JNI_LOCAL_PATH)
-SRCDIR := ./AndroidAudio
+SRCDIR := ./PluginAudio
 
 LOCAL_MODULE := Project64-audio-android
 LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES :=
 
-LOCAL_SRC_FILES :=             \
+LOCAL_SRC_FILES :=            \
     $(SRCDIR)/Main.cpp        \
 
 LOCAL_CFLAGS := $(COMMON_CFLAGS)
