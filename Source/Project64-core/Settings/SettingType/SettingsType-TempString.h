@@ -17,30 +17,29 @@ class CSettingTypeTempString :
 {
 public:
     CSettingTypeTempString(const char * initialValue);
-    CSettingTypeTempString(SettingID DefaultSetting);
     ~CSettingTypeTempString();
 
-    bool        IndexBasedSetting(void) const { return false; }
-    SettingType GetSettingType(void) const { return SettingType_StringVariable; }
+    bool        IndexBasedSetting ( void ) const { return false; }
+    SettingType GetSettingType    ( void ) const { return SettingType_StringVariable; }
 
     //return the values
-    bool Load(int32_t Index, bool & Value) const;
-    bool Load(int32_t Index, uint32_t & Value) const;
-    bool Load(int32_t Index, stdstr & Value) const;
+    bool Load   ( int32_t Index, bool & Value   ) const;
+    bool Load   ( int32_t Index, uint32_t & Value  ) const;
+    bool Load   ( int32_t Index, stdstr & Value ) const;
 
     //return the default values
-    void LoadDefault(int32_t Index, bool & Value) const;
-    void LoadDefault(int32_t Index, uint32_t & Value) const;
-    void LoadDefault(int32_t Index, stdstr & Value) const;
+    void LoadDefault ( int32_t Index, bool & Value   ) const;
+    void LoadDefault ( int32_t Index, uint32_t & Value  ) const;
+    void LoadDefault ( int32_t Index, stdstr & Value ) const;
 
     //Update the settings
-    void Save(int32_t Index, bool Value);
-    void Save(int32_t Index, uint32_t Value);
-    void Save(int32_t Index, const stdstr & Value);
-    void Save(int32_t Index, const char * Value);
+    void Save   ( int32_t Index, bool Value );
+    void Save   ( int32_t Index, uint32_t Value );
+    void Save   ( int32_t Index, const stdstr & Value );
+    void Save   ( int32_t Index, const char * Value );
 
     // Delete the setting
-    void Delete(int32_t Index);
+    void Delete ( int32_t Index );
 
 private:
     CSettingTypeTempString(void);                                     // Disable default constructor
@@ -48,6 +47,4 @@ private:
     CSettingTypeTempString& operator=(const CSettingTypeTempString&); // Disable assignment
 
     stdstr m_value;
-    bool m_UseDefault;
-    const SettingID m_DefaultSetting;
 };

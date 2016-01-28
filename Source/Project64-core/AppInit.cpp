@@ -1,11 +1,14 @@
 #include "stdafx.h"
+
 #include <Common/path.h>
 #include <Common/Trace.h>
 #include <Common/Util.h>
+
 #include <Project64-core/N64System/Mips/MemoryVirtualMem.h>
 #include <Project64-core/N64System/SystemGlobals.h>
 #include <Project64-core/Plugins/PluginClass.h>
 #include <Project64-core/N64System/N64RomClass.h>
+#include <Project64-core/N64System/N64DiskClass.h>
 #include "Settings/SettingType/SettingsType-Application.h"
 
 static void FixDirectories(void);
@@ -161,14 +164,6 @@ const char * AppName(void)
 
 static bool ParseCommand(int32_t argc, char **argv)
 {
-    WriteTrace(TraceAppInit, TraceDebug, "argc = %d", argc);
-    if (g_ModuleLogLevel[TraceAppInit] >= TraceDebug)
-    {
-        for (int32_t i = 1; i < argc; i++)
-        {
-            WriteTrace(TraceAppInit, TraceDebug, "%d: %s", i, argv[i]);
-        }
-    }
     if (argc == 1)
     {
         return true;
@@ -176,33 +171,7 @@ static bool ParseCommand(int32_t argc, char **argv)
     for (int32_t i = 1; i < argc; i++)
     {
         int32_t ArgsLeft = argc - i - 1;
-        if (strcmp(argv[i], "--basedir") == 0 && ArgsLeft >= 1)
-        {
-            g_Settings->SaveString(Cmd_BaseDirectory, argv[i + 1]);
-            CSettingTypeApplication::Initialize(AppName());
-            i++;
-        }
-        else if (strcmp(argv[i], "--gfxplugin") == 0 && ArgsLeft >= 1)
-        {
-            g_Settings->SaveString(Cmd_Plugin_Gfx, argv[i + 1]);
-            i++;
-        }
-        else if (strcmp(argv[i], "--audioplugin") == 0 && ArgsLeft >= 1)
-        {
-            g_Settings->SaveString(Cmd_Plugin_Audio, argv[i + 1]);
-            i++;
-        }
-        else if (strcmp(argv[i], "--rspplugin") == 0 && ArgsLeft >= 1)
-        {
-            g_Settings->SaveString(Cmd_Plugin_RSP, argv[i + 1]);
-            i++;
-        }
-        else if (strcmp(argv[i], "--contplugin") == 0 && ArgsLeft >= 1)
-        {
-            g_Settings->SaveString(Cmd_Plugin_Controller, argv[i + 1]);
-            i++;
-        }
-        else if (strcmp(argv[i], "--help") == 0)
+        if (strcmp(argv[i], "--help") == 0)
         {
             g_Settings->SaveBool(Cmd_ShowHelp, true);
             return false;
@@ -220,7 +189,7 @@ static bool ParseCommand(int32_t argc, char **argv)
     return false;
 }
 
-bool AppInit(CNotification * Notify, int argc, char **argv)
+bool AppInit(CNotification * Notify, const char * BaseDirectory, int argc, char **argv)
 {
     try
     {
@@ -234,7 +203,7 @@ bool AppInit(CNotification * Notify, int argc, char **argv)
         }
         WriteTrace(TraceAppInit, TraceDebug, "Settings up settings");
         g_Settings = new CSettings;
-        g_Settings->Initialize(AppName());
+        g_Settings->Initialize(BaseDirectory, AppName());
 
         WriteTrace(TraceAppInit, TraceDebug, "Parse Commands");
         if (!ParseCommand(argc, argv))
@@ -248,7 +217,7 @@ bool AppInit(CNotification * Notify, int argc, char **argv)
         {
             delete g_Settings;
             g_Settings = new CSettings;
-            g_Settings->Initialize(AppName());
+            g_Settings->Initialize(BaseDirectory, AppName());
         }
 #endif
 
@@ -283,6 +252,8 @@ void AppCleanup(void)
     CleanupTrace();
 
     if (g_Rom)      { delete g_Rom; g_Rom = NULL; }
+    if (g_DDRom)      { delete g_DDRom; g_DDRom = NULL; }
+    if (g_Disk)      { delete g_Disk; g_Disk = NULL; }
     if (g_Plugins)  { delete g_Plugins; g_Plugins = NULL; }
     if (g_Settings) { delete g_Settings; g_Settings = NULL; }
     if (g_Lang)     { delete g_Lang; g_Lang = NULL; }
@@ -294,6 +265,10 @@ void AppCleanup(void)
 void FixDirectories(void)
 {
     CPath Directory(g_Settings->LoadStringVal(Cmd_BaseDirectory).c_str(), "");
+    Directory.AppendDirectory("Config");
+    if (!Directory.DirectoryExists()) Directory.DirectoryCreate();
+
+    Directory.UpDirectory();
     Directory.AppendDirectory("Save");
     if (!Directory.DirectoryExists()) Directory.DirectoryCreate();
 

@@ -12,80 +12,69 @@
 #include "SettingsType-TempString.h"
 
 CSettingTypeTempString::CSettingTypeTempString(const char * initialValue) :
-m_value(initialValue ? initialValue : ""),
-m_UseDefault(false),
-m_DefaultSetting(Default_None)
+    m_value(initialValue)
 {
 }
 
-CSettingTypeTempString::CSettingTypeTempString(SettingID DefaultSetting) :
-m_value(""),
-m_UseDefault(true),
-m_DefaultSetting(DefaultSetting)
+CSettingTypeTempString::~CSettingTypeTempString ( void )
 {
 }
 
-CSettingTypeTempString::~CSettingTypeTempString(void)
-{
-}
-
-bool CSettingTypeTempString::Load(int /*Index*/, bool & /*Value*/) const
+bool CSettingTypeTempString::Load ( int /*Index*/, bool & /*Value*/ ) const
 {
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return false;
 }
 
-bool CSettingTypeTempString::Load(int /*Index*/, uint32_t & /*Value*/) const
+bool CSettingTypeTempString::Load ( int /*Index*/, uint32_t & /*Value*/ ) const
 {
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return false;
 }
 
-bool CSettingTypeTempString::Load(int /*Index*/, stdstr & Value) const
+bool CSettingTypeTempString::Load ( int /*Index*/, stdstr & Value ) const
 {
-    Value = m_UseDefault ? g_Settings->LoadStringVal(m_DefaultSetting) : m_value;
+    Value = m_value;
     return true;
 }
 
 //return the default values
-void CSettingTypeTempString::LoadDefault(int /*Index*/, bool & /*Value*/) const
+void CSettingTypeTempString::LoadDefault ( int /*Index*/, bool & /*Value*/ ) const
 {
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
-void CSettingTypeTempString::LoadDefault(int /*Index*/, uint32_t & /*Value*/) const
+void CSettingTypeTempString::LoadDefault ( int /*Index*/, uint32_t & /*Value*/  ) const
 {
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
-void CSettingTypeTempString::LoadDefault(int /*Index*/, stdstr & /*Value*/) const
+void CSettingTypeTempString::LoadDefault ( int /*Index*/, stdstr & /*Value*/ ) const
 {
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
-void CSettingTypeTempString::Save(int /*Index*/, bool /*Value*/)
+void CSettingTypeTempString::Save ( int /*Index*/, bool /*Value*/ )
 {
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
-void CSettingTypeTempString::Save(int /*Index*/, uint32_t /*Value*/)
+void CSettingTypeTempString::Save ( int /*Index*/, uint32_t /*Value*/ )
 {
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
-void CSettingTypeTempString::Save(int /*Index*/, const stdstr & Value)
+void CSettingTypeTempString::Save ( int /*Index*/, const stdstr & Value )
 {
     m_value = Value;
-    m_UseDefault = false;
 }
 
-void CSettingTypeTempString::Save(int /*Index*/, const char * Value)
+void CSettingTypeTempString::Save ( int /*Index*/, const char * Value )
 {
     m_value = Value;
-    m_UseDefault = false;
 }
 
-void CSettingTypeTempString::Delete(int /*Index*/)
+void CSettingTypeTempString::Delete( int /*Index*/ )
 {
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }

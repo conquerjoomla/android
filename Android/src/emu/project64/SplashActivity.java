@@ -14,6 +14,7 @@ import java.io.File;
 import java.util.List;
 
 import emu.project64.R;
+import emu.project64.jni.NativeExports;
 import emu.project64.persistent.AppData;
 import emu.project64.persistent.GlobalPrefs;
 import emu.project64.task.ExtractAssetsTask;
@@ -89,6 +90,8 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         // Extract the assets in a separate thread and launch the menu activity
         // Handler.postDelayed ensures this runs only after activity has resumed
         final Handler handler = new Handler();
+        
+        NativeExports.appInit(mAppData.coreSharedDataDir);
         handler.postDelayed( extractAssetsTaskLauncher, SPLASH_DELAY );
     }
     

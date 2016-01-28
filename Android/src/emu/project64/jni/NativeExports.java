@@ -17,6 +17,8 @@ public class NativeExports
         System.loadLibrary( "Project64-bridge" );
     }
     
+    public static native void appInit (String BaseDir );
+    
     public static native void loadLibraries( String libPath );
     
     public static native void unloadLibraries();
