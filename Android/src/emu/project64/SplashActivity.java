@@ -15,6 +15,7 @@ import java.util.List;
 
 import emu.project64.R;
 import emu.project64.jni.NativeExports;
+import emu.project64.jni.SettingsID;
 import emu.project64.persistent.AppData;
 import emu.project64.persistent.GlobalPrefs;
 import emu.project64.task.ExtractAssetsTask;
@@ -92,6 +93,8 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         final Handler handler = new Handler();
         
         NativeExports.appInit(mAppData.coreSharedDataDir);
+        NativeExports.SettingsSaveBool(SettingsID.Directory_PluginUseSelected.getValue(), true);
+        //NativeExports.SettingsSaveString(SettingsID.Directory_PluginSelected.getValue(), mAppData.libsDir);
         handler.postDelayed( extractAssetsTaskLauncher, SPLASH_DELAY );
     }
     

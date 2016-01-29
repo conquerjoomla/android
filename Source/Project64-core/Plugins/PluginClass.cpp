@@ -34,6 +34,8 @@ CPlugins::CPlugins(const stdstr & PluginDir) :
     g_Settings->RegisterChangeCB(Game_EditPlugin_Audio, this, (CSettings::SettingChangedFunc)PluginChanged);
     g_Settings->RegisterChangeCB(Game_EditPlugin_Contr, this, (CSettings::SettingChangedFunc)PluginChanged);
     g_Settings->RegisterChangeCB(Game_EditPlugin_RSP, this, (CSettings::SettingChangedFunc)PluginChanged);
+    g_Settings->RegisterChangeCB(Directory_PluginUseSelected, this, (CSettings::SettingChangedFunc)PluginChanged);
+    g_Settings->RegisterChangeCB(Directory_PluginSelected, this, (CSettings::SettingChangedFunc)PluginChanged);
 }
 
 CPlugins::~CPlugins(void)
@@ -48,6 +50,8 @@ CPlugins::~CPlugins(void)
     g_Settings->UnregisterChangeCB(Game_EditPlugin_Audio, this, (CSettings::SettingChangedFunc)PluginChanged);
     g_Settings->UnregisterChangeCB(Game_EditPlugin_Contr, this, (CSettings::SettingChangedFunc)PluginChanged);
     g_Settings->UnregisterChangeCB(Game_EditPlugin_RSP, this, (CSettings::SettingChangedFunc)PluginChanged);
+    g_Settings->UnregisterChangeCB(Directory_PluginUseSelected, this, (CSettings::SettingChangedFunc)PluginChanged);
+    g_Settings->UnregisterChangeCB(Directory_PluginSelected, this, (CSettings::SettingChangedFunc)PluginChanged);
 
     DestroyGfxPlugin();
     DestroyAudioPlugin();
@@ -57,8 +61,11 @@ CPlugins::~CPlugins(void)
 
 void CPlugins::PluginChanged(CPlugins * _this)
 {
+    WriteTrace(TracePlugins, TraceDebug, "Start");
     if (g_Settings->LoadBool(Game_TempLoaded) == true)
     {
+		WriteTrace(TracePlugins, TraceDebug, "Game is temporary loaded, not changing plugins");
+		WriteTrace(TracePlugins, TraceDebug, "Done");
         return;
     }
     bool bGfxChange = _stricmp(_this->m_GfxFile.c_str(), g_Settings->LoadStringVal(Game_Plugin_Gfx).c_str()) != 0;
@@ -68,7 +75,11 @@ void CPlugins::PluginChanged(CPlugins * _this)
 
     if (bGfxChange || bAudioChange || bRspChange || bContChange)
     {
-        if (g_Settings->LoadBool(GameRunning_CPU_Running))
+		if (bGfxChange) { WriteTrace(TracePlugins, TraceDebug, "Gfx plugin changed"); }
+		if (bAudioChange) { WriteTrace(TracePlugins, TraceDebug, "Audio plugin changed"); }
+		if (bRspChange) { WriteTrace(TracePlugins, TraceDebug, "RSP plugin changed"); }
+		if (bContChange) { WriteTrace(TracePlugins, TraceDebug, "Controller plugin changed"); }
+		if (g_Settings->LoadBool(GameRunning_CPU_Running))
         {
             //Ensure that base system actually exists before we go triggering the event
             if (g_BaseSystem)
@@ -81,6 +92,7 @@ void CPlugins::PluginChanged(CPlugins * _this)
             _this->Reset(NULL);
         }
     }
+	WriteTrace(TracePlugins, TraceDebug, "Done");
 }
 
 template <typename plugin_type>

@@ -30,5 +30,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="jniBridge.cpp" />
+    <ClCompile Include="NotificationClass.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="NotificationClass.h" />
   </ItemGroup>
 </Project>

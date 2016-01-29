@@ -5,6 +5,11 @@
 #include <sys/time.h>
 #endif
 
+#if defined(ANDROID)
+#include <android/log.h>
+
+#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "PJ64-Bridge", __VA_ARGS__)
+#endif
 typedef std::map<uint32_t, stdstr> ModuleNameMap;
 
 uint32_t * g_ModuleLogLevel = NULL;
@@ -42,7 +47,8 @@ void TraceSetModuleName(uint8_t module, const char * Name)
 
 void WriteTraceFull(uint32_t module, uint8_t severity, const char * file, int line, const char * function, const char *format, ...)
 {
-    va_list args;
+	printf("WriteTraceFull 1\n");
+	va_list args;
     va_start(args, format);
     size_t nlen = _vscprintf(format, args) + 1;
     char * Message = (char *)alloca(nlen * sizeof(char));
@@ -50,9 +56,11 @@ void WriteTraceFull(uint32_t module, uint8_t severity, const char * file, int li
     if (Message != NULL)
     {
         vsprintf(Message, format, args);
+	printf("WriteTraceFull 2\n");
         GetTraceObjet().TraceMessage(module, severity, file, line, function, Message);
     }
     va_end(args);
+	printf("WriteTraceFull 3\n");
 }
 
 void CloseTrace(void)

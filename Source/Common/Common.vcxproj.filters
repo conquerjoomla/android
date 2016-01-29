@@ -107,8 +107,4 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\AndroidAudio\AndroidAudio.vcxproj" />
-    <None Include="..\AndroidInput\AndroidInput.vcxproj" />
-  </ItemGroup>
 </Project>

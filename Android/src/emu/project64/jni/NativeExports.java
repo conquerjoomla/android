@@ -18,6 +18,12 @@ public class NativeExports
     }
     
     public static native void appInit (String BaseDir );
+    public static native void SettingsSaveBool (int type, boolean value );
+    public static native void SettingsSaveString (int type, String value );
+    
+    
+    
+    
     
     public static native void loadLibraries( String libPath );
     
