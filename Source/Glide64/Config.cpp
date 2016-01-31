@@ -57,7 +57,7 @@
 #endif
 #endif
 
-short Set_basic_mode = 0, Set_texture_dir = 0;
+short Set_basic_mode = 0, Set_texture_dir = 0, Set_log_dir = 0, Set_log_flush = 0;
 
 #ifdef _WIN32
 #ifdef tofix

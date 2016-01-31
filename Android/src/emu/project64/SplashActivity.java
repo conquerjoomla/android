@@ -93,8 +93,8 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         final Handler handler = new Handler();
         
         NativeExports.appInit(mAppData.coreSharedDataDir);
+        NativeExports.SettingsSaveString(SettingsID.Directory_PluginSelected.getValue(), mAppData.libsDir);
         NativeExports.SettingsSaveBool(SettingsID.Directory_PluginUseSelected.getValue(), true);
-        //NativeExports.SettingsSaveString(SettingsID.Directory_PluginSelected.getValue(), mAppData.libsDir);
         handler.postDelayed( extractAssetsTaskLauncher, SPLASH_DELAY );
     }
     

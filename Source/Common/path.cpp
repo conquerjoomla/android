@@ -919,13 +919,8 @@ bool CPath::DirectoryExists() const
 
     return bGotFile;
 #else
-    DIR * dir = opendir(m_strPath.c_str());
-    if (dir)
-    {
-        closedir(dir);
-        return true;
-    }
-    return false;
+    struct stat fileinfo;
+    return stat(m_strPath.c_str(), &fileinfo) == 0 && S_ISDIR(fileinfo.st_mode);
 #endif
 }
 
@@ -1222,15 +1217,14 @@ bool CPath::DirectoryCreate(bool bCreateIntermediates /*= TRUE*/)
     StripTrailingBackslash(PathText);
     bSuccess = ::CreateDirectory(PathText.c_str(), NULL) != 0;
 #else
-    bSuccess = false;
-#endif
-    if (!bSuccess)
+    GetDirectory(PathText);
+    StripTrailingBackslash(PathText);
+    if (DirectoryExists())
     {
-        CPath CurrentDir(CPath::CURRENT_DIRECTORY);
-        bSuccess = ChangeDirectory() != 0;
-        CurrentDir.ChangeDirectory();
+        return true;
     }
-
+    bSuccess = mkdir(PathText.c_str(), 0700) == 0;
+#endif
     if (!bSuccess && bCreateIntermediates)
     {
         std::string::size_type nDelimiter = PathText.rfind(DIRECTORY_DELIMITER);

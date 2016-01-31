@@ -24,7 +24,6 @@
 #define CALL
 #endif
 
-
 #ifdef ANDROID
 #include <jni.h>
 #include <android/log.h>
@@ -45,11 +44,15 @@ class AndroidLogger : public CTraceModule
         }
     }
 };
+AndroidLogger * g_Logger = NULL;
 
 EXPORT jboolean CALL Java_emu_project64_jni_NativeExports_appInit(JNIEnv* env, jclass cls, jstring BaseDir)
 {
-	AndroidLogger Logger;
-    TraceAddModule(&Logger);
+    if (g_Logger == NULL)
+    {
+        g_Logger = new AndroidLogger();
+    }
+    TraceAddModule(g_Logger);
 
     Notify().DisplayMessage(10, "    ____               _           __  _____ __ __");
     Notify().DisplayMessage(10, "   / __ \\_________    (_)__  _____/ /_/ ___// // /");
@@ -61,35 +64,34 @@ EXPORT jboolean CALL Java_emu_project64_jni_NativeExports_appInit(JNIEnv* env, j
     Notify().DisplayMessage(10, stdstr_f("%s Version %s", VER_FILE_DESCRIPTION_STR, VER_FILE_VERSION_STR).c_str());
     Notify().DisplayMessage(10, "");
 
-	const char *baseDir = env->GetStringUTFChars(BaseDir, 0);
-	bool res = AppInit(&Notify(), baseDir, 0, NULL);
+    const char *baseDir = env->GetStringUTFChars(BaseDir, 0);
+    bool res = AppInit(&Notify(), baseDir, 0, NULL);
     env->ReleaseStringUTFChars(BaseDir, baseDir);
-	if (!res)
+    if (!res)
     {
         AppCleanup();
     }
     return res;
 }
 
-
 EXPORT void CALL Java_emu_project64_jni_NativeExports_SettingsSaveBool(JNIEnv* env, jclass cls, int Type, jboolean Value)
 {
-	WriteTrace(TraceUserInterface, TraceDebug, "Saving %d value: %s",Type,Value ? "true" : "false");	
-	g_Settings->SaveBool((SettingID)Type, Value);
-	WriteTrace(TraceUserInterface, TraceDebug, "Saved");	
+    WriteTrace(TraceUserInterface, TraceDebug, "Saving %d value: %s",Type,Value ? "true" : "false");
+    g_Settings->SaveBool((SettingID)Type, Value);
+    WriteTrace(TraceUserInterface, TraceDebug, "Saved");
 }
 
 /*EXPORT void CALL Java_emu_project64_jni_NativeExports_SettingsSaveDword(JNIEnv* env, jclass cls, int Type, uint32_t Value)
 {
-    Notify().DisplayMessage(10, "SettingsSaveDword: ");
+Notify().DisplayMessage(10, "SettingsSaveDword: ");
 }*/
 
 EXPORT void CALL Java_emu_project64_jni_NativeExports_SettingsSaveString(JNIEnv* env, jclass cls, int Type, jstring Buffer)
 {
-	const char *value = env->GetStringUTFChars(Buffer, 0);
-	WriteTrace(TraceUserInterface, TraceDebug, "Saving %d value: %s",Type,value);	
-	g_Settings->SaveString((SettingID)Type, value);
-	WriteTrace(TraceUserInterface, TraceDebug, "Saved");	
+    const char *value = env->GetStringUTFChars(Buffer, 0);
+    WriteTrace(TraceUserInterface, TraceDebug, "Saving %d value: %s",Type,value);
+    g_Settings->SaveString((SettingID)Type, value);
+    WriteTrace(TraceUserInterface, TraceDebug, "Saved");
     env->ReleaseStringUTFChars(Buffer, value);
 }
 

@@ -1,5 +1,5 @@
 ######################
-# project64-rsp-hle
+# Project64-rsp-hle
 ######################
 include $(CLEAR_VARS)
 LOCAL_PATH := $(JNI_LOCAL_PATH)

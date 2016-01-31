@@ -425,7 +425,7 @@ void CN64System::StartEmulation2(bool NewThread)
             }
             g_Notify->DisplayMessage(5, "Copy Plugins");
             g_Plugins->CopyPlugins(g_Settings->LoadStringVal(Directory_PluginSync));
-            m_SyncPlugins = new CPlugins(g_Settings->LoadStringVal(Directory_PluginSync));
+            m_SyncPlugins = new CPlugins(Directory_PluginSync);
             m_SyncPlugins->SetRenderWindows(g_Plugins->SyncWindow(), NULL);
             m_SyncCPU = new CN64System(m_SyncPlugins, true);
         }

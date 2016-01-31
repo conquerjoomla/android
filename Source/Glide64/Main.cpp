@@ -53,6 +53,7 @@
 #include "CRC.h"
 #include "FBtoScreen.h"
 #include "DepthBufferRender.h"
+#include "trace.h"
 
 #ifdef TEXTURE_FILTER // Hiroshi Morii <koolsmoky@users.sourceforge.net>
 #include <stdarg.h>
@@ -1134,7 +1135,7 @@ public:
 
 IMPLEMENT_APP_NO_MAIN(wxDLLApp)
 
-    bool wxDLLApp::OnInit()
+bool wxDLLApp::OnInit()
 {
     wxImage::AddHandler(new wxPNGHandler);
     wxImage::AddHandler(new wxJPEGHandler);
@@ -1551,6 +1552,11 @@ void CALL PluginLoaded(void)
     SetModuleName("default");
     Set_basic_mode = FindSystemSettingId("Basic Mode");
     Set_texture_dir = FindSystemSettingId("Dir:Texture");
+    Set_log_flush = FindSystemSettingId("Log Auto Flush");
+    Set_log_dir = FindSystemSettingId("Dir:Log");
+    SetupTrace();
+
+    WriteTrace(TraceInterface, TraceDebug, "Start");
 
     SetModuleName("Glide64");
     general_setting(Set_CardId, "card_id", 0);
@@ -1637,6 +1643,8 @@ void CALL PluginLoaded(void)
     game_setting(Set_detect_cpu_write, "detect_cpu_write", 0);
     game_setting(Set_fb_get_info, "fb_get_info", 0);
     game_setting(Set_fb_render, "fb_render", 0);
+
+    WriteTrace(TraceInterface, TraceDebug, "Done");
 }
 
 /******************************************************************
@@ -1664,14 +1672,14 @@ static void CheckDRAMSize()
     {
         test = gfx.RDRAM[0x007FFFFF] + 1;
     }
-    GLIDE64_CATCH
+        GLIDE64_CATCH
     {
         test = 0;
     }
-    if (test)
-        BMASK = 0x7FFFFF;
-    else
-        BMASK = WMASK;
+        if (test)
+            BMASK = 0x7FFFFF;
+        else
+            BMASK = WMASK;
 #ifdef LOGGING
     sprintf(out_buf, "Detected RDRAM size: %08lx\n", BMASK);
     LOG(out_buf);
@@ -2396,7 +2404,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode,
         k_ctl = 0;
         k_alt = 0;
         k_del = 0;
-        ReleaseGfx ();
+        ReleaseGfx();
     }
 
     return CallNextHookEx(NULL, nCode, wParam, lParam);

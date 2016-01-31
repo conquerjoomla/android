@@ -47,8 +47,7 @@ void TraceSetModuleName(uint8_t module, const char * Name)
 
 void WriteTraceFull(uint32_t module, uint8_t severity, const char * file, int line, const char * function, const char *format, ...)
 {
-	printf("WriteTraceFull 1\n");
-	va_list args;
+    va_list args;
     va_start(args, format);
     size_t nlen = _vscprintf(format, args) + 1;
     char * Message = (char *)alloca(nlen * sizeof(char));
@@ -56,11 +55,9 @@ void WriteTraceFull(uint32_t module, uint8_t severity, const char * file, int li
     if (Message != NULL)
     {
         vsprintf(Message, format, args);
-	printf("WriteTraceFull 2\n");
         GetTraceObjet().TraceMessage(module, severity, file, line, function, Message);
     }
     va_end(args);
-	printf("WriteTraceFull 3\n");
 }
 
 void CloseTrace(void)
@@ -219,7 +216,7 @@ void CTraceFileLog::Write(uint32_t module, uint8_t severity, const char * /*file
     gettimeofday(&curTime, NULL);
     int milliseconds = curTime.tv_usec / 1000;
 
-    stdstr_f timestamp("%04d/%02d/%02d %02d:%02d:%02d.%03d %05d,", result.tm_year+1900, result.tm_mon+1, result.tm_mday, result.tm_hour, result.tm_min, result.tm_sec, milliseconds, GetCurrentThreadId());
+    stdstr_f timestamp("%04d/%02d/%02d %02d:%02d:%02d.%03d %05d,", result.tm_year + 1900, result.tm_mon + 1, result.tm_mday, result.tm_hour, result.tm_min, result.tm_sec, milliseconds, GetCurrentThreadId());
 #endif
 
     m_hLogFile.Log(timestamp.c_str());

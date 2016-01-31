@@ -150,7 +150,7 @@ bool CN64Rom::AllocateAndLoadZipImage(const char * FileLoc, bool LoadBootCodeOnl
     while (port == UNZ_OK && !FoundRom)
     {
         unz_file_info info;
-        char zname[_MAX_PATH];
+        char zname[260];
 
         unzGetCurrentFileInfo(file, &info, zname, sizeof(zname), NULL, 0, NULL, 0);
         if (unzLocateFile(file, zname, 1) != UNZ_OK)

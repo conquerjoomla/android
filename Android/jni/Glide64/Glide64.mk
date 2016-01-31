@@ -1,12 +1,11 @@
 ###############################
-# project64-Glide64
+# Project64-gfx-glide64
 ###############################
 include $(CLEAR_VARS)
 LOCAL_PATH := $(JNI_LOCAL_PATH)
 SRCDIR := ./
 
-LOCAL_MODULE := glide64
-LOCAL_SHARED_LIBRARIES := SDL2
+LOCAL_MODULE := Project64-gfx-glide64
 LOCAL_STATIC_LIBRARIES := common \
     Settings                     \
     png                          \
@@ -37,6 +36,7 @@ LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/Glide64/rdp.cpp                   \
     $(SRCDIR)/Glide64/TexBuffer.cpp             \
     $(SRCDIR)/Glide64/TexCache.cpp              \
+    $(SRCDIR)/Glide64/trace.cpp                 \
     $(SRCDIR)/Glide64/Util.cpp                  \
     $(SRCDIR)/Glide64/Ext_TxFilter.cpp          \
     $(SRCDIR)/GlideHQ/TxFilterExport.cpp        \

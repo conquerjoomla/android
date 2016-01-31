@@ -64,7 +64,7 @@ void pjutil::Sleep(uint32_t timeout)
 #ifdef _WIN32
     ::Sleep(timeout);
 #else
-	sleep(timeout);
+    sleep(timeout);
 #endif
 }
 
@@ -96,7 +96,7 @@ bool pjutil::TerminatedExistingExe()
                 if (!AskedUser)
                 {
                     AskedUser = true;
-                    int res = MessageBox(NULL, stdstr_f("%s currently running\n\nTerminate pid %d now?", ModuleName.c_str(), lppe.th32ProcessID).c_str(), stdstr_f("Terminate %s",ModuleName.c_str()).c_str(), MB_YESNO | MB_ICONEXCLAMATION);
+                    int res = MessageBox(NULL, stdstr_f("%s currently running\n\nTerminate pid %d now?", ModuleName.c_str(), lppe.th32ProcessID).c_str(), stdstr_f("Terminate %s", ModuleName.c_str()).c_str(), MB_YESNO | MB_ICONEXCLAMATION);
                     if (res != IDYES)
                     {
                         break;
@@ -111,7 +111,7 @@ bool pjutil::TerminatedExistingExe()
                     }
                     else
                     {
-                        MessageBox(NULL, stdstr_f("Failed to terminate pid %d", lppe.th32ProcessID).c_str(), stdstr_f("Terminate %s failed!",ModuleName.c_str()).c_str(), MB_YESNO | MB_ICONEXCLAMATION);
+                        MessageBox(NULL, stdstr_f("Failed to terminate pid %d", lppe.th32ProcessID).c_str(), stdstr_f("Terminate %s failed!", ModuleName.c_str()).c_str(), MB_YESNO | MB_ICONEXCLAMATION);
                     }
                     CloseHandle(hHandle);
                 }
