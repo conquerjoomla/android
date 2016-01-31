@@ -125,7 +125,7 @@ static void LoadPlugin(SettingID PluginSettingID, SettingID PluginVerSettingID, 
         }
         else
         {
-            WriteTrace(TraceError, TraceDebug, "Failed to load %s", (const char *)PluginFileName);
+            WriteTrace(TraceLevel, TraceError, "Failed to load %s", (const char *)PluginFileName);
             delete plugin;
             plugin = NULL;
         }
@@ -133,7 +133,7 @@ static void LoadPlugin(SettingID PluginSettingID, SettingID PluginVerSettingID, 
     }
     else
     {
-        WriteTrace(TraceError, TraceDebug, "Failed to allocate %s plugin", type);
+        WriteTrace(TraceLevel, TraceError, "Failed to allocate %s plugin", type);
     }
 }
 

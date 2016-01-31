@@ -19,7 +19,7 @@ enum { PLUGIN_TYPE_AUDIO = 3 };
 #define EXPORT      extern "C" __declspec(dllexport)
 #define CALL        __cdecl
 #else
-#define EXPORT      __attribute__((visibility("default")))
+#define EXPORT      extern "C" __attribute__((visibility("default")))
 #define CALL
 #endif
 

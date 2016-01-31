@@ -7,10 +7,14 @@ AUDIO_INFO g_AudioInfo;
 
 EXPORT void CALL AiDacrateChanged(int /*SystemType*/)
 {
+    int a = 5;
+    a = a;
 }
 
 EXPORT void CALL AiLenChanged(void)
 {
+    int a = 5;
+    a = a;
 }
 
 EXPORT uint32_t CALL AiReadLength(void)
@@ -20,10 +24,14 @@ EXPORT uint32_t CALL AiReadLength(void)
 
 EXPORT void CALL AiUpdate(int32_t Wait)
 {
+    int a = 5;
+    a = a;
 }
 
 EXPORT void CALL CloseDLL(void)
 {
+    int a = 5;
+    a = a;
 }
 
 EXPORT void CALL DllAbout(void * hParent)
@@ -60,12 +68,18 @@ EXPORT int32_t CALL InitiateAudio(AUDIO_INFO Audio_Info)
 
 EXPORT void CALL RomOpen()
 {
+    int a = 5;
+    a = a;
 }
 
 EXPORT void CALL RomClosed(void)
 {
+    int a = 5;
+    a = a;
 }
 
-EXPORT void CALL ProcessAlist(void)
+EXPORT void CALL ProcessAList(void)
 {
+    int a = 5;
+    a = a;
 }

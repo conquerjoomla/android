@@ -95,15 +95,8 @@ EXPORT void CALL Java_emu_project64_jni_NativeExports_SettingsSaveString(JNIEnv*
     env->ReleaseStringUTFChars(Buffer, value);
 }
 
-extern "C" void Java_emu_project64_jni_NativeExports_loadLibraries(JNIEnv* env, jclass cls, jstring jlibPath)
+EXPORT jint CALL Java_emu_project64_jni_NativeExports_RunFileImage(JNIEnv* env, jclass cls, jstring FileLoc)
 {
-}
-
-extern "C" void Java_emu_project64_jni_NativeExports_unloadLibraries(JNIEnv* env, jclass cls)
-{
-}
-
-extern "C" jint Java_emu_project64_jni_NativeExports_emuStart(JNIEnv* env, jclass cls, jstring juserDataPath, jstring juserCachePath, jobjectArray jargv)
-{
+    WriteTrace(TraceUserInterface, TraceDebug, "FileLoc: %s",FileLoc);
 }
 #endif

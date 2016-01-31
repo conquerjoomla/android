@@ -38,7 +38,6 @@ public class CoreInterface
     protected static AppData sAppData = null;
     protected static GlobalPrefs sGlobalPrefs = null;
     private static Activity sActivity = null;
-    private static Thread sCoreThread;
     
     // Startup info - used internally
     protected static String sRomPath = null;
@@ -52,57 +51,12 @@ public class CoreInterface
         new File( sGlobalPrefs.coreUserCacheDir ).mkdirs();
     }
     
-    public static void addOnStateCallbackListener( OnStateCallbackListener listener )
-    {
-    }
-    
     public static synchronized void startupEmulator()
     {
-        if( sCoreThread == null )
-        {
-            // Load the native libraries
-            NativeExports.loadLibraries( sAppData.libsDir );
-            
-            // Start the core thread if not already running
-            sCoreThread = new Thread( new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    // Initialize input-android plugin (even if we aren't going to use it)
-                    ArrayList<String> arglist = new ArrayList<String>();
-                    arglist.add("projet64");
-                    arglist.add("--basedir");
-                    arglist.add(sAppData.coreSharedDataDir);
-                    arglist.add("--rspplugin");
-                    arglist.add(sAppData.rspLib);
-                    arglist.add(sRomPath);
-                    int result = NativeExports.emuStart( sGlobalPrefs.coreUserDataDir, sGlobalPrefs.coreUserCacheDir, arglist.toArray() );
-                }
-            }, "CoreThread" );
-            
-            // Start the core on its own thread
-            sCoreThread.start();
-        }
+		NativeExports.RunFileImage(sRomPath);
     }
     
     public static synchronized void shutdownEmulator()
     {
-        if( sCoreThread != null )
-        {
-            // Now wait for the core thread to quit
-            try
-            {
-                sCoreThread.join();
-            }
-            catch( InterruptedException e )
-            {
-                Log.i( "CoreInterface", "Problem stopping core thread: " + e );
-            }
-            sCoreThread = null;
-            
-            // Unload the native libraries
-            NativeExports.unloadLibraries();
-        }
     }
 }

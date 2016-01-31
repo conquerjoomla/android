@@ -22,8 +22,8 @@ public class GameActivity extends Activity
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
-        mMenuHandler = new GameMenuHandler( this );
-        CoreInterface.addOnStateCallbackListener( mMenuHandler  );
+        //mMenuHandler = new GameMenuHandler( this );
+        //CoreInterface.addOnStateCallbackListener( mMenuHandler );
         
         mLifecycleHandler = new GameLifecycleHandler( this );
         mLifecycleHandler.onCreateBegin( savedInstanceState );

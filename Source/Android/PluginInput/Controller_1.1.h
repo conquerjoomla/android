@@ -10,7 +10,7 @@ enum { PLUGIN_TYPE_CONTROLLER = 4 };
 /*** Conteroller plugin's ****/
 enum
 {
-    PLUGIN_NONE	= 1,
+    PLUGIN_NONE = 1,
     PLUGIN_MEMPAK = 2,
     PLUGIN_RUMBLE_PAK = 3,
     PLUGIN_TANSFER_PAK = 4,
@@ -21,7 +21,7 @@ enum
 #define EXPORT      extern "C" __declspec(dllexport)
 #define CALL        __cdecl
 #else
-#define EXPORT      __attribute__((visibility("default")))
+#define EXPORT      extern "C"  __attribute__((visibility("default")))
 #define CALL
 #endif
 
@@ -92,7 +92,7 @@ down allowing the dll to de-initialise.
 input:    none
 output:   none
 *******************************************************************/
-EXPORT void CALL CloseDLL (void);
+EXPORT void CALL CloseDLL(void);
 
 /******************************************************************
 Function: ControllerCommand
@@ -110,7 +110,7 @@ the data that is being processed looks like this:
 initilize controller: 01 03 00 FF FF FF
 read controller:      01 04 01 FF FF FF FF
 *******************************************************************/
-EXPORT void CALL ControllerCommand ( int Control, uint8_t * Command);
+EXPORT void CALL ControllerCommand(int Control, uint8_t * Command);
 
 /******************************************************************
 Function: DllAbout
@@ -119,7 +119,7 @@ to give further information about the DLL.
 input:    a handle to the window that calls this function
 output:   none
 *******************************************************************/
-EXPORT void CALL DllAbout ( void * hParent );
+EXPORT void CALL DllAbout(void * hParent);
 
 /******************************************************************
 Function: DllConfig
@@ -128,7 +128,7 @@ to allow the user to configure the dll
 input:    a handle to the window that calls this function
 output:   none
 *******************************************************************/
-EXPORT void CALL DllConfig ( void * hParent );
+EXPORT void CALL DllConfig(void * hParent);
 
 /******************************************************************
 Function: DllTest
@@ -137,7 +137,7 @@ to allow the user to test the dll
 input:    a handle to the window that calls this function
 output:   none
 *******************************************************************/
-EXPORT void CALL DllTest ( void * hParent );
+EXPORT void CALL DllTest(void * hParent);
 
 /******************************************************************
 Function: GetDllInfo
@@ -147,7 +147,7 @@ input:    a pointer to a PLUGIN_INFO stucture that needs to be
 filled by the function. (see def above)
 output:   none
 *******************************************************************/
-EXPORT void CALL GetDllInfo ( PLUGIN_INFO * PluginInfo );
+EXPORT void CALL GetDllInfo(PLUGIN_INFO * PluginInfo);
 
 /******************************************************************
 Function: GetKeys
@@ -157,7 +157,7 @@ input:    - Controller Number (0 to 3)
 the controller state.
 output:   none
 *******************************************************************/
-EXPORT void CALL GetKeys(int32_t Control, BUTTONS * Keys );
+EXPORT void CALL GetKeys(int32_t Control, BUTTONS * Keys);
 
 /******************************************************************
 Function: InitiateControllers
@@ -168,7 +168,7 @@ input:    - The handle to the main window.
 the emulator to know how to handle each controller.
 output:   none
 *******************************************************************/
-EXPORT void CALL InitiateControllers (CONTROL_INFO ControlInfo);
+EXPORT void CALL InitiateControllers(CONTROL_INFO ControlInfo);
 
 /******************************************************************
 Function: ReadController
@@ -181,7 +181,7 @@ output:   none
 note:     This function is only needed if the DLL is allowing raw
 data.
 *******************************************************************/
-EXPORT void CALL ReadController ( int Control, uint8_t * Command );
+EXPORT void CALL ReadController(int Control, uint8_t * Command);
 
 /******************************************************************
 Function: RomClosed
@@ -189,7 +189,7 @@ Purpose:  This function is called when a rom is closed.
 input:    none
 output:   none
 *******************************************************************/
-EXPORT void CALL RomClosed (void);
+EXPORT void CALL RomClosed(void);
 
 /******************************************************************
 Function: RomOpen
@@ -198,7 +198,7 @@ emulation thread)
 input:    none
 output:   none
 *******************************************************************/
-EXPORT void CALL RomOpen (void);
+EXPORT void CALL RomOpen(void);
 
 /******************************************************************
 Function: WM_KeyDown
@@ -207,7 +207,7 @@ plugin.
 input:    wParam and lParam of the WM_KEYDOWN message.
 output:   none
 *******************************************************************/
-EXPORT void CALL WM_KeyDown( uint32_t wParam, uint32_t lParam );
+EXPORT void CALL WM_KeyDown(uint32_t wParam, uint32_t lParam);
 
 /******************************************************************
 Function: WM_KeyUp
@@ -216,4 +216,4 @@ plugin.
 input:    wParam and lParam of the WM_KEYDOWN message.
 output:   none
 *******************************************************************/
-EXPORT void CALL WM_KeyUp( uint32_t wParam, uint32_t lParam );
+EXPORT void CALL WM_KeyUp(uint32_t wParam, uint32_t lParam);
