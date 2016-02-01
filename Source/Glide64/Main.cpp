@@ -314,7 +314,7 @@ void UseUnregisteredSetting(int /*SettingID*/)
 
 void ReadSettings()
 {
-	g_settings->card_id = GetSetting(Set_CardId);
+    g_settings->card_id = GetSetting(Set_CardId);
     g_settings->res_data = (uint32_t)GetSetting(Set_Resolution);
     if (g_settings->res_data >= 24) g_settings->res_data = 12;
     g_settings->scr_res_x = g_settings->res_x = resolutions[g_settings->res_data][0];

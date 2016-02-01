@@ -246,7 +246,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback
         {
             switch( state )
             {
-                case NativeConstants.EMULATOR_STATE_UNKNOWN:
+                case NativeConstants.EMULATOR_STATE_IDLE:
                     CoreInterface.startupEmulator();
                     break;
                 case NativeConstants.EMULATOR_STATE_PAUSED:

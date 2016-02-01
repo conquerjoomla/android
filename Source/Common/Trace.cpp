@@ -5,11 +5,6 @@
 #include <sys/time.h>
 #endif
 
-#if defined(ANDROID)
-#include <android/log.h>
-
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "PJ64-Bridge", __VA_ARGS__)
-#endif
 typedef std::map<uint32_t, stdstr> ModuleNameMap;
 
 uint32_t * g_ModuleLogLevel = NULL;
@@ -216,7 +211,7 @@ void CTraceFileLog::Write(uint32_t module, uint8_t severity, const char * /*file
     gettimeofday(&curTime, NULL);
     int milliseconds = curTime.tv_usec / 1000;
 
-    stdstr_f timestamp("%04d/%02d/%02d %02d:%02d:%02d.%03d %05d,", result.tm_year + 1900, result.tm_mon + 1, result.tm_mday, result.tm_hour, result.tm_min, result.tm_sec, milliseconds, GetCurrentThreadId());
+    stdstr_f timestamp("%04d/%02d/%02d %02d:%02d:%02d.%03d %05d,", result.tm_year+1900, result.tm_mon+1, result.tm_mday, result.tm_hour, result.tm_min, result.tm_sec, milliseconds, GetCurrentThreadId());
 #endif
 
     m_hLogFile.Log(timestamp.c_str());

@@ -22,5 +22,5 @@ public class NativeExports
     public static native void SettingsSaveString (int type, String value );
     public static native void RunFileImage( String FileLoc );
     
-    public static native int emuGetState();
+	public static native int emuGetState();
 }

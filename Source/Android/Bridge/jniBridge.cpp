@@ -73,10 +73,10 @@ EXPORT jboolean CALL Java_emu_project64_jni_NativeExports_appInit(JNIEnv* env, j
     env->ReleaseStringUTFChars(BaseDir, baseDir);
     if (res)
     {
-		JniBridegSettings = new CJniBridegSettings();
-	}
-	else
-	{
+        JniBridegSettings = new CJniBridegSettings();
+    }
+    else
+    {
         AppCleanup();
     }
     return res;
@@ -114,19 +114,23 @@ EXPORT jint CALL Java_emu_project64_jni_NativeExports_RunFileImage(JNIEnv* env, 
 
 EXPORT jint CALL Java_emu_project64_jni_NativeExports_emuGetState(JNIEnv* env, jclass cls)
 {
-	if (JniBridegSettings != NULL)
-	{
-		//need to add a test for paused(3)
-		if (!JniBridegSettings->bCPURunning())
-		{
-			return (jint) 1; // CPU not running
-		}
-		if (JniBridegSettings->bCPURunning())
-		{
-			return (jint) 2; // CPU not running
-		}
-	}
-	return (jint) 0; // Unknown
+    WriteTrace(TraceUserInterface, TraceDebug, "Start");
+    if (JniBridegSettings != NULL)
+    {
+        //need to add a test for paused(3)
+        if (!JniBridegSettings->bCPURunning())
+        {
+            WriteTrace(TraceUserInterface, TraceDebug, "Done (res: 1) CPU not running");
+            return (jint) 1; // CPU not running
+        }
+        if (JniBridegSettings->bCPURunning())
+        {
+            WriteTrace(TraceUserInterface, TraceDebug, "Done (res: 2) CPU is running");
+            return (jint) 2; // CPU is running
+        }
+    }
+    WriteTrace(TraceUserInterface, TraceDebug, "Done (res: 0)  Unknown - JniBridegSettings does not exist");
+    return (jint) 0; // Unknown
 }
 
 #endif
