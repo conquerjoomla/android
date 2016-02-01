@@ -367,6 +367,7 @@ void CN64System::CloseSystem()
 
 bool CN64System::EmulationStarting(void * hThread, uint32_t ThreadId)
 {
+    WriteTrace(TraceN64System, TraceDebug, "Starting (hThread: %p ThreadId: %d)", hThread, ThreadId);
     bool bRes = true;
 
     WriteTrace(TraceN64System, TraceDebug, "Setting N64 system as active");
@@ -411,7 +412,7 @@ void CN64System::StartEmulation2(bool NewThread)
         CInterpreterCPU::BuildCPU();
 
         uint32_t CpuType = g_Settings->LoadDword(Game_CpuType);
-
+		WriteTrace(TraceN64System, TraceDebug, "CpuType = %d",CpuType);
         if (CpuType == CPU_SyncCores && !g_Settings->LoadBool(Debugger_Enabled))
         {
             g_Settings->SaveDword(Game_CpuType, CPU_Recompiler);
@@ -450,11 +451,13 @@ void CN64System::StartEmulation2(bool NewThread)
 
         if (!bSetActive)
         {
+			WriteTrace(TraceN64System, TraceWarning, "Failed to set system as active");
             g_Settings->SaveBool(GameRunning_LoadingInProgress, false);
             g_Notify->DisplayError(MSG_PLUGIN_NOT_INIT);
         }
         else
         {
+			WriteTrace(TraceN64System, TraceDebug, "Starting emulation thread");
             StartEmulationThead();
         }
     }
@@ -462,9 +465,10 @@ void CN64System::StartEmulation2(bool NewThread)
     {
         //mark the emulation as starting and fix up menus
         g_Notify->DisplayMessage(5, MSG_EMULATION_STARTED);
-
+		WriteTrace(TraceN64System, TraceDebug, "Start Executing CPU");
         ExecuteCPU();
     }
+	WriteTrace(TraceN64System, TraceDebug, "Done");
 }
 
 void  CN64System::StartEmulation(bool NewThread)
@@ -480,7 +484,7 @@ void  CN64System::StartEmulation(bool NewThread)
         sprintf(message, "Exception caught\nFile: %s\nLine: %d", __FILE__, __LINE__);
         g_Notify->DisplayError(message);
     }
-    WriteTrace(TraceN64System, TraceDebug, "Done");
+    WriteTrace(TraceN64System, TraceDebug, "Done (NewThread: %s)", NewThread ? "true" : "false")
 }
 
 void CN64System::Pause()

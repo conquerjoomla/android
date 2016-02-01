@@ -16,6 +16,7 @@
 #include <Project64-core/Settings/SettingsClass.h>
 #include <Project64-core/N64System/N64Class.h>
 #include <Common/Trace.h>
+#include "jniBridgeSettings.h"
 
 #ifdef _WIN32
 #define EXPORT      extern "C" __declspec(dllexport)
@@ -24,6 +25,8 @@
 #define EXPORT      extern "C" __attribute__((visibility("default")))
 #define CALL
 #endif
+
+CJniBridegSettings * JniBridegSettings = NULL;
 
 #ifdef ANDROID
 #include <jni.h>
@@ -68,8 +71,12 @@ EXPORT jboolean CALL Java_emu_project64_jni_NativeExports_appInit(JNIEnv* env, j
     const char *baseDir = env->GetStringUTFChars(BaseDir, 0);
     bool res = AppInit(&Notify(), baseDir, 0, NULL);
     env->ReleaseStringUTFChars(BaseDir, baseDir);
-    if (!res)
+    if (res)
     {
+		JniBridegSettings = new CJniBridegSettings();
+	}
+	else
+	{
         AppCleanup();
     }
     return res;
@@ -104,4 +111,22 @@ EXPORT jint CALL Java_emu_project64_jni_NativeExports_RunFileImage(JNIEnv* env, 
     env->ReleaseStringUTFChars(FileLoc, fileLoc);
     WriteTrace(TraceUserInterface, TraceDebug, "Image started");
 }
+
+EXPORT jint CALL Java_emu_project64_jni_NativeExports_emuGetState(JNIEnv* env, jclass cls)
+{
+	if (JniBridegSettings != NULL)
+	{
+		//need to add a test for paused(3)
+		if (!JniBridegSettings->bCPURunning())
+		{
+			return (jint) 1; // CPU not running
+		}
+		if (JniBridegSettings->bCPURunning())
+		{
+			return (jint) 2; // CPU not running
+		}
+	}
+	return (jint) 0; // Unknown
+}
+
 #endif

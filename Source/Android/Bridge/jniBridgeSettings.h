@@ -1,6 +1,6 @@
 /****************************************************************************
 *                                                                           *
-* Project 64 - A Nintendo 64 emulator.                                      *
+* Project64 - A Nintendo 64 emulator.                                      *
 * http://www.pj64-emu.com/                                                  *
 * Copyright (C) 2012 Project64. All rights reserved.                        *
 *                                                                           *
@@ -8,19 +8,20 @@
 * GNU/GPLv2 http://www.gnu.org/licenses/gpl-2.0.html                        *
 *                                                                           *
 ****************************************************************************/
-package emu.project64.jni;
+#pragma once
 
-public class NativeExports
+class CJniBridegSettings
 {
-    static
-    {
-        System.loadLibrary( "Project64-bridge" );
-    }
-    
-    public static native void appInit (String BaseDir );
-    public static native void SettingsSaveBool (int type, boolean value );
-    public static native void SettingsSaveString (int type, String value );
-    public static native void RunFileImage( String FileLoc );
-    
-    public static native int emuGetState();
-}
+public:
+	CJniBridegSettings();
+	~CJniBridegSettings();
+	
+	static inline bool bCPURunning ( void) { return m_bCPURunning; }
+
+private:
+	static void RefreshSettings (void *);
+
+	static bool m_bCPURunning;
+	
+	static int  m_RefCount;
+};

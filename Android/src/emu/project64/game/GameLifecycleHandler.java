@@ -241,6 +241,20 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback
     
     private void tryRunning()
     {        
-        CoreInterface.startupEmulator();
+		int state = NativeExports.emuGetState();
+        if( isSafeToRender() && ( state != NativeConstants.EMULATOR_STATE_RUNNING ))
+        {
+            switch( state )
+            {
+                case NativeConstants.EMULATOR_STATE_UNKNOWN:
+                    CoreInterface.startupEmulator();
+                    break;
+                case NativeConstants.EMULATOR_STATE_PAUSED:
+                    //CoreInterface.resumeEmulator();
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }
