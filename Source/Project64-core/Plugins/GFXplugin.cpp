@@ -101,7 +101,8 @@ bool CGfxPlugin::LoadFunctions(void)
 
 bool CGfxPlugin::Initiate(CN64System * System, RenderWindow * Window)
 {
-    if (m_Initialized)
+    WriteTrace(TraceGFXPlugin, TraceDebug, "Starting");
+	if (m_Initialized)
     {
         Close();
     }
@@ -154,13 +155,17 @@ bool CGfxPlugin::Initiate(CN64System * System, RenderWindow * Window)
     //Get Function from DLL
     int32_t(CALL *InitiateGFX)(GFX_INFO Gfx_Info);
     _LoadFunction("InitiateGFX",InitiateGFX);
-    if (InitiateGFX == NULL) { return false; }
+    if (InitiateGFX == NULL) 
+	{
+		WriteTrace(TraceGFXPlugin, TraceDebug, "Failed to find InitiateGFX");
+		return false; 
+	}
 
     GFX_INFO Info = { 0 };
 
     Info.MemoryBswaped = true;
-    Info.hWnd = Window->GetWindowHandle();
-    Info.hStatusBar = Window->GetStatusBar();
+    Info.hWnd = Window ? Window->GetWindowHandle() : NULL; 
+    Info.hStatusBar = Window ? Window->GetStatusBar() : NULL;
     Info.CheckInterrupts = DummyCheckInterrupts;
 
     // We are initializing the plugin before any rom is loaded so we do not have any correct
@@ -222,6 +227,7 @@ bool CGfxPlugin::Initiate(CN64System * System, RenderWindow * Window)
         Info.VI__Y_SCALE_REG = &g_Reg->VI_Y_SCALE_REG;
     }
 
+	WriteTrace(TraceGFXPlugin, TraceDebug, "Calling InitiateGFX");
     m_Initialized = InitiateGFX(Info) != 0;
 
 #ifdef _WIN32
@@ -229,6 +235,7 @@ bool CGfxPlugin::Initiate(CN64System * System, RenderWindow * Window)
     pjutil::DynLibCallDllMain();
 #endif
 
+	WriteTrace(TraceGFXPlugin, TraceDebug, "InitiateGFX done (res: %s)", m_Initialized ? "true" : "false");
     return m_Initialized;
 }
 

@@ -14,6 +14,7 @@
 #include <Project64-core/Version.h>
 #include <Project64-core/TraceModulesProject64.h>
 #include <Project64-core/Settings/SettingsClass.h>
+#include <Project64-core/N64System/N64Class.h>
 #include <Common/Trace.h>
 
 #ifdef _WIN32
@@ -97,6 +98,10 @@ EXPORT void CALL Java_emu_project64_jni_NativeExports_SettingsSaveString(JNIEnv*
 
 EXPORT jint CALL Java_emu_project64_jni_NativeExports_RunFileImage(JNIEnv* env, jclass cls, jstring FileLoc)
 {
-    WriteTrace(TraceUserInterface, TraceDebug, "FileLoc: %s",FileLoc);
+    const char *fileLoc = env->GetStringUTFChars(FileLoc, 0);
+    WriteTrace(TraceUserInterface, TraceDebug, "FileLoc: %s",fileLoc);
+    CN64System::RunFileImage(fileLoc);
+    env->ReleaseStringUTFChars(FileLoc, fileLoc);
+    WriteTrace(TraceUserInterface, TraceDebug, "Image started");
 }
 #endif

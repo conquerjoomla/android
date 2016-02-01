@@ -75,7 +75,7 @@ void calc_light (VERTEX *v)
 //*
 void calc_linear (VERTEX *v)
 {
-  if (settings.force_calc_sphere)
+  if (g_settings->force_calc_sphere)
   {
     calc_sphere(v);
     return;
@@ -123,7 +123,7 @@ void calc_sphere (VERTEX *v)
 //  LRDP("calc_sphere\n");
   DECLAREALIGN16VAR(vec[3]);
   int s_scale, t_scale;
-  if (settings.hacks&hack_Chopper)
+  if (g_settings->hacks&hack_Chopper)
   {
     s_scale = minval(rdp.tiles[rdp.cur_tile].org_s_scale >> 6, rdp.tiles[rdp.cur_tile].lr_s);
     t_scale = minval(rdp.tiles[rdp.cur_tile].org_t_scale >> 6, rdp.tiles[rdp.cur_tile].lr_t);

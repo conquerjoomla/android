@@ -1020,7 +1020,7 @@ static void cc_shade()
 
 static void cc_one_mul_shade()
 {
-    if ((settings.hacks&hack_Knockout) && (rdp.aTBuffTex[0] || rdp.aTBuffTex[1] || rdp.cur_image)) //hack for boxer shadow
+    if ((g_settings->hacks&hack_Knockout) && (rdp.aTBuffTex[0] || rdp.aTBuffTex[1] || rdp.cur_image)) //hack for boxer shadow
     {
         CCMB(GR_COMBINE_FUNCTION_SCALE_OTHER,
             GR_COMBINE_FACTOR_LOCAL,
@@ -5999,7 +5999,7 @@ static void cc_prim_sub_env_mul_t1_add_env()
         GR_COMBINE_OTHER_CONSTANT);
     CC_PRIM();
     SETSHADE_ENV();
-    if (rdp.cycle_mode == 0 || ((settings.hacks&hack_KI) && (rdp.cycle2 & 0x0FFFFFFF) == 0x01FF1FFF))
+    if (rdp.cycle_mode == 0 || ((g_settings->hacks&hack_KI) && (rdp.cycle2 & 0x0FFFFFFF) == 0x01FF1FFF))
     {
         USE_T0();
     }
@@ -8153,13 +8153,13 @@ static void cc__t1_inter_t0_using_prim__mul_shade()
 static void cc__t0_inter_t1_using_primlod__mul_shade()
 {
     //*
-    if (rdp.LOD_en && (rdp.mipmap_level == 0) && !(settings.hacks&hack_Fifa98))
+    if (rdp.LOD_en && (rdp.mipmap_level == 0) && !(g_settings->hacks&hack_Fifa98))
     {
         cc_t0_mul_shade();
         return;
     }
     //*/
-    if (settings.ucode == 7)
+    if (g_settings->ucode == 7)
         lod_frac = rdp.prim_lodfrac;
     CCMB(GR_COMBINE_FUNCTION_SCALE_OTHER,
         GR_COMBINE_FACTOR_LOCAL,
@@ -8435,7 +8435,7 @@ static void cc__one_inter_prim_using_t1__mul_shade()
 {
     if (cmb.combine_ext)
     {
-        if ((settings.hacks&hack_BAR) && rdp.cur_tile == 1)
+        if ((g_settings->hacks&hack_BAR) && rdp.cur_tile == 1)
         {
             T0CCMBEXT(GR_CMBX_TMU_CCOLOR, GR_FUNC_MODE_X,
                 GR_CMBX_TMU_CALPHA, GR_FUNC_MODE_NEGATIVE_X,
@@ -8467,7 +8467,7 @@ static void cc__one_inter_prim_using_t1__mul_shade()
             GR_COMBINE_FACTOR_LOCAL,
             GR_COMBINE_LOCAL_ITERATED,
             GR_COMBINE_OTHER_TEXTURE);
-        if ((settings.hacks&hack_BAR) && rdp.cur_tile == 1)
+        if ((g_settings->hacks&hack_BAR) && rdp.cur_tile == 1)
         {
             MOD_0(TMOD_COL_INTER_COL1_USING_TEX);
             MOD_0_COL(0xFFFFFF00);
@@ -8836,7 +8836,7 @@ static void ac_t1()
         GR_COMBINE_FACTOR_ONE,
         GR_COMBINE_LOCAL_NONE,
         GR_COMBINE_OTHER_TEXTURE);
-    if ((settings.hacks&hack_BAR) && rdp.tiles[rdp.cur_tile].format == 3)
+    if ((g_settings->hacks&hack_BAR) && rdp.tiles[rdp.cur_tile].format == 3)
         A_USE_T0();
     else
         A_USE_T1();
@@ -9416,7 +9416,7 @@ static void ac_t1_mul_env() //Added by Gonetz
         GR_COMBINE_LOCAL_CONSTANT,
         GR_COMBINE_OTHER_TEXTURE);
     CA_ENV();
-    //  if ((settings.hacks&hack_Powerpuff) && (rdp.last_tile == 0))
+    //  if ((g_settings->hacks&hack_Powerpuff) && (rdp.last_tile == 0))
     if (rdp.cycle_mode == 0)
         A_USE_T0();
     else
@@ -11225,7 +11225,7 @@ static void ac__t1_mul_primlod_add_t0__mul_env()
 
 static void ac__t0_inter_t1_using_primlod__mul_shade()
 {
-    if (settings.hacks & hack_Makers)
+    if (g_settings->hacks & hack_Makers)
     {
         //rolling rock issue - it has zero shade alpha and thus rejected by alpha compare
         ac_t0_inter_t1_using_primlod();
@@ -15545,7 +15545,7 @@ void Combine()
         Alpha0[(rdp.cycle2 >> 16) & 7], Alpha1[(rdp.cycle2 >> 19) & 7], Alpha2[(rdp.cycle2 >> 22) & 7], Alpha3[(rdp.cycle2 >> 25) & 7]);
     if (!rdp.LOD_en || rdp.cur_tile == rdp.mipmap_level)
         lod_frac = rdp.prim_lodfrac;
-    else if (settings.lodmode == 0)
+    else if (g_settings->lodmode == 0)
         lod_frac = 0;
     else
         lod_frac = 10;
@@ -15626,7 +15626,7 @@ void Combine()
     {
         rdp.uncombined |= 1;
 #ifdef UNIMP_LOG
-        if (settings.log_unk)
+        if (g_settings->log_unk)
         {
             sprintf (out_buf, "COLOR combine not found: %08x, #1: (%s-%s)*%s+%s, #2: (%s-%s)*%s+%s\n",
                 actual_combine,
@@ -15681,7 +15681,7 @@ void Combine()
         {
             rdp.uncombined |= 2;
 #ifdef UNIMP_LOG
-            if (settings.log_unk)
+            if (g_settings->log_unk)
             {
                 sprintf (out_buf, "ALPHA combine not found: %08x, #1: (%s-%s)*%s+%s, #2: (%s-%s)*%s+%s\n",
                     actual_combine,
@@ -15691,7 +15691,7 @@ void Combine()
             }
 #endif
         }
-        if (settings.unk_as_red)
+        if (g_settings->unk_as_red)
         {
             BrightRed();
         }
@@ -15714,7 +15714,7 @@ void Combine()
         cc_t0();
         ac_t1();
     }
-    else if (color_combine == 0x613522f0 && (settings.hacks&hack_PMario)) //Paper Mario fortune teller spheres
+    else if (color_combine == 0x613522f0 && (g_settings->hacks&hack_PMario)) //Paper Mario fortune teller spheres
     {
         ac_t0();
     }
@@ -15742,9 +15742,9 @@ void Combine()
         aTBuff[rdp.aTBuffTex[1]->tile] = rdp.aTBuffTex[1];
     if (cmb.tex && (aTBuff[0] || aTBuff[1]))
     {
-        if (aTBuff[0] && (settings.frame_buffer&fb_read_alpha))
+        if (aTBuff[0] && (g_settings->frame_buffer&fb_read_alpha))
         {
-            if ((settings.hacks&hack_PMario) && aTBuff[0]->width == rdp.ci_width)
+            if ((g_settings->hacks&hack_PMario) && aTBuff[0]->width == rdp.ci_width)
                 ;
             else
             {
@@ -15924,7 +15924,7 @@ void CombineBlender()
     */
     else if (blendmode == 0x0040) // Mia Soccer Lights
         A_BLEND(GR_BLEND_SRC_ALPHA, GR_BLEND_ONE_MINUS_SRC_ALPHA);
-    else if ((settings.hacks&hack_Pilotwings) && (rdp.othermode_l & 0x80)) //CLR_ON_CVG without FORCE_BL
+    else if ((g_settings->hacks&hack_Pilotwings) && (rdp.othermode_l & 0x80)) //CLR_ON_CVG without FORCE_BL
         A_BLEND(GR_BLEND_ZERO, GR_BLEND_ONE);
     else
         A_BLEND(GR_BLEND_ONE, GR_BLEND_ZERO);
@@ -15934,7 +15934,7 @@ void CombineBlender()
     //  if (rdp.othermode_l & 0x2000)
     if ((rdp.othermode_l & 0x2000) && ((rdp.othermode_l & 0x7000) != 0x7000))
     {
-        if ((settings.hacks&hack_PMario) && (blendmode == 0x5055))
+        if ((g_settings->hacks&hack_PMario) && (blendmode == 0x5055))
         {
             A_BLEND(GR_BLEND_ZERO, GR_BLEND_ONE);
         }
@@ -15950,7 +15950,7 @@ void CombineBlender()
 
     //hack
     //*
-    if (settings.hacks&hack_ISS64)
+    if (g_settings->hacks&hack_ISS64)
     {
         if (rdp.othermode_l == 0xff5a6379)
         {
@@ -15961,7 +15961,7 @@ void CombineBlender()
             A_BLEND(GR_BLEND_ZERO, GR_BLEND_ONE);
         }
     }
-    else if (settings.hacks&hack_TGR)
+    else if (g_settings->hacks&hack_TGR)
     {
         if (rdp.othermode_l == 0x0f0a0235)
         {

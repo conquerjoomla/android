@@ -75,6 +75,7 @@ the plugin
 #include "rdp.h"
 #include "Keys.h"
 #include "config.h"
+#include "Settings.h"
 
 #if defined __VISUALC__
 typedef unsigned char boolean;
@@ -199,13 +200,13 @@ extern "C" {
 #ifdef RDP_LOGGING
     extern int log_open;
     extern std::ofstream rdp_log;
-#define OPEN_RDP_LOG() EXT("OPEN_RDP_LOG ()\n"); if (settings.logging && !log_open) { rdp_log.open ("rdp.txt"); log_open=TRUE; }
-#define CLOSE_RDP_LOG() EXT("CLOSE_RDP_LOG ()\n"); if (settings.logging && log_open) { rdp_log.close (); log_open=FALSE; }
+#define OPEN_RDP_LOG() EXT("OPEN_RDP_LOG ()\n"); if (g_settings->logging && !log_open) { rdp_log.open ("rdp.txt"); log_open=TRUE; }
+#define CLOSE_RDP_LOG() EXT("CLOSE_RDP_LOG ()\n"); if (g_settings->logging && log_open) { rdp_log.close (); log_open=FALSE; }
 
 #ifdef LOGNOTKEY
-#define LRDP(x) EXT("RDP (...)\n"); if (settings.logging && log_open) { if (!CheckKeyPressed(LOGKEY,0x8000)) { rdp_log << x; rdp_log.flush(); } }
+#define LRDP(x) EXT("RDP (...)\n"); if (g_settings->logging && log_open) { if (!CheckKeyPressed(LOGKEY,0x8000)) { rdp_log << x; rdp_log.flush(); } }
 #else
-#define LRDP(x) EXT("RDP (...)\n"); if (settings.logging && log_open) { rdp_log << x; rdp_log.flush(); }
+#define LRDP(x) EXT("RDP (...)\n"); if (g_settings->logging && log_open) { rdp_log << x; rdp_log.flush(); }
 #endif
 
 #else
@@ -217,9 +218,9 @@ extern "C" {
 #ifdef RDP_ERROR_LOG
     extern int elog_open;
     extern std::ofstream rdp_err;
-#define OPEN_RDP_E_LOG() EXT("OPEN_RDP_E_LOG ()\n"); if (settings.elogging && !elog_open) { rdp_err.open ("rdp_e.txt"); elog_open=TRUE; }
-#define CLOSE_RDP_E_LOG() EXT("CLOSE_RDP_LOG ()\n"); if (settings.elogging && elog_open) { rdp_err.close (); elog_open=FALSE; }
-#define RDP_E(x) if (settings.elogging) { FRDP_E (x); }
+#define OPEN_RDP_E_LOG() EXT("OPEN_RDP_E_LOG ()\n"); if (g_settings->elogging && !elog_open) { rdp_err.open ("rdp_e.txt"); elog_open=TRUE; }
+#define CLOSE_RDP_E_LOG() EXT("CLOSE_RDP_LOG ()\n"); if (g_settings->elogging && elog_open) { rdp_err.close (); elog_open=FALSE; }
+#define RDP_E(x) if (g_settings->elogging) { FRDP_E (x); }
 #else
 #define OPEN_RDP_E_LOG()
 #define CLOSE_RDP_E_LOG()
@@ -229,7 +230,7 @@ extern "C" {
 #ifdef RDP_LOGGING
     __inline void FRDP(const char *fmt, ...)
     {
-        if (!settings.logging || !log_open) return;
+        if (!g_settings->logging || !log_open) return;
 
 #ifdef LOGNOTKEY
         if (CheckKeyPressed(LOGKEY, 0x8000)) return;
@@ -248,7 +249,7 @@ extern "C" {
 #ifdef RDP_ERROR_LOG
     __inline void FRDP_E(const char *fmt, ...)
     {
-        if (!settings.elogging || !elog_open) return;
+        if (!g_settings->elogging || !elog_open) return;
 
 #ifdef LOGNOTKEY
         if (CheckKeyPressed(LOGKEY, 0x8000)) return;

@@ -52,6 +52,7 @@
   <ItemGroup>
     <ClInclude Include="FrameSkipper.h" />
     <ClInclude Include="Gfx_1.3.h" />
+    <ClInclude Include="Settings.h" />
     <ClInclude Include="trace.h" />
     <ClInclude Include="TraceModuleGlide64.h" />
     <ClInclude Include="turbo3D.h" />
@@ -101,6 +102,7 @@
   <ItemGroup>
     <ClCompile Include="CRC.cpp" />
     <ClCompile Include="FrameSkipper.cpp" />
+    <ClCompile Include="Settings.cpp" />
     <ClCompile Include="TexCache.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="3dmath.cpp" />

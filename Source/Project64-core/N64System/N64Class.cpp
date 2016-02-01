@@ -399,14 +399,15 @@ bool CN64System::EmulationStarting(void * hThread, uint32_t ThreadId)
 
 void CN64System::StartEmulation2(bool NewThread)
 {
+    WriteTrace(TraceN64System, TraceDebug, "Start (NewThread: %s)",NewThread ? "true" : "false");
     if (NewThread)
     {
-        WriteTrace(TraceN64System, TraceDebug, "Starting");
         if (bHaveDebugger())
         {
             StartLog();
         }
 
+		WriteTrace(TraceN64System, TraceDebug, "Setting up system");
         CInterpreterCPU::BuildCPU();
 
         uint32_t CpuType = g_Settings->LoadDword(Game_CpuType);
@@ -435,6 +436,7 @@ void CN64System::StartEmulation2(bool NewThread)
             m_Recomp = new CRecompiler(m_Reg, m_Profile, m_EndEmulation);
         }
 
+		WriteTrace(TraceN64System, TraceDebug, "Setting system as active");
         bool bSetActive = true;
         if (m_SyncCPU)
         {
@@ -467,7 +469,7 @@ void CN64System::StartEmulation2(bool NewThread)
 
 void  CN64System::StartEmulation(bool NewThread)
 {
-    WriteTrace(TraceN64System, TraceDebug, "Start");
+    WriteTrace(TraceN64System, TraceDebug, "Start (NewThread: %s)", NewThread ? "true" : "false");
     __except_try()
     {
         StartEmulation2(NewThread);

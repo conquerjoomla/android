@@ -60,11 +60,9 @@ CPlugins::~CPlugins(void)
 
 void CPlugins::PluginChanged(CPlugins * _this)
 {
-    WriteTrace(TracePlugins, TraceDebug, "Start");
     if (g_Settings->LoadBool(Game_TempLoaded) == true)
     {
         WriteTrace(TracePlugins, TraceDebug, "Game is temporary loaded, not changing plugins");
-        WriteTrace(TracePlugins, TraceDebug, "Done");
         return;
     }
 
@@ -72,8 +70,6 @@ void CPlugins::PluginChanged(CPlugins * _this)
     bool bAudioChange = _stricmp(_this->m_AudioFile.c_str(), g_Settings->LoadStringVal(Game_Plugin_Audio).c_str()) != 0;
     bool bRspChange = _stricmp(_this->m_RSPFile.c_str(), g_Settings->LoadStringVal(Game_Plugin_RSP).c_str()) != 0;
     bool bContChange = _stricmp(_this->m_ControlFile.c_str(), g_Settings->LoadStringVal(Game_Plugin_Controller).c_str()) != 0;
-    WriteTrace(TracePlugins, TraceDebug, "_this->m_PluginDir.c_str() = %s", _this->m_PluginDir.c_str());
-    WriteTrace(TracePlugins, TraceDebug, "g_Settings->LoadStringVal(_this->m_PluginDirSetting).c_str() = %s", g_Settings->LoadStringVal(_this->m_PluginDirSetting).c_str());
     if (_stricmp(_this->m_PluginDir.c_str(), g_Settings->LoadStringVal(_this->m_PluginDirSetting).c_str()) != 0)
     {
         bGfxChange = true;

@@ -131,6 +131,7 @@
     <ClInclude Include="FrameSkipper.h" />
     <ClInclude Include="TraceModuleGlide64.h" />
     <ClInclude Include="trace.h" />
+    <ClInclude Include="Settings.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CRC.cpp">
@@ -155,6 +156,7 @@
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="FrameSkipper.cpp" />
     <ClCompile Include="trace.cpp" />
+    <ClCompile Include="Settings.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="gpl.txt">
