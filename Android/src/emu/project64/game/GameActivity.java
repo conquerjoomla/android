@@ -20,6 +20,13 @@ public class GameActivity extends Activity
     private GameMenuHandler mMenuHandler;
     
     @Override
+    public void onWindowFocusChanged( boolean hasFocus )
+    {
+        super.onWindowFocusChanged( hasFocus );
+        mLifecycleHandler.onWindowFocusChanged( hasFocus );
+    }
+    
+    @Override
     protected void onCreate( Bundle savedInstanceState )
     {
         //mMenuHandler = new GameMenuHandler( this );
