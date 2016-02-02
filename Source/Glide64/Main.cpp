@@ -1859,11 +1859,7 @@ void CALL UpdateScreen(void)
         LOG("KEY!!!\n");
     }
 #endif
-    char out_buf[128];
-    sprintf(out_buf, "UpdateScreen (). Origin: %08x, Old origin: %08x, width: %d\n", *gfx.VI_ORIGIN_REG, rdp.vi_org_reg, *gfx.VI_WIDTH_REG);
-    LOG(out_buf);
-    LRDP(out_buf);
-
+    WriteTrace(TraceInterface, TraceDebug, "Origin: %08x, Old origin: %08x, width: %d\n", *gfx.VI_ORIGIN_REG, rdp.vi_org_reg, *gfx.VI_WIDTH_REG);
     uint32_t width = (*gfx.VI_WIDTH_REG) << 1;
     if (*gfx.VI_ORIGIN_REG > width)
     {

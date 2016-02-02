@@ -10,25 +10,75 @@
 ****************************************************************************/
 package emu.project64.game;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
-import android.util.AttributeSet;
-import android.view.SurfaceView;
+import android.content.pm.ConfigurationInfo;
+import android.opengl.GLSurfaceView;
+import android.os.Build;
+import android.os.Bundle;
 
-public class GameSurface extends SurfaceView
+public class GameSurface extends Activity 
 {
-    /**
-     * Constructor that is called when inflating a view from XML. This is called when a view is
-     * being constructed from an XML file, supplying attributes that were specified in the XML file.
-     * This version uses a default style of 0, so the only attribute values applied are those in the
-     * Context's Theme and the given AttributeSet. The method onFinishInflate() will be called after
-     * all children have been added.
-     * 
-     * @param context The Context the view is running in, through which it can access the current
-     *            theme, resources, etc.
-     * @param attrs The attributes of the XML tag that is inflating the view.
-     */
-    public GameSurface( Context context, AttributeSet attribs )
-    {
-        super( context, attribs );
-    }
+	private GLSurfaceView glSurfaceView;
+	private boolean rendererSet;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) 
+	{
+		super.onCreate(savedInstanceState);
+
+		ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+		ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
+
+		final boolean supportsEs2 = configurationInfo.reqGlEsVersion >= 0x20000 || isProbablyEmulator();
+
+		if (supportsEs2) 
+		{
+			glSurfaceView = new GLSurfaceView(this);
+
+			if (isProbablyEmulator()) 
+			{
+				// Avoids crashes on startup with some emulator images.
+				glSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+			}
+
+			glSurfaceView.setEGLContextClientVersion(2);
+			glSurfaceView.setRenderer(new RendererWrapper());
+			rendererSet = true;
+			setContentView(glSurfaceView);
+		}
+	}
+
+	private boolean isProbablyEmulator() 
+	{
+		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1
+				&& (Build.FINGERPRINT.startsWith("generic")
+				|| Build.FINGERPRINT.startsWith("unknown")
+				|| Build.MODEL.contains("google_sdk")
+				|| Build.MODEL.contains("Emulator")
+				|| Build.MODEL.contains("Android SDK built for x86"));
+	}
+
+	@Override
+	protected void onPause() 
+	{
+		super.onPause();
+
+		if (rendererSet) 
+		{
+			glSurfaceView.onPause();
+		}
+	}
+
+	@Override
+	protected void onResume() 
+	{
+		super.onResume();
+
+		if (rendererSet) 
+		{
+			glSurfaceView.onResume();
+		}
+	}
 }
