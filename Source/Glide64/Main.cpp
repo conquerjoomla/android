@@ -1850,16 +1850,9 @@ set
 input:    none
 output:   none
 *******************************************************************/
-#include <GLES2/gl2.h>
-
 uint32_t update_screen_count = 0;
 void CALL UpdateScreen(void)
 {
-	glClearColor(0.33, 0.66, 1.00, 1);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glFinish();
-	return;
-#ifdef tofix
 #ifdef LOG_KEY
     if (CheckKeyPressed(G64_VK_SPACE, 0x0001))
     {
@@ -1922,7 +1915,6 @@ void CALL UpdateScreen(void)
     //*/
     if (g_settings->swapmode == 0)
         newSwapBuffers();
-#endif
 }
 
 static void DrawWholeFrameBufferToScreen()

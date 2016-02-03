@@ -11,26 +11,29 @@
 package emu.project64.game;
 
 import android.opengl.GLSurfaceView;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
+import emu.project64.jni.NativeExports;
 
 public class RendererWrapper implements GLSurfaceView.Renderer
 {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config)
     {
-    	gl.glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
+    	NativeExports.onSurfaceCreated();
     }
  
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height)
     {
-        // No-op
+    	NativeExports.onSurfaceChanged(width, height);
     }
  
     @Override
     public void onDrawFrame(GL10 gl) 
     {
-    	gl.glClear(gl.GL_COLOR_BUFFER_BIT);
+    	NativeExports.onDrawFrame();
     }
 }
