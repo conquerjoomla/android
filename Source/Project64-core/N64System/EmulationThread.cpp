@@ -15,7 +15,7 @@
 
 void  CN64System::StartEmulationThead()
 {
-	WriteTrace(TraceN64System, TraceDebug, "Start");
+    WriteTrace(TraceN64System, TraceDebug, "Start");
     ThreadInfo * Info = new ThreadInfo;
 
 #ifdef _WIN32
@@ -28,19 +28,20 @@ void  CN64System::StartEmulationThead()
 
     *hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)StartEmulationThread, Info, 0, (LPDWORD)&Info->ThreadID);
 #else
-	pthread_t ** thread = new pthread_t *;
+    pthread_t * thread_id = new pthread_t;
 
-	Info->ThreadHandle = (void** )thread;
-	Info->ThreadID = 0;
+    Info->ThreadHandle = (void** )thread_id;
+    Info->ThreadID = 0;
 
-	int res = pthread_create(*thread, NULL, (void *(*)(void *))StartEmulationThread, Info);
-	WriteTrace(TraceN64System, TraceDebug, "pthread_create res = %d, ThreadHandle = %X",res, *Info->ThreadHandle);
+    int res = pthread_create(thread_id, NULL, (void *(*)(void *))StartEmulationThread, Info);
+    WriteTrace(TraceN64System, TraceDebug, "pthread_create res = %d, ThreadHandle = %X", res, *Info->ThreadHandle);
 #endif
-	WriteTrace(TraceN64System, TraceDebug, "Done");
+    WriteTrace(TraceN64System, TraceDebug, "Done");
 }
 
 void CN64System::StartEmulationThread(ThreadInfo * Info)
 {
+    WriteTrace(TraceN64System, TraceDebug, "Start");
 #ifdef _WIN32
     if (g_Settings->LoadBool(Setting_CN64TimeCritical))
     {
@@ -54,9 +55,10 @@ void CN64System::StartEmulationThread(ThreadInfo * Info)
 
     CoUninitialize();
 #else
-    EmulationStarting(*Info->ThreadHandle, Info->ThreadID);
+    EmulationStarting(Info->ThreadHandle, Info->ThreadID);
 #endif
     delete Info;
+    WriteTrace(TraceN64System, TraceDebug, "Done");
 }
 
 void CN64System::CloseCpu()
