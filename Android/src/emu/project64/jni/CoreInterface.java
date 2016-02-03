@@ -41,7 +41,7 @@ public class CoreInterface
     
     // Startup info - used internally
     protected static String sRomPath = null;
-    public static void initialize( Activity activity, GameSurface surface, String romPath, String romMd5, boolean isRestarting )
+    public static void initialize( Activity activity, String romPath, String romMd5, boolean isRestarting )
     {
         sRomPath = romPath;
         sActivity = activity;

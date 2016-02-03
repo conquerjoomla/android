@@ -16,10 +16,14 @@ LOCAL_SRC_FILES :=                   \
     $(SRCDIR)/jniBridgeSettings.cpp  \
     $(SRCDIR)/NotificationClass.cpp  \
 
-LOCAL_CFLAGS := $(COMMON_CFLAGS)
+LOCAL_CFLAGS :=         \
+    $(COMMON_CFLAGS)    \
+    -DUSE_GLES          \
 
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
 
-LOCAL_LDLIBS := -llog
+LOCAL_LDLIBS :=         \
+    -lGLESv2            \
+    -llog               \
 
 include $(BUILD_SHARED_LIBRARY)

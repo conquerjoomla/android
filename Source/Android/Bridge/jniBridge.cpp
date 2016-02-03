@@ -133,4 +133,19 @@ EXPORT jint CALL Java_emu_project64_jni_NativeExports_emuGetState(JNIEnv* env, j
     return (jint) 0; // Unknown
 }
 
+#include <GLES2/gl2.h>
+EXPORT void CALL Java_emu_project64_jni_NativeExports_onSurfaceCreated(JNIEnv * env, jclass cls)
+{
+    glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+}
+ 
+EXPORT void CALL Java_emu_project64_jni_NativeExports_onSurfaceChanged (JNIEnv * env, jclass cls, jint width, jint height) 
+{
+    //on_surface_changed();
+}
+ 
+EXPORT void CALL Java_emu_project64_jni_NativeExports_onDrawFrame (JNIEnv * env, jclass cls) 
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+}
 #endif
