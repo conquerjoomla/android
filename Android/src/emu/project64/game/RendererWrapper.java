@@ -17,7 +17,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import emu.project64.jni.NativeExports;
 
-public class RendererWrapper implements GLSurfaceView.Renderer
+public class RendererWrapper implements GLSurfaceView2.Renderer
 {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config)

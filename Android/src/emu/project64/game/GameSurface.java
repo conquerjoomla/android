@@ -22,7 +22,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceView;
 
-public class GameSurface extends GLSurfaceView
+public class GameSurface extends GLSurfaceView2
 {
 	private boolean rendererSet;
 
