@@ -10,75 +10,947 @@
 ****************************************************************************/
 package emu.project64.game;
 
+import android.app.ActivityManager;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
+
+import javax.microedition.khronos.egl.EGL10;
+import javax.microedition.khronos.egl.EGL11;
 import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLContext;
+import javax.microedition.khronos.egl.EGLDisplay;
+import javax.microedition.khronos.egl.EGLSurface;
+import javax.microedition.khronos.opengles.GL;
 import javax.microedition.khronos.opengles.GL10;
 
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
-import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class GameSurface extends GLSurfaceView2
+/**
+ * Represents a graphical area of memory that can be drawn to.
+ */
+public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
 {
-	private boolean rendererSet;
-
-	// LogCat strings for debugging, defined here to simplify maintenance/lookup
-    private static final String TAG = "GameSurface";
-    
     /**
-     * Constructor that is called when inflating a view from XML. This is called when a view is
-     * being constructed from an XML file, supplying attributes that were specified in the XML file.
-     * This version uses a default style of 0, so the only attribute values applied are those in the
-     * Context's Theme and the given AttributeSet. The method onFinishInflate() will be called after
-     * all children have been added.
-     * 
-     * @param context The Context the view is running in, through which it can access the current
-     *            theme, resources, etc.
-     * @param attrs The attributes of the XML tag that is inflating the view.
+     * The renderer only renders
+     * when the surface is created, or when {@link #requestRender} is called.
+     *
+     * @see #getRenderMode()
+     * @see #setRenderMode(int)
+     */
+    public final static int RENDERMODE_WHEN_DIRTY = 0;
+    /**
+     * The renderer is called
+     * continuously to re-render the scene.
+     *
+     * @see #getRenderMode()
+     * @see #setRenderMode(int)
+     * @see #requestRender()
+     */
+    public final static int RENDERMODE_CONTINUOUSLY = 1;
+
+    /**
+     * Standard View constructor. In order to render something, you
+     * must call {@link #setRenderer} to register a renderer.
      */
     public GameSurface( Context context, AttributeSet attribs )
     {
         super( context, attribs );
+        init();
     }
-    
+
+    private void init() 
+    {
+        // Install a SurfaceHolder.Callback so we get notified when the
+        // underlying surface is created and destroyed
+        SurfaceHolder holder = getHolder();
+        holder.addCallback(this);
+    }
+
     public boolean createGLContext( ActivityManager activityManager )
     {
-		ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
+        ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
 
-		final boolean supportsEs2 = configurationInfo.reqGlEsVersion >= 0x20000 || isProbablyEmulator();
-		if (supportsEs2) 
-		{
-			if (isProbablyEmulator()) 
-			{
-				// Avoids crashes on startup with some emulator images.
-				this.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
-			}
+        final boolean supportsEs2 = configurationInfo.reqGlEsVersion >= 0x20000 || isProbablyEmulator();
+        if (supportsEs2) 
+        {
+            if (isProbablyEmulator()) 
+            {
+                // Avoids crashes on startup with some emulator images.
+                this.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+            }
 
-			//this.setEGLContextClientVersion(2);
-			this.setRenderer(new RendererWrapper());
-			rendererSet = true;
-		}
-		else 
-		{
-			// Should never be seen in production, since the manifest filters
-			// unsupported devices.
-			Log.e(TAG, "This device does not support OpenGL ES 2.0.");
-	        return false;
-		}
+            this.setRenderer(new RendererWrapper());
+        }
+        else 
+        {
+            // Should never be seen in production, since the manifest filters
+            // unsupported devices.
+            Log.e("GameSurface", "This device does not support OpenGL ES 2.0.");
+            return false;
+        }
         return true;
     }
-	
+
+    /**
+     * Set the renderer associated with this view. Also starts the thread that
+     * will call the renderer, which in turn causes the rendering to start.
+     * <p>This method should be called once and only once in the life-cycle of
+     * a GameSurface.
+     * <p>The following GameSurface methods can only be called <em>before</em>
+     * setRenderer is called:
+     * <ul>
+     * <li>{@link #setEGLConfigChooser(boolean)}
+     * <li>{@link #setEGLConfigChooser(EGLConfigChooser)}
+     * <li>{@link #setEGLConfigChooser(int, int, int, int, int, int)}
+     * </ul>
+     * <p>
+     * The following GameSurface methods can only be called <em>after</em>
+     * setRenderer is called:
+     * <ul>
+     * <li>{@link #getRenderMode()}
+     * <li>{@link #onPause()}
+     * <li>{@link #onResume()}
+     * <li>{@link #queueEvent(Runnable)}
+     * <li>{@link #requestRender()}
+     * <li>{@link #setRenderMode(int)}
+     * </ul>
+     *
+     * @param renderer the renderer to use to perform OpenGL drawing.
+     */
+    public void setRenderer(Renderer renderer) 
+    {
+        checkRenderThreadState();
+        if (mEGLConfigChooser == null) 
+        {
+            mEGLConfigChooser = new SimpleEGLConfigChooser(true);
+        }
+        if (mEGLContextFactory == null) 
+        {
+            mEGLContextFactory = new DefaultContextFactory();
+        }
+        if (mEGLWindowSurfaceFactory == null) 
+        {
+            mEGLWindowSurfaceFactory = new DefaultWindowSurfaceFactory();
+        }
+        mGLThread = new GLThread(renderer);
+        mGLThread.start();
+    }
+
+    /**
+     * Install a custom EGLConfigChooser.
+     * <p>If this method is
+     * called, it must be called before {@link #setRenderer(Renderer)}
+     * is called.
+     * <p>
+     * If no setEGLConfigChooser method is called, then by default the
+     * view will choose a config as close to 16-bit RGB as possible, with
+     * a depth buffer as close to 16 bits as possible.
+     * @param configChooser
+     */
+    public void setEGLConfigChooser(EGLConfigChooser configChooser)
+    {
+        checkRenderThreadState();
+        mEGLConfigChooser = configChooser;
+    }
+
+    /**
+     * Install a config chooser which will choose a config
+     * with at least the specified component sizes, and as close
+     * to the specified component sizes as possible.
+     * <p>If this method is
+     * called, it must be called before {@link #setRenderer(Renderer)}
+     * is called.
+     * <p>
+     * If no setEGLConfigChooser method is called, then by default the
+     * view will choose a config as close to 16-bit RGB as possible, with
+     * a depth buffer as close to 16 bits as possible.
+     *
+     */
+    public void setEGLConfigChooser(int redSize, int greenSize, int blueSize,
+            int alphaSize, int depthSize, int stencilSize)
+    {
+        setEGLConfigChooser(new ComponentSizeChooser(redSize, greenSize,
+                blueSize, alphaSize, depthSize, stencilSize));
+    }
+
     private boolean isProbablyEmulator() 
-	{
-		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1
-				&& (Build.FINGERPRINT.startsWith("generic")
-				|| Build.FINGERPRINT.startsWith("unknown")
-				|| Build.MODEL.contains("google_sdk")
-				|| Build.MODEL.contains("Emulator")
-				|| Build.MODEL.contains("Android SDK built for x86"));
-	}
+    {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1
+                && (Build.FINGERPRINT.startsWith("generic")
+                || Build.FINGERPRINT.startsWith("unknown")
+                || Build.MODEL.contains("google_sdk")
+                || Build.MODEL.contains("Emulator")
+                || Build.MODEL.contains("Android SDK built for x86"));
+    }
+
+    /**
+     * This method is part of the SurfaceHolder.Callback interface, and is
+     * not normally called or subclassed by clients of GLSurfaceView2.
+     */
+    public void surfaceCreated(SurfaceHolder holder) 
+    {
+        Log.i( "GameSurface", "surface Created" );
+        mGLThread.surfaceCreated();
+    }
+
+    /**
+     * This method is part of the SurfaceHolder.Callback interface, and is
+     * not normally called or subclassed by clients of GLSurfaceView2.
+     */
+    public void surfaceDestroyed(SurfaceHolder holder) 
+    {
+        Log.i( "GameSurface", "surface Destroyed" );
+        // Surface will be destroyed when we return
+        mGLThread.surfaceDestroyed();
+    }
+
+    /**
+     * This method is part of the SurfaceHolder.Callback interface, and is
+     * not normally called or subclassed by clients of GLSurfaceView2.
+     */
+    public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) 
+    {
+        Log.i( "GameSurface", "surface Changed" );
+        mGLThread.onWindowResize(w, h);
+    }
+
+
+
+    /**
+     * A generic renderer interface.
+     * <p>
+     * The renderer is responsible for making OpenGL calls to render a frame.
+     * <p>
+     * GLSurfaceView2 clients typically create their own classes that implement
+     * this interface, and then call {@link GLSurfaceView2#setRenderer} to
+     * register the renderer with the GLSurfaceView2.
+     * <p>
+     * <h3>Threading</h3>
+     * The renderer will be called on a separate thread, so that rendering
+     * performance is decoupled from the UI thread. Clients typically need to
+     * communicate with the renderer from the UI thread, because that's where
+     * input events are received. Clients can communicate using any of the
+     * standard Java techniques for cross-thread communication, or they can
+     * use the {@link GLSurfaceView2#queueEvent(Runnable)} convenience method.
+     * <p>
+     * <h3>EGL Context Lost</h3>
+     * There are situations where the EGL rendering context will be lost. This
+     * typically happens when device wakes up after going to sleep. When
+     * the EGL context is lost, all OpenGL resources (such as textures) that are
+     * associated with that context will be automatically deleted. In order to
+     * keep rendering correctly, a renderer must recreate any lost resources
+     * that it still needs. The {@link #onSurfaceCreated(GL10, EGLConfig)} method
+     * is a convenient place to do this.
+     *
+     *
+     * @see #setRenderer(Renderer)
+     */
+    public interface Renderer {
+        /**
+         * Called when the surface is created or recreated.
+         * <p>
+         * Called when the rendering thread
+         * starts and whenever the EGL context is lost. The context will typically
+         * be lost when the Android device awakes after going to sleep.
+         * <p>
+         * Since this method is called at the beginning of rendering, as well as
+         * every time the EGL context is lost, this method is a convenient place to put
+         * code to create resources that need to be created when the rendering
+         * starts, and that need to be recreated when the EGL context is lost.
+         * Textures are an example of a resource that you might want to create
+         * here.
+         * <p>
+         * Note that when the EGL context is lost, all OpenGL resources associated
+         * with that context will be automatically deleted. You do not need to call
+         * the corresponding "glDelete" methods such as glDeleteTextures to
+         * manually delete these lost resources.
+         * <p>
+         * @param gl the GL interface. Use <code>instanceof</code> to
+         * test if the interface supports GL11 or higher interfaces.
+         * @param config the EGLConfig of the created surface. Can be used
+         * to create matching pbuffers.
+         */
+        void onSurfaceCreated(GL10 gl, EGLConfig config);
+
+        /**
+         * Called when the surface changed size.
+         * <p>
+         * Called after the surface is created and whenever
+         * the OpenGL ES surface size changes.
+         * <p>
+         * Typically you will set your viewport here. If your camera
+         * is fixed then you could also set your projection matrix here:
+         * <pre class="prettyprint">
+         * void onSurfaceChanged(GL10 gl, int width, int height) {
+         *     gl.glViewport(0, 0, width, height);
+         *     // for a fixed camera, set the projection too
+         *     float ratio = (float) width / height;
+         *     gl.glMatrixMode(GL10.GL_PROJECTION);
+         *     gl.glLoadIdentity();
+         *     gl.glFrustumf(-ratio, ratio, -1, 1, 1, 10);
+         * }
+         * </pre>
+         * @param gl the GL interface. Use <code>instanceof</code> to
+         * test if the interface supports GL11 or higher interfaces.
+         * @param width
+         * @param height
+         */
+        void onSurfaceChanged(GL10 gl, int width, int height);
+
+        /**
+         * Called to draw the current frame.
+         * <p>
+         * This method is responsible for drawing the current frame.
+         * <p>
+         * The implementation of this method typically looks like this:
+         * <pre class="prettyprint">
+         * void onDrawFrame(GL10 gl) {
+         *     gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+         *     //... other gl calls to render the scene ...
+         * }
+         * </pre>
+         * @param gl the GL interface. Use <code>instanceof</code> to
+         * test if the interface supports GL11 or higher interfaces.
+         */
+        void onDrawFrame(GL10 gl);
+    }
+
+    /**
+     * @hide
+     * An interface for customizing the eglCreateContext and eglDestroyContext calls.
+     * <p>
+     * This interface must be implemented by clients wishing to call
+     * {@link GameSurface#setEGLContextFactory(EGLContextFactory)}
+     */
+    public interface EGLContextFactory 
+    {
+        EGLContext createContext(EGL10 egl, EGLDisplay display, EGLConfig eglConfig);
+        void destroyContext(EGL10 egl, EGLDisplay display, EGLContext context);
+    }
+
+    private static class DefaultContextFactory implements EGLContextFactory
+    {
+
+        public EGLContext createContext(EGL10 egl, EGLDisplay display, EGLConfig config)
+        {
+            return egl.eglCreateContext(display, config, EGL10.EGL_NO_CONTEXT, null);
+        }
+
+        public void destroyContext(EGL10 egl, EGLDisplay display,EGLContext context)
+        {
+            egl.eglDestroyContext(display, context);
+        }
+    }
+
+    /**
+     * @hide
+     * An interface for customizing the eglCreateWindowSurface and eglDestroySurface calls.
+     * <p>
+     * This interface must be implemented by clients wishing to call
+     * {@link GameSurface#setEGLContextCreator(EGLContextCreator)}
+     */
+    public interface EGLWindowSurfaceFactory 
+    {
+        EGLSurface createWindowSurface(EGL10 egl, EGLDisplay display, EGLConfig config, Object nativeWindow);
+        void destroySurface(EGL10 egl, EGLDisplay display, EGLSurface surface);
+    }
+
+    private static class DefaultWindowSurfaceFactory implements EGLWindowSurfaceFactory
+    {
+        public EGLSurface createWindowSurface(EGL10 egl, EGLDisplay display, EGLConfig config, Object nativeWindow)
+        {
+            return egl.eglCreateWindowSurface(display, config, nativeWindow, null);
+        }
+
+        public void destroySurface(EGL10 egl, EGLDisplay display,EGLSurface surface)
+        {
+            egl.eglDestroySurface(display, surface);
+        }
+    }
+
+    /**
+     * An interface for choosing an EGLConfig configuration from a list of
+     * potential configurations.
+     * <p>
+     * This interface must be implemented by clients wishing to call
+     * {@link GLSurfaceView2#setEGLConfigChooser(EGLConfigChooser)}
+     */
+    public interface EGLConfigChooser
+    {
+        /**
+         * Choose a configuration from the list. Implementors typically
+         * implement this method by calling
+         * {@link EGL10#eglChooseConfig} and iterating through the results. Please consult the
+         * EGL specification available from The Khronos Group to learn how to call eglChooseConfig.
+         * @param egl the EGL10 for the current display.
+         * @param display the current display.
+         * @return the chosen configuration.
+         */
+        EGLConfig chooseConfig(EGL10 egl, EGLDisplay display);
+    }
+
+    private static abstract class BaseConfigChooser
+            implements EGLConfigChooser {
+        public BaseConfigChooser(int[] configSpec) {
+            mConfigSpec = configSpec;
+        }
+        public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
+            int[] num_config = new int[1];
+            egl.eglChooseConfig(display, mConfigSpec, null, 0, num_config);
+
+            int numConfigs = num_config[0];
+
+            if (numConfigs <= 0) {
+                throw new IllegalArgumentException(
+                        "No configs match configSpec");
+            }
+
+            EGLConfig[] configs = new EGLConfig[numConfigs];
+            egl.eglChooseConfig(display, mConfigSpec, configs, numConfigs,
+                    num_config);
+            EGLConfig config = chooseConfig(egl, display, configs);
+            if (config == null) {
+                throw new IllegalArgumentException("No config chosen");
+            }
+            return config;
+        }
+
+        abstract EGLConfig chooseConfig(EGL10 egl, EGLDisplay display,
+                EGLConfig[] configs);
+
+        protected int[] mConfigSpec;
+    }
+
+    private static class ComponentSizeChooser extends BaseConfigChooser {
+        public ComponentSizeChooser(int redSize, int greenSize, int blueSize,
+                int alphaSize, int depthSize, int stencilSize) {
+            super(new int[] {
+                    EGL10.EGL_RED_SIZE, redSize,
+                    EGL10.EGL_GREEN_SIZE, greenSize,
+                    EGL10.EGL_BLUE_SIZE, blueSize,
+                    EGL10.EGL_ALPHA_SIZE, alphaSize,
+                    EGL10.EGL_DEPTH_SIZE, depthSize,
+                    EGL10.EGL_STENCIL_SIZE, stencilSize,
+                    EGL10.EGL_NONE
+            });
+
+            mValue = new int[1];
+            mRedSize = redSize;
+            mGreenSize = greenSize;
+            mBlueSize = blueSize;
+            mAlphaSize = alphaSize;
+            mDepthSize = depthSize;
+            mStencilSize = stencilSize;
+       }
+
+        @Override
+        public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display,
+                EGLConfig[] configs) {
+            EGLConfig closestConfig = null;
+            int closestDistance = 1000;
+            for(EGLConfig config : configs) {
+                int d = findConfigAttrib(egl, display, config,
+                        EGL10.EGL_DEPTH_SIZE, 0);
+                int s = findConfigAttrib(egl, display, config,
+                        EGL10.EGL_STENCIL_SIZE, 0);
+                if (d >= mDepthSize && s>= mStencilSize) {
+                    int r = findConfigAttrib(egl, display, config,
+                            EGL10.EGL_RED_SIZE, 0);
+                    int g = findConfigAttrib(egl, display, config,
+                             EGL10.EGL_GREEN_SIZE, 0);
+                    int b = findConfigAttrib(egl, display, config,
+                              EGL10.EGL_BLUE_SIZE, 0);
+                    int a = findConfigAttrib(egl, display, config,
+                            EGL10.EGL_ALPHA_SIZE, 0);
+                    int distance = Math.abs(r - mRedSize)
+                                + Math.abs(g - mGreenSize)
+                                + Math.abs(b - mBlueSize)
+                                + Math.abs(a - mAlphaSize);
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                        closestConfig = config;
+                    }
+                }
+            }
+            return closestConfig;
+        }
+
+        private int findConfigAttrib(EGL10 egl, EGLDisplay display,
+                EGLConfig config, int attribute, int defaultValue) {
+
+            if (egl.eglGetConfigAttrib(display, config, attribute, mValue)) {
+                return mValue[0];
+            }
+            return defaultValue;
+        }
+
+        private int[] mValue;
+        // Subclasses can adjust these values:
+        protected int mRedSize;
+        protected int mGreenSize;
+        protected int mBlueSize;
+        protected int mAlphaSize;
+        protected int mDepthSize;
+        protected int mStencilSize;
+        }
+
+    /**
+     * This class will choose a supported surface as close to
+     * RGB565 as possible, with or without a depth buffer.
+     *
+     */
+    private static class SimpleEGLConfigChooser extends ComponentSizeChooser {
+        public SimpleEGLConfigChooser(boolean withDepthBuffer) {
+            super(4, 4, 4, 0, withDepthBuffer ? 16 : 0, 0);
+            // Adjust target values. This way we'll accept a 4444 or
+            // 555 buffer if there's no 565 buffer available.
+            mRedSize = 5;
+            mGreenSize = 6;
+            mBlueSize = 5;
+        }
+    }
+
+    /**
+     * An EGL helper class.
+     */
+
+    private class EglHelper {
+        public EglHelper() {
+
+        }
+
+        /**
+         * Initialize EGL for a given configuration spec.
+         * @param configSpec
+         */
+        public void start(){
+            /*
+             * Get an EGL instance
+             */
+            mEgl = (EGL10) EGLContext.getEGL();
+
+            /*
+             * Get to the default display.
+             */
+            mEglDisplay = mEgl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
+
+            /*
+             * We can now initialize EGL for that display
+             */
+            int[] version = new int[2];
+            mEgl.eglInitialize(mEglDisplay, version);
+            mEglConfig = mEGLConfigChooser.chooseConfig(mEgl, mEglDisplay);
+
+            /*
+            * Create an OpenGL ES context. This must be done only once, an
+            * OpenGL context is a somewhat heavy object.
+            */
+            mEglContext = mEGLContextFactory.createContext(mEgl, mEglDisplay, mEglConfig);
+
+            mEglSurface = null;
+        }
+
+        /*
+         * React to the creation of a new surface by creating and returning an
+         * OpenGL interface that renders to that surface.
+         */
+        public GL createSurface(SurfaceHolder holder) {
+            /*
+             *  The window size has changed, so we need to create a new
+             *  surface.
+             */
+            if (mEglSurface != null) {
+
+                /*
+                 * Unbind and destroy the old EGL surface, if
+                 * there is one.
+                 */
+                mEgl.eglMakeCurrent(mEglDisplay, EGL10.EGL_NO_SURFACE,
+                        EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
+                mEGLWindowSurfaceFactory.destroySurface(mEgl, mEglDisplay, mEglSurface);
+            }
+
+            /*
+             * Create an EGL surface we can render into.
+             */
+            mEglSurface = mEGLWindowSurfaceFactory.createWindowSurface(mEgl,
+                    mEglDisplay, mEglConfig, holder);
+
+            /*
+             * Before we can issue GL commands, we need to make sure
+             * the context is current and bound to a surface.
+             */
+            mEgl.eglMakeCurrent(mEglDisplay, mEglSurface, mEglSurface,
+                    mEglContext);
+
+            GL gl = mEglContext.getGL();
+            return gl;
+        }
+
+        /**
+         * Display the current render surface.
+         * @return false if the context has been lost.
+         */
+        public boolean swap() {
+            mEgl.eglSwapBuffers(mEglDisplay, mEglSurface);
+
+            /*
+             * Always check for EGL_CONTEXT_LOST, which means the context
+             * and all associated data were lost (For instance because
+             * the device went to sleep). We need to sleep until we
+             * get a new surface.
+             */
+            return mEgl.eglGetError() != EGL11.EGL_CONTEXT_LOST;
+        }
+
+        public void destroySurface() {
+            if (mEglSurface != null) {
+                mEgl.eglMakeCurrent(mEglDisplay, EGL10.EGL_NO_SURFACE,
+                        EGL10.EGL_NO_SURFACE,
+                        EGL10.EGL_NO_CONTEXT);
+                mEGLWindowSurfaceFactory.destroySurface(mEgl, mEglDisplay, mEglSurface);
+                mEglSurface = null;
+            }
+        }
+
+        public void finish() {
+            if (mEglContext != null) {
+                mEGLContextFactory.destroyContext(mEgl, mEglDisplay, mEglContext);
+                mEglContext = null;
+            }
+            if (mEglDisplay != null) {
+                mEgl.eglTerminate(mEglDisplay);
+                mEglDisplay = null;
+            }
+        }
+
+        EGL10 mEgl;
+        EGLDisplay mEglDisplay;
+        EGLSurface mEglSurface;
+        EGLConfig mEglConfig;
+        EGLContext mEglContext;
+    }
+
+    /**
+     * A generic GL Thread. Takes care of initializing EGL and GL. Delegates
+     * to a Renderer instance to do the actual drawing. Can be configured to
+     * render continuously or on request.
+     *
+     */
+    class GLThread extends Thread {
+        GLThread(Renderer renderer) {
+            super();
+            mDone = false;
+            mWidth = 0;
+            mHeight = 0;
+            mRequestRender = true;
+            mRenderMode = RENDERMODE_CONTINUOUSLY;
+            mRenderer = renderer;
+            setName("GLThread");
+        }
+
+        @Override
+        public void run() {
+            /*
+             * When the android framework launches a second instance of
+             * an activity, the new instance's onCreate() method may be
+             * called before the first instance returns from onDestroy().
+             *
+             * This semaphore ensures that only one instance at a time
+             * accesses EGL.
+             */
+            try {
+                try {
+                sEglSemaphore.acquire();
+                } catch (InterruptedException e) {
+                    return;
+                }
+                guardedRun();
+            } catch (InterruptedException e) {
+                // fall thru and exit normally
+            } finally {
+                sEglSemaphore.release();
+            }
+        }
+
+        private void guardedRun() throws InterruptedException {
+            mEglHelper = new EglHelper();
+            try {
+                mEglHelper.start();
+
+                GL10 gl = null;
+                boolean tellRendererSurfaceCreated = true;
+                boolean tellRendererSurfaceChanged = true;
+
+                /*
+                 * This is our main activity thread's loop, we go until
+                 * asked to quit.
+                 */
+                while (!mDone) {
+
+                    /*
+                     *  Update the asynchronous state (window size)
+                     */
+                    int w, h;
+                    boolean changed;
+                    boolean needStart = false;
+                    synchronized (this) {
+                        Runnable r;
+                        while ((r = getEvent()) != null) {
+                            r.run();
+                        }
+                        if (mPaused) {
+                            mEglHelper.destroySurface();
+                            mEglHelper.finish();
+                            needStart = true;
+                        }
+                        while (needToWait()) {
+                            if (!mHasSurface) {
+                                if (!mWaitingForSurface) {
+                                    mEglHelper.destroySurface();
+                                    mWaitingForSurface = true;
+                                    notify();
+                                }
+                            }
+                            wait();
+                        }
+                        if (mDone) {
+                            break;
+                        }
+                        changed = mSizeChanged;
+                        w = mWidth;
+                        h = mHeight;
+                        mSizeChanged = false;
+                        mRequestRender = false;
+                        if (mHasSurface && mWaitingForSurface) {
+                            changed = true;
+                            mWaitingForSurface = false;
+                        }
+                    }
+                    if (needStart) {
+                        mEglHelper.start();
+                        tellRendererSurfaceCreated = true;
+                        changed = true;
+                    }
+                    if (changed) {
+                        gl = (GL10) mEglHelper.createSurface(getHolder());
+                        tellRendererSurfaceChanged = true;
+                    }
+                    if (tellRendererSurfaceCreated) {
+                        mRenderer.onSurfaceCreated(gl, mEglHelper.mEglConfig);
+                        tellRendererSurfaceCreated = false;
+                    }
+                    if (tellRendererSurfaceChanged) {
+                        mRenderer.onSurfaceChanged(gl, w, h);
+                        tellRendererSurfaceChanged = false;
+                    }
+                    if ((w > 0) && (h > 0)) {
+                        /* draw a frame here */
+                        mRenderer.onDrawFrame(gl);
+
+                        /*
+                         * Once we're done with GL, we need to call swapBuffers()
+                         * to instruct the system to display the rendered frame
+                         */
+                        mEglHelper.swap();
+                    }
+                 }
+            } finally {
+                /*
+                 * clean-up everything...
+                 */
+                mEglHelper.destroySurface();
+                mEglHelper.finish();
+            }
+        }
+
+        private boolean needToWait() {
+            if (mDone) {
+                return false;
+            }
+
+            if (mPaused || (! mHasSurface)) {
+                return true;
+            }
+
+            if ((mWidth > 0) && (mHeight > 0) && (mRequestRender || (mRenderMode == RENDERMODE_CONTINUOUSLY))) {
+                return false;
+            }
+
+            return true;
+        }
+
+        public void setRenderMode(int renderMode) {
+            if ( !((RENDERMODE_WHEN_DIRTY <= renderMode) && (renderMode <= RENDERMODE_CONTINUOUSLY)) ) {
+                throw new IllegalArgumentException("renderMode");
+            }
+            synchronized(this) {
+                mRenderMode = renderMode;
+                if (renderMode == RENDERMODE_CONTINUOUSLY) {
+                    notify();
+                }
+            }
+        }
+
+        public int getRenderMode() 
+        {
+            synchronized(this) {
+                return mRenderMode;
+            }
+        }
+
+        public void requestRender() {
+            synchronized(this) {
+                mRequestRender = true;
+                notify();
+            }
+        }
+
+        public void surfaceCreated() 
+        {
+            synchronized(this) {
+                mHasSurface = true;
+                notify();
+            }
+        }
+
+        public void surfaceDestroyed() 
+        {
+            synchronized(this) {
+                mHasSurface = false;
+                notify();
+                while(!mWaitingForSurface && isAlive()) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+        }
+
+        public void onPause() {
+            synchronized (this) {
+                mPaused = true;
+            }
+        }
+
+        public void onResume() {
+            synchronized (this) {
+                mPaused = false;
+                notify();
+            }
+        }
+
+        public void onWindowResize(int w, int h) {
+            synchronized (this) {
+                mWidth = w;
+                mHeight = h;
+                mSizeChanged = true;
+                notify();
+            }
+        }
+
+        public void requestExitAndWait() {
+            // don't call this from GLThread thread or it is a guaranteed
+            // deadlock!
+            synchronized(this) {
+                mDone = true;
+                notify();
+            }
+            try {
+                join();
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        /**
+         * Queue an "event" to be run on the GL rendering thread.
+         * @param r the runnable to be run on the GL rendering thread.
+         */
+        public void queueEvent(Runnable r) {
+            synchronized(this) {
+                mEventQueue.add(r);
+            }
+        }
+
+        private Runnable getEvent() {
+            synchronized(this) {
+                if (mEventQueue.size() > 0) {
+                    return mEventQueue.remove(0);
+                }
+
+            }
+            return null;
+        }
+
+        private boolean mDone;
+        private boolean mPaused;
+        private boolean mHasSurface;
+        private boolean mWaitingForSurface;
+        private int mWidth;
+        private int mHeight;
+        private int mRenderMode;
+        private boolean mRequestRender;
+        private Renderer mRenderer;
+        private ArrayList<Runnable> mEventQueue = new ArrayList<Runnable>();
+        private EglHelper mEglHelper;
+    }
+
+    static class LogWriter extends Writer {
+
+        @Override public void close() {
+            flushBuilder();
+        }
+
+        @Override public void flush() {
+            flushBuilder();
+        }
+
+        @Override public void write(char[] buf, int offset, int count) {
+            for(int i = 0; i < count; i++) {
+                char c = buf[offset + i];
+                if ( c == '\n') {
+                    flushBuilder();
+                }
+                else {
+                    mBuilder.append(c);
+                }
+            }
+        }
+
+        private void flushBuilder() {
+            if (mBuilder.length() > 0) {
+                Log.v("GLSurfaceView2", mBuilder.toString());
+                mBuilder.delete(0, mBuilder.length());
+            }
+        }
+
+        private StringBuilder mBuilder = new StringBuilder();
+    }
+
+
+    private void checkRenderThreadState() {
+        if (mGLThread != null) {
+            throw new IllegalStateException(
+                    "setRenderer has already been called for this instance.");
+        }
+    }
+
+    private static final Semaphore sEglSemaphore = new Semaphore(1);
+    private boolean mSizeChanged = true;
+
+    private GLThread mGLThread;
+    private EGLConfigChooser mEGLConfigChooser;
+    private EGLContextFactory mEGLContextFactory;
+    private EGLWindowSurfaceFactory mEGLWindowSurfaceFactory;
+    private int mDebugFlags;
 }
