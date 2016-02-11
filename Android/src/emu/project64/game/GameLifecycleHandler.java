@@ -12,6 +12,7 @@ package emu.project64.game;
 
 import emu.project64.R;
 import emu.project64.ActivityHelper;
+import emu.project64.game.GLThread;
 import emu.project64.jni.CoreInterface;
 import emu.project64.jni.NativeConstants;
 import emu.project64.jni.NativeExports;
@@ -58,6 +59,8 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback
 	// App data and user preferences
 	private GlobalPrefs mGlobalPrefs;
 
+    private GLThread mGLThread;
+    
 	public GameLifecycleHandler(Activity activity) 
 	{
 		mActivity = activity;
@@ -237,7 +240,9 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback
 			switch (state) 
 			{
 			case NativeConstants.EMULATOR_STATE_IDLE:
-				CoreInterface.startupEmulator();
+				//CoreInterface.startupEmulator();
+		        mGLThread = new GLThread(mSurface, new RendererWrapper());
+		        mGLThread.start();
 				break;
 			case NativeConstants.EMULATOR_STATE_PAUSED:
 				// CoreInterface.resumeEmulator();
