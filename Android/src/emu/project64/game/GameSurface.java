@@ -49,15 +49,9 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         // underlying surface is created and destroyed
         SurfaceHolder holder = getHolder();
         holder.addCallback(this);
-        if (mEGLConfigChooser == null) {
-            mEGLConfigChooser = new SimpleEGLConfigChooser(true);
-        }
-        if (mEGLContextFactory == null) {
-            mEGLContextFactory = new DefaultContextFactory();
-        }
-        if (mEGLWindowSurfaceFactory == null) {
-            mEGLWindowSurfaceFactory = new DefaultWindowSurfaceFactory();
-        }
+        mWidth = 0;
+        mHeight = 0;
+        mEglHelper = new EglHelper(this);
     }
 
     public boolean createGLContext( ActivityManager activityManager )
@@ -80,6 +74,15 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
             Log.e("GameSurface", "This device does not support OpenGL ES 2.0.");
             return false;
         }
+        if (mEGLConfigChooser == null) {
+            mEGLConfigChooser = new SimpleEGLConfigChooser(true);
+        }
+        if (mEGLContextFactory == null) {
+            mEGLContextFactory = new DefaultContextFactory();
+        }
+        if (mEGLWindowSurfaceFactory == null) {
+            mEGLWindowSurfaceFactory = new DefaultWindowSurfaceFactory();
+        }
         return true;
     }
 
@@ -96,7 +99,6 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
      */
     public void setEGLConfigChooser(EGLConfigChooser configChooser)
     {
-        checkRenderThreadState();
         mEGLConfigChooser = configChooser;
     }
 
@@ -151,7 +153,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
     {
         Log.i( "GameSurface", "surface Destroyed" );
         // Surface will be destroyed when we return
-            synchronized(this) {
+        /*    synchronized(this) {
                 mHasSurface = false;
                 notify();
                 while(!mGLThread.mWaitingForSurface && mGLThread.isAlive()) {
@@ -162,6 +164,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
                     }
                 }
             }
+           */
     }
 
     /**
@@ -171,9 +174,29 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) 
     {
         Log.i( "GameSurface", "surface Changed" );
-        //mGLThread.onWindowResize(w, h);
+        synchronized (this) 
+        {
+            mWidth = w;
+            mHeight = h;
+            mSizeChanged = true;
+            notify();
+        }
     }
 
+    public boolean needToWait() 
+    {
+        if ((! mHasSurface)) 
+        {
+            return true;
+        }
+
+        if ((mWidth > 0) && (mHeight > 0)) 
+        {
+            return false;
+        }
+
+        return true;
+    }
 
     /**
      * @hide
@@ -186,6 +209,133 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
     {
         EGLContext createContext(EGL10 egl, EGLDisplay display, EGLConfig eglConfig);
         void destroyContext(EGL10 egl, EGLDisplay display, EGLContext context);
+    }
+
+    /**
+     * An EGL helper class.
+     */
+
+    public class EglHelper
+    {
+        public EglHelper(GameSurface surface)
+        {
+            mSurface = surface;
+        }
+
+        /**
+         * Initialize EGL for a given configuration spec.
+         * @param configSpec
+         */
+        public void start() 
+        {
+            Log.w("EglHelper", "start() tid=" + Thread.currentThread().getId());
+            /*
+             * Get an EGL instance
+             */
+            mEgl = (EGL10) EGLContext.getEGL();
+
+            /*
+             * Get to the default display.
+             */
+            mEglDisplay = mEgl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
+
+            /*
+             * We can now initialize EGL for that display
+             */
+            int[] version = new int[2];
+            mEgl.eglInitialize(mEglDisplay, version);
+            mEglConfig = mSurface.mEGLConfigChooser.chooseConfig(mEgl, mEglDisplay);
+
+            /*
+            * Create an OpenGL ES context. This must be done only once, an
+            * OpenGL context is a somewhat heavy object.
+            */
+            mEglContext = mSurface.mEGLContextFactory.createContext(mEgl, mEglDisplay, mEglConfig);
+
+            mEglSurface = null;
+        }
+
+        /*
+         * React to the creation of a new surface by creating and returning an
+         * OpenGL interface that renders to that surface.
+         */
+        public GL createSurface()
+        {
+            /*
+             *  The window size has changed, so we need to create a new
+             *  surface.
+             */
+            if (mEglSurface != null) {
+
+                /*
+                 * Unbind and destroy the old EGL surface, if
+                 * there is one.
+                 */
+                mEgl.eglMakeCurrent(mEglDisplay, EGL10.EGL_NO_SURFACE,
+                        EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
+                mSurface.mEGLWindowSurfaceFactory.destroySurface(mEgl, mEglDisplay, mEglSurface);
+            }
+
+            /*
+             * Create an EGL surface we can render into.
+             */
+            mEglSurface = mSurface.mEGLWindowSurfaceFactory.createWindowSurface(mEgl,
+                    mEglDisplay, mEglConfig, mSurface.getHolder());
+
+            /*
+             * Before we can issue GL commands, we need to make sure
+             * the context is current and bound to a surface.
+             */
+            mEgl.eglMakeCurrent(mEglDisplay, mEglSurface, mEglSurface,
+                    mEglContext);
+
+            GL gl = mEglContext.getGL();
+            return gl;
+        }
+
+        /**
+         * Display the current render surface.
+         * @return false if the context has been lost.
+         */
+        public boolean swap() {
+            mEgl.eglSwapBuffers(mEglDisplay, mEglSurface);
+
+            /*
+             * Always check for EGL_CONTEXT_LOST, which means the context
+             * and all associated data were lost (For instance because
+             * the device went to sleep). We need to sleep until we
+             * get a new surface.
+             */
+            return mEgl.eglGetError() != EGL11.EGL_CONTEXT_LOST;
+        }
+
+        public void destroySurface() {
+            if (mEglSurface != null) {
+                mEgl.eglMakeCurrent(mEglDisplay, EGL10.EGL_NO_SURFACE,
+                        EGL10.EGL_NO_SURFACE,
+                        EGL10.EGL_NO_CONTEXT);
+                mSurface.mEGLWindowSurfaceFactory.destroySurface(mEgl, mEglDisplay, mEglSurface);
+                mEglSurface = null;
+            }
+        }
+
+        public void finish() {
+            if (mEglContext != null) {
+                mSurface.mEGLContextFactory.destroyContext(mEgl, mEglDisplay, mEglContext);
+                mEglContext = null;
+            }
+            if (mEglDisplay != null) {
+                mEgl.eglTerminate(mEglDisplay);
+                mEglDisplay = null;
+            }
+        }
+
+        GameSurface mSurface;
+        EGL10 mEgl;
+        EGLDisplay mEglDisplay;
+        EGLSurface mEglSurface;
+        EGLConfig mEglConfig;
+        EGLContext mEglContext;
     }
 
     private static class DefaultContextFactory implements EGLContextFactory
@@ -402,21 +552,15 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         private StringBuilder mBuilder = new StringBuilder();
     }
 
-
-    private void checkRenderThreadState() {
-        if (mGLThread != null) {
-            throw new IllegalStateException(
-                    "setRenderer has already been called for this instance.");
-        }
-    }
-
     public static final Semaphore sEglSemaphore = new Semaphore(1);
     private boolean mSizeChanged = true;
 
-    private GLThread mGLThread;
     public EGLConfigChooser mEGLConfigChooser;
     public EGLContextFactory mEGLContextFactory;
     public EGLWindowSurfaceFactory mEGLWindowSurfaceFactory;
     private int mDebugFlags;
-	private boolean mHasSurface;
+    private boolean mHasSurface;
+    public EglHelper mEglHelper;
+    public int mWidth;
+    public int mHeight;
 }
