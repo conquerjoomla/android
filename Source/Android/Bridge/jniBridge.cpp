@@ -146,6 +146,7 @@ EXPORT void CALL Java_emu_project64_jni_NativeExports_onSurfaceChanged (JNIEnv *
  
 EXPORT void CALL Java_emu_project64_jni_NativeExports_onDrawFrame (JNIEnv * env, jclass cls) 
 {
+    glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 #endif

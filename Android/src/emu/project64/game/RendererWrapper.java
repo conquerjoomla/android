@@ -10,28 +10,39 @@
 ****************************************************************************/
 package emu.project64.game;
 
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
+import android.util.Log;
 
 import emu.project64.jni.NativeExports;
 
-public class RendererWrapper implements GLThread.Renderer
+public class RendererWrapper extends Thread
 {
-    @Override
-    public void onSurfaceCreated(GL10 gl, EGLConfig config)
+    RendererWrapper(GameSurface Surface)
     {
-    	NativeExports.onSurfaceCreated();
+        super();
+        mGLThread = new GLThread(Surface);
+        mSurface = Surface;
     }
- 
+    
     @Override
-    public void onSurfaceChanged(GL10 gl, int width, int height)
+    public void run()
     {
-    	NativeExports.onSurfaceChanged(width, height);
+        Log.i("RendererWrapper", "starting tid=" + getId());
+        try 
+        {
+            mGLThread.ThreadStarting();
+            while (true) 
+            {
+                mGLThread.ReadyToDraw();
+                NativeExports.onDrawFrame();
+                mGLThread.SwapBuffers();
+            }
+        }
+        finally
+        {
+            mGLThread.ThreadExiting();
+        }
     }
- 
-    @Override
-    public void onDrawFrame(GL10 gl) 
-    {
-    	NativeExports.onDrawFrame();
-    }
+
+    GLThread mGLThread;
+    GameSurface mSurface;
 }
