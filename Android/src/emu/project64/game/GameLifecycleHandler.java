@@ -58,7 +58,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback
 
 	// App data and user preferences
 	private GlobalPrefs mGlobalPrefs;
-    
+
     private RendererWrapper mRendererWrapper;
     
 	public GameLifecycleHandler(Activity activity) 
@@ -192,7 +192,8 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback
 		// in-game menu.
 		Log.i("GameLifecycleHandler", "onWindowFocusChanged: " + hasFocus);
 		mIsFocused = hasFocus;
-		if (hasFocus) {
+		if (hasFocus)
+		{
 			hideSystemBars();
 		}
 		tryRunning();
@@ -240,9 +241,9 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback
 			switch (state) 
 			{
 			case NativeConstants.EMULATOR_STATE_IDLE:
-				//CoreInterface.startupEmulator();
-				mRendererWrapper = new RendererWrapper(mSurface);
-				mRendererWrapper.start();
+				CoreInterface.startupEmulator(new GLThread(mSurface));
+				//mRendererWrapper = new RendererWrapper(mSurface);
+				//mRendererWrapper.start();
 				break;
 			case NativeConstants.EMULATOR_STATE_PAUSED:
 				// CoreInterface.resumeEmulator();

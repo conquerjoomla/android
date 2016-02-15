@@ -26,9 +26,10 @@
 #endif // _WIN32
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "glide.h"
 #include "glitchmain.h"
-
+#include <Glide64/trace.h>
 void vbo_draw();
 
 static int fct[4], source0[4], operand0[4], source1[4], operand1[4], source2[4], operand2[4];
@@ -220,7 +221,7 @@ void check_compile(GLuint shader)
   {
     char log[1024];
     glGetShaderInfoLog(shader,1024,NULL,log);
-    LOGINFO(log);
+    //LOGINFO(log);
   }
 }
 
@@ -232,7 +233,7 @@ void check_link(GLuint program)
 {
     char log[1024];
     glGetProgramInfoLog(program,1024,NULL,log);
-    LOGINFO(log);
+    //LOGINFO(log);
   }
 }
 
@@ -640,7 +641,7 @@ void set_lambda()
 FX_ENTRY void FX_CALL 
 grConstantColorValue( GrColor_t value )
 {
-  LOG("grConstantColorValue(%d)\r\n", value);
+    WriteTrace(TraceResolution, TraceDebug, "value: %d", value);
   switch(lfb_color_fmt)
   {
   case GR_COLORFORMAT_ARGB:
@@ -753,7 +754,7 @@ grColorCombine(
                GrCombineLocal_t local, GrCombineOther_t other,
                FxBool invert )
 {
-  LOG("grColorCombine(%d,%d,%d,%d,%d)\r\n", function, factor, local, other, invert);
+    WriteTrace(TraceResolution, TraceDebug, "function: %d factor: %d local: %d other: %d invert: %d", function, factor, local, other, invert);
   static int last_function = 0;
   static int last_factor = 0;
   static int last_local = 0;
@@ -963,7 +964,7 @@ grAlphaCombine(
                FxBool invert
                )
 {
-  LOG("grAlphaCombine(%d,%d,%d,%d,%d)\r\n", function, factor, local, other, invert);
+    WriteTrace(TraceResolution, TraceDebug, "function: %d factor: %d local: %d other: %d invert: %d", function, factor, local, other, invert);
   static int last_function = 0;
   static int last_factor = 0;
   static int last_local = 0;
@@ -1201,7 +1202,7 @@ grTexCombine(
              FxBool alpha_invert
              )
 {
-  LOG("grTexCombine(%d,%d,%d,%d,%d,%d,%d)\r\n", tmu, rgb_function, rgb_factor, alpha_function, alpha_factor, rgb_invert, alpha_invert);
+    WriteTrace(TraceResolution, TraceDebug, "tmu: %d rgb_function: %d rgb_factor: %d alpha_function: %d alpha_factor: %d rgb_invert: %d alpha_invert: %d", tmu, rgb_function, rgb_factor, alpha_function, alpha_factor, rgb_invert, alpha_invert);
   int num_tex;
 
   if (tmu == GR_TMU0) num_tex = 1;
@@ -1452,7 +1453,7 @@ grAlphaBlendFunction(
                      )
 {
   int sfactorRGB = 0, dfactorRGB = 0, sfactorAlpha = 0, dfactorAlpha = 0;
-  LOG("grAlphaBlendFunction(%d,%d,%d,%d)\r\n", rgb_sf, rgb_df, alpha_sf, alpha_df);
+    WriteTrace(TraceResolution, TraceDebug, "rgb_sf: %d rgb_df: %d alpha_sf: %d alpha_df: %d", rgb_sf, rgb_df, alpha_sf, alpha_df);
 
   switch(rgb_sf)
   {
@@ -1526,7 +1527,7 @@ grAlphaBlendFunction(
 FX_ENTRY void FX_CALL
 grAlphaTestReferenceValue( GrAlpha_t value )
 {
-  LOG("grAlphaTestReferenceValue(%d)\r\n", value);
+    WriteTrace(TraceResolution, TraceDebug, "value: %d", value);
   alpha_ref = value;
   grAlphaTestFunction(alpha_func);
 }
@@ -1534,7 +1535,7 @@ grAlphaTestReferenceValue( GrAlpha_t value )
 FX_ENTRY void FX_CALL
 grAlphaTestFunction( GrCmpFnc_t function )
 {
-  LOG("grAlphaTestFunction(%d)\r\n", function);
+    WriteTrace(TraceResolution, TraceDebug, "function: %d", function);
   alpha_func = function;
   switch(function)
   {
@@ -1562,7 +1563,7 @@ grAlphaTestFunction( GrCmpFnc_t function )
 FX_ENTRY void FX_CALL 
 grFogMode( GrFogMode_t mode )
 {
-  LOG("grFogMode(%d)\r\n", mode);
+    WriteTrace(TraceResolution, TraceDebug, "mode: %d", mode);
   switch(mode)
   {
   case GR_FOG_DISABLE:
@@ -1588,7 +1589,7 @@ grFogMode( GrFogMode_t mode )
 FX_ENTRY float FX_CALL
 guFogTableIndexToW( int i )
 {
-  LOG("guFogTableIndexToW(%d)\r\n", i);
+    WriteTrace(TraceResolution, TraceDebug, "i: %d", i);
   return (float)(pow(2.0, 3.0+(double)(i>>2)) / (8-(i&3)));
 }
 
@@ -1596,7 +1597,7 @@ FX_ENTRY void FX_CALL
 guFogGenerateLinear(GrFog_t *fogtable,
                     float nearZ, float farZ )
 {
-  LOG("guFogGenerateLinear(%f,%f)\r\n", nearZ, farZ);
+    WriteTrace(TraceResolution, TraceDebug, "nearZ: %f farZ: %f", nearZ, farZ);
 /*
   glFogi(GL_FOG_MODE, GL_LINEAR);
   glFogi(GL_FOG_COORDINATE_SOURCE_EXT, GL_FOG_COORDINATE_EXT);
@@ -1608,15 +1609,15 @@ guFogGenerateLinear(GrFog_t *fogtable,
 }
 
 FX_ENTRY void FX_CALL 
-grFogTable( const GrFog_t ft[] )
+grFogTable(const GrFog_t /*ft */[])
 {
-  LOG("grFogTable()\r\n");
+    WriteTrace(TraceResolution, TraceDebug, "-");
 }
 
 FX_ENTRY void FX_CALL 
 grFogColorValue( GrColor_t fogcolor )
 {
-  LOG("grFogColorValue(%x)\r\n", fogcolor);
+    WriteTrace(TraceResolution, TraceDebug, "fogcolor: %x", fogcolor);
 
   switch(lfb_color_fmt)
   {
@@ -1644,7 +1645,7 @@ grFogColorValue( GrColor_t fogcolor )
 FX_ENTRY void FX_CALL 
 grChromakeyMode( GrChromakeyMode_t mode )
 {
-  LOG("grChromakeyMode(%d)\r\n", mode);
+    WriteTrace(TraceResolution, TraceDebug, "mode: %d", mode);
   switch(mode)
   {
   case GR_CHROMAKEY_DISABLE:
@@ -1662,7 +1663,7 @@ grChromakeyMode( GrChromakeyMode_t mode )
 FX_ENTRY void FX_CALL 
 grChromakeyValue( GrColor_t value )
 {
-  LOG("grChromakeyValue(%x)\r\n", value);
+    WriteTrace(TraceResolution, TraceDebug, "value: %d", value);
   int chroma_color_location;
 
   switch(lfb_color_fmt)
@@ -1729,7 +1730,7 @@ FX_ENTRY void FX_CALL
 grStipplePattern(
                  GrStipplePattern_t stipple)
 {
-  LOG("grStipplePattern(%x)\r\n", stipple);
+    WriteTrace(TraceResolution, TraceDebug, "value: %x", stipple);
   srand(stipple);
   setPattern();
 }
@@ -1737,7 +1738,7 @@ grStipplePattern(
 FX_ENTRY void FX_CALL
 grStippleMode( GrStippleMode_t mode )
 {
-  LOG("grStippleMode(%d)\r\n", mode);
+    WriteTrace(TraceResolution, TraceDebug, "mode: %d", mode);
   switch(mode)
   {
   case GR_STIPPLE_DISABLE:
@@ -1770,7 +1771,7 @@ grColorCombineExt(GrCCUColor_t a, GrCombineMode_t a_mode,
                   GrCCUColor_t d, FxBool d_invert,
                   FxU32 shift, FxBool invert)
 {
-  LOG("grColorCombineExt(%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)\r\n", a, a_mode, b, b_mode, c, c_invert, d, d_invert, shift, invert);
+    WriteTrace(TraceResolution, TraceDebug, "a: %d a_mode: %d b: %d b_mode: %d c: %d c_invert: %d d: %d d_invert: %d shift: %d invert: %d", a, a_mode, b, b_mode, c, c_invert, d, d_invert, shift, invert);
   if (invert) display_warning("grColorCombineExt : inverted result");
   if (shift) display_warning("grColorCombineExt : shift = %d", shift);
 
@@ -1952,7 +1953,7 @@ grAlphaCombineExt(GrACUColor_t a, GrCombineMode_t a_mode,
                   GrACUColor_t d, FxBool d_invert,
                   FxU32 shift, FxBool invert)
 {
-  LOG("grAlphaCombineExt(%d,%d,%d,%d,%d,%d,%d,%d,%d,%d)\r\n", a, a_mode, b, b_mode, c, c_invert, d, d_invert, shift, invert);
+    WriteTrace(TraceResolution, TraceDebug, "a: %d a_mode: %d b: %d b_mode: %d c: %d c_invert: %d d: %d d_invert: %d shift: %d invert: %d", a, a_mode, b, b_mode, c, c_invert, d, d_invert, shift, invert);
   if (invert) display_warning("grAlphaCombineExt : inverted result");
   if (shift) display_warning("grAlphaCombineExt : shift = %d", shift);
 
@@ -2106,7 +2107,7 @@ grTexColorCombineExt(GrChipID_t       tmu,
                      FxU32 shift, FxBool invert)
 {
   int num_tex;
-  LOG("grTexColorCombineExt(%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d)\r\n", tmu, a, a_mode, b, b_mode, c, c_invert, d, d_invert, shift, invert);
+    WriteTrace(TraceResolution, TraceDebug, "tmu: %d a: %d a_mode: %d b: %d b_mode: %d c: %d c_invert: %d d: %d d_invert: %d shift: %d invert: %d", tmu, a, a_mode, b, b_mode, c, c_invert, d, d_invert, shift, invert);
 
   if (invert) display_warning("grTexColorCombineExt : inverted result");
   if (shift) display_warning("grTexColorCombineExt : shift = %d", shift);
@@ -2471,7 +2472,7 @@ grTexAlphaCombineExt(GrChipID_t       tmu,
                      FxU32 shift, FxBool invert)
 {
   int num_tex;
-  LOG("grTexAlphaCombineExt(%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d)\r\n", tmu, a, a_mode, b, b_mode, c, c_invert, d, d_invert, shift, invert);
+    WriteTrace(TraceResolution, TraceDebug, "tmu: %d a: %d a_mode: %d b: %d b_mode: %d c: %d c_invert: %d d: %d d_invert: %d shift, invert: %d", tmu, a, a_mode, b, b_mode, c, c_invert, d, d_invert, shift, invert);
 
   if (invert) display_warning("grTexAlphaCombineExt : inverted result");
   if (shift) display_warning("grTexAlphaCombineExt : shift = %d", shift);
@@ -2751,7 +2752,7 @@ grConstantColorValueExt(GrChipID_t    tmu,
                         GrColor_t     value)
 {
   int num_tex;
-  LOG("grConstantColorValueExt(%d,%d)\r\n", tmu, value);
+    WriteTrace(TraceResolution, TraceDebug, "tmu: %d value: %d", tmu, value);
 
   if (tmu == GR_TMU0) num_tex = 1;
   else num_tex = 0;

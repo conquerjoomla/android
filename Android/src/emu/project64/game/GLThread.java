@@ -28,7 +28,7 @@ import javax.microedition.khronos.opengles.GL10;
  * render continuously or on request.
  *
  */
-class GLThread
+public class GLThread
 {
     GLThread(GameSurface Surface )
     {

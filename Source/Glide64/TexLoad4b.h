@@ -115,9 +115,8 @@ static inline void load4bCI(uint8_t *src, uint8_t *dst, int wid_64, int height, 
             *v15 = v14;
             v8 = (uint8_t *)(v15 + 1);
             v10 = v11 - 1;
-        }
-        while ( v11 != 1 );
-        if ( v25 == 1 )
+        } while (v11 != 1);
+        if (v25 == 1)
             break;
         v26 = v25 - 1;
         v17 = &src[(line + (uintptr_t)v7 - (uintptr_t)src) & 0x7FF];
@@ -170,13 +169,11 @@ static inline void load4bCI(uint8_t *src, uint8_t *dst, int wid_64, int height, 
             *v23 = v22;
             v18 = v23 + 1;
             v19 = v20 - 1;
-        }
-        while ( v20 != 1 );
+        } while (v20 != 1);
         v7 = &src[(line + (uintptr_t)v17 - (uintptr_t)src) & 0x7FF];
         v8 = (uint8_t *)((char *)v18 + ext);
         v9 = v26 - 1;
-    }
-    while ( v26 != 1 );
+    } while (v26 != 1);
 }
 
 static inline void load4bIAPal(uint8_t *src, uint8_t *dst, int wid_64, int height, int line, int ext, uint16_t *pal)
@@ -257,9 +254,8 @@ static inline void load4bIAPal(uint8_t *src, uint8_t *dst, int wid_64, int heigh
             *v15 = v14;
             v8 = v15 + 1;
             v10 = v11 - 1;
-        }
-        while ( v11 != 1 );
-        if ( v25 == 1 )
+        } while (v11 != 1);
+        if (v25 == 1)
             break;
         v26 = v25 - 1;
         v17 = &src[(line + (uintptr_t)v7 - (uintptr_t)src) & 0x7FF];
@@ -312,13 +308,11 @@ static inline void load4bIAPal(uint8_t *src, uint8_t *dst, int wid_64, int heigh
             *v23 = v22;
             v18 = v23 + 1;
             v19 = v20 - 1;
-        }
-        while ( v20 != 1 );
+        } while (v20 != 1);
         v7 = &src[(line + (uintptr_t)v17 - (uintptr_t)src) & 0x7FF];
         v8 = (uint32_t *)((char *)v18 + ext);
         v9 = v26 - 1;
-    }
-    while ( v26 != 1 );
+    } while (v26 != 1);
 }
 
 static inline void load4bIA(uint8_t *src, uint8_t *dst, int wid_64, int height, int line, int ext)
@@ -428,9 +422,8 @@ static inline void load4bIA(uint8_t *src, uint8_t *dst, int wid_64, int height, 
             *v16 = ((((v24 << 24) & 0xE000000) >> 3) & 0x1000000) | ((v24 << 24) & 0xE000000) | (8 * ((v24 << 28) & 0x10000000)) | (4 * ((v24 << 28) & 0x10000000)) | (2 * ((v24 << 28) & 0x10000000)) | ((v24 << 28) & 0x10000000) | (v31 & 0x10000) | v32;
             v7 = v16 + 1;
             v9 = v10 - 1;
-        }
-        while ( v10 != 1 );
-        if ( v57 == 1 )
+        } while (v10 != 1);
+        if (v57 == 1)
             break;
         v58 = v57 - 1;
         v33 = (uint32_t *)((char *)v6 + line);
@@ -477,13 +470,11 @@ static inline void load4bIA(uint8_t *src, uint8_t *dst, int wid_64, int height, 
             *v40 = ((((v48 << 24) & 0xE000000) >> 3) & 0x1000000) | ((v48 << 24) & 0xE000000) | (8 * ((v48 << 28) & 0x10000000)) | (4 * ((v48 << 28) & 0x10000000)) | (2 * ((v48 << 28) & 0x10000000)) | ((v48 << 28) & 0x10000000) | (v55 & 0x10000) | v56;
             v34 = v40 + 1;
             v35 = v36 - 1;
-        }
-        while ( v36 != 1 );
+        } while (v36 != 1);
         v6 = (uint32_t *)((char *)v33 + line);
         v7 = (uint32_t *)((char *)v34 + ext);
         v8 = v58 - 1;
-    }
-    while ( v58 != 1 );
+    } while (v58 != 1);
 }
 
 static inline void load4bI(uint8_t *src, uint8_t *dst, int wid_64, int height, int line, int ext)
@@ -549,9 +540,8 @@ static inline void load4bI(uint8_t *src, uint8_t *dst, int wid_64, int height, i
             *v15 = (16 * ((v18 << 24) & 0xF000000)) | ((v18 << 24) & 0xF000000) | (16 * (v20 & 0xF0000)) | (v20 & 0xF0000) | (16 * (v18 & 0xF00)) | (v18 & 0xF00) | (16 * ((uint16_t)v18 >> 12)) | ((uint16_t)v18 >> 12);
             v7 = v15 + 1;
             v9 = v10 - 1;
-        }
-        while ( v10 != 1 );
-        if ( v33 == 1 )
+        } while (v10 != 1);
+        if (v33 == 1)
             break;
         v34 = v33 - 1;
         v21 = (uint32_t *)((char *)v6 + line);
@@ -578,19 +568,17 @@ static inline void load4bI(uint8_t *src, uint8_t *dst, int wid_64, int height, i
             *v27 = (16 * ((v30 << 24) & 0xF000000)) | ((v30 << 24) & 0xF000000) | (16 * (v32 & 0xF0000)) | (v32 & 0xF0000) | (16 * (v30 & 0xF00)) | (v30 & 0xF00) | (16 * ((uint16_t)v30 >> 12)) | ((uint16_t)v30 >> 12);
             v22 = v27 + 1;
             v23 = v24 - 1;
-        }
-        while ( v24 != 1 );
+        } while (v24 != 1);
         v6 = (uint32_t *)((char *)v21 + line);
         v7 = (uint32_t *)((char *)v22 + ext);
         v8 = v34 - 1;
-    }
-    while ( v34 != 1 );
+    } while (v34 != 1);
 }
 
 //****************************************************************
 // Size: 0, Format: 2
 
-uint32_t Load4bCI (uintptr_t dst, uintptr_t src, int wid_64, int height, int line, int real_width, int tile)
+uint32_t Load4bCI(uintptr_t dst, uintptr_t src, int wid_64, int height, int line, int real_width, int tile)
 {
     if (wid_64 < 1) wid_64 = 1;
     if (height < 1) height = 1;
@@ -600,20 +588,20 @@ uint32_t Load4bCI (uintptr_t dst, uintptr_t src, int wid_64, int height, int lin
     {
         //in tlut DISABLE mode load CI texture as plain intensity texture instead of palette dereference.
         //Thanks to angrylion for the advice
-        load4bI ((uint8_t *)src, (uint8_t *)dst, wid_64, height, line, ext);
+        load4bI((uint8_t *)src, (uint8_t *)dst, wid_64, height, line, ext);
         return /*(0 << 16) | */GR_TEXFMT_ALPHA_INTENSITY_44;
     }
 
-    uintptr_t pal = (uintptr_t)(rdp.pal_8 + (rdp.tiles[tile].palette << 4));
+    uintptr_t pal = uintptr_t(rdp.pal_8 + (rdp.tiles[tile].palette << 4));
     if (rdp.tlut_mode == 2)
     {
         ext <<= 1;
-        load4bCI ((uint8_t *)src, (uint8_t *)dst, wid_64, height, line, ext, (uint16_t *)pal);
+        load4bCI((uint8_t *)src, (uint8_t *)dst, wid_64, height, line, ext, (uint16_t *)pal);
         return (1 << 16) | GR_TEXFMT_ARGB_1555;
     }
 
     ext <<= 1;
-    load4bIAPal ((uint8_t *)src, (uint8_t *)dst, wid_64, height, line, ext, (uint16_t *)pal);
+    load4bIAPal((uint8_t *)src, (uint8_t *)dst, wid_64, height, line, ext, (uint16_t *)pal);
     return (1 << 16) | GR_TEXFMT_ALPHA_INTENSITY_88;
 }
 
@@ -622,30 +610,30 @@ uint32_t Load4bCI (uintptr_t dst, uintptr_t src, int wid_64, int height, int lin
 //
 // ** BY GUGAMAN **
 
-uint32_t Load4bIA (uintptr_t dst, uintptr_t src, int wid_64, int height, int line, int real_width, int tile)
+uint32_t Load4bIA(uintptr_t dst, uintptr_t src, int wid_64, int height, int line, int real_width, int tile)
 {
     if (rdp.tlut_mode != 0)
-        return Load4bCI (dst, src, wid_64, height, line, real_width, tile);
+        return Load4bCI(dst, src, wid_64, height, line, real_width, tile);
 
     if (wid_64 < 1) wid_64 = 1;
     if (height < 1) height = 1;
     int ext = (real_width - (wid_64 << 4));
-    load4bIA ((uint8_t *)src, (uint8_t *)dst, wid_64, height, line, ext);
+    load4bIA((uint8_t *)src, (uint8_t *)dst, wid_64, height, line, ext);
     return /*(0 << 16) | */GR_TEXFMT_ALPHA_INTENSITY_44;
 }
 
 //****************************************************************
 // Size: 0, Format: 4
 
-uint32_t Load4bI (uintptr_t dst, uintptr_t src, int wid_64, int height, int line, int real_width, int tile)
+uint32_t Load4bI(uintptr_t dst, uintptr_t src, int wid_64, int height, int line, int real_width, int tile)
 {
     if (rdp.tlut_mode != 0)
-        return Load4bCI (dst, src, wid_64, height, line, real_width, tile);
+        return Load4bCI(dst, src, wid_64, height, line, real_width, tile);
 
     if (wid_64 < 1) wid_64 = 1;
     if (height < 1) height = 1;
     int ext = (real_width - (wid_64 << 4));
-    load4bI ((uint8_t *)src, (uint8_t *)dst, wid_64, height, line, ext);
+    load4bI((uint8_t *)src, (uint8_t *)dst, wid_64, height, line, ext);
 
     return /*(0 << 16) | */GR_TEXFMT_ALPHA_INTENSITY_44;
 }
@@ -653,10 +641,10 @@ uint32_t Load4bI (uintptr_t dst, uintptr_t src, int wid_64, int height, int line
 //****************************************************************
 // Size: 0, Format: 0
 
-uint32_t Load4bSelect (uintptr_t dst, uintptr_t src, int wid_64, int height, int line, int real_width, int tile)
+uint32_t Load4bSelect(uintptr_t dst, uintptr_t src, int wid_64, int height, int line, int real_width, int tile)
 {
     if (rdp.tlut_mode == 0)
-        return Load4bI (dst, src, wid_64, height, line, real_width, tile);
+        return Load4bI(dst, src, wid_64, height, line, real_width, tile);
 
-    return Load4bCI (dst, src, wid_64, height, line, real_width, tile);
+    return Load4bCI(dst, src, wid_64, height, line, real_width, tile);
 }

@@ -27,6 +27,7 @@
 #include "glitchmain.h"
 #include "../Glide64/winlnxdefs.h"
 #include "../Glide64/rdp.h"
+#include <Glide64/trace.h>
 
 #define Z_MAX (65536.0f)
 #define VERTEX_SIZE sizeof(VERTEX) //Size of vertex struct
@@ -167,7 +168,7 @@ void init_geometry()
 FX_ENTRY void FX_CALL
 grCoordinateSpace( GrCoordinateSpaceMode_t mode )
 {
-  LOG("grCoordinateSpace(%d)\r\n", mode);
+    WriteTrace(TraceGlitch, TraceDebug, "mode: %d", mode);
   switch(mode)
   {
   case GR_WINDOW_COORDS:
@@ -180,7 +181,7 @@ grCoordinateSpace( GrCoordinateSpaceMode_t mode )
 FX_ENTRY void FX_CALL
 grVertexLayout(FxU32 param, FxI32 offset, FxU32 mode)
 {
-  LOG("grVertexLayout(%d,%d,%d)\r\n", param, offset, mode);
+    WriteTrace(TraceGlitch, TraceDebug, "param: %d offset: %d mode: %d", param, offset, mode);
   switch(param)
   {
   case GR_PARAM_XY:
@@ -219,7 +220,7 @@ grVertexLayout(FxU32 param, FxI32 offset, FxU32 mode)
 FX_ENTRY void FX_CALL
 grCullMode( GrCullMode_t mode )
 {
-  LOG("grCullMode(%d)\r\n", mode);
+    WriteTrace(TraceGlitch, TraceDebug, "mode: %d", mode);
   static int oldmode = -1, oldinv = -1;
   culling_mode = mode;
   if (inverted_culling == oldinv && oldmode == mode)
@@ -255,7 +256,7 @@ grCullMode( GrCullMode_t mode )
 FX_ENTRY void FX_CALL
 grDepthBufferMode( GrDepthBufferMode_t mode )
 {
-  LOG("grDepthBufferMode(%d)\r\n", mode);
+    WriteTrace(TraceGlitch, TraceDebug, "mode: %d", mode);
   switch(mode)
   {
   case GR_DEPTHBUFFER_DISABLE:
@@ -280,8 +281,8 @@ grDepthBufferMode( GrDepthBufferMode_t mode )
 FX_ENTRY void FX_CALL
 grDepthBufferFunction( GrCmpFnc_t function )
 {
-  LOG("grDepthBufferFunction(%d)\r\n", function);
-  switch(function)
+    WriteTrace(TraceGlitch, TraceDebug, "function: %d", function);
+    switch (function)
   {
   case GR_CMP_GEQUAL:
     if (w_buffer_mode)
@@ -328,7 +329,7 @@ grDepthBufferFunction( GrCmpFnc_t function )
 FX_ENTRY void FX_CALL
 grDepthMask( FxBool mask )
 {
-  LOG("grDepthMask(%d)\r\n", mask);
+    WriteTrace(TraceGlitch, TraceDebug, "mask: %d", mask);
   glDepthMask(mask);
 }
 float biasFactor = 0;
@@ -381,7 +382,7 @@ void FindBestDepthBias()
 FX_ENTRY void FX_CALL
 grDepthBiasLevel( FxI32 level )
 {
-  LOG("grDepthBiasLevel(%d)\r\n", level);
+    WriteTrace(TraceGlitch, TraceDebug, "level: %d", level);
   if (level)
   {
     #ifdef ANDROID_EDITION
@@ -406,7 +407,7 @@ grDepthBiasLevel( FxI32 level )
 FX_ENTRY void FX_CALL
 grDrawTriangle( const void *a, const void *b, const void *c )
 {
-  LOG("grDrawTriangle()\r\n\t");
+  WriteTrace(TraceGlitch, TraceDebug,"grDrawTriangle()\r\n\t");
 
   if(nvidia_viewport_hack && !render_to_texture)
   {
@@ -443,7 +444,7 @@ grDrawPoint( const void *pt )
   float *s1 = (float*)pt + st1_off/sizeof(float);
   float *t1 = (float*)pt + st1_off/sizeof(float) + 1;
   float *fog = (float*)pt + fog_ext_off/sizeof(float);
-  LOG("grDrawPoint()\r\n");
+  WriteTrace(TraceGlitch, TraceDebug,"grDrawPoint()\r\n");
 
   if(nvidia_viewport_hack && !render_to_texture)
   {
@@ -513,7 +514,7 @@ grDrawLine( const void *a, const void *b )
   float *b_s1 = (float*)b + st1_off/sizeof(float);
   float *b_t1 = (float*)b + st1_off/sizeof(float) + 1;
   float *b_fog = (float*)b + fog_ext_off/sizeof(float);
-  LOG("grDrawLine()\r\n");
+  WriteTrace(TraceGlitch, TraceDebug,"grDrawLine()\r\n");
 
   if(nvidia_viewport_hack && !render_to_texture)
   {
@@ -586,7 +587,7 @@ FX_ENTRY void FX_CALL
 grDrawVertexArray(FxU32 mode, FxU32 Count, void *pointers2)
 {
   void **pointers = (void**)pointers2;
-  LOG("grDrawVertexArray(%d,%d)\r\n", mode, Count);
+  WriteTrace(TraceGlitch, TraceDebug,"grDrawVertexArray(%d,%d)\r\n", mode, Count);
 
   if(nvidia_viewport_hack && !render_to_texture)
   {
@@ -610,7 +611,7 @@ grDrawVertexArray(FxU32 mode, FxU32 Count, void *pointers2)
 FX_ENTRY void FX_CALL
 grDrawVertexArrayContiguous(FxU32 mode, FxU32 Count, void *pointers, FxU32 stride)
 {
-  LOG("grDrawVertexArrayContiguous(%d,%d,%d)\r\n", mode, Count, stride);
+  WriteTrace(TraceGlitch, TraceDebug,"grDrawVertexArrayContiguous(%d,%d,%d)\r\n", mode, Count, stride);
 
   if(nvidia_viewport_hack && !render_to_texture)
   {
@@ -620,7 +621,7 @@ grDrawVertexArrayContiguous(FxU32 mode, FxU32 Count, void *pointers, FxU32 strid
 
   if(stride != 156)
   {
-	  LOGINFO("Incompatible stride\n");
+	  //LOGINFO("Incompatible stride\n");
   }
 
   reloadTexture();

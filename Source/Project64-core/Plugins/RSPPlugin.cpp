@@ -19,18 +19,18 @@
 void DummyFunc1(int a) { a += 1; }
 
 CRSP_Plugin::CRSP_Plugin(void) :
-    DoRspCycles(NULL),
-    EnableDebugging(NULL),
-    m_CycleCount(0),
-    GetDebugInfo(NULL),
-    InitiateDebugger(NULL)
+DoRspCycles(NULL),
+EnableDebugging(NULL),
+m_CycleCount(0),
+GetDebugInfo(NULL),
+InitiateDebugger(NULL)
 {
     memset(&m_RSPDebug, 0, sizeof(m_RSPDebug));
 }
 
 CRSP_Plugin::~CRSP_Plugin()
 {
-    Close();
+    Close(NULL);
     UnloadPlugin();
 }
 
@@ -69,8 +69,8 @@ bool CRSP_Plugin::Initiate(CPlugins * Plugins, CN64System * System)
     WriteTrace(TraceRSPPlugin, TraceDebug, "Starting");
     if (m_PluginInfo.Version == 1 || m_PluginInfo.Version == 0x100)
     {
-		WriteTrace(TraceRSPPlugin, TraceDebug, "Invalid Version: %X",m_PluginInfo.Version);
-		WriteTrace(TraceRSPPlugin, TraceDebug, "Done (res: false)");
+        WriteTrace(TraceRSPPlugin, TraceDebug, "Invalid Version: %X", m_PluginInfo.Version);
+        WriteTrace(TraceRSPPlugin, TraceDebug, "Done (res: false)");
         return false;
     }
 
@@ -113,7 +113,11 @@ bool CRSP_Plugin::Initiate(CPlugins * Plugins, CN64System * System)
 
     RSP_INFO_1_1 Info = { 0 };
 
-    Info.hInst = (Plugins != NULL && Plugins->MainWindow()!= NULL ) ? Plugins->MainWindow()->GetModuleInstance() : NULL;
+#ifdef _WIN32
+    Info.hInst = (Plugins != NULL && Plugins->MainWindow() != NULL) ? Plugins->MainWindow()->GetModuleInstance() : NULL;
+#else
+    Info.hInst = NULL;
+#endif
     Info.CheckInterrupts = DummyCheckInterrupts;
     Info.MemoryBswaped = (System == NULL); // only true when the system's not yet loaded
 
@@ -121,11 +125,11 @@ bool CRSP_Plugin::Initiate(CPlugins * Plugins, CN64System * System)
     void(CALL *InitiateRSP) (RSP_INFO_1_1 Audio_Info, uint32_t * Cycles);
     LoadFunction(InitiateRSP);
     if (InitiateRSP == NULL)
-	{
-		WriteTrace(TraceRSPPlugin, TraceDebug, "Failed to find InitiateRSP");
-		WriteTrace(TraceRSPPlugin, TraceDebug, "Done (res: false)");
-		return false; 
-	}
+    {
+        WriteTrace(TraceRSPPlugin, TraceDebug, "Failed to find InitiateRSP");
+        WriteTrace(TraceRSPPlugin, TraceDebug, "Done (res: false)");
+        return false;
+    }
 
     // We are initializing the plugin before any rom is loaded so we do not have any correct
     // parameters here.. just needed to we can config the DLL.
@@ -202,10 +206,10 @@ bool CRSP_Plugin::Initiate(CPlugins * Plugins, CN64System * System)
     m_Initialized = true;
 
 #ifdef _WIN32
-	//jabo had a bug so I call CreateThread so his dllmain gets called again
+    //jabo had a bug so I call CreateThread so his dllmain gets called again
     pjutil::DynLibCallDllMain();
 #endif
-	WriteTrace(TraceRSPPlugin, TraceDebug, "Done (res: %s)",m_Initialized ? "true" : "false");
+    WriteTrace(TraceRSPPlugin, TraceDebug, "Done (res: %s)", m_Initialized ? "true" : "false");
     return m_Initialized;
 }
 

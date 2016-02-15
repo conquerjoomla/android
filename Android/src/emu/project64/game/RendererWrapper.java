@@ -33,7 +33,7 @@ public class RendererWrapper extends Thread
             while (true) 
             {
                 mGLThread.ReadyToDraw();
-                NativeExports.onDrawFrame();
+                //NativeExports.onDrawFrame();
                 mGLThread.SwapBuffers();
             }
         }

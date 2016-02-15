@@ -90,6 +90,9 @@ private:
     void(CALL *GetDebugInfo)    (GFXDEBUG_INFO * GFXDebugInfo);
     void(CALL *InitiateDebugger)(DEBUG_INFO DebugInfo);
 
+#ifdef ANDROID
+	static void SwapBuffers(void);
+#endif
     static void CALL DummyDrawScreen(void) {}
     static void CALL DummyMoveScreen(int32_t /*xpos*/, int32_t /*ypos*/) {}
     static void CALL DummyViStatusChanged(void) {}

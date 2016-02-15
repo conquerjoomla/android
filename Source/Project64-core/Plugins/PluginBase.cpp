@@ -123,12 +123,25 @@ bool CPlugin::Load(const char * FileName)
     return true;
 }
 
-void CPlugin::RomOpened()
+void CPlugin::RomOpened(RenderWindow * Render)
 {
     if (m_RomOpen)
     {
         return;
     }
+
+#ifdef ANDROID
+    if (m_PluginInfo.Type == PLUGIN_TYPE_GFX)
+    {
+        WriteTrace(PluginTraceType(), TraceDebug, "Render = %p", Render);
+        if (Render != NULL)
+        {
+            Render->GfxThreadInit();
+        }
+    }
+#else
+    Render = Render; // used just for andoid
+#endif
 
     if (RomOpen != NULL)
     {
@@ -136,38 +149,49 @@ void CPlugin::RomOpened()
         RomOpen();
         WriteTrace(PluginTraceType(), TraceDebug, "After Rom Open");
     }
+
     m_RomOpen = true;
 }
 
-void CPlugin::RomClose()
+void CPlugin::RomClose(RenderWindow * Render)
 {
     if (!m_RomOpen)
     {
         return;
     }
 
+#ifdef ANDROID
+    if (m_PluginInfo.Type == PLUGIN_TYPE_GFX)
+    {
+        WriteTrace(PluginTraceType(), TraceDebug, "Render = %p", Render);
+        if (Render != NULL)
+        {
+            Render->GfxThreadDone();
+        }
+    }
+#else
+    Render = Render; // used just for andoid
+#endif
+
     WriteTrace(PluginTraceType(), TraceDebug, "Before Rom Close");
     RomClosed();
     m_RomOpen = false;
     WriteTrace(PluginTraceType(), TraceDebug, "After Rom Close");
-}
+    }
 
-void CPlugin::GameReset()
+void CPlugin::GameReset(RenderWindow * Render)
 {
     if (m_RomOpen)
     {
-        RomClose();
-        if (RomOpen)
-        {
-            RomOpen();
-        }
+        RomClose(Render);
+        RomOpened(Render);
     }
 }
 
-void CPlugin::Close()
+void CPlugin::Close(RenderWindow * Render)
 {
     WriteTrace(PluginTraceType(), TraceDebug, "(%s): Start", PluginType());
-    RomClose();
+    RomClose(Render);
     if (m_Initialized)
     {
         CloseDLL();

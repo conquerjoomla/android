@@ -153,19 +153,19 @@ void CPlugins::GameReset(void)
 {
     if (m_Gfx)
     {
-        m_Gfx->GameReset();
+        m_Gfx->GameReset(m_MainWindow);
     }
     if (m_Audio)
     {
-        m_Audio->GameReset();
+        m_Audio->GameReset(m_MainWindow);
     }
     if (m_RSP)
     {
-        m_RSP->GameReset();
+        m_RSP->GameReset(m_MainWindow);
     }
     if (m_Control)
     {
-        m_Control->GameReset();
+        m_Control->GameReset(m_MainWindow);
     }
 }
 
@@ -190,7 +190,7 @@ void CPlugins::DestroyAudioPlugin(void)
         return;
     }
     WriteTrace(TraceAudioPlugin, TraceDebug, "before close");
-    m_Audio->Close();
+    m_Audio->Close(m_MainWindow);
     WriteTrace(TraceAudioPlugin, TraceDebug, "before delete");
     delete m_Audio;
     WriteTrace(TraceAudioPlugin, TraceDebug, "after delete");
@@ -208,7 +208,7 @@ void CPlugins::DestroyRspPlugin(void)
         return;
     }
     WriteTrace(TraceRSPPlugin, TraceDebug, "before close");
-    m_RSP->Close();
+    m_RSP->Close(m_MainWindow);
     WriteTrace(TraceRSPPlugin, TraceDebug, "before delete");
     delete m_RSP;
     m_RSP = NULL;
@@ -223,7 +223,7 @@ void CPlugins::DestroyControlPlugin(void)
         return;
     }
     WriteTrace(TraceControllerPlugin, TraceDebug, "before close");
-    m_Control->Close();
+    m_Control->Close(m_MainWindow);
     WriteTrace(TraceControllerPlugin, TraceDebug, "before delete");
     delete m_Control;
     m_Control = NULL;
@@ -233,24 +233,25 @@ void CPlugins::DestroyControlPlugin(void)
 
 void CPlugins::SetRenderWindows(RenderWindow * MainWindow, RenderWindow * SyncWindow)
 {
+	WriteTrace(TracePlugins, TraceDebug, "MainWindow = %p SyncWindow = %p",MainWindow,SyncWindow);
     m_MainWindow = MainWindow;
     m_SyncWindow = SyncWindow;
 }
 
 void CPlugins::RomOpened(void)
 {
-    m_Gfx->RomOpened();
-    m_RSP->RomOpened();
-    m_Audio->RomOpened();
-    m_Control->RomOpened();
+    m_Gfx->RomOpened(m_MainWindow);
+    m_RSP->RomOpened(m_MainWindow);
+    m_Audio->RomOpened(m_MainWindow);
+    m_Control->RomOpened(m_MainWindow);
 }
 
 void CPlugins::RomClosed(void)
 {
-    m_Gfx->RomClose();
-    m_RSP->RomClose();
-    m_Audio->RomClose();
-    m_Control->RomClose();
+    m_Gfx->RomClose(m_MainWindow);
+    m_RSP->RomClose(m_MainWindow);
+    m_Audio->RomClose(m_MainWindow);
+    m_Control->RomClose(m_MainWindow);
 }
 
 bool CPlugins::Initiate(CN64System * System)
@@ -280,7 +281,11 @@ bool CPlugins::Initiate(CN64System * System)
 
 bool CPlugins::ResetInUiThread(CN64System * System)
 {
+#ifdef tofix
     return m_MainWindow->ResetPluginsInUiThread(this, System);
+#else
+    return false;
+#endif
 }
 
 bool CPlugins::Reset(CN64System * System)

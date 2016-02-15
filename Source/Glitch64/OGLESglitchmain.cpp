@@ -38,6 +38,7 @@
 #include "g3ext.h"
 #include "glitchmain.h"
 #include "m64p.h"
+#include <Glide64/trace.h>
 
 #define OPENGL_CHECK_ERRORS { const GLenum errcode = glGetError(); if (errcode != GL_NO_ERROR) LOG("OpenGL Error code %i in '%s' line %i\n", errcode, __FILE__, __LINE__-1); }
 
@@ -49,6 +50,8 @@ extern void (*renderCallback)(int);
 
 wrapper_config config = {0, 0, 0, 0};
 int screen_width, screen_height;
+
+void Android_JNI_SwapWindow ( void );
 
 /*
 static inline void opt_glCopyTexImage2D( GLenum target,
@@ -221,7 +224,7 @@ void display_warning(const char *text, ...)
     vsprintf(buf, text, ap);
     va_end(ap);
     first_message--;
-    LOGINFO(buf);
+    //LOGINFO(buf);
   }
 }
 
@@ -253,66 +256,10 @@ void display_error()
 }
 #endif // _WIN32
 
-#ifdef LOGGING
-char log_buf[256];
-bool log_open = false;
-std::ofstream log_file;
-
-void OPEN_LOG()
-{
-  if (!log_open)
-  {
-    log_file.open ("wrapper_log.txt", std::ios_base::out|std::ios_base::app);
-    log_open = true;
-  }
-}
-
-void CLOSE_LOG()
-{
-  if (log_open)
-  {
-    log_file.close();
-    log_open = false;
-  }
-}
-
-void LOG(const char *text, ...)
-{
-#ifdef VPDEBUG
-  if (!dumping) return;
-#endif
-	if (!log_open)
-    return;
-	va_list ap;
-	va_start(ap, text);
-	vsprintf(log_buf, text, ap);
-  log_file << log_buf;
-  log_file.flush();
-	va_end(ap);
-}
-
-class LogManager {
-public:
-	LogManager() {
-		OPEN_LOG();
-	}
-	~LogManager() {
-		CLOSE_LOG();
-	}
-};
-
-LogManager logManager;
-
-#else // LOGGING
-#define OPEN_LOG()
-#define CLOSE_LOG()
-#define LOG(...)
-#endif // LOGGING
-
 FX_ENTRY void FX_CALL
 grSstOrigin(GrOriginLocation_t  origin)
 {
-  LOG("grSstOrigin(%d)\r\n", origin);
+    WriteTrace(TraceGlitch, TraceDebug, "origin = %d", origin);
   if (origin != GR_ORIGIN_UPPER_LEFT)
     display_warning("grSstOrigin : %x", origin);
 }
@@ -320,7 +267,7 @@ grSstOrigin(GrOriginLocation_t  origin)
 FX_ENTRY void FX_CALL
 grClipWindow( FxU32 minx, FxU32 miny, FxU32 maxx, FxU32 maxy )
 {
-  LOG("grClipWindow(%d,%d,%d,%d)\r\n", minx, miny, maxx, maxy);
+    WriteTrace(TraceGlitch, TraceDebug, "minx = %d, miny: %d maxy: %d", minx, miny, maxy);
 
   if (use_fbo && render_to_texture) {
     if (int(minx) < 0) minx = 0;
@@ -356,20 +303,20 @@ grClipWindow( FxU32 minx, FxU32 miny, FxU32 maxx, FxU32 maxy )
 FX_ENTRY void FX_CALL
 grColorMask( FxBool rgb, FxBool a )
 {
-  LOG("grColorMask(%d, %d)\r\n", rgb, a);
+    WriteTrace(TraceGlitch, TraceDebug, "rgb = %d, a: %d", rgb, a);
   glColorMask(rgb, rgb, rgb, a);
 }
 
 FX_ENTRY void FX_CALL
 grGlideInit( void )
 {
-  LOG("grGlideInit()\r\n");
+    WriteTrace(TraceGlitch, TraceDebug, "-");
 }
 
 FX_ENTRY void FX_CALL
 grSstSelect( int which_sst )
 {
-  LOG("grSstSelect(%d)\r\n", which_sst);
+    WriteTrace(TraceGlitch, TraceDebug, "which_sst = %d", which_sst);
 }
 
 int isExtensionSupported(const char *extension)
@@ -448,7 +395,7 @@ grSstWinOpenExt(
                 int                  nColBuffers,
                 int                  nAuxBuffers)
 {
-  LOG("grSstWinOpenExt(%d, %d, %d, %d, %d, %d %d)\r\n", hWnd, screen_resolution, refresh_rate, color_format, origin_location, nColBuffers, nAuxBuffers);
+    WriteTrace(TraceGlitch, TraceDebug, "hWnd: %d, screen_resolution: %d, refresh_rate: %d, color_format: %d, origin_location: %d, nColBuffers: %d, nAuxBuffers: %d", hWnd, screen_resolution, refresh_rate, color_format, origin_location, nColBuffers, nAuxBuffers);
   return grSstWinOpen(hWnd, screen_resolution, refresh_rate, color_format,
     origin_location, nColBuffers, nAuxBuffers);
 }
@@ -480,7 +427,7 @@ grSstWinOpen(
   color_texture = free_texture++;
   depth_texture = free_texture++;
 
-  LOG("grSstWinOpen(%08lx, %d, %d, %d, %d, %d %d)\r\n", hWnd, screen_resolution&~0x80000000, refresh_rate, color_format, origin_location, nColBuffers, nAuxBuffers);
+    WriteTrace(TraceGlitch, TraceDebug, "hWnd: %d, screen_resolution: %d, refresh_rate: %d, color_format: %d, origin_location: %d, nColBuffers: %d, nAuxBuffers: %d", hWnd, screen_resolution&~0x80000000, refresh_rate, color_format, origin_location, nColBuffers, nAuxBuffers);
 
 #ifdef _WIN32
   if ((HWND)hWnd == NULL) hWnd = GetActiveWindow();
@@ -627,7 +574,7 @@ grSstWinOpen(
   use_fbo = config.fbo;
 #endif // _WIN32
 
-  LOGINFO("use_fbo %d\n", use_fbo);
+  //LOGINFO("use_fbo %d\n", use_fbo);
 
   if (isExtensionSupported("GL_ARB_shading_language_100") &&
     isExtensionSupported("GL_ARB_shader_objects") &&
@@ -747,14 +694,14 @@ grSstWinOpen(
 FX_ENTRY void FX_CALL
 grGlideShutdown( void )
 {
-  LOG("grGlideShutdown\r\n");
+    WriteTrace(TraceGlitch, TraceDebug, "-");
 }
 
 FX_ENTRY FxBool FX_CALL
 grSstWinClose( GrContext_t context )
 {
   int i, clear_texbuff = use_fbo;
-  LOG("grSstWinClose(%d)\r\n", context);
+    WriteTrace(TraceGlitch, TraceDebug, "context: %d", context);
 
   for (i=0; i<2; i++) {
     tmu_usage[i].min = 0xfffffff;
@@ -835,8 +782,7 @@ FX_ENTRY void FX_CALL grTextureBufferExt( GrChipID_t  		tmu,
   int i;
   static int fbs_init = 0;
 
-  //printf("grTextureBufferExt(%d, %d, %d, %d, %d, %d, %d)\r\n", tmu, startAddress, lodmin, lodmax, aspect, fmt, evenOdd);
-  LOG("grTextureBufferExt(%d, %d, %d, %d %d, %d, %d)\r\n", tmu, startAddress, lodmin, lodmax, aspect, fmt, evenOdd);
+    WriteTrace(TraceGlitch, TraceDebug, "tmu: %d startAddress: %d lodmin: %d lodmax: %d aspect: %d fmt: %d evenOdd: %d", tmu, startAddress, lodmin, lodmax, aspect, fmt, evenOdd);
   if (lodmin != lodmax) display_warning("grTextureBufferExt : loading more than one LOD");
   if (!use_fbo) {
 
@@ -1150,7 +1096,7 @@ grTextureAuxBufferExt( GrChipID_t tmu,
                       GrTextureFormat_t format,
                       FxU32      odd_even_mask )
 {
-  LOG("grTextureAuxBufferExt(%d, %d, %d, %d %d, %d, %d)\r\n", tmu, startAddress, thisLOD, largeLOD, aspectRatio, format, odd_even_mask);
+    WriteTrace(TraceGlitch, TraceDebug, "tmu: %d startAddress: %d thisLOD: %d largeLOD: %d aspectRatio: %d format: %d odd_even_mask: %d", tmu, startAddress, thisLOD, largeLOD, aspectRatio, format, odd_even_mask);
   //display_warning("grTextureAuxBufferExt");
 }
 
@@ -1159,7 +1105,7 @@ FX_ENTRY void FX_CALL grAuxBufferExt( GrBuffer_t buffer );
 FX_ENTRY GrProc FX_CALL
 grGetProcAddress( char *procName )
 {
-  LOG("grGetProcAddress(%s)\r\n", procName);
+    WriteTrace(TraceGlitch, TraceDebug, "procName: %s", procName);
   if(!strcmp(procName, "grSstWinOpenExt"))
     return (GrProc)grSstWinOpenExt;
   if(!strcmp(procName, "grTextureBufferExt"))
@@ -1206,7 +1152,7 @@ grGetProcAddress( char *procName )
 FX_ENTRY FxU32 FX_CALL
 grGet( FxU32 pname, FxU32 plength, FxI32 *params )
 {
-  LOG("grGet(%d,%d)\r\n", pname, plength);
+    WriteTrace(TraceGlitch, TraceDebug, "pname: %d plength: %d", pname, plength);
   switch(pname)
   {
   case GR_MAX_TEXTURE_SIZE:
@@ -1324,7 +1270,7 @@ grGet( FxU32 pname, FxU32 plength, FxI32 *params )
 FX_ENTRY const char * FX_CALL
 grGetString( FxU32 pname )
 {
-  LOG("grGetString(%d)\r\n", pname);
+    WriteTrace(TraceGlitch, TraceDebug, "pname: %d", pname);
   switch(pname)
   {
   case GR_EXTENSION:
@@ -1368,7 +1314,7 @@ static void render_rectangle(int texture_number,
                              int src_width, int src_height,
                              int tex_width, int tex_height, int invert)
 {
-  LOGINFO("render_rectangle(%d,%d,%d,%d,%d,%d,%d,%d)",texture_number,dst_x,dst_y,src_width,src_height,tex_width,tex_height,invert);
+  //LOGINFO("render_rectangle(%d,%d,%d,%d,%d,%d,%d,%d)",texture_number,dst_x,dst_y,src_width,src_height,tex_width,tex_height,invert);
   int vertexOffset_location;
   int textureSizes_location;
   static float data[] = {
@@ -1447,7 +1393,7 @@ void reloadTexture()
   if (use_fbo || !render_to_texture || buffer_cleared)
     return;
 
-  LOG("reload texture %dx%d\n", width, height);
+    WriteTrace(TraceGlitch, TraceDebug, "width: %d height: %d", width, height);
   //printf("reload texture %dx%d\n", width, height);
 
   buffer_cleared = 1;
@@ -1474,12 +1420,12 @@ void reloadTexture()
 void updateTexture()
 {
   if (!use_fbo && render_to_texture == 2) {
-    LOG("update texture %x\n", pBufferAddress);
+        WriteTrace(TraceGlitch, TraceDebug, "pBufferAddress: %x", pBufferAddress);
     //printf("update texture %x\n", pBufferAddress);
 
     // nothing changed, don't update the texture
     if (!buffer_cleared) {
-      LOG("update cancelled\n", pBufferAddress);
+            WriteTrace(TraceGlitch, TraceDebug, "update cancelled");
       return;
     }
 
@@ -1557,7 +1503,7 @@ grRenderBuffer( GrBuffer_t buffer )
   static HANDLE region = NULL;
   int realWidth = pBufferWidth, realHeight = pBufferHeight;
 #endif // _WIN32
-  LOG("grRenderBuffer(%d)\r\n", buffer);
+    WriteTrace(TraceGlitch, TraceDebug, "buffer: %d", buffer);
   //printf("grRenderBuffer(%d)\n", buffer);
 
   switch(buffer)
@@ -1671,7 +1617,7 @@ grRenderBuffer( GrBuffer_t buffer )
 FX_ENTRY void FX_CALL
 grAuxBufferExt( GrBuffer_t buffer )
 {
-  LOG("grAuxBufferExt(%d)\r\n", buffer);
+    WriteTrace(TraceGlitch, TraceDebug, "buffer: %d", buffer);
   //display_warning("grAuxBufferExt");
 
   if (buffer == GR_BUFFER_AUXBUFFER) {
@@ -1696,7 +1642,7 @@ FX_ENTRY void FX_CALL
 grBufferClear( GrColor_t color, GrAlpha_t alpha, FxU32 depth )
 {
   vbo_draw();
-  LOG("grBufferClear(%d,%d,%d)\r\n", color, alpha, depth);
+    WriteTrace(TraceGlitch, TraceDebug, "color: %d alpha: %d depth: %d", color, alpha, depth);
   switch(lfb_color_fmt)
   {
   case GR_COLORFORMAT_ARGB:
@@ -1733,6 +1679,7 @@ grBufferSwap( FxU32 swap_interval )
 //   GLuint program;
 
   vbo_draw();
+  Android_JNI_SwapWindow();
 //	glFinish();
 //  printf("rendercallback is %p\n", renderCallback);
 #ifdef tofix
@@ -1745,7 +1692,7 @@ grBufferSwap( FxU32 swap_interval )
   }
 #endif
   int i;
-  LOG("grBufferSwap(%d)\r\n", swap_interval);
+    WriteTrace(TraceGlitch, TraceDebug, "swap_interval: %d", swap_interval);
   //printf("swap\n");
   if (render_to_texture) {
     display_warning("swap while render_to_texture\n");
@@ -1790,7 +1737,7 @@ grLfbLock( GrLock_t type, GrBuffer_t buffer, GrLfbWriteMode_t writeMode,
           GrOriginLocation_t origin, FxBool pixelPipeline,
           GrLfbInfo_t *info )
 {
-  LOG("grLfbLock(%d,%d,%d,%d,%d)\r\n", type, buffer, writeMode, origin, pixelPipeline);
+    WriteTrace(TraceGlitch, TraceDebug, "type: %d buffer: %d writeMode: %d origin: %d pixelPipeline: %d", type, buffer, writeMode, origin, pixelPipeline);
   if (type == GR_LFB_WRITE_ONLY)
   {
     display_warning("grLfbLock : write only");
@@ -1859,7 +1806,7 @@ grLfbLock( GrLock_t type, GrBuffer_t buffer, GrLfbWriteMode_t writeMode,
 FX_ENTRY FxBool FX_CALL
 grLfbUnlock( GrLock_t type, GrBuffer_t buffer )
 {
-  LOG("grLfbUnlock(%d,%d)\r\n", type, buffer);
+    WriteTrace(TraceGlitch, TraceDebug, "type: %d, buffer: %d", type, buffer);
   if (type == GR_LFB_WRITE_ONLY)
   {
     display_warning("grLfbUnlock : write only");
@@ -1877,7 +1824,7 @@ grLfbReadRegion( GrBuffer_t src_buffer,
   unsigned int i,j;
   unsigned short *frameBuffer = (unsigned short*)dst_data;
   unsigned short *depthBuffer = (unsigned short*)dst_data;
-  LOG("grLfbReadRegion(%d,%d,%d,%d,%d,%d)\r\n", src_buffer, src_x, src_y, src_width, src_height, dst_stride);
+    WriteTrace(TraceGlitch, TraceDebug, "src_buffer: %d src_x: %d src_y: %d src_width: %d src_height: %d dst_stride: %d", src_buffer, src_x, src_y, src_width, src_height, dst_stride);
 
   switch(src_buffer)
   {
@@ -1945,7 +1892,7 @@ grLfbWriteRegion( GrBuffer_t dst_buffer,
   unsigned short *frameBuffer = (unsigned short*)src_data;
   int texture_number;
   unsigned int tex_width = 1, tex_height = 1;
-  LOG("grLfbWriteRegion(%d,%d,%d,%d,%d,%d,%d,%d)\r\n",dst_buffer, dst_x, dst_y, src_format, src_width, src_height, pixelPipeline, src_stride);
+    WriteTrace(TraceGlitch, TraceDebug, "dst_buffer: %d dst_x: %d dst_y: %d src_format: %d src_width: %d src_height: %d pixelPipeline: %d src_stride: %d", dst_buffer, dst_x, dst_y, src_format, src_width, src_height, pixelPipeline, src_stride);
 
   //glPushAttrib(GL_ALL_ATTRIB_BITS);
 
@@ -2096,18 +2043,18 @@ grLfbWriteRegion( GrBuffer_t dst_buffer,
 FX_ENTRY char ** FX_CALL
 grQueryResolutionsExt(FxI32 * Size)
 {
+    WriteTrace(TraceGlitch, TraceDebug, "-");
   return 0;
 /*
-  LOG("grQueryResolutionsExt\r\n");
   return g_FullScreenResolutions.getResolutionsList(Size);
 */
 }
 
 FX_ENTRY GrScreenResolution_t FX_CALL grWrapperFullScreenResolutionExt(FxU32* width, FxU32* height)
 {
+    WriteTrace(TraceGlitch, TraceDebug, "-");
   return 0;
 /*
-  LOG("grWrapperFullScreenResolutionExt\r\n");
   g_FullScreenResolutions.getResolution(config.res, width, height);
   return config.res;
 */
@@ -2143,7 +2090,7 @@ FX_ENTRY FxBool FX_CALL grKeyPressedExt(FxU32 key)
 
 FX_ENTRY void FX_CALL grConfigWrapperExt(FxI32 resolution, FxI32 vram, FxBool fbo, FxBool aniso)
 {
-  LOG("grConfigWrapperExt\r\n");
+    WriteTrace(TraceGlitch, TraceDebug, "-");
   config.res = resolution;
   config.vram_size = vram;
   config.fbo = fbo;
@@ -2159,7 +2106,7 @@ grQueryResolutions( const GrResolution *resTemplate, GrResolution *output )
   int res_sup = 0xf;
   int i;
   int n=0;
-  LOG("grQueryResolutions\r\n");
+    WriteTrace(TraceGlitch, TraceDebug, "-");
   display_warning("grQueryResolutions");
   if ((unsigned int)resTemplate->resolution != GR_QUERY_ANY)
   {
@@ -2191,7 +2138,7 @@ grReset( FxU32 what )
 FX_ENTRY void FX_CALL
 grEnable( GrEnableMode_t mode )
 {
-  LOG("grEnable(%d)\r\n", mode);
+    WriteTrace(TraceGlitch, TraceDebug, "-");
   if (mode == GR_TEXTURE_UMA_EXT)
     UMAmode = 1;
 }
@@ -2199,7 +2146,7 @@ grEnable( GrEnableMode_t mode )
 FX_ENTRY void FX_CALL
 grDisable( GrEnableMode_t mode )
 {
-  LOG("grDisable(%d)\r\n", mode);
+    WriteTrace(TraceGlitch, TraceDebug, "-");
   if (mode == GR_TEXTURE_UMA_EXT)
     UMAmode = 0;
 }

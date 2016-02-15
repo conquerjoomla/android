@@ -13,6 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{593B00E6-1987-415D-A62C-26533FC3E95C}</ProjectGuid>
     <RootNamespace>Bridge</RootNamespace>
+    <ProjectName>JniBridge</ProjectName>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -29,11 +30,14 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="JavaBridge.cpp" />
     <ClCompile Include="jniBridge.cpp" />
     <ClCompile Include="jniBridgeSettings.cpp" />
     <ClCompile Include="NotificationClass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="JavaBridge.h" />
+    <ClInclude Include="jniBridge.h" />
     <ClInclude Include="jniBridgeSettings.h" />
     <ClInclude Include="NotificationClass.h" />
   </ItemGroup>

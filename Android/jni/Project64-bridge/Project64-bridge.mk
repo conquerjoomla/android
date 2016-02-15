@@ -12,6 +12,7 @@ LOCAL_STATIC_LIBRARIES := common  \
 LOCAL_C_INCLUDES := $(SDL_INCLUDES)
 
 LOCAL_SRC_FILES :=                   \
+    $(SRCDIR)/JavaBridge.cpp         \
     $(SRCDIR)/jniBridge.cpp          \
     $(SRCDIR)/jniBridgeSettings.cpp  \
     $(SRCDIR)/NotificationClass.cpp  \
