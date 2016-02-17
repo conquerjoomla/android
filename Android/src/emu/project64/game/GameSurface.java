@@ -58,7 +58,7 @@ public class GameSurface extends GLSurfaceView2
 				this.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 			}
 
-			//this.setEGLContextClientVersion(2);
+			this.setEGLContextClientVersion(2);
 			this.setRenderer(new RendererWrapper());
 			rendererSet = true;
 		}
