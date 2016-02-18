@@ -61,7 +61,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback
 	// App data and user preferences
 	private GlobalPrefs mGlobalPrefs;
     
-	private GLThread mGLThread;
+    private RendererWrapper mRendererWrapper;
     
 	public GameLifecycleHandler(Activity activity) 
 	{
@@ -243,8 +243,8 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback
 			{
 			case NativeConstants.EMULATOR_STATE_IDLE:
 				//CoreInterface.startupEmulator();
-		        mGLThread = new GLThread(new WeakReference<GameSurface>(mSurface), new RendererWrapper());
-		        mGLThread.start();
+				mRendererWrapper = new RendererWrapper(mSurface);
+				mRendererWrapper.start();
 				break;
 			case NativeConstants.EMULATOR_STATE_PAUSED:
 				// CoreInterface.resumeEmulator();

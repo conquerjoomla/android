@@ -10,13 +10,44 @@
 ****************************************************************************/
 package emu.project64.game;
 
+import java.lang.ref.WeakReference;
+
+import android.util.Log;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import emu.project64.jni.NativeExports;
 
-public class RendererWrapper implements GLThread.Renderer
+public class RendererWrapper extends Thread implements GLThread.SurfaceInfo
 {
+    RendererWrapper(GameSurface Surface)
+    {
+        super();
+        mGLThread = new GLThread(new WeakReference<GameSurface>(Surface), this);
+        mSurface = Surface;
+    }
+    
+    @Override
+    public void run()
+    {
+        Log.i("RendererWrapper", "starting tid=" + getId());
+        try 
+        {
+            mGLThread.ThreadStarting();
+            while (true) 
+            {
+                mGLThread.ReadyToDraw();
+                NativeExports.onDrawFrame();
+                mGLThread.SwapBuffers();
+            }
+        }
+        finally
+        {
+            mGLThread.ThreadExiting();
+        }
+    }
+
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config)
     {
@@ -29,9 +60,7 @@ public class RendererWrapper implements GLThread.Renderer
     	NativeExports.onSurfaceChanged(width, height);
     }
  
-    @Override
-    public void onDrawFrame(GL10 gl) 
-    {
-    	NativeExports.onDrawFrame();
-    }
+    GLThread mGLThread;
+    GameSurface mSurface;
+
 }
