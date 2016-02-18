@@ -1823,9 +1823,37 @@ input:    none
 output:   none
 *******************************************************************/
 uint32_t update_screen_count = 0;
+#ifdef ANDROID
+#include <GLES2/gl2.h>
+
+void Android_JNI_SwapWindow();
+
+float red = 1.0f;
+bool down = true;
+
+#endif
 
 void CALL UpdateScreen(void)
 {
+#ifdef ANDROID
+    WriteTrace(TraceGlide64, TraceDebug, "red = %f",red);
+    glClearColor(red, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    red += down ? - 0.01 : +0.01;
+    if (red < 0.1f)
+    {
+        down = false;
+    }
+    else if (red > 0.9f)
+    {
+        down = true;
+    }
+    Android_JNI_SwapWindow();
+}
+
+void CALL UpdateScreen2(void)
+{
+#endif
     WriteTrace(TraceGlide64, TraceDebug, "Origin: %08x, Old origin: %08x, width: %d", *gfx.VI_ORIGIN_REG, rdp.vi_org_reg, *gfx.VI_WIDTH_REG);
     uint32_t width = (*gfx.VI_WIDTH_REG) << 1;
     if (*gfx.VI_ORIGIN_REG > width)
@@ -1850,7 +1878,7 @@ void CALL UpdateScreen(void)
         fps_last = fps_next;
         fps_count = 0;
         vi_count = 0;
-    }
+}
 #endif
 #endif
     //*
@@ -1973,7 +2001,7 @@ void newSwapBuffers()
         else
         {
             output(930.0f, 0, 1, (char*)wxDateTime::Now().Format("%I:%M:%S %p").char_str(), 0);
-        }
+}
 #endif
     }
     //hotkeys

@@ -37,7 +37,7 @@ import emu.project64.game.GameSurface.LogWriter;
  * sGLThreadManager object. This avoids multiple-lock ordering issues.
  *
  */
-class GLThread
+public class GLThread
 {
     private final static boolean LOG_THREADS = false;
     private final static boolean LOG_SURFACE = false;
@@ -132,6 +132,10 @@ class GLThread
         GameSurface view = mGLSurfaceViewWeakRef.get();
         view.mHaveEglContext = false;
         view.mHaveEglSurface = false;
+        ReadyToDraw();
+        if (LOG_THREADS) {
+            Log.i("GLThread", "starting tid=" + Thread.currentThread().getId());
+        }
     }
 
     public void ThreadExiting()
@@ -458,6 +462,7 @@ class GLThread
 		if (mWantRenderNotification) {
 			mDoRenderNotification = true;
 		}
+        ReadyToDraw();
 	}
 	
 	public void requestRender() {

@@ -12,6 +12,9 @@ package emu.project64.game;
 
 import java.lang.ref.WeakReference;
 
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
 import emu.project64.R;
 import emu.project64.ActivityHelper;
 import emu.project64.game.GLThread;
@@ -36,7 +39,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 
-public class GameLifecycleHandler implements SurfaceHolder.Callback 
+public class GameLifecycleHandler implements SurfaceHolder.Callback, GLThread.SurfaceInfo
 {
 	// Activity and views
 	private Activity mActivity;
@@ -242,7 +245,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback
 			switch (state) 
 			{
 			case NativeConstants.EMULATOR_STATE_IDLE:
-				CoreInterface.startupEmulator(new GLThread(mSurface));
+				CoreInterface.startupEmulator(new GLThread(new WeakReference<GameSurface>(mSurface), this));
 				//mRendererWrapper = new RendererWrapper(mSurface);
 				//mRendererWrapper.start();
 				break;
@@ -254,4 +257,16 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback
 			}
 		}
 	}
+	
+    @Override
+    public void onSurfaceCreated(GL10 gl, EGLConfig config)
+    {
+    	NativeExports.onSurfaceCreated();
+    }
+ 
+    @Override
+    public void onSurfaceChanged(GL10 gl, int width, int height)
+    {
+    	NativeExports.onSurfaceChanged(width, height);
+    }
 }

@@ -10,6 +10,9 @@
 ****************************************************************************/
 package emu.project64.jni;
 
+import emu.project64.game.GLThread;
+import emu.project64.game.GameSurface;
+
 public class NativeExports
 {
     static
@@ -20,7 +23,7 @@ public class NativeExports
     public static native void appInit (String BaseDir );
     public static native void SettingsSaveBool (int type, boolean value );
     public static native void SettingsSaveString (int type, String value );
-    public static native void RunFileImage( String FileLoc );
+    public static native void RunFileImage( String FileLoc, GLThread thread );
     
 	public static native int emuGetState();
 	

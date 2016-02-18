@@ -14,8 +14,8 @@ import java.io.File;
 import java.util.ArrayList;
 
 import emu.project64.R;
-
 import emu.project64.game.GameSurface;
+import emu.project64.game.GLThread;
 import emu.project64.persistent.AppData;
 import emu.project64.persistent.GlobalPrefs;
 import android.app.Activity;
@@ -51,9 +51,9 @@ public class CoreInterface
         new File( sGlobalPrefs.coreUserCacheDir ).mkdirs();
     }
     
-    public static synchronized void startupEmulator()
+    public static synchronized void startupEmulator(GLThread thread)
     {
-		NativeExports.RunFileImage(sRomPath);
+		NativeExports.RunFileImage(sRomPath, thread);
     }
     
     public static synchronized void shutdownEmulator()
