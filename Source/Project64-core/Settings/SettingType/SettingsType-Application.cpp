@@ -146,9 +146,17 @@ bool CSettingTypeApplication::Load ( int /*Index*/, bool & Value ) const
     return bRes;
 }
 
+#if defined(ANDROID)
+#include <android/log.h>
+
+#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "UI-Console", __VA_ARGS__)
+#endif
+
 bool CSettingTypeApplication::Load ( int /*Index*/, uint32_t & Value ) const
 {
-    bool bRes = m_SettingsIniFile->GetNumber(SectionName(),m_KeyNameIdex.c_str(),Value,Value);
+    printf("%s: SectionName(): %s m_KeyNameIdex = %s", __FUNCTION__, SectionName(), m_KeyNameIdex.c_str());
+    bool bRes = m_SettingsIniFile->GetNumber(SectionName(), m_KeyNameIdex.c_str(), Value, Value);
+    printf("%s: bRes: %s", __FUNCTION__, bRes ? "true" : "false");
     if (!bRes && m_DefaultSetting != Default_None)
     {
         if (m_DefaultSetting == Default_Constant)

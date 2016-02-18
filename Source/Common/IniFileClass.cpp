@@ -1,6 +1,12 @@
 #include "stdafx.h"
 #include <stdlib.h>
 
+#if defined(ANDROID)
+#include <android/log.h>
+
+#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "UI-Console", __VA_ARGS__)
+#endif
+
 CIniFileBase::CIniFileBase(CFileBase & FileObject, const char * FileName) :
 m_lastSectionSearch(0),
 m_CurrentSectionFilePos(0),
@@ -11,6 +17,7 @@ m_File(FileObject),
 m_FileName(FileName),
 m_CurrentSectionDirty(false)
 {
+    printf("%s: FileName: %s", __FUNCTION__, FileName);
 }
 
 CIniFileBase::~CIniFileBase(void)

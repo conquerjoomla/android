@@ -126,11 +126,18 @@ bool CSettingTypeRomDatabase::Load ( int Index, bool & Value ) const
     return bRes;
 }
 
+#if defined(ANDROID)
+#include <android/log.h>
+
+#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "UI-Console", __VA_ARGS__)
+#endif
+
 bool CSettingTypeRomDatabase::Load ( int Index, uint32_t & Value ) const
 {
     bool bRes = false;
     if (m_GlideSetting)
     {
+        printf("Is glide setting m_GlideIniFile");
         bRes = m_GlideIniFile->GetNumber(Section(),m_KeyName.c_str(),Value,Value);
     }
     else

@@ -47,7 +47,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     private static final int TOTAL_ASSETS = 120;
     
     /** The minimum duration that the splash screen is shown, in milliseconds. */
-    private static final int SPLASH_DELAY = 1000;
+    private static final int SPLASH_DELAY = 2000;
     
     /**
      * The subdirectory within the assets directory to extract. A subdirectory is necessary to avoid
@@ -92,9 +92,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         // Handler.postDelayed ensures this runs only after activity has resumed
         final Handler handler = new Handler();
         
-        NativeExports.appInit(mAppData.coreSharedDataDir);
-        NativeExports.SettingsSaveString(SettingsID.Directory_PluginSelected.getValue(), mAppData.libsDir);
-        NativeExports.SettingsSaveBool(SettingsID.Directory_PluginUseSelected.getValue(), true);
         handler.postDelayed( extractAssetsTaskLauncher, SPLASH_DELAY );
     }
     
@@ -104,13 +101,21 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         @Override
         public void run()
         {
-        	Log.e( "Splash", "mAppData.coreSharedDataDir = " + mAppData.coreSharedDataDir);
-            if( !(new File( mAppData.coreSharedDataDir ) ).exists() || mAppData.getAssetVersion() != ASSET_VERSION )
+            NativeExports.appInit(mAppData.coreSharedDataDir);
+            NativeExports.SettingsSaveString(SettingsID.Directory_PluginSelected.getValue(), mAppData.libsDir);
+            NativeExports.SettingsSaveBool(SettingsID.Directory_PluginUseSelected.getValue(), true);
+			Log.e( "Splash", "getPackageName() = " + getPackageName());
+            /*if (NativeExports.NeedToExtractAssets(mAppData.coreSharedDataDir))
             {
                 // Extract and merge the assets if they are out of date
                 FileUtil.deleteFolder( new File( mAppData.coreSharedDataDir ) );
                 mAssetsExtracted = 0;
-                new ExtractAssetsTask( getAssets(), SOURCE_DIR, mAppData.coreSharedDataDir, SplashActivity.this ).execute();
+                new ExtractAssetsTask( getAssets(), SOURCE_DIR, mAppData.coreSharedDataDir, SplashActivity.this ).execute();            	
+            }*/
+
+            /*Log.e( "Splash", "mAppData.coreSharedDataDir = " + mAppData.coreSharedDataDir);
+            if( !(new File( mAppData.coreSharedDataDir ) ).exists() || mAppData.getAssetVersion() != ASSET_VERSION )
+            {
             }
             else
             {
@@ -119,7 +124,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
                 
                 // We never want to come back to this activity, so finish it
                 finish();
-            }
+            }*/
         }
     };
     
@@ -139,7 +144,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         {
             // Extraction succeeded, record new asset version and merge cheats
             mTextView.setText( R.string.assetExtractor_finished );
-            mAppData.putAssetVersion( ASSET_VERSION );
+            //mAppData.putAssetVersion( ASSET_VERSION );
             // Launch gallery activity, passing ROM path if it was provided externally
             ActivityHelper.startGalleryActivity( this, getIntent().getData() );
             

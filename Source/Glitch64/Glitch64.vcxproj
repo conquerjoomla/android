@@ -42,11 +42,26 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="OGLcombiner.cpp" />
+    <ClCompile Include="OGLEScombiner.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="OGLESgeometry.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="OGLESglitchmain.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="OGLEStextures.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="OGLgeometry.cpp" />
     <ClCompile Include="OGLglitchmain.cpp" />
     <ClCompile Include="OGLtextures.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glitchmain.h" />
+    <ClInclude Include="OGLESwrappers.h">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClInclude>
   </ItemGroup>
 </Project>

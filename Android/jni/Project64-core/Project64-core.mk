@@ -6,7 +6,8 @@ LOCAL_PATH := $(JNI_LOCAL_PATH)
 SRCDIR := ./Project64-core
 
 LOCAL_MODULE := Project64-core
-LOCAL_STATIC_LIBRARIES := common
+LOCAL_STATIC_LIBRARIES := common   \
+                          zlib     \
 
 LOCAL_C_INCLUDES := ../     \
     ../3rdParty/            \

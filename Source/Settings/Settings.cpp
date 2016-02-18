@@ -12,6 +12,12 @@
 #define CALL
 #endif
 
+#if defined(ANDROID)
+#include <android/log.h>
+
+#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "UI-Console", __VA_ARGS__)
+#endif
+
 enum SettingLocation
 {
     SettingType_ConstString = 0,
@@ -104,6 +110,7 @@ void SetModuleName(const char * Name)
 void RegisterSetting(short SettingID, SETTING_DATA_TYPE Type, const char * Name, const char * Category,
     unsigned int DefaultDW, const char * DefaultStr)
 {
+    printf("%s: SettingID = %d Name = %s\n", __FUNCTION__, SettingID, Name);
     int DefaultID = g_PluginSettings.NoDefault;
     SettingLocation Location = (SettingLocation)g_PluginSettings.DefaultLocation;
     char FullCategory[400];
@@ -189,10 +196,14 @@ void FlushSettings(void)
 
 unsigned int GetSetting(short SettingID)
 {
+    printf("%s: SettingID = %d\n", __FUNCTION__, SettingID);
+
     if (g_PluginSettings.GetSetting == NULL)
     {
+        printf("%s: g_PluginSettings.GetSetting == NULL\n", __FUNCTION__);
         return 0;
     }
+    printf("%s: g_PluginSettings.SettingStartRange = %d\n", __FUNCTION__, g_PluginSettings.SettingStartRange);
     return g_PluginSettings.GetSetting(g_PluginSettings.handle, SettingID + g_PluginSettings.SettingStartRange);
 }
 

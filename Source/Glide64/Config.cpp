@@ -47,8 +47,10 @@
 #include "Gfx_1.3.h"
 #include "DepthBufferRender.h"
 #include "Config.h"
+#include "trace.h"
 
 #ifdef _WIN32
+#include <Common/CriticalSection.h>
 #ifdef tofix
 #include <wx/file.h>
 #include <wx/dir.h>
@@ -61,6 +63,8 @@ short Set_basic_mode = 0, Set_texture_dir = 0, Set_log_dir = 0, Set_log_flush = 
 
 #ifdef _WIN32
 #ifdef tofix
+extern CriticalSection * g_ProcessDListCS;
+
 ConfigNotebook::ConfigNotebook(wxWindow* parent, int id, const wxPoint& pos, const wxSize& size, long /*style*/) :
 wxNotebook(parent, id, pos, size, 0)
 {
@@ -426,7 +430,7 @@ void ConfigNotebook::set_properties()
     lblResolution->SetToolTip(tooltip);
     cmbResolution->SetToolTip(tooltip);
     cmbResolution->SetSelection(g_settings->res_data);
-    cbxVSync->SetToolTip("Vertical sync\nThis option will enable the vertical sync, which will prevent tearing.\nNote: this option will ONLY have effect if vsync is set to \"Software Controlled\".\n");
+    cbxVSync->SetToolTip("Vertical sync\nThis option will enable the vertical sync, which will prevent tearing.\nNote: this option will ONLY have effect if vsync is set to \"Software Controlled\".");
     cbxVSync->SetValue(g_settings->vsync > 0);
     tooltip = "Select a format, in which screen shots will be saved";
     lblScreenShotFormat->SetToolTip(tooltip);
@@ -832,7 +836,7 @@ void ConfigNotebook::do_layout()
 
 void ConfigNotebook::SaveSettings()
 {
-    SETTINGS oldsettings = settings;
+    CSettings oldsettings = *g_settings;
     int is_advanced_changed = 0;
     if (g_settings->advanced_options)
     {
@@ -857,7 +861,7 @@ void ConfigNotebook::SaveSettings()
         else g_settings->frame_buffer &= ~fb_get_info;
         if (cbxFBDepthBuffer->GetValue()) g_settings->frame_buffer |= fb_depth_render;
         else g_settings->frame_buffer &= ~fb_depth_render;
-        is_advanced_changed = memcmp(&oldsettings, &settings, sizeof(SETTINGS));
+        is_advanced_changed = memcmp(&oldsettings, g_settings, sizeof(CSettings));
     }
 
     g_settings->res_data = cmbResolution->GetSelection();
@@ -918,7 +922,7 @@ void ConfigNotebook::SaveSettings()
     g_settings->filter_cache = (int)cbxBilinearTexCache->GetValue();
 #endif //_ENDUSER_RELEASE_
 
-    if (memcmp(&oldsettings, &settings, sizeof(SETTINGS))) //check that settings were changed
+    if (memcmp(&oldsettings, g_settings, sizeof(CSettings))) //check that settings were changed
     {
         if (romopen)
         {
@@ -1082,9 +1086,10 @@ output:   none
 *******************************************************************/
 void CALL DllConfig(HWND hParent)
 {
+    WriteTrace(TraceGlide64, TraceDebug, "-");
 #ifdef _WIN32
 #ifdef tofix
-    LOG("DllConfig ()\n");
+    CGuard guard(*g_ProcessDListCS);
     ReadSettings();
 
     if (romopen)
@@ -1185,7 +1190,7 @@ void AboutDialog::do_layout()
 
     wxStaticText* label_1 = new wxStaticText(this, wxID_ANY, "authors:");
     sizer_1->Add(label_1, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, 5);
-    wxStaticText* label_2 = new wxStaticText(this, wxID_ANY, "Dave2001. Original author and former main developer.\nHe founded Glide64 project on Dec. 29th, 2001.\nLeft the project at fall of 2002.\n");
+    wxStaticText* label_2 = new wxStaticText(this, wxID_ANY, "Dave2001. Original author and former main developer.\nHe founded Glide64 project on Dec. 29th, 2001.\nLeft the project at fall of 2002.");
     label_2->Enable(false);
     sizer_2->Add(label_2, 0, 0, 0);
     sizer_1->Add(sizer_2, 1, wxEXPAND, 0);
@@ -1225,7 +1230,7 @@ void AboutDialog::do_layout()
     wxStaticText* label_13 = new wxStaticText(this, wxID_ANY, "olivieryuyu");
     sizer_12->Add(label_13, 0, wxALIGN_CENTER_VERTICAL, 0);
     sizer_1->Add(sizer_12, 1, wxEXPAND, 0);
-    wxStaticText* label_14 = new wxStaticText(this, wxID_ANY, "special thanks to:\n Orkin, Rice, Daniel Borca, Legend.\nThanks to EmuXHaven for hosting my site:\nhttp://glide64.emuxhaven.net\n", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE);
+    wxStaticText* label_14 = new wxStaticText(this, wxID_ANY, "special thanks to:\n Orkin, Rice, Daniel Borca, Legend.\nThanks to EmuXHaven for hosting my site:\nhttp://glide64.emuxhaven.net", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE);
     sizer_1->Add(label_14, 0, wxALIGN_CENTER_HORIZONTAL, 0);
     sizer_1->Add(button_ok, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND | wxALIGN_CENTER_HORIZONTAL, 10);
     SetSizer(sizer_1);

@@ -681,12 +681,19 @@ uint32_t CSettings::LoadDword(SettingID Type)
     LoadDword(Type, Value);
     return Value;
 }
+#if defined(ANDROID)
+#include <android/log.h>
+
+#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "UI-Console", __VA_ARGS__)
+#endif
 
 bool CSettings::LoadDword(SettingID Type, uint32_t & Value)
 {
+    printf("%s: Type = %d", __FUNCTION__, Type);
     SETTING_HANDLER FindInfo = m_SettingInfo.find(Type);
     if (FindInfo == m_SettingInfo.end())
     {
+        printf("%s: not found do nothing", __FUNCTION__);
         //if not found do nothing
         UnknownSetting(Type);
         return false;

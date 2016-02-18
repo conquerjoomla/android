@@ -136,7 +136,6 @@ bool CN64Rom::AllocateAndLoadN64Image(const char * FileLoc, bool LoadBootCodeOnl
 
 bool CN64Rom::AllocateAndLoadZipImage(const char * FileLoc, bool LoadBootCodeOnly)
 {
-#ifdef tofix
     unzFile file = unzOpen(FileLoc);
     if (file == NULL)
     {
@@ -231,8 +230,6 @@ bool CN64Rom::AllocateAndLoadZipImage(const char * FileLoc, bool LoadBootCodeOnl
     unzClose(file);
 
     return FoundRom;
-#endif
-	return false;
 }
 
 void CN64Rom::ByteSwapRom()

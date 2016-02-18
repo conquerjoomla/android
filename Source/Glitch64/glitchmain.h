@@ -1,17 +1,6 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include "m64p_types.h"
-
-#define LOGINFO(...)
-#ifdef __cplusplus
-extern "C" {
-#endif
-    void WriteLog(m64p_msg_level level, const char *msg, ...);
-#ifdef __cplusplus
-}
-#endif
-
 #ifndef _WIN32
 //#define VPDEBUG
 #endif
@@ -21,6 +10,8 @@ void dump_start();
 void dump_stop();
 extern int dumping;
 #endif
+
+#include <Glide64/trace.h>
 
 #define zscale 1.0f
 
@@ -106,8 +97,6 @@ extern "C" {
 #endif // _WIN32
 #include "glide.h"
 
-void display_warning(const unsigned char *text, ...);
-void display_warning(const char *text, ...);
 void init_geometry();
 void init_textures();
 void init_combiner();
@@ -280,94 +269,80 @@ grConstantColorValueExt(GrChipID_t    tmu,
 GrColor_t     value);
 
 #ifdef USE_GLES
-#define CHECK_FRAMEBUFFER_STATUS() \
-{\
- GLenum status; \
- status = glCheckFramebufferStatus(GL_FRAMEBUFFER); \
- /*display_warning("%x\n", status);*/\
- switch(status) { \
- case GL_FRAMEBUFFER_COMPLETE: \
-   /*display_warning("framebuffer complete!\n");*/\
-   break; \
- case GL_FRAMEBUFFER_UNSUPPORTED: \
-   display_warning("framebuffer GL_FRAMEBUFFER_UNSUPPORTED_EXT\n");\
-    /* you gotta choose different formats */ \
-   /*assert(0);*/ \
-   break; \
- case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT: \
-   display_warning("framebuffer INCOMPLETE_ATTACHMENT\n");\
-   break; \
- case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: \
-   display_warning("framebuffer FRAMEBUFFER_MISSING_ATTACHMENT\n");\
-   break; \
- case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS: \
-   display_warning("framebuffer FRAMEBUFFER_DIMENSIONS\n");\
-   break; \
- default: \
-   break; \
-   /* programming error; will fail on all hardware */ \
-   /*assert(0);*/ \
- }\
+static void CHECK_FRAMEBUFFER_STATUS(void)
+{
+    GLenum status;
+    status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    WriteTrace(TraceGlitch, TraceDebug, "status: %X", status);
+    switch(status) {
+    case GL_FRAMEBUFFER_COMPLETE:
+        /*WriteTrace(TraceGlitch, TraceWarning, "framebuffer complete!\n");*/
+        break;
+    case GL_FRAMEBUFFER_UNSUPPORTED:
+        WriteTrace(TraceGlitch, TraceWarning, "framebuffer GL_FRAMEBUFFER_UNSUPPORTED_EXT\n");
+        /* you gotta choose different formats */
+        /*assert(0);*/
+        break;
+    case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+        WriteTrace(TraceGlitch, TraceWarning, "framebuffer INCOMPLETE_ATTACHMENT\n");
+        break;
+    case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+        WriteTrace(TraceGlitch, TraceWarning, "framebuffer FRAMEBUFFER_MISSING_ATTACHMENT\n");
+        break;
+    case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
+        WriteTrace(TraceGlitch, TraceWarning, "framebuffer FRAMEBUFFER_DIMENSIONS\n");
+        break;
+    default:
+        break;
+        /* programming error; will fail on all hardware */
+        /*assert(0);*/
+    }
 }
 #else
-#define CHECK_FRAMEBUFFER_STATUS() \
-{\
- GLenum status; \
- status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT); \
- /*display_warning("%x\n", status);*/\
- switch(status) { \
- case GL_FRAMEBUFFER_COMPLETE_EXT: \
-   /*display_warning("framebuffer complete!\n");*/\
-   break; \
- case GL_FRAMEBUFFER_UNSUPPORTED_EXT: \
-   display_warning("framebuffer GL_FRAMEBUFFER_UNSUPPORTED_EXT\n");\
-    /* you gotta choose different formats */ \
-   /*assert(0);*/ \
-   break; \
- case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT: \
-   display_warning("framebuffer INCOMPLETE_ATTACHMENT\n");\
-   break; \
- case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT: \
-   display_warning("framebuffer FRAMEBUFFER_MISSING_ATTACHMENT\n");\
-   break; \
- case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT: \
-   display_warning("framebuffer FRAMEBUFFER_DIMENSIONS\n");\
-   break; \
- /*case GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT: \
-   display_warning("framebuffer INCOMPLETE_DUPLICATE_ATTACHMENT\n");\
-   break;*/ \
- case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT: \
-   display_warning("framebuffer INCOMPLETE_FORMATS\n");\
-   break; \
- case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT: \
-   display_warning("framebuffer INCOMPLETE_DRAW_BUFFER\n");\
-   break; \
- case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT: \
-   display_warning("framebuffer INCOMPLETE_READ_BUFFER\n");\
-   break; \
- case GL_FRAMEBUFFER_BINDING_EXT: \
-   display_warning("framebuffer BINDING_EXT\n");\
-   break; \
- default: \
-   break; \
-   /* programming error; will fail on all hardware */ \
-   /*assert(0);*/ \
- }\
+static void CHECK_FRAMEBUFFER_STATUS()
+{
+    GLenum status;
+    status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+    WriteTrace(TraceGlitch, TraceDebug, "status: %X", status);
+    switch (status) {
+    case GL_FRAMEBUFFER_COMPLETE_EXT:
+        /*WriteTrace(TraceGlitch, TraceWarning, "framebuffer complete!\n");*/
+        break;
+    case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
+        WriteTrace(TraceGlitch, TraceWarning, "framebuffer GL_FRAMEBUFFER_UNSUPPORTED_EXT\n");
+        /* you gotta choose different formats */
+        /*assert(0);*/
+        break;
+    case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
+        WriteTrace(TraceGlitch, TraceWarning, "framebuffer INCOMPLETE_ATTACHMENT\n");
+        break;
+    case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
+        WriteTrace(TraceGlitch, TraceWarning, "framebuffer FRAMEBUFFER_MISSING_ATTACHMENT\n");
+        break;
+    case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
+        WriteTrace(TraceGlitch, TraceWarning, "framebuffer FRAMEBUFFER_DIMENSIONS\n");
+        break;
+        /*case GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT:
+          WriteTrace(TraceGlitch, TraceWarning, "framebuffer INCOMPLETE_DUPLICATE_ATTACHMENT\n");
+          break;*/
+    case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
+        WriteTrace(TraceGlitch, TraceWarning, "framebuffer INCOMPLETE_FORMATS\n");
+        break;
+    case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
+        WriteTrace(TraceGlitch, TraceWarning, "framebuffer INCOMPLETE_DRAW_BUFFER\n");
+        break;
+    case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
+        WriteTrace(TraceGlitch, TraceWarning, "framebuffer INCOMPLETE_READ_BUFFER\n");
+        break;
+    case GL_FRAMEBUFFER_BINDING_EXT:
+        WriteTrace(TraceGlitch, TraceWarning, "framebuffer BINDING_EXT\n");
+        break;
+    default:
+        break;
+        /* programming error; will fail on all hardware */
+        /*assert(0);*/
+    }
 }
 #endif
-
-#ifdef VPDEBUG
-#define LOGGING
-#endif
-
-#ifdef LOGGING
-void OPEN_LOG();
-void CLOSE_LOG();
-void LOG(const char *text, ...);
-#else // LOGGING
-#define OPEN_LOG()
-#define CLOSE_LOG()
-#define LOG
-#endif // LOGGING
 
 #endif
