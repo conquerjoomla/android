@@ -497,6 +497,22 @@ extern "C" {
       *******************************************************************/
     EXPORT void CALL ViWidthChanged(void);
 
+#ifdef ANDROID
+    /******************************************************************
+    Function: SurfaceCreated
+    Purpose:  this function is called when the surface is created.
+    input:    none
+    output:   none
+    *******************************************************************/
+    EXPORT void CALL SurfaceCreated(void);
+    /******************************************************************
+    Function: SurfaceChanged
+    Purpose:  this function is called when the surface is has changed.
+    input:    none
+    output:   none
+    *******************************************************************/
+    EXPORT void CALL SurfaceChanged(int width, int height);
+#endif
     /******************************************************************
       Function: FrameBufferWrite
       Purpose:  This function is called to notify the dll that the

@@ -55,6 +55,10 @@ bool CGfxPlugin::LoadFunctions(void)
     LoadFunction(ViStatusChanged);
     LoadFunction(ViWidthChanged);
     LoadFunction(SoftReset);
+#ifdef ANDROID
+    LoadFunction(SurfaceCreated);
+    LoadFunction(SurfaceChanged);
+#endif
 
     // version 0x104 functions
     _LoadFunction("DrawFullScreenStatus", DrawStatus);
@@ -171,7 +175,7 @@ bool CGfxPlugin::Initiate(CN64System * System, RenderWindow * Window)
     Info.hWnd = Window ? Window->GetWindowHandle() : NULL;
     Info.hStatusBar = Window ? Window->GetStatusBar() : NULL;
 #else
-	Info.SwapBuffers = SwapBuffers;
+    Info.SwapBuffers = SwapBuffers;
     Info.hWnd = NULL;
     Info.hStatusBar = NULL;
 #endif
@@ -282,18 +286,17 @@ void CGfxPlugin::ProcessMenuItem(int32_t id)
     {
         m_GFXDebug.ProcessMenuItem(id);
     }
-
 }
 
 #ifdef ANDROID
 void CGfxPlugin::SwapBuffers(void)
 {
-	RenderWindow * render = g_Plugins ? g_Plugins->MainWindow() : NULL;
+    RenderWindow * render = g_Plugins ? g_Plugins->MainWindow() : NULL;
     WriteTrace(TraceGFXPlugin, TraceDebug, "Start (render: %p)",render);
-	if (render != NULL)
-	{
-		render->SwapWindow();
-	}
+    if (render != NULL)
+    {
+        render->SwapWindow();
+    }
     WriteTrace(TraceGFXPlugin, TraceDebug, "Done");
 }
 #endif
