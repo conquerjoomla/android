@@ -148,7 +148,7 @@ typedef struct
 
 int nbTextureUnits;
 int nbAuxBuffers, current_buffer;
-int width, widtho, heighto, height;
+int g_width, widtho, heighto, g_height;
 int saved_width, saved_height;
 int blend_func_separate_support;
 int npot_support;
@@ -277,14 +277,14 @@ grClipWindow(FxU32 minx, FxU32 miny, FxU32 maxx, FxU32 maxy)
     }
 
     if (!use_fbo) {
-        int th = height;
+        int th = g_height;
         if (th > screen_height)
             th = screen_height;
         maxy = th - maxy;
         miny = th - miny;
         FxU32 tmp = maxy; maxy = miny; miny = tmp;
-        if (maxx > (FxU32)width) maxx = width;
-        if (maxy > (FxU32)height) maxy = height;
+        if (maxx > (FxU32)g_width) maxx = g_width;
+        if (maxy > (FxU32)g_height) maxy = g_height;
         if (int(minx) < 0) minx = 0;
         if (int(miny) < 0) miny = 0;
         if (maxx < minx) maxx = minx;
@@ -293,7 +293,7 @@ grClipWindow(FxU32 minx, FxU32 miny, FxU32 maxx, FxU32 maxy)
         //printf("gl scissor %d %d %d %d\n", minx, miny, maxx, maxy);
     }
     else {
-        glScissor(minx, (viewport_offset)+height - maxy, maxx - minx, maxy - miny);
+        glScissor(minx, (viewport_offset)+g_height - maxy, maxx - minx, maxy - miny);
     }
     glEnable(GL_SCISSOR_TEST);
 }
@@ -431,7 +431,7 @@ int                  nAuxBuffers)
     if ((HWND)hWnd == NULL) hWnd = GetActiveWindow();
     hwnd_win = (HWND)hWnd;
 #endif // _WIN32
-    width = height = 0;
+    g_width = g_height = 0;
 
 #ifdef tofix
     m64p_handle video_general_section;
@@ -463,9 +463,9 @@ int                  nAuxBuffers)
     CoreVideo_GL_SetAttribute(M64P_GL_DEPTH_SIZE, 16);
 #endif
 
-    printf("(II) Setting video mode %dx%d...\n", width, height);
+    printf("(II) Setting video mode %dx%d...\n", g_width, g_height);
 #ifdef tofix
-    if(CoreVideo_SetVideoMode(width, height, 0, fullscreen ? M64VIDEO_FULLSCREEN : M64VIDEO_WINDOWED, (m64p_video_flags) 0) != M64ERR_SUCCESS)
+    if (CoreVideo_SetVideoMode(width, height, 0, fullscreen ? M64VIDEO_FULLSCREEN : M64VIDEO_WINDOWED, (m64p_video_flags)0) != M64ERR_SUCCESS)
     {
         printf("(EE) Error setting videomode %dx%d\n", width, height);
         return false;
@@ -482,7 +482,7 @@ int                  nAuxBuffers)
     CoreVideo_SetCaption(caption);
 #endif
 
-    glViewport(0, viewport_offset, width, height);
+    glViewport(0, viewport_offset, g_width, g_height);
     lfb_color_fmt = color_format;
     if (origin_location != GR_ORIGIN_UPPER_LEFT) WriteTrace(TraceGlitch, TraceWarning, "origin must be in upper left corner");
     if (nColBuffers != 2) WriteTrace(TraceGlitch, TraceWarning, "number of color buffer is not 2");
@@ -615,9 +615,9 @@ int                  nAuxBuffers)
     viewport_height = height;
     nvidia_viewport_hack = 1;
 #else
-    glViewport(0, viewport_offset, width, height);
-    viewport_width = width;
-    viewport_height = height;
+    glViewport(0, viewport_offset, g_width, g_height);
+    viewport_width = g_width;
+    viewport_height = g_height;
 #endif // _WIN32
 
     //   void do_benchmarks();
@@ -629,8 +629,8 @@ int                  nAuxBuffers)
     //  glTranslatef(0, 0, 1-zscale);
     //  glScalef(1, 1, zscale);
 
-    widtho = width / 2;
-    heighto = height / 2;
+    widtho = g_width / 2;
+    heighto = g_height / 2;
 
     pBufferWidth = pBufferHeight = -1;
 
@@ -646,12 +646,12 @@ int                  nAuxBuffers)
 
     if (!use_fbo && nbAuxBuffers == 0) {
         // create the framebuffer saving texture
-        int w = width, h = height;
+        int w = g_width, h = g_height;
         glBindTexture(GL_TEXTURE_2D, color_texture);
         if (!npot_support) {
             w = h = 1;
-            while (w < width) w *= 2;
-            while (h < height) h *= 2;
+            while (w < g_width) w *= 2;
+            while (h < g_height) h *= 2;
         }
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -711,7 +711,7 @@ grSstWinClose(GrContext_t context)
         // ZIGGY : I found the problem : it is a function pointer, when the extension isn't supported , it is then zero, so just need to check the pointer prior to do the call.
     {
         if (use_fbo)
-            glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
     catch (...)
     {
@@ -720,11 +720,11 @@ grSstWinClose(GrContext_t context)
 
     if (clear_texbuff)
     {
-        for (i=0; i<nb_fb; i++)
+        for (i = 0; i < nb_fb; i++)
         {
-            glDeleteTextures( 1, &(fbs[i].texid) );
-            glDeleteFramebuffers( 1, &(fbs[i].fbid) );
-            glDeleteRenderbuffers( 1, &(fbs[i].zbid) );
+            glDeleteTextures(1, &(fbs[i].texid));
+            glDeleteFramebuffers(1, &(fbs[i].fbid));
+            glDeleteRenderbuffers(1, &(fbs[i].zbid));
         }
     }
 #endif
@@ -867,11 +867,11 @@ FX_ENTRY void FX_CALL grTextureBufferExt(GrChipID_t  		tmu,
         //   printf("tmu %d usage now %gMb - %gMb\n",
         //          rtmu, tmu_usage[rtmu].min/1024.0f, tmu_usage[rtmu].max/1024.0f);
 
-        width = pBufferWidth;
-        height = pBufferHeight;
+        g_width = pBufferWidth;
+        g_height = pBufferHeight;
 
-        widtho = width / 2;
-        heighto = height / 2;
+        widtho = g_width / 2;
+        heighto = g_height / 2;
 
         // this could be improved, but might be enough as long as the set of
         // texture buffer addresses stay small
@@ -891,13 +891,13 @@ FX_ENTRY void FX_CALL grTextureBufferExt(GrChipID_t  		tmu,
         add_tex(pBufferAddress);
 
         //printf("viewport %dx%d\n", width, height);
-        if (height > screen_height) {
-            glViewport(0, viewport_offset + screen_height - height, width, height);
+        if (g_height > screen_height) {
+            glViewport(0, viewport_offset + screen_height - g_height, g_width, g_height);
         }
         else
-            glViewport(0, viewport_offset, width, height);
+            glViewport(0, viewport_offset, g_width, g_height);
 
-        glScissor(0, viewport_offset, width, height);
+        glScissor(0, viewport_offset, g_width, g_height);
     }
     else {
         if (!render_to_texture) //initialization
@@ -925,25 +925,25 @@ FX_ENTRY void FX_CALL grTextureBufferExt(GrChipID_t  		tmu,
         }
         pBufferAddress = startAddress + 1;
 
-        width = pBufferWidth;
-        height = pBufferHeight;
+        g_width = pBufferWidth;
+        g_height = pBufferHeight;
 
-        widtho = width / 2;
-        heighto = height / 2;
+        widtho = g_width / 2;
+        heighto = g_height / 2;
 
         for (i = 0; i < nb_fb; i++)
         {
             if (fbs[i].address == pBufferAddress)
             {
-                if (fbs[i].width == width && fbs[i].height == height) //select already allocated FBO
+                if (fbs[i].width == g_width && fbs[i].height == g_height) //select already allocated FBO
                 {
                     glBindFramebuffer(GL_FRAMEBUFFER, 0);
                     glBindFramebuffer(GL_FRAMEBUFFER, fbs[i].fbid);
                     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbs[i].texid, 0);
                     glBindRenderbuffer(GL_RENDERBUFFER, fbs[i].zbid);
                     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fbs[i].zbid);
-                    glViewport(0, 0, width, height);
-                    glScissor(0, 0, width, height);
+                    glViewport(0, 0, g_width, g_height);
+                    glScissor(0, 0, g_width, g_height);
                     if (fbs[i].buff_clear)
                     {
                         glDepthMask(1);
@@ -966,20 +966,20 @@ FX_ENTRY void FX_CALL grTextureBufferExt(GrChipID_t  		tmu,
             }
         }
 
-        remove_tex(pBufferAddress, pBufferAddress + width*height * 2/*grTexFormatSize(fmt)*/);
+        remove_tex(pBufferAddress, pBufferAddress + g_width*g_height * 2/*grTexFormatSize(fmt)*/);
         //create new FBO
         glGenFramebuffers(1, &(fbs[nb_fb].fbid));
         glGenRenderbuffers(1, &(fbs[nb_fb].zbid));
         glBindRenderbuffer(GL_RENDERBUFFER, fbs[nb_fb].zbid);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, g_width, g_height);
         fbs[nb_fb].address = pBufferAddress;
-        fbs[nb_fb].width = width;
-        fbs[nb_fb].height = height;
+        fbs[nb_fb].width = g_width;
+        fbs[nb_fb].height = g_height;
         fbs[nb_fb].texid = pBufferAddress;
         fbs[nb_fb].buff_clear = 0;
         add_tex(fbs[nb_fb].texid);
         glBindTexture(GL_TEXTURE_2D, fbs[nb_fb].texid);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, g_width, g_height, 0,
             GL_RGB, GL_UNSIGNED_BYTE, NULL);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -988,8 +988,8 @@ FX_ENTRY void FX_CALL grTextureBufferExt(GrChipID_t  		tmu,
         glFramebufferTexture2D(GL_FRAMEBUFFER,
             GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbs[nb_fb].texid, 0);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fbs[nb_fb].zbid);
-        glViewport(0, 0, width, height);
-        glScissor(0, 0, width, height);
+        glViewport(0, 0, g_width, g_height);
+        glScissor(0, 0, g_width, g_height);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glDepthMask(1);
         glClear(GL_DEPTH_BUFFER_BIT);
@@ -1389,7 +1389,7 @@ void reloadTexture()
     if (use_fbo || !render_to_texture || buffer_cleared)
         return;
 
-    WriteTrace(TraceGlitch, TraceDebug, "width: %d height: %d", width, height);
+    WriteTrace(TraceGlitch, TraceDebug, "width: %d height: %d", g_width, g_height);
     //printf("reload texture %dx%d\n", width, height);
 
     buffer_cleared = 1;
@@ -1404,11 +1404,11 @@ void reloadTexture()
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
     int w = 0, h = 0;
-    if (height > screen_height) h = screen_height - height;
+    if (g_height > screen_height) h = screen_height - g_height;
     render_rectangle(texture_unit,
         -w, -h,
-        width, height,
-        width, height, -1);
+        g_width, g_height,
+        g_width, g_height, -1);
     glBindTexture(GL_TEXTURE_2D, default_texture);
     //glPopAttrib();
 }
@@ -1437,7 +1437,7 @@ void updateTexture()
         //glDeleteTextures( 1, &pBufferAddress );
         glBindTexture(GL_TEXTURE_2D, pBufferAddress);
         glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-            0, viewport_offset, width, height, 0);
+            0, viewport_offset, g_width, g_height, 0);
 
         glBindTexture(GL_TEXTURE_2D, default_texture);
         //glPopAttrib();
@@ -1450,11 +1450,11 @@ FX_ENTRY void FX_CALL grFramebufferCopyExt(int x, int y, int w, int h,
     if (mode == GR_FBCOPY_MODE_DEPTH) {
         int tw = 1, th = 1;
         if (npot_support) {
-            tw = width; th = height;
+            tw = g_width; th = g_height;
         }
         else {
-            while (tw < width) tw <<= 1;
-            while (th < height) th <<= 1;
+            while (tw < g_width) tw <<= 1;
+            while (th < g_height) th <<= 1;
         }
 
         if (from == GR_FBCOPY_BUFFER_BACK && to == GR_FBCOPY_BUFFER_FRONT) {
@@ -1481,7 +1481,7 @@ FX_ENTRY void FX_CALL grFramebufferCopyExt(int x, int y, int w, int h,
             glDisable(GL_CULL_FACE);
             render_rectangle(texture_unit,
                 0, 0,
-                width, height,
+                g_width, g_height,
                 tw, th, -1);
             glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
             glBindTexture(GL_TEXTURE_2D, default_texture);
@@ -1516,8 +1516,8 @@ grRenderBuffer(GrBuffer_t buffer)
             inverted_culling = 0;
             grCullMode(culling_mode);
 
-            width = savedWidth;
-            height = savedHeight;
+            g_width = savedWidth;
+            g_height = savedHeight;
             widtho = savedWidtho;
             heighto = savedHeighto;
             if (use_fbo) {
@@ -1526,8 +1526,8 @@ grRenderBuffer(GrBuffer_t buffer)
             }
             curBufferAddr = 0;
 
-            glViewport(0, viewport_offset, width, viewport_height);
-            glScissor(0, viewport_offset, width, height);
+            glViewport(0, viewport_offset, g_width, viewport_height);
+            glScissor(0, viewport_offset, g_width, g_height);
 
 #ifdef SAVE_CBUFFER
             if (!use_fbo && render_to_texture == 2) {
@@ -1575,8 +1575,8 @@ grRenderBuffer(GrBuffer_t buffer)
     case 6: // RENDER TO TEXTURE
         if (!render_to_texture)
         {
-            savedWidth = width;
-            savedHeight = height;
+            savedWidth = g_width;
+            savedHeight = g_height;
             savedWidtho = widtho;
             savedHeighto = heighto;
         }
@@ -1684,7 +1684,7 @@ grBufferSwap(FxU32 swap_interval)
     //	glFinish();
     //  printf("rendercallback is %p\n", renderCallback);
 #ifdef tofix
-    if(renderCallback) {
+    if (renderCallback) {
         //      glGetIntegerv(GL_CURRENT_PROGRAM, (GLint*) &program);
         //      glUseProgramObjectARB(0);
         (*renderCallback)(1);
@@ -1721,7 +1721,7 @@ grBufferSwap(FxU32 swap_interval)
             case 'w': {
                 static int wireframe;
                 wireframe = !wireframe;
-                glPolygonMode(GL_FRONT_AND_BACK, wireframe? GL_LINE : GL_FILL);
+                glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
                 break;
             }
             }
@@ -1765,28 +1765,28 @@ GrLfbInfo_t *info)
             if (writeMode == GR_LFBWRITEMODE_888) {
                 //printf("LfbLock GR_LFBWRITEMODE_888\n");
                 info->lfbPtr = frameBuffer;
-                info->strideInBytes = width * 4;
+                info->strideInBytes = g_width * 4;
                 info->writeMode = GR_LFBWRITEMODE_888;
                 info->origin = origin;
-                glReadPixels(0, viewport_offset, width, height, GL_RGBA, GL_UNSIGNED_BYTE, frameBuffer);
+                glReadPixels(0, viewport_offset, g_width, g_height, GL_RGBA, GL_UNSIGNED_BYTE, frameBuffer);
             }
             else {
-                buf = (unsigned char*)malloc(width*height * 4);
+                buf = (unsigned char*)malloc(g_width*g_height * 4);
 
                 info->lfbPtr = frameBuffer;
-                info->strideInBytes = width * 2;
+                info->strideInBytes = g_width * 2;
                 info->writeMode = GR_LFBWRITEMODE_565;
                 info->origin = origin;
-                glReadPixels(0, viewport_offset, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buf);
+                glReadPixels(0, viewport_offset, g_width, g_height, GL_RGBA, GL_UNSIGNED_BYTE, buf);
 
-                for (j = 0; j < height; j++)
+                for (j = 0; j < g_height; j++)
                 {
-                    for (i = 0; i < width; i++)
+                    for (i = 0; i < g_width; i++)
                     {
-                        frameBuffer[(height - j - 1)*width + i] =
-                            ((buf[j*width * 4 + i * 4 + 0] >> 3) << 11) |
-                            ((buf[j*width * 4 + i * 4 + 1] >> 2) << 5) |
-                            (buf[j*width * 4 + i * 4 + 2] >> 3);
+                        frameBuffer[(g_height - j - 1)*g_width + i] =
+                            ((buf[j*g_width * 4 + i * 4 + 0] >> 3) << 11) |
+                            ((buf[j*g_width * 4 + i * 4 + 1] >> 2) << 5) |
+                            (buf[j*g_width * 4 + i * 4 + 2] >> 3);
                     }
                 }
                 free(buf);
@@ -1795,10 +1795,10 @@ GrLfbInfo_t *info)
         else
         {
             info->lfbPtr = depthBuffer;
-            info->strideInBytes = width * 2;
+            info->strideInBytes = g_width * 2;
             info->writeMode = GR_LFBWRITEMODE_ZA16;
             info->origin = origin;
-            glReadPixels(0, viewport_offset, width, height, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, depthBuffer);
+            glReadPixels(0, viewport_offset, g_width, g_height, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, depthBuffer);
         }
     }
 
@@ -1847,7 +1847,7 @@ FxU32 dst_stride, void *dst_data)
     {
         buf = (unsigned char*)malloc(src_width*src_height * 4);
 
-        glReadPixels(src_x, (viewport_offset)+height - src_y - src_height, src_width, src_height, GL_RGBA, GL_UNSIGNED_BYTE, buf);
+        glReadPixels(src_x, (viewport_offset)+g_height - src_y - src_height, src_width, src_height, GL_RGBA, GL_UNSIGNED_BYTE, buf);
 
         for (j = 0; j < src_height; j++)
         {
@@ -1865,7 +1865,7 @@ FxU32 dst_stride, void *dst_data)
     {
         buf = (unsigned char*)malloc(src_width*src_height * 2);
 
-        glReadPixels(src_x, (viewport_offset)+height - src_y - src_height, src_width, src_height, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, depthBuffer);
+        glReadPixels(src_x, (viewport_offset)+g_height - src_y - src_height, src_width, src_height, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, depthBuffer);
 
         for (j = 0; j < src_height; j++)
         {
@@ -2011,9 +2011,9 @@ FxI32 src_stride, void *src_data)
 
 #ifdef VPDEBUG
         if (dumping) {
-            unsigned char * buf2 = (unsigned char *)malloc(src_width*(src_height+(viewport_offset)));
-            for (i=0; i<src_width*src_height ; i++)
-                buf2[i] = buf[i]*255.0f;
+            unsigned char * buf2 = (unsigned char *)malloc(src_width*(src_height + (viewport_offset)));
+            for (i = 0; i < src_width*src_height; i++)
+                buf2[i] = buf[i] * 255.0f;
             ilTexImage(src_width, src_height, 1, 1, IL_LUMINANCE, IL_UNSIGNED_BYTE, buf2);
             char name[128];
             static int id;
@@ -2453,7 +2453,7 @@ void dump_stop()
     if (!dumping) return;
 
     int i, j;
-    for (i=0; i<nb_fb; i++) {
+    for (i = 0; i < nb_fb; i++) {
         dump_tex(fbs[i].texid);
     }
     dump_tex(default_texture);
@@ -2469,38 +2469,39 @@ void dump_stop()
     //   FILE * fp = fopen("glide_depth1.bin", "rb");
     //   fread(depthBuffer, 2, width*height, fp);
     //   fclose(fp);
-    for (j=0; j<height; j++) {
-        for (i=0; i<width; i++) {
+    for (j = 0; j < height; j++) {
+        for (i = 0; i < width; i++) {
             //uint16_t d = ( (uint16_t *)depthBuffer )[i+(height-1-j)*width]/2 + 0x8000;
-            uint16_t d = ( (uint16_t *)depthBuffer )[i+j*width];
-            uint32_t c = ( (uint32_t *)frameBuffer )[i+j*width];
-            ( (unsigned char *)frameBuffer )[(i+j*width)*3] = d&0xff;
-            ( (unsigned char *)frameBuffer )[(i+j*width)*3+1] = d>>8;
-            ( (unsigned char *)frameBuffer )[(i+j*width)*3+2] = c&0xff;
+            uint16_t d = ((uint16_t *)depthBuffer)[i + j*width];
+            uint32_t c = ((uint32_t *)frameBuffer)[i + j*width];
+            ((unsigned char *)frameBuffer)[(i + j*width) * 3] = d & 0xff;
+            ((unsigned char *)frameBuffer)[(i + j*width) * 3 + 1] = d >> 8;
+            ((unsigned char *)frameBuffer)[(i + j*width) * 3 + 2] = c & 0xff;
         }
     }
     ilTexImage(width, height, 1, 3, IL_RGB, IL_UNSIGNED_BYTE, frameBuffer);
     ilSaveImage("dump/framedepth.png");
 
-    for (i=0; i<tl_i; i++) {
+    for (i = 0; i < tl_i; i++) {
         glBindTexture(GL_TEXTURE_2D, tl[i]);
         GLint w, h, fmt;
         glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &w);
         glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &h);
         glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &fmt);
-        fprintf(stderr, "Texture %d %dx%d fmt %x\n", tl[i], (int)w, (int)h, (int) fmt);
+        fprintf(stderr, "Texture %d %dx%d fmt %x\n", tl[i], (int)w, (int)h, (int)fmt);
 
-        uint32_t * pixels = (uint32_t *) malloc(w*h*4);
+        uint32_t * pixels = (uint32_t *)malloc(w*h * 4);
         // 0x1902 is another constant meaning GL_DEPTH_COMPONENT
         // (but isn't defined in gl's headers !!)
         if (fmt != GL_DEPTH_COMPONENT && fmt != 0x1902) {
             glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
             ilTexImage(w, h, 1, 4, IL_RGBA, IL_UNSIGNED_BYTE, pixels);
-        } else {
+        }
+        else {
             glGetTexImage(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, pixels);
             int i;
-            for (i=0; i<w*h; i++)
-                ((unsigned char *)frameBuffer)[i] = ((unsigned short *)pixels)[i]/256;
+            for (i = 0; i < w*h; i++)
+                ((unsigned char *)frameBuffer)[i] = ((unsigned short *)pixels)[i] / 256;
             ilTexImage(w, h, 1, 1, IL_LUMINANCE, IL_UNSIGNED_BYTE, frameBuffer);
         }
         char name[128];
@@ -2522,13 +2523,13 @@ void dump_tex(int id)
 
     int n;
     // yes, it's inefficient
-    for (n=0; n<tl_i; n++)
+    for (n = 0; n < tl_i; n++)
         if (tl[n] == id)
             return;
 
     tl[tl_i++] = id;
 
-    int i = tl_i-1;
+    int i = tl_i - 1;
 }
 
 #endif
