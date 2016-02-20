@@ -2470,8 +2470,12 @@ Purpose:  this function is called when the surface is has changed.
 input:    none
 output:   none
 *******************************************************************/
+extern int g_width, g_height;
+
 void CALL SurfaceChanged(int width, int height)
 {
+    g_width = width;
+    g_height = height;
     setupGraphics(width, height);
 }
 #endif
