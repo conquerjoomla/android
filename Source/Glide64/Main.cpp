@@ -1922,33 +1922,14 @@ GLuint createProgram(const char* pVertexSource, const char* pFragmentSource) {
     return program;
 }
 
-GLuint gProgram;
-GLuint gvPositionHandle;
+VERTEX gTriangleVertices[] = {
+	{ 0.0f, 0.5f, 0.0f, 1.0f },
+	{ -0.5f, -0.5f, 0.0f, 1.0f },
+	{ 0.5f, -0.5f, 0.0f, 1.0f },
+};
 
-bool setupGraphics(int w, int h) {
-    printGLString("Version", GL_VERSION);
-    printGLString("Vendor", GL_VENDOR);
-    printGLString("Renderer", GL_RENDERER);
-    printGLString("Extensions", GL_EXTENSIONS);
-
-    LOGI("setupGraphics(%d, %d)", w, h);
-    gProgram = createProgram(gVertexShader, gFragmentShader);
-    if (!gProgram) {
-        LOGE("Could not create program.");
-        return false;
-    }
-    gvPositionHandle = glGetAttribLocation(gProgram, "vPosition");
-    checkGlError("glGetAttribLocation");
-    LOGI("glGetAttribLocation(\"vPosition\") = %d\n",
-        gvPositionHandle);
-
-    glViewport(0, 0, w, h);
-    checkGlError("glViewport");
-    return true;
-}
-
-const GLfloat gTriangleVertices[] = { 0.0f, 0.5f, -0.5f, -0.5f,
-0.5f, -0.5f };
+void vbo_enable();
+void vbo_draw();
 
 void renderFrame() {
     static float grey;
@@ -1957,19 +1938,11 @@ void renderFrame() {
         grey = 0.0f;
     }
     glClearColor(grey, grey, grey, 1.0f);
-    checkGlError("glClearColor");
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-    checkGlError("glClear");
 
-    glUseProgram(gProgram);
-    checkGlError("glUseProgram");
-
-    glVertexAttribPointer(gvPositionHandle, 2, GL_FLOAT, GL_FALSE, 0, gTriangleVertices);
-    checkGlError("glVertexAttribPointer");
-    glEnableVertexAttribArray(gvPositionHandle);
-    checkGlError("glEnableVertexAttribArray");
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    checkGlError("glDrawArrays");
+	vbo_enable();
+	grDrawTriangle(&gTriangleVertices[0],&gTriangleVertices[1],&gTriangleVertices[2]);
+    vbo_draw();
 }
 
 #endif
@@ -2471,12 +2444,13 @@ input:    none
 output:   none
 *******************************************************************/
 extern int g_width, g_height;
+void init_combiner();
 
 void CALL SurfaceChanged(int width, int height)
 {
     g_width = width;
     g_height = height;
-    setupGraphics(width, height);
+	init_combiner();
 }
 #endif
 
