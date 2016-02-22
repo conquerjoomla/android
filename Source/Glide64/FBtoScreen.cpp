@@ -422,6 +422,10 @@ bool DrawFrameBufferToScreen(FB_TO_SCREEN_INFO & fb_info)
             { ul_x, lr_y, 1, 1, 0.5f, lr_v, 0.5f, lr_v, { 0.5f, lr_v, 0.5f, lr_v } },
             { lr_x, lr_y, 1, 1, lr_u, lr_v, lr_u, lr_v, { lr_u, lr_v, lr_u, lr_v } }
         };
+		WriteTrace(TraceRDP, TraceDebug, "DrawFrameBufferToScreen. ul_x = %f, ul_y = %f", ul_x, ul_y);
+		WriteTrace(TraceRDP, TraceDebug, "DrawFrameBufferToScreen. lr_x = %f, ul_y = %f", lr_x, ul_y);
+		WriteTrace(TraceRDP, TraceDebug, "DrawFrameBufferToScreen. ul_x = %f, lr_y = %f", ul_x, lr_y);
+		WriteTrace(TraceRDP, TraceDebug, "DrawFrameBufferToScreen. lr_x = %f, lr_y = %f", lr_x, lr_y);
         grDrawTriangle(&v[0], &v[2], &v[1]);
         grDrawTriangle(&v[2], &v[3], &v[1]);
     }

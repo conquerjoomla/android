@@ -1940,9 +1940,13 @@ void renderFrame() {
     glClearColor(grey, grey, grey, 1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-	vbo_enable();
-	grDrawTriangle(&gTriangleVertices[0],&gTriangleVertices[1],&gTriangleVertices[2]);
-    vbo_draw();
+    if (*gfx.VI_ORIGIN_REG > ((*gfx.VI_WIDTH_REG) << 1))
+    {
+		vbo_enable();
+        ChangeSize();
+        drawViRegBG();
+	    vbo_draw();
+	}
 }
 
 #endif
