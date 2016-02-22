@@ -431,7 +431,6 @@ int                  nAuxBuffers)
     if ((HWND)hWnd == NULL) hWnd = GetActiveWindow();
     hwnd_win = (HWND)hWnd;
 #endif // _WIN32
-    g_width = g_height = 0;
 
 #ifdef tofix
     m64p_handle video_general_section;
