@@ -1956,11 +1956,7 @@ void CALL UpdateScreen(void)
 #ifdef ANDROID
     //renderFrame();
     //Android_JNI_SwapWindow();
-    UpdateScreen2();
-}
-
-void CALL UpdateScreen2(void)
-{
+    //return;
 #endif
     WriteTrace(TraceGlide64, TraceDebug, "Origin: %08x, Old origin: %08x, width: %d", *gfx.VI_ORIGIN_REG, rdp.vi_org_reg, *gfx.VI_WIDTH_REG);
     uint32_t width = (*gfx.VI_WIDTH_REG) << 1;
@@ -1986,7 +1982,7 @@ void CALL UpdateScreen2(void)
         fps_last = fps_next;
         fps_count = 0;
         vi_count = 0;
-    }
+}
 #endif
 #endif
     //*
@@ -2109,7 +2105,7 @@ void newSwapBuffers()
         else
         {
             output(930.0f, 0, 1, (char*)wxDateTime::Now().Format("%I:%M:%S %p").char_str(), 0);
-        }
+}
 #endif
     }
     //hotkeys
