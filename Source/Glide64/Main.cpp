@@ -1923,9 +1923,9 @@ GLuint createProgram(const char* pVertexSource, const char* pFragmentSource) {
 }
 
 VERTEX gTriangleVertices[] = {
-	{ 0.0f, 0.5f, 0.0f, 1.0f },
-	{ -0.5f, -0.5f, 0.0f, 1.0f },
-	{ 0.5f, -0.5f, 0.0f, 1.0f },
+    { 0.0f, 0.5f, 0.0f, 1.0f },
+    { -0.5f, -0.5f, 0.0f, 1.0f },
+    { 0.5f, -0.5f, 0.0f, 1.0f },
 };
 
 void vbo_enable();
@@ -1942,11 +1942,11 @@ void renderFrame() {
 
     if (*gfx.VI_ORIGIN_REG > ((*gfx.VI_WIDTH_REG) << 1))
     {
-		vbo_enable();
+        vbo_enable();
         ChangeSize();
         drawViRegBG();
-	    vbo_draw();
-	}
+        vbo_draw();
+    }
 }
 
 #endif
@@ -1954,8 +1954,9 @@ void renderFrame() {
 void CALL UpdateScreen(void)
 {
 #ifdef ANDROID
-    renderFrame();
-    Android_JNI_SwapWindow();
+    //renderFrame();
+    //Android_JNI_SwapWindow();
+    UpdateScreen2();
 }
 
 void CALL UpdateScreen2(void)
@@ -2454,7 +2455,7 @@ void CALL SurfaceChanged(int width, int height)
 {
     g_width = width;
     g_height = height;
-	init_combiner();
+    init_combiner();
 }
 #endif
 
