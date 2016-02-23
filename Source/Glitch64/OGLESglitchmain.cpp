@@ -431,6 +431,7 @@ int                  nAuxBuffers)
     if ((HWND)hWnd == NULL) hWnd = GetActiveWindow();
     hwnd_win = (HWND)hWnd;
 #endif // _WIN32
+    WriteTrace(TraceGlitch, TraceDebug, "g_width: %d, g_height: %d fullscreen: %d", g_width, g_height, fullscreen);
 
 #ifdef tofix
     m64p_handle video_general_section;

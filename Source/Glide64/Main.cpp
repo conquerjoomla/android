@@ -777,7 +777,10 @@ void DisplayLoadProgress(const wchar_t *format, ...)
 
 int InitGfx()
 {
-    if (GfxInitDone)
+#ifdef ANDROID
+	return true;
+#endif
+	if (GfxInitDone)
     {
         ReleaseGfx();
     }

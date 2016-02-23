@@ -316,6 +316,7 @@ static GLsizei cached_Scissor_width;
 static GLsizei cached_Scissor_height;
 void inline cache_glScissor (GLint x, GLint y, GLsizei width, GLsizei height)
 {
+  WriteTrace(TraceGlide64, TraceDebug, "x: %d, y: %d, width: %d, height: %d", x, y, width, height);
   if(x != cached_Scissor_x || y != cached_Scissor_y || width != cached_Scissor_width || height != cached_Scissor_height)
   {
     vbo_draw();
