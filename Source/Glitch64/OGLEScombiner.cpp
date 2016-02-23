@@ -67,7 +67,6 @@ static GLuint fragment_shader_object;
 static GLuint fragment_depth_shader_object;
 static GLuint vertex_shader_object;
 static GLuint program_object_default;
-static GLuint program_object_depth;
 static GLuint program_object;
 static int constant_color_location;
 static int ccolor0_location;
@@ -300,6 +299,7 @@ void init_combiner()
     check_compile(vertex_shader_object);
 
     // depth program
+#ifndef ANDROID
     program_object = glCreateProgram();
     program_object_depth = program_object;
     glAttachShader(program_object, fragment_depth_shader_object);
@@ -319,6 +319,7 @@ void init_combiner()
     texture1_location = glGetUniformLocation(program_object, "texture1");
     glUniform1i(texture0_location, 0);
     glUniform1i(texture1_location, 1);
+#endif
 
     // default program
     program_object = glCreateProgram();
@@ -613,20 +614,6 @@ void set_copy_shader()
     glUniform1i(texture0_location, 0);
 
     alphaRef_location = glGetUniformLocation(program_object_default, "alphaRef");
-    if (alphaRef_location != -1)
-        glUniform1f(alphaRef_location, alpha_test ? alpha_ref / 255.0f : -1.0f);
-}
-
-void set_depth_shader()
-{
-    int texture0_location;
-    int alphaRef_location;
-
-    glUseProgram(program_object_depth);
-    texture0_location = glGetUniformLocation(program_object_depth, "texture0");
-    glUniform1i(texture0_location, 0);
-
-    alphaRef_location = glGetUniformLocation(program_object_depth, "alphaRef");
     if (alphaRef_location != -1)
         glUniform1f(alphaRef_location, alpha_test ? alpha_ref / 255.0f : -1.0f);
 }

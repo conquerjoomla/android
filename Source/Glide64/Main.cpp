@@ -290,14 +290,22 @@ void UseUnregisteredSetting(int /*SettingID*/)
     DebugBreak();
 #endif
 }
+#ifdef ANDROID
+extern int g_width, g_height;
+#endif
 
 void ReadSettings()
 {
     g_settings->card_id = GetSetting(Set_CardId);
+#ifdef ANDROID
+    g_settings->scr_res_x = g_settings->res_x = g_width;
+    g_settings->scr_res_y = g_settings->res_y = g_height;
+#else
     g_settings->res_data = (uint32_t)GetSetting(Set_Resolution);
     if (g_settings->res_data >= 24) g_settings->res_data = 12;
     g_settings->scr_res_x = g_settings->res_x = resolutions[g_settings->res_data][0];
     g_settings->scr_res_y = g_settings->res_y = resolutions[g_settings->res_data][1];
+#endif
     g_settings->vsync = GetSetting(Set_vsync);
     g_settings->ssformat = (uint8_t)GetSetting(Set_ssformat);
     g_settings->show_fps = (uint8_t)GetSetting(Set_ShowFps);
@@ -490,6 +498,7 @@ void ReadSpecialSettings(const char * name)
         g_settings->swapmode = GetSetting(Set_swapmode);
         g_settings->aspectmode = GetSetting(Set_aspect);
         g_settings->lodmode = GetSetting(Set_lodmode);
+#ifdef _WIN32
         int resolution = GetSetting(Set_Resolution);
         if (resolution >= 0)
         {
@@ -498,7 +507,7 @@ void ReadSpecialSettings(const char * name)
             g_settings->scr_res_x = g_settings->res_x = resolutions[g_settings->res_data][0];
             g_settings->scr_res_y = g_settings->res_y = resolutions[g_settings->res_data][1];
         }
-
+#endif
         //frame buffer
         int smart_read = GetSetting(Set_fb_smart);
         int hires = GetSetting(Set_fb_hires);
@@ -531,7 +540,9 @@ void ReadSpecialSettings(const char * name)
 void WriteSettings(bool saveEmulationSettings)
 {
     SetSetting(Set_CardId, g_settings->card_id);
+#ifdef _WIN32
     SetSetting(Set_Resolution, (int)g_settings->res_data);
+#endif
     SetSetting(Set_ssformat, g_settings->ssformat);
     SetSetting(Set_vsync, g_settings->vsync);
     SetSetting(Set_ShowFps, g_settings->show_fps);
@@ -777,10 +788,7 @@ void DisplayLoadProgress(const wchar_t *format, ...)
 
 int InitGfx()
 {
-#ifdef ANDROID
-	return true;
-#endif
-	if (GfxInitDone)
+    if (GfxInitDone)
     {
         ReleaseGfx();
     }
@@ -1544,7 +1552,9 @@ void CALL PluginLoaded(void)
 
     SetModuleName("Glide64");
     general_setting(Set_CardId, "card_id", 0);
+#ifndef ANDROID
     general_setting(Set_Resolution, "resolution", 7);
+#endif
     general_setting(Set_vsync, "vsync", 1);
     general_setting(Set_ssformat, "ssformat", 1);
     general_setting(Set_ShowFps, "show_fps", 0);
@@ -1985,7 +1995,7 @@ void CALL UpdateScreen(void)
         fps_last = fps_next;
         fps_count = 0;
         vi_count = 0;
-}
+    }
 #endif
 #endif
     //*
@@ -2108,7 +2118,7 @@ void newSwapBuffers()
         else
         {
             output(930.0f, 0, 1, (char*)wxDateTime::Now().Format("%I:%M:%S %p").char_str(), 0);
-}
+        }
 #endif
     }
     //hotkeys
@@ -2447,7 +2457,6 @@ Purpose:  this function is called when the surface is has changed.
 input:    none
 output:   none
 *******************************************************************/
-extern int g_width, g_height;
 void init_combiner();
 
 void CALL SurfaceChanged(int width, int height)

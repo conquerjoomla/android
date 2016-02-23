@@ -1475,7 +1475,6 @@ FX_ENTRY void FX_CALL grFramebufferCopyExt(int x, int y, int w, int h,
             glActiveTexture(texture_unit);
             glBindTexture(GL_TEXTURE_2D, depth_texture);
             glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-            set_depth_shader();
             glEnable(GL_DEPTH_TEST);
             glDepthFunc(GL_ALWAYS);
             glDisable(GL_CULL_FACE);
@@ -1622,7 +1621,6 @@ grAuxBufferExt(GrBuffer_t buffer)
         invtex[0] = 0;
         invtex[1] = 0;
         need_to_compile = 0;
-        set_depth_shader();
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_ALWAYS);
