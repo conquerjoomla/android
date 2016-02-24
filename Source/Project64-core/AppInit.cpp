@@ -27,14 +27,10 @@ void LogFlushChanged(CTraceFileLog * LogFile)
 
 void InitializeLog(void)
 {
-#ifdef ANDROID
-    TraceSetMaxModule(MaxTraceModuleProject64, TraceVerbose);
-#else
 #ifdef _DEBUG
     TraceSetMaxModule(MaxTraceModuleProject64, TraceInfo);
 #else
     TraceSetMaxModule(MaxTraceModuleProject64, TraceError);
-#endif
 #endif
     SetTraceModuleNames();
 }
