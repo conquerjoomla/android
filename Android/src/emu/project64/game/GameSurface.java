@@ -39,6 +39,11 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
 	{
 		public static final int EGL_OPENGL_ES2_BIT = 0x0004;
 	}
+	
+	public class EGLExt 
+	{
+	    public static final int EGL_OPENGL_ES3_BIT_KHR = 0x0040;
+	}
 
 	private final static boolean LOG_THREADS = false;
     private final static boolean LOG_SURFACE = false;
