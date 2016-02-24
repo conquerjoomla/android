@@ -87,20 +87,4 @@ public class GLDebugHelper {
         }
         return gl;
     }
-
-    /**
-     * Wrap an existing EGL interface in a new EGL interface that adds
-     * support for error checking and/or logging.
-     * @param egl the existing GL interface. Must implement EGL and EGL10. May
-     * optionally implement EGL11 as well.
-     * @param configFlags A bitmask of error checking flags.
-     * @param log - null to disable logging, non-null to enable logging.
-     * @return the wrapped EGL interface.
-     */
-    public static EGL wrap(EGL egl, int configFlags, Writer log) {
-        if (log != null) {
-            egl = new EGLLogWrapper(egl, configFlags, log);
-        }
-        return egl;
-    }
 }

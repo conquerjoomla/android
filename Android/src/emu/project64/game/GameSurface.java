@@ -561,8 +561,9 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
             Log.w(tag, formatEglError(function, error));
         }
 
-        public static String formatEglError(String function, int error) {
-            return function + " failed: " + EGLLogWrapper.getErrorString(error);
+        public static String formatEglError(String function, int error) 
+        {
+            return function + " failed: " + error;
         }
 
         private WeakReference<GameSurface> mGLSurfaceViewWeakRef;
@@ -596,20 +597,21 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
             		mEGLContextClientVersion != 0 ? attrib_list : null);
         }
 
-        public void destroyContext(EGL10 egl, EGLDisplay display,
-                EGLContext context) {
-            if (!egl.eglDestroyContext(display, context)) {
+        public void destroyContext(EGL10 egl, EGLDisplay display, EGLContext context) 
+        {
+            if (!egl.eglDestroyContext(display, context)) 
+            {
                 Log.e("DefaultContextFactory", "display:" + display + " context: " + context);
-                if (LOG_THREADS) {
+                if (LOG_THREADS) 
+                {
                     Log.i("DefaultContextFactory", "tid=" + Thread.currentThread().getId());
                 }
-                String message = "eglDestroyContex failed: " + EGLLogWrapper.getErrorString(egl.eglGetError());
-                if (LOG_THREADS) {
-                    Log.e("EglHelper", "throwEglException tid=" + Thread.currentThread().getId() + " "
-                            + message);
+                String message = "eglDestroyContex failed: " + egl.eglGetError();
+                if (LOG_THREADS) 
+                {
+                    Log.e("EglHelper", "throwEglException tid=" + Thread.currentThread().getId() + " " + message);
                 }
                 throw new RuntimeException(message);
-
             }
         }
     }
