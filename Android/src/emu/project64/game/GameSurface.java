@@ -35,7 +35,10 @@ import android.view.SurfaceView;
 
 public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
 {
-	private boolean rendererSet;
+	public class EGL14 
+	{
+		public static final int EGL_OPENGL_ES2_BIT = 0x0004;
+	}
 
 	private final static boolean LOG_THREADS = false;
     private final static boolean LOG_SURFACE = false;
@@ -123,7 +126,6 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
 			}
 
 			this.setEGLContextClientVersion(2);
-			rendererSet = true;
 		}
 		else 
 		{
