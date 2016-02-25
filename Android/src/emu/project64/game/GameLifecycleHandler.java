@@ -17,7 +17,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import emu.project64.R;
 import emu.project64.ActivityHelper;
-import emu.project64.game.GLThread;
+import emu.project64.game.GameSurface.GLThread;
 import emu.project64.jni.CoreInterface;
 import emu.project64.jni.NativeConstants;
 import emu.project64.jni.NativeExports;
@@ -39,7 +39,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 
-public class GameLifecycleHandler implements SurfaceHolder.Callback, GLThread.SurfaceInfo
+public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSurface.SurfaceInfo
 {
 	// Activity and views
 	private Activity mActivity;
@@ -243,7 +243,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GLThread.Su
 			switch (state) 
 			{
 			case NativeConstants.EMULATOR_STATE_IDLE:
-				CoreInterface.startupEmulator(new GLThread(new WeakReference<GameSurface>(mSurface), this));
+				CoreInterface.startupEmulator(new GameSurface.GLThread(new WeakReference<GameSurface>(mSurface), this));
 				break;
 			case NativeConstants.EMULATOR_STATE_PAUSED:
 				break;
