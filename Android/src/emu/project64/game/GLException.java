@@ -16,6 +16,8 @@
 
 package emu.project64.game;
 
+import javax.microedition.khronos.opengles.GL10;
+
 /**
  * An exception class for OpenGL errors.
  *
@@ -33,11 +35,39 @@ public class GLException extends RuntimeException {
     }
 
     private static String getErrorString(int error) {
-        String errorString = GLU.gluErrorString(error);
+        String errorString = gluErrorString(error);
         if ( errorString == null ) {
             errorString = "Unknown error 0x" + Integer.toHexString(error);
         }
         return errorString;
+    }
+
+    /**
+     * Return an error string from a GL or GLU error code.
+     *
+     * @param error - a GL or GLU error code.
+     * @return the error string for the input error code, or NULL if the input
+     *         was not a valid GL or GLU error code.
+     */
+    private static String gluErrorString(int error) {
+        switch (error) {
+        case GL10.GL_NO_ERROR:
+            return "no error";
+        case GL10.GL_INVALID_ENUM:
+            return "invalid enum";
+        case GL10.GL_INVALID_VALUE:
+            return "invalid value";
+        case GL10.GL_INVALID_OPERATION:
+            return "invalid operation";
+        case GL10.GL_STACK_OVERFLOW:
+            return "stack overflow";
+        case GL10.GL_STACK_UNDERFLOW:
+            return "stack underflow";
+        case GL10.GL_OUT_OF_MEMORY:
+            return "out of memory";
+        default:
+            return null;
+        }
     }
 
     int getError() {
